@@ -1,0 +1,1 @@
+[16-Nov-2010 01:11:19] PHP Fatal error:  Call to undefined function  get_header() in /home/ypotanin/public_html/sites/wp-property/wp-content/plugins/wp-property/templates/property.php on line 28
