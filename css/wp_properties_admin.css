@@ -1,0 +1,369 @@
+.wpp_notification {
+    background: none repeat scroll 0 0 #F6F8E5;
+    border: 1px solid #EBEBEB;
+    color: #8E8E8E;
+    padding: 4px;
+}
+
+.wpp_draggable_handle {
+	width:22px !important;
+	padding:0 !important;
+}
+
+.wpp_draggable_handle_show {
+	padding:0 !important;
+	width:22px !important;
+	cursor: move;
+	background:url("images/wpp_draggable.png") no-repeat scroll 7px center transparent;
+}
+
+.wpp_clear {
+	clear: both;
+	height: 1px;
+	line-height: 1px;
+	margin-top: -1px;
+}
+
+.wpp_attribute_row_for_rent .wpp_prefill_values, .wpp_attribute_row_for_sale .wpp_prefill_values {
+	display: none !important;
+}
+
+.wpp_attribute_row_address {
+	float:left;
+}
+
+.wpp_attribute_row_address_options {
+	margin-top:6px;	
+}
+
+.wpp_attribute_row_address ul {
+	margin: 6px 0 0 0;
+}
+
+.wpp_attribute_row_address ul li {
+	margin: 0;	
+}
+
+.wpp_attribute_row_address ul li input {
+	float: left;
+	width: 90px !important;
+	margin-right: 6px;
+}
+
+#wpp_settings_tabs .form-table p, #wpp_settings_tabs .form-table h3 {
+	margin-top: 0;
+}
+
+#wpp_settings_tabs select option{
+	padding-right: 10px;
+}
+
+.wpp_hidden_property_attributes li{
+ 
+}
+
+#wpp_premium_feature_table thead td{
+	padding: 10px;
+}
+
+.clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+ 
+.clearfix {
+	display: inline-block;
+}
+ 
+html[xmlns] .clearfix {
+	display: block;
+}
+ 
+* html .clearfix {
+	height: 1%;
+}
+
+
+
+/* Settings Page Begin */
+#wpp_settings_tabs table.ud_ui_dynamic_table {
+	margin: 0;
+}
+
+/* Settings Page End */
+
+
+/*
+	Property Overview Page
+*/
+/* Hide Monthly Filter Dropdown */
+
+.wpp_overview  .tablenav select[name=m] { display: none; }
+ 
+.wpp_overview  .tablenav #post-query-submit { display: none; }
+ 
+.wpp_overview .widefat input.wpp_is_featured {
+	background: none repeat scroll 0 0 #FF8104 !important;
+	border-color: #E89A00 !important;
+	color: #FFF !important;
+	text-decoration: none !important; }
+ 
+.wpp_overview .widefat input.wpp_featured_toggle {
+	background: transparent;
+	border: 0;
+	color: #B2B2B4;
+	cursor: pointer; }
+ 
+.wpp_overview  .column-thumbnail a.fancybox img { border: 4px solid #D9D9D9; }
+ 
+.cb { clear: both; }
+ 
+.wpp_class_pre {
+	background: none repeat scroll 0 0 #F4F9BC;
+	border: 2px solid #D6D9C1;
+	color: black;
+	font-size: 12px;
+	height: 600px;
+	margin-top: 17px;
+	overflow: scroll;
+	width: 100%; }
+ 
+.wpp_save_changes_row {
+	clear: both;
+	margin-top: 15px; }
+ 
+#wpp_settings_tabs  ul.tabs {
+	border-bottom: 1px solid #CBCBCB;
+	float: left;
+	height: 32px;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	width: 100%; }
+ 
+	#wpp_settings_tabs  ul.tabs li {
+		-moz-border-radius-topleft: 5px;
+		-moz-border-radius-topright: 5px;
+		-webkit-border-top-left-radius: 5px;
+		-webkit-border-top-right-radius: 5px;
+		background: none repeat scroll 0 0 #F4F4F4;
+		border-color: #D0D0D0;
+		border-style: solid solid none;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		border-width: 1px 1px 0;
+		float: left;
+		height: 25px;
+		line-height: 23px;
+		margin: 0 10px -1px 0;
+		overflow: hidden;
+		padding: 3px;
+		position: relative; }
+ 
+		#wpp_settings_tabs  ul.tabs li a {
+			color: #000;
+			display: block;
+			font-size: 1.1em;
+			outline: none;
+			padding: 0 10px;
+			text-decoration: none; }
+ 
+			#wpp_settings_tabs  ul.tabs li a:hover { color: #9D611D; }
+ 
+		#wpp_settings_tabs  ul.tabs li.ui-tabs-selected {
+			background: none repeat scroll 0 0 #FFFFFF;
+			border-bottom: 1px solid #FFFFFF; }
+ 
+			#wpp_settings_tabs  ul.tabs li.ui-tabs-selected a:hover {
+				background: #FFFFFF;
+				border-bottom: 1px solid #FFFFFF; }
+ 
+html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.active a:hover {
+	background: #fff;
+	border-bottom: 1px solid #fff; }
+ 
+#wpp_settings_tabs  .ui-tabs-panel table {  }
+ 
+#wpp_settings_tabs  .ui-tabs-panel {
+	-khtml-border-radius-bottomleft: 5px;
+	-khtml-border-radius-bottomright: 5px;
+	-moz-border-radius-bottomleft: 5px;
+	-moz-border-radius-bottomright: 5px;
+	-webkit-border-bottom-left-radius: 5px;
+	-webkit-border-bottom-right-radius: 5px;
+	background: none repeat scroll 0 0 #FFFFFF;
+	border-color: #DEDEDE;
+	border-right: 1px solid #DEDEDE;
+	border-style: none solid solid;
+	border-width: medium 1px 1px;
+	clear: both;
+	float: left;
+	padding-bottom: 20px;
+	width: 100%; }
+ 
+#wpp_settings_tabs  .wpp_inner_tab {
+	font-size: 1.2em;
+	padding: 20px; }
+ 
+#wpp_settings_tabs .ui-tabs-hide {
+	;
+	display: none !important; }
+ 
+#wpp_settings_tabs ul.navigation { list-style-type: none; }
+ 
+	#wpp_settings_tabs ul.navigation li {
+		display: block;
+		padding: 10px; }
+ 
+#wpp_settings_tabs .wpp_permanent_image {
+	background: none repeat scroll 0 0 #F5F5F5;
+	border: 1px solid #B4B4B4;
+	font-size: 12px;
+	line-height: 15px;
+	padding: 2px 1px 3px 6px;
+	width: 136px; }
+ 
+.wpp_link {
+	color: #21759B;
+	cursor: pointer;
+	text-decoration: underline; }
+ 
+	.wpp_link:hover { color: #D54E21; }
+ 
+#property_meta.wpp_link {
+	color: #21759B;
+	cursor: pointer;
+	text-decoration: underline; }
+ 
+.wpp_prefill_values {
+	display: block;
+	float: right;
+	padding-top: 5px; }
+ 
+	.wpp_prefill_values .wpp_prefill_attribute {
+		-moz-border-radius: 5px;
+		-webkit-border-radius: 5px;
+		background: #EFEFEF;
+		border-radius: 5px;
+		border: 1px solid #D6D6D6;
+		color: #000;
+		cursor: pointer;
+		display: none;
+		float: left;
+		margin: 0 5px 5px 0;
+		padding: 6px; }
+ 
+.misc-pub-section-last { display: none; }
+ 
+#property_meta input.text-input {  }
+ 
+#property_meta .inside { margin: 0; }
+ 
+	#property_meta .inside .widefat { border: 0; }
+ 
+		#property_meta .inside .widefat th {
+			background: #E1E1E1;
+			padding-left: 15px;
+			vertical-align: top;
+			width: 150px; }
+ 
+		#property_meta .inside .widefat td { border-bottom: 1px solid #EFEFEF; vertical-align: middle;}
+ 
+		#property_meta .inside .widefat textarea { width: 100%; }
+ 
+		#property_meta .inside .widefat .description {
+			display: block;
+			padding: 5px 0 5px 0; }
+ 
+		#property_meta .inside .widefat input[type=text] { width: 200px; }
+ 
+		#property_meta .inside .widefat #wpp_meta_location { width: 400px; }
+ 
+		#property_meta .inside .widefat option { padding-right: 15px; }
+ 
+		#property_meta .inside .widefat #wpp_meta_price { width: 75px; }
+ 
+.disabled_message { display: none; }
+ 
+.disabled_row, .disabled_row th, .disabled_row td { background: #EFEFEF !important; }
+ 
+.disabled_row * {
+	border: #CFCFCF;
+	color: #BFBFBF;
+	cursor: default; }
+ 
+.disabled_row .description, .disabled_row .wpp_prefill_values, .disabled_row .wpp_prefill_attribute, .disabled_row input, .disabled_row textarea, .disabled_row select { display: none !important; }
+ 
+.disabled_row .disabled_message {
+	color: #BFBFBF;
+	display: inline;
+	float: left;
+	font-size: 1.1em;
+	letter-spacing: 1px;
+	margin-top: 1px;
+	padding: 4px 4px 4px 8px;
+	width: auto; }
+ 
+#wpp_settings_tabs #wpp_plugins_ajax_response {
+	background: none repeat scroll 0 0 #FFFFAA;
+	border: 1px solid #B6B7B1;
+	margin: 5px 0;
+	padding: 5px 10px; }
+ 
+{
+	margin: 0 auto;
+	width: 95%; }
+ 
+td.wpp_premium_feature_intro {
+	border-bottom: 1px solid #CCCCCC;
+	font-size: 1.3em;
+	font: normal;
+	padding-top: 30px; }
+ 
+	td.wpp_premium_feature_intro .header {
+		font-size: 18px;
+		font-weight: bold; }
+ 
+tr.wpp_premium_feature_block {  }
+ 
+td.wpp_premium_feature_image { width: 250px; }
+ 
+.wpp_premium_feature_image img { padding: 20px 10px 20px 20px; }
+ 
+.wpp_box {
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	background: #EEEEEE;
+	border-radius: 7px;
+	border: 1px solid #DDDDDD;
+	margin-bottom: 15px; }
+ 
+#wpp_premium_feature_table .wpp_box { margin: 20px; }
+ 
+.wpp_box_header strong {
+	color: #000;
+	display: block;
+	font-weight: strong;
+	margin-bottom: 10px; }
+ 
+.wpp_box_header p {
+	font-size: 11px;
+	margin: 0; }
+ 
+.wpp_box_header {
+	border-bottom: 3px solid #E4E4E4;
+	padding: 7px 0 10px 11px; }
+ 
+.wpp_box_content {
+	background: #FFF;
+	line-height: 1.2em;
+	padding: 10px; }
+ 
+.wpp_box_footer { padding: 10px; }
+
+.wpp_input_colorpicker {width:80px;}
+ 
