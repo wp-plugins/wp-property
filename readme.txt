@@ -189,6 +189,16 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.14
+* Fix to search and sorting. 
+* Fixed typo in property editing screen.
+* Added filter: wpp_search_form_field_[slug] to filter elements in search widget / shortcode.
+* Fixed issue with draft properties showing up poorly in back-end.
+* Fixed ownership nag not going away after ownership of premium folder has been granted.
+* Generated new POT file
+* Fix to Google Maps link to use localization from back-end overview.
+* Added backup / restore backup features for WP-Property configuration on Properties -> Settings -> Help
+
 = 1.13.1
 * Version fix.
 

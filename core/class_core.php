@@ -58,6 +58,11 @@ class WPP_Core {
  
 		global $wp_properties, $wp_rewrite;
 
+		
+		/** Making template-functions global but load after the premium features, giving the premium features priority. */
+		include_once WPP_Templates . '/template-functions.php';
+
+
 		// Load settings into $wp_properties and save settings if nonce exists
 		WPP_F::settings_action();
 	
@@ -172,6 +177,7 @@ class WPP_Core {
 				register_taxonomy( $taxonomy, 'property', array(
 					 'hierarchical' => $taxonomy_data['hierarchical'],
 					 'label' => $taxonomy_data['label'],
+					 'labels' => $taxonomy_data['labels'],
 					 'query_var' => $taxonomy,
 					 'rewrite' => array('slug' => $taxonomy )
 				));
@@ -263,7 +269,7 @@ class WPP_Core {
  	 * @since 0.60
 	 *
 	 */
-	function after_setup_theme() {
+	static function after_setup_theme() {
 		add_theme_support( 'post-thumbnails' );
 	}
 
@@ -405,7 +411,7 @@ class WPP_Core {
 						var message = "<div class='updated fade'>" +
 							"<p><b><?php _e('Thank you for installing WP-Property!','wpp') ?></b> " +
 							"<?php echo $permalink_problem; ?></p>" +
-							"<?php _e('<p>You may also visit <a href="http://twincitiestech.com/plugins/wp-property/">TwinCitiesTech.com</a> for more information, and <a href="http://twincitiestech.com/plugins/wp-property/screencasts/">screencasts</a>.</div>', 'wpp') ?>";
+							"<p><?php _e('You may also visit <a href="http://twincitiestech.com/plugins/wp-property/">TwinCitiesTech.com</a> for more information, and <a href="http://twincitiestech.com/plugins/wp-property/screencasts/">screencasts</a>.', 'wpp') ?></p></div>";
 
  						jQuery(message).insertAfter(".wpp_overview  h2");
 					});
@@ -533,10 +539,38 @@ class WPP_Core {
 
 		$update_data = $_REQUEST['wpp_data']['meta'];
 
+		$old_location = get_post_meta($post_id, $wp_properties['configuration']['address_attribute'], true);
+		$coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
+		$new_location = $update_data[$wp_properties['configuration']['address_attribute']];
+
+	// Update Coordinates (skip if old address matches new address), but always do if no coordinates set
+		if(empty($coordinates) || ($old_location != $new_location && !empty($new_location))) {
+				
+			$geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
+      
+			if(!empty($geo_data->formatted_address)) {
+				update_post_meta($post_id, 'address_is_formatted', true);
+
+				if(!empty($wp_properties['configuration']['address_attribute']))
+					update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));
+				
+
+				foreach($geo_data as $geo_type => $this_data)
+					update_post_meta($post_id, $geo_type, WPP_F::encode_mysql_input( $this_data ), $geo_type);
+				
+				
+			} else {
+        // Try to figure out why it failed
+        update_post_meta($post_id, 'address_is_formatted', false);
+      }
+
+		}
+
+
 		foreach($update_data as $meta_key => $meta_value) {
 		
 			/* Cleans the user input */
-			$meta_value = WPP_F::encode_mysql_input( $meta_value );
+			$meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key);
 
 			// Only admins can make features
 			if( $meta_key == 'featured' && !current_user_can('manage_options') ) {
@@ -554,29 +588,6 @@ class WPP_Core {
 
 			update_post_meta($post_id, $meta_key, $meta_value);
  		}
-
-		// Update Coordinates
-		if(!empty($update_data[$wp_properties['configuration']['address_attribute']])) {
-
-			$geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization']);
-			if($geo_data) {
-				update_post_meta($post_id, 'address_is_formatted', true);
-
-				if(!empty($wp_properties['configuration']['address_attribute']))
-					update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address ));
-				
-
-				foreach($geo_data as $geo_type => $this_data)
-					update_post_meta($post_id, $geo_type, WPP_F::encode_mysql_input( $this_data ));
-				
-				
-			} else {
-                update_post_meta($post_id, 'address_is_formatted', false);
-            }
-
-		}
-
-
 
 		// Check if property has children
 		$children = get_children("post_parent=$post_id&post_type=property");
@@ -700,7 +711,7 @@ class WPP_Core {
 		
 		$messages['property'] = array(
 		0 => '', // Unused. Messages start at index 1.
-		1 => sprintf( __('Property updated. <a href="%s">vew property</a>','wpp'), esc_url( get_permalink($post_id) ) ),
+		1 => sprintf( __('Property updated. <a href="%s">view property</a>','wpp'), esc_url( get_permalink($post_id) ) ),
 		2 => __('Custom field updated.','wpp'),
 		3 => __('Custom field deleted.','wpp'),
 		4 => __('Property updated.','wpp'),
@@ -750,6 +761,7 @@ class WPP_Core {
 		$columns['menu_order'] = __('Order','wpp');
 		$columns['thumbnail'] = __('Thumbnail','wpp');
 
+		$columns = apply_filters('wpp_admin_overview_columns', $columns);
 		//
 		return $columns;
 	}
@@ -809,13 +821,13 @@ class WPP_Core {
 
 				// Only show this is the property type has an address
 				if(in_array($post->property_type, $wp_properties['location_matters'])) {
+				
+				$localization = ($wp_properties['configuration']['google_maps_localization'] ? $wp_properties['configuration']['google_maps_localization'] : 'en');
 
-				echo $post->display_address. "<br />";
-
-				if($post->address_is_formatted)
-					echo __('Validated:','wpp') . "<a href='http://maps.google.com/maps?q={$post->latitude},+{$post->longitude}+%28" . str_replace(" ", "+",$post->post_title). "%29&iwloc=A&hl=en' target='_blank'>". __('view on map','wpp')."</a>.";
+				if($post->latitude && $post->longitude)
+					echo "<a href='http://maps.google.com/maps?q={$post->latitude},+{$post->longitude}&hl=$localization' target='_blank'>".$post->display_address ."</a>.";
 				else
-					_e('Address not validated.','wpp');
+					_e(' - ','wpp');
 
 				}
 
@@ -888,12 +900,13 @@ class WPP_Core {
 				}
 			break;
 
-				case "menu_order":
+			case "menu_order":
 				if($post->menu_order)
 					echo $post->menu_order;
 			break;
 
 			default:
+			
 				echo (!empty($post->$column) ? apply_filters('wpp_stat_filter_' . $column, $post->$column) : "");
 
 			break;
@@ -1086,6 +1099,26 @@ class WPP_Core {
 		// Add metaboxes
 		do_action('wpp_metaboxes');
 		WPP_F::manual_activation();
+		
+		// Download backup of configuration
+		if($_REQUEST['page'] == 'property_settings' 
+			&& $_REQUEST['wpp_action'] == 'download-wpp-backup'
+			&& wp_verify_nonce($_REQUEST['_wpnonce'], 'download-wpp-backup')) {
+				global $wp_properties;
+				
+				$sitename = sanitize_key( get_bloginfo( 'name' ) );
+				$filename = $sitename . '-wp-property.' . date( 'Y-m-d' ) . '.txt';
+
+				header("Cache-Control: public");
+				header("Content-Description: File Transfer");
+				header("Content-Disposition: attachment; filename=$filename");
+ 				header("Content-Transfer-Encoding: binary");
+				header( 'Content-Type: text/plain; charset=' . get_option( 'blog_charset' ), true );				
+
+				echo json_encode($wp_properties);
+				
+			die();
+		}
 	}
 
 
@@ -1279,8 +1312,8 @@ class WPP_Core {
         
         // If not set, menu_order will not be used at all if any of the attributes are marked as searchable
         $sortable_attrs = array(
-            'menu_order' => 'Default',
-            'post_title' => 'Title'
+            'menu_order' => __('Default', 'wpp'),
+            'post_title' => __('Title', 'wpp')
         );
         
         if (!empty($wp_properties['property_stats']) && $wp_properties['sortable_attributes']) {
@@ -1544,6 +1577,14 @@ class WPP_Core {
 			unset($params['pagination']);
 
 		$params['ajax_call'] = true;
+    
+    /* We are going to check if the params have been url encoded */
+    if(!empty($params['url_encoded']) && $params['url_encoded'] == 'true') {
+      unset($params['url_encoded']);
+      foreach($params as $key => $value){
+        $params[$key] = urldecode($value);
+      }
+    }
 	
 		$data = WPP_Core::shortcode_property_overview( $params );
 

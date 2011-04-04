@@ -55,16 +55,18 @@
 
         var params_<?php echo $unique; ?> = {
             action: 'wpp_property_overview_pagination',
-            ajax_call:'true'
+            ajax_call:'true',
+            url_encoded:'true'
             <?php if(!empty($template)) {
                 echo ", template: '$template'";
             }
-            $data = explode('&',$query);
+            //$data = explode('&',$query);
+            $data = WPP_F::split_query_string( $query );
             foreach($data as $attr => $value ){
                 if ($value == '')continue;
                 $value_data = explode('=',$value);
                 if($value_data[0]=='pagi' || $value_data[0] == 'pagination') continue;
-                echo ", $value_data[0]:'$value_data[1]'";
+                echo ", $value_data[0]:'".urlencode($value_data[1])."'";
             } ?>
         };
 

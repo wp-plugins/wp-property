@@ -190,17 +190,22 @@
 	/**
 	 * Save manually entered coordinates if setting exists
  	 *
+ 	 * Does not blank out latitude or longitude unless maual_coordinates are set
+ 	 *
 	 * @since 1.08
 	 */
 	function save_property_coordinate_override($post_id, $post_data, $geo_data) {
 		global $wp_properties;
-		
+    		
 		if (get_post_meta($post_id, 'manual_coordinates', true) != 'true' &&
 			get_post_meta($post_id, 'manual_coordinates', true) != '1') {
 
-
-			update_post_meta($post_id, 'latitude', $geo_data->latitude);
-			update_post_meta($post_id, 'longitude', $geo_data->longitude);
+      if($geo_data->latitude)
+        update_post_meta($post_id, 'latitude', $geo_data->latitude);
+      
+      if($geo_data->longitude)
+        update_post_meta($post_id, 'longitude', $geo_data->longitude);
+		
 		} else {
 
 			update_post_meta($post_id, 'location', $post_data['wpp_data']['meta'][$wp_properties['configuration']['address_attribute']]);
@@ -470,11 +475,13 @@
 			// If latitude and logitude meta isn't set, returns false
 			$coords = WPP_F::get_coordinates($listing_id);
 
+			echo "<span class='description'>";
 			if($coords) {
-				_e("<span class='description'>Address was validated by Google Maps.</span>",'wpp');
+				_e("Address was validated by Google Maps.",'wpp');
 			} else {
-				_e("<span class='description'>Address has not yet been validated, should be formatted as: street, city, state, postal code, country. Locations are validated through Google Maps.</span>",'wpp');
+				_e("Address has not yet been validated, should be formatted as: street, city, state, postal code, country. Locations are validated through Google Maps.",'wpp');
 			}
+			echo "</span>";
 
 		}
 

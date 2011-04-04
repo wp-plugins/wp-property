@@ -1,6 +1,6 @@
 <ul class="wpp_featured_properties_shortcode clearfix">
 <?php
-
+unset($properties['total']); // VERY IMPORTANT!!!
 foreach($properties as $featured):
 
 	$this_property = WPP_F::get_property($featured, 'return_object=true&get_children=false&load_gallery=false&load_parent=false');

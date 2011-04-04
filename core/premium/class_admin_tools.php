@@ -24,7 +24,7 @@ add_action('wpp_init', array('class_admin_tools', 'init'));
  */
 class class_admin_tools {
 
-	function init() {
+	static function init() {
 
 		// Add Inquiry page to Property Settings page array
 		add_filter('wpp_settings_nav', array('class_admin_tools', 'settings_nav'));

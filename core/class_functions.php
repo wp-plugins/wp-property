@@ -13,18 +13,22 @@
 class WPP_F {
 
 
+
 	/**
 	 * Check permissions and ownership of premium folder.
 	 *
- 	 * @since 1.12
+ 	 * @since 1.13
 	 *
  	 */
-	 function check_premium_folder_permissions() {
+	 static function check_premium_folder_permissions() {
 		global $wp_messages;
 
-
-		if (!is_writable(WPP_Premium . "/"))
+		// If folder is writable, it's all good
+		if(!is_writable(WPP_Premium . "/"))
 			$writable_issue = true;
+		else
+			return;
+
 
 		// If not writable, check if this is an ownerhsip issue
 		if(function_exists('posix_getuid')) {
@@ -60,33 +64,33 @@ class WPP_F {
 	 }
 
 
-
 	/**
 	 * Revalidate all addresses
+	 *
+	 * Revalidates addresses of all publishd properties.
+	 * If Google daily addres lookup is exceeded, breaks the function and notifies the user.
 	 *
  	 * @since 1.05
 	 *
  	 */
-	 function revalidate_all_addresses() {
+	 static function revalidate_all_addresses($echo_result = true) {
 		global $wp_properties, $wpdb;
 
-		$all_properties = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type = 'property'");
-
+		$all_properties = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type = 'property' AND post_status = 'publish'");
 
 		$google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true');
 
  		foreach($all_properties as $post_id) {
- 			$address = get_post_meta($post_id, $wp_properties['configuration']['address_attribute'], true);
 
-			$geo_data = UD_F::geo_locate_address($address, $wp_properties['configuration']['google_maps_localization']);
+      $address = get_post_meta($post_id, $wp_properties['configuration']['address_attribute'], true);
 
+      $geo_data = UD_F::geo_locate_address($address, $wp_properties['configuration']['google_maps_localization'], true);
 
-			if($geo_data) {
+      $coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
+
+			if(!empty($geo_data->formatted_address)) {
 				update_post_meta($post_id, 'address_is_formatted', true);
-
-				if(!empty($wp_properties['configuration']['address_attribute']))
-					update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], $geo_data->formatted_address);
-
+        update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], $geo_data->formatted_address);
 				update_post_meta($post_id, 'street_number', $geo_data->street_number);
 				update_post_meta($post_id, 'route', $geo_data->route);
 				update_post_meta($post_id, 'city', $geo_data->city);
@@ -97,18 +101,51 @@ class WPP_F {
 				update_post_meta($post_id, 'country_code', $geo_data->country_code);
 				update_post_meta($post_id, 'postal_code', $geo_data->postal_code);
 
-				$updated[] = $post_id;
-			} else {
-                update_post_meta($post_id, 'address_is_formatted', false);
-            }
+        if (get_post_meta($post_id, 'manual_coordinates', true) != 'true' &&
+          get_post_meta($post_id, 'manual_coordinates', true) != '1') {
 
-			// Sets latitude and longitude
-			do_action('save_property',$post_id, $_REQUEST, $geo_data);
+          update_post_meta($post_id, 'latitude', $geo_data->latitude);
+          update_post_meta($post_id, 'longitude', $geo_data->longitude);
+        }
+
+				$updated[] = $post_id;
+
+			} else {
+          // Try to figure out what went wrong
+   
+          if($geo_data->status != 'OK') {
+
+            // Break if daily geo-lookup limit is exceeded
+            if($geo_data->status == 'OVER_QUERY_LIMIT') {
+             $return['message'] = __("Address revalidation failed because the Google daily address look-up limit has been exceeded.", 'wpp');
+            } else {
+             $return['message'] = __("An error occured that prevented geo-location from working.", 'wpp');
+            }
+ 
+          $return['success'] = 'false';
+          
+          if($echo_result)
+            echo json_encode($return);
+          else
+            return $return;
+          
+          return;
+      }
+      
+      update_post_meta($post_id, 'address_is_formatted', false);
+      }
 
 		}
 
-		echo "Updated " . count($updated) . " properties using the " . $google_map_localizations[$wp_properties['configuration']['google_maps_localization']] .  " localization.";
-
+		$return['success'] = 'true';
+		$return['message'] = "Updated " . count($updated) . " properties using the " . $google_map_localizations[$wp_properties['configuration']['google_maps_localization']] .  " localization.";
+  
+    if($echo_result)            
+      echo json_encode($return);
+    else
+      return $echo_result;
+      
+    return;
 	 }
 
 	/**
@@ -122,7 +159,7 @@ class WPP_F {
  	 * @since 1.06
 	 *
  	 */
-	function minify_js($data) {
+	static function minify_js($data) {
 
 		if(!class_exists('W3_Plugin'))
 			include_once WPP_Path. '/third-party/jsmin.php';
@@ -144,7 +181,7 @@ class WPP_F {
  	 * @since 1.0
 	 *
  	 */
-	 function get_image_dimensions($type = false) {
+	 static function get_image_dimensions($type = false) {
 		global $wp_properties;
 
 		if(!$type)
@@ -169,7 +206,7 @@ class WPP_F {
  	 * @since 0.721
 	 *
  	 */
-	function fix_screen_options() {
+	static function fix_screen_options() {
 		global $current_user;
 
 		$user_id = $current_user->data->ID;
@@ -204,7 +241,7 @@ class WPP_F {
  	 * @since 0.55
 	 *
  	 */
-	function get_most_common_property_type($array = false) {
+	static function get_most_common_property_type($array = false) {
 		global $wpdb;
 
 		$top_property_type = $wpdb->get_row("
@@ -220,6 +257,24 @@ class WPP_F {
 
 
 	/**
+	 * Splits a query string properly, using preg_split to avoid conflicts with dashes and other special chars.
+	 * @param string $query string to split
+	 * @return Array
+	 */
+	static function split_query_string($query)
+	{
+		/**
+		 * Split the string properly, so no interference with &ndash; which is used in user input.
+		 */
+		//$data = preg_split( "/&(?!&ndash;)/", $query );
+		//$data = preg_split( "/(&(?!.*;)|&&)/", $query );
+		$data = preg_split( "/&(?!([a-zA-Z]+|#[0-9]+|#x[0-9a-fA-F]+);)/", $query );
+
+		return $data;
+	}
+
+
+	/**
 	* Handles user input, so a standard is created for supporting special characters.
 	*
 	* Added fix for PHP versions earlier than 4.3.0
@@ -227,8 +282,12 @@ class WPP_F {
 	* @param	string 	$input to be converted
 	* @return 	string 	$result
 	*/
-	function encode_mysql_input( $input ) {
+	static function encode_mysql_input( $input, $meta_key = false) {
 
+    if($meta_key == 'latitude' || $meta_key == 'longitude')
+      return $input;
+      
+      
 		/* If PHP version is newer than 4.3.0, else apply fix. */
 		if ( strnatcmp(phpversion(),'4.3.0' ) >= 0 ) {
 
@@ -255,7 +314,7 @@ class WPP_F {
 	* @param	string 	$string to be converted
 	* @return 	string 	$result
 	*/
-	function decode_mysql_output( $output ) {
+	static function decode_mysql_output( $output ) {
 
 		$result = html_entity_decode( $output );
 
@@ -271,7 +330,7 @@ class WPP_F {
  	 * @since 0.55
 	 *
  	 */
-	function is_numeric_range($array = false) {
+	static function is_numeric_range($array = false) {
 		if(!is_array($array))
 			return;
 
@@ -284,7 +343,7 @@ class WPP_F {
 
 	}
 
-	function draw_property_type_dropdown($args = '') {
+	static function draw_property_type_dropdown($args = '') {
 		global $wp_properties;
 
 		$defaults = array('id' => 'wpp_property_type',  'name' => 'wpp_property_type',  'selected' => '');
@@ -304,7 +363,7 @@ class WPP_F {
 
 	}
 
-	function draw_property_dropdown($args = '') {
+	static function draw_property_dropdown($args = '') {
 		global $wp_properties, $wpdb;
 
 		$defaults = array('id' => 'wpp_properties',  'name' => 'wpp_properties',  'selected' => '');
@@ -325,7 +384,7 @@ class WPP_F {
 
 	}
 
-	function draw_attribute_dropdown($args = '') {
+	static function draw_attribute_dropdown($args = '') {
 		global $wp_properties, $wpdb;
 
 		$defaults = array('id' => 'wpp_attribute',  'name' => 'wpp_attribute',  'selected' => '');
@@ -348,7 +407,7 @@ class WPP_F {
 
 	}
 
-	function draw_localization_dropdown($args = '') {
+	static function draw_localization_dropdown($args = '') {
 		global $wp_properties, $wpdb;
 
 		$defaults = array('id' => 'wpp_google_maps_localization',  'name' => 'wpp_google_maps_localization',  'selected' => '', 'return_array' => 'false');
@@ -402,7 +461,7 @@ class WPP_F {
  	 * @version 1.13.1
 	 *
  	 */
-	function feature_check($return = false) {
+	static function feature_check($return = false) {
 		$blogname = get_bloginfo('url');
 		$blogname = urlencode(str_replace(array('http://', 'https://'), '', $blogname));
 		$system = 'wpp';
@@ -524,7 +583,7 @@ class WPP_F {
  	 * @since 0.721
 	 *
  	 */
-	 function toggle_featured($post_id = false) {
+	 static function toggle_featured($post_id = false) {
 		global $current_user;
 
 		if(!current_user_can('manage_options'))
@@ -555,7 +614,7 @@ class WPP_F {
  	 * @since 0.54
 	 *
  	 */
-	function image_sizes_dropdown($args = "") {
+	static function image_sizes_dropdown($args = "") {
 		global $wp_properties;
 
 		$defaults = array('name' => 'wpp_image_sizes',  'selected' => 'none');
@@ -571,6 +630,7 @@ class WPP_F {
 
 		?>
 			<select id="<?php echo $id ?>" name="<?php echo $name ?>" >
+				<option> - </option>
 					<?php
 						foreach($image_array as $name) {
 						$sizes = WPP_F::image_sizes($name);
@@ -588,7 +648,7 @@ class WPP_F {
 		<?php
 	}
 
-	function image_sizes($type = false, $args = "") {
+	static function image_sizes($type = false, $args = "") {
 		global $_wp_additional_image_sizes;
 
 		$defaults = array('return_all' => false);
@@ -646,16 +706,29 @@ class WPP_F {
 	 * As of 1.11 prevents removal of premium feature configurations that are not held in the settings page array
 	 *
 	 * 1.12 - added taxonomies filter: wpp_taxonomies
+	 * 1.14 - added backup from text file
 	 *
 	 * @return array|$wp_properties
 	 * @since 1.12
 	 *
  	 */
-	function settings_action($force_db = false) {
+	static function settings_action($force_db = false) {
 		global $wp_properties, $wp_rewrite;
 
 		// Process saving settings
 		if(isset($_REQUEST['wpp_settings']) && wp_verify_nonce($_REQUEST['_wpnonce'], 'wpp_setting_save') ) {
+
+			// Handle backup
+			if($backup_file = $_FILES['wpp_settings']['tmp_name']['settings_from_backup']) {
+				$backup_contents = file_get_contents($backup_file);
+
+				if(!empty($backup_contents))
+					$decoded_settings = json_decode($backup_contents, true);
+
+				if(!empty($decoded_settings))
+					$_REQUEST['wpp_settings'] = $decoded_settings;
+			}
+
 
 			$wpp_settings = apply_filters('wpp_settings_save', $_REQUEST['wpp_settings'], $wp_properties);
 
@@ -682,6 +755,15 @@ class WPP_F {
 
 			// Overwrite $wp_properties with database setting
 			$wp_properties = array_merge($wp_properties, $wp_properties_db);
+
+			// Reload page to make sure higher-end functions take affect of new settings
+			// The filters below will be ran on reload, but the saving functions won't
+			if($_REQUEST['page'] == 'property_settings'); {
+				unset($_REQUEST);
+				wp_redirect(admin_url("edit.php?post_type=property&page=property_settings&message=updated"));
+				exit;
+			}
+
 
 		}
 
@@ -716,7 +798,7 @@ class WPP_F {
 
 	}
 
-	function remove_deleted_image_sizes($sizes) {
+	static function remove_deleted_image_sizes($sizes) {
 		global $wp_properties;
 
 		foreach($sizes as $slug => $size) {
@@ -740,7 +822,7 @@ class WPP_F {
 	 * @since 0.54
 	 *
  	 */
-	function the_post($post) {
+	static function the_post($post) {
 		global $post;
 
 		if($post->post_type == 'property') {
@@ -756,7 +838,7 @@ class WPP_F {
 	 * @since 0.624
 	 *
  	 */
-	function load_premium() {
+	static function load_premium() {
 		global $wp_properties;
 
 		$default_headers = array(
@@ -778,7 +860,7 @@ class WPP_F {
 				if($file == 'index.php')
 					continue;
 
-				if(end(explode(".", $file)) == 'php') {
+				if(end(@explode(".", $file)) == 'php') {
 
 					$plugin_slug = str_replace(array('.php'), '', $file);
 
@@ -790,7 +872,7 @@ class WPP_F {
 					$wp_properties['installed_features'][$plugin_slug]['description'] = $plugin_data['Description'];
 
 					// Check if the plugin is disabled
-					if(@$wp_properties['installed_features'][$plugin_slug]['disabled'] != 'true') {
+					if($wp_properties['installed_features'][$plugin_slug]['disabled'] != 'true') {
 						@include_once(WPP_Premium . "/" . $file);
 
  						// Disable plugin if class does not exists - file is empty
@@ -806,7 +888,7 @@ class WPP_F {
 
 	}
 
-	function check_plugin_updates() {
+	static function check_plugin_updates() {
 		global $wp_properties;
 
 		echo WPP_F::feature_check(true);
@@ -822,7 +904,7 @@ class WPP_F {
 	 * @since 1.10
 	 *
  	 */
-	function activation() {
+	static function activation() {
 
 		// Do nothing because only ran on activation, not updates, as of 3.1
 		// Now handled by WPP_F::manual_activation().
@@ -840,11 +922,11 @@ class WPP_F {
 	 * @version 1.13
 	 *
  	 */
-	function manual_activation() {
+	static function manual_activation() {
 
 		$installed_ver = get_option( "wpp_version" );
 		$wpp_version = WPP_Version;
-		
+
 		if(@version_compare($installed_ver, $wpp_version) == '-1') {
 			// We are upgrading.
 
@@ -870,7 +952,7 @@ class WPP_F {
 
 	}
 
-	function deactivation() {
+	static function deactivation() {
 		global $wp_rewrite;
 		$timestamp = wp_next_scheduled( 'wpp_premium_feature_check' );
 		wp_unschedule_event($timestamp, 'wpp_premium_feature_check' );
@@ -888,7 +970,7 @@ class WPP_F {
 	 * @since 0.621
 	 *
  	 */
-	function get_searchable_properties() {
+	static function get_searchable_properties() {
 		global $wp_properties;
 
 		$searchable_properties = array();
@@ -920,7 +1002,7 @@ class WPP_F {
      * @since 0.57
      *
      */
-    function get_search_values($search_attributes, $searchable_property_types, $cache = true, $instance_id = false) {
+    static function get_search_values($search_attributes, $searchable_property_types, $cache = true, $instance_id = false) {
         global $wpdb, $wp_properties;
 
         if($instance_id) {
@@ -1011,7 +1093,7 @@ class WPP_F {
     /*
         check if a search converstion exists for a attributes value
     */
-	function do_search_conversion($attribute, $value, $reverse = false)  {
+	static function do_search_conversion($attribute, $value, $reverse = false)  {
 		global $wp_properties;
 
 		// First, check if any conversions exists for this attribute, if not, return value
@@ -1056,13 +1138,13 @@ class WPP_F {
 
 
     /**
-     * Primary function for queries properties  based on type and attributes
+     * Primary static function for queries properties  based on type and attributes
      *
      *
      * @since 1.08
      *
      */
-    function get_properties($args = "") {
+    static function get_properties($args = "") {
         global $wpdb;
 
 		//var_dump( debug_backtrace() );
@@ -1114,7 +1196,7 @@ class WPP_F {
         // Go down the array list narrowing down matching properties
         foreach ($query as $meta_key => $criteria) {
 
-			$criteria = WPP_F::encode_mysql_input( $criteria );
+			$criteria = WPP_F::encode_mysql_input( $criteria, $meta_key);
 
 			//printf( "Criteria: %s<br />", $criteria );
 
@@ -1341,7 +1423,7 @@ class WPP_F {
     /**
 	* Returns array of all values for a particular attribute/meta_key
 	*/
-	function get_all_attribute_values($slug) {
+	static function get_all_attribute_values($slug) {
 		global $wpdb;
 
 
@@ -1374,16 +1456,17 @@ class WPP_F {
 
 
 	}
-
-	/**
+/**
 	 * Load property information into an array or an object
 	 *
  	 * @version 1.11 Added support for multiple meta values for a given key
  	 *
  	 * @since 1.11
+	 * @version 1.14 - fixed problem with drafts
+	 * @todo Fix the long dashes - when in latitude or longitude it breaks it when using static map
 	 *
  	 */
-	function get_property($id, $args = false) {
+	static function get_property($id, $args = false) {
 		global $wp_properties, $wpdb;
 
 		if($return = wp_cache_get($id.$args))
@@ -1397,8 +1480,11 @@ class WPP_F {
 
 		$post = get_post($id, ARRAY_A);
 
+
 		if($post['post_type'] != 'property')
 			return false;
+
+		$return = array();
 
 		if ( $keys = get_post_custom( $id ) ) {
 
@@ -1439,9 +1525,8 @@ class WPP_F {
 			}
  		}
 
-		if(is_array($return))
-			$return = array_merge($return, $post);
 
+		$return = array_merge($return, $post);
 
 		/*
 			Figure out what the thumbnail is, and load all sizes
@@ -1508,11 +1593,7 @@ class WPP_F {
 			}
 		}
 		// end load_gallery
-
-
-
-
-
+    
 		/*
 			Load parent if exists.
 			Inherit Parent's Properties
@@ -1637,14 +1718,13 @@ class WPP_F {
 
 		if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number']))
 			$return['phone_number'] = $wp_properties['configuration']['phone_number'];
-
-
-
+ 
+ 
 		if(is_array($return))
 			ksort($return);
 
 		$return = apply_filters('wpp_get_property', $return);
-
+ 
 
 		// Get rid of all empty values
 		foreach($return as $key => $item) {
@@ -1673,11 +1753,10 @@ class WPP_F {
 
 
 	}
-
 	/**
 	* Gets prefix to an attribute
 	*/
-	function get_attrib_prefix($attrib) {
+	static function get_attrib_prefix($attrib) {
 
 		if($attrib == 'price')
 			return "$";
@@ -1690,7 +1769,7 @@ class WPP_F {
 	/*
 	Gets annex to an attribute
 */
-	function get_attrib_annex($attrib) {
+	static function get_attrib_annex($attrib) {
 		if($attrib == 'area')
 			return __(' sq ft.','wpp');
 
@@ -1700,7 +1779,7 @@ class WPP_F {
 /*
 	Get coordinates for property out of database
 */
-	function get_coordinates($listing_id = false) {
+	static function get_coordinates($listing_id = false) {
 		global $post;
 
 		if(!$listing_id)
@@ -1733,7 +1812,7 @@ class WPP_F {
 /*
 	Validate if a URL is valid.
 */
-	function isURL($url) {
+	static function isURL($url) {
 		return preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 
@@ -1747,7 +1826,7 @@ class WPP_F {
  	 * @since 1.0
 	 *
  	 */
-	function get_stat_values_and_labels($property_object, $args = false) {
+	static function get_stat_values_and_labels($property_object, $args = false) {
 		global $wp_properties;
 
 		$defaults = array( );
@@ -1793,7 +1872,7 @@ class WPP_F {
 
 
 
-	function array_to_object($array = array()) {
+	static function array_to_object($array = array()) {
     if (!empty($array)) {
         $data = false;
 
@@ -1818,7 +1897,7 @@ class WPP_F {
  	 * @since 1.081
 	 *
  	 */
-	function google_maps_infobox($post) {
+	static function google_maps_infobox($post) {
 		global $wp_properties;
 		$map_image_type = $wp_properties['configuration']['single_property_view']['map_image_type'];
 		$infobox_attributes = $wp_properties['configuration']['google_maps']['infobox_attributes'];
@@ -1931,7 +2010,7 @@ class WPP_F {
  	 * @since 1.11
 	 *
  	 */
-	function get_property_map($id, $args = '') {
+	static function get_property_map($id, $args = '') {
 		global $wp_properties, $wpdb;
 
 		$defaults = array(
@@ -1995,6 +2074,36 @@ class WPP_F {
 
 
 		return $return;
+
+
+	}
+
+	/**
+	 * This static function is not actually used, it's only use to hold some common translations that may be used by our themes.
+	 *
+ 	 * @since 1.14
+	 *
+ 	 */
+	static function strings_for_translations() {
+
+
+		// Denali Theme
+		__('Find your property', 'wpp');
+		__('City', 'wpp');
+		__('Contact us', 'wpp');
+		__('Login', 'wpp');
+		__('Explore', 'wpp');
+		__('Message', 'wpp');
+		__('Phone Number', 'wpp');
+		__('Name', 'wpp');
+		__('E-mail', 'wpp');
+		__('Send Message', 'wpp');
+		__('Submit Inquiry', 'wpp');
+		__('Inquiry', 'wpp');
+		__('Comment About', 'wpp');
+		__('Inquire About', 'wpp');
+
+
 
 
 	}

@@ -20,7 +20,18 @@
 // Check if premium folder is writable
 $wp_messages = WPP_F::check_premium_folder_permissions();
 
+if(isset($_REQUEST['message'])) {
 
+	switch($_REQUEST['message']) {
+	
+		case 'updated':		
+		$wp_messages['notice'][] = "Settings updated.";
+		break;
+	}
+
+
+
+}
 ?>
 
  <script type="text/javascript">
@@ -73,9 +84,13 @@ $wp_messages = WPP_F::check_premium_folder_permissions();
 				jQuery("#wpp_ajax_revalidate_all_addresses").val('Revalidate again');
 				jQuery("#wpp_ajax_revalidate_all_addresses").attr('disabled', false);
 				
-				message = "<div class='address_revalidation_status updated fade'><p>" + data + "</p></div>";
+        if(data.success == 'true')
+          message = "<div class='address_revalidation_status updated fade'><p>" + data.message + "</p></div>";
+        else
+          message = "<div class='address_revalidation_status error fade'><p>" + data.message + "</p></div>";
+        
 				jQuery(message).insertAfter("h2");
-			});
+			}, 'json');
 	});	
 	
 	// Show property query
@@ -130,15 +145,15 @@ $wp_messages = WPP_F::check_premium_folder_permissions();
 
 <?php if(isset($wp_messages['notice']) && $wp_messages['notice']): ?>
 <div class="updated fade">
-	<?php foreach($wp_messages['error'] as $warning_message): ?>
-		<p><?php echo $warning_message; ?>
+	<?php foreach($wp_messages['notice'] as $notice_message): ?>
+		<p><?php echo $notice_message; ?>
 	<?php endforeach; ?>
 </div>
 <?php endif; ?>
 
 
 
-<form method="post" action="<?php echo admin_url('edit.php?post_type=property&page=property_settings'); ?>" />
+<form method="post" action="<?php echo admin_url('edit.php?post_type=property&page=property_settings'); ?>"  enctype="multipart/form-data" />
 <?php wp_nonce_field('wpp_setting_save'); ?>
 
 <div id="wpp_settings_tabs" class="clearfix">
@@ -491,6 +506,12 @@ $wp_messages = WPP_F::check_premium_folder_permissions();
 				<input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][tagline]" value="<?php echo $plugin_data['tagline']; ?>" />
 				<input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][image]" value="<?php echo $plugin_data['image']; ?>" />
 				<input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $plugin_data['description']; ?>" />
+				
+				<?php /* Do this to preserve settings after page save. */ ?>
+				<input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][disabled]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['disabled']; ?>" />
+				<input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][name]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['name']; ?>" />
+				<input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][version]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>" />
+				<input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['description']; ?>" />
 
 				<?php $installed = (!empty($wp_properties['installed_features'][$plugin_slug]['version']) ? true : false); ?>
 				<?php $active = (@$wp_properties['installed_features'][$plugin_slug]['disabled'] != 'false' ? true : false); ?>
@@ -517,8 +538,8 @@ $wp_messages = WPP_F::check_premium_folder_permissions();
 
 								<div class="alignleft">
 								<?php
-                           $disable_text = __('Disable plugin.','wpp');
-                           echo UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=$disable_text", $wp_properties['installed_features'][$plugin_slug]['disabled']); ?>
+								   $disable_text = __('Disable plugin.','wpp');
+								   echo UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=$disable_text", $wp_properties['installed_features'][$plugin_slug]['disabled']); ?>
 								</div>
 
 								<div class="alignright"><?php _e('Feature installed, using version','wpp') ?> <?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>.</div>
@@ -538,31 +559,38 @@ $wp_messages = WPP_F::check_premium_folder_permissions();
 	<div id="tab_troubleshooting">
 		<div class="wpp_inner_tab">
 
-			<p><?php _e('Enter in the ID of the property you want to look up, and the class will be displayed below.','wpp') ?>
+			<div class="wpp_settings_block"><?php _e('Enter in the ID of the property you want to look up, and the class will be displayed below.','wpp') ?>
 				<input type="text" id="wpp_property_class_id" />
 				<input type="button" value="<?php _e('Lookup','wpp') ?>" id="wpp_ajax_property_query"> <span id="wpp_ajax_property_query_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
-			</p>
+				<pre id="wpp_ajax_property_result" class="wpp_class_pre hidden"></pre>
+			</div>
 
 
-			<pre id="wpp_ajax_property_result" class="wpp_class_pre hidden"></pre>
 
-			<p>
+			<div class="wpp_settings_block">
 				<?php _e('Look up the <b>$wp_properties</b> global settings array.  This array stores all the default settings, which are overwritten by database settings, and custom filters.','wpp') ?>
 				<input type="button" value="<?php _e('Show $wp_properties','wpp') ?>" id="wpp_show_settings_array"> <span id="wpp_show_settings_array_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
-			</p>
+				<pre id="wpp_show_settings_array_result" class="wpp_class_pre hidden"><?php print_r($wp_properties); ?></pre>				
+			</div>
 
-			<pre id="wpp_show_settings_array_result" class="wpp_class_pre hidden"><?php print_r($wp_properties); ?></pre>
 
-
-			<p><?php _e('Force check of allowed premium features.','wpp');?>
- 				<input type="button" value="<?php _e('Check Updates','wpp');?>" id="wpp_ajax_check_plugin_updates">
-			</p>
+			<div class="wpp_settings_block">
 			
-			<p>
+ 			<?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />
+			<a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e("Download Backup of Current WP-Property Configuration.");?></a>
+			
+			</div>
+
+			<div class="wpp_settings_block">
+				<?php _e('Force check of allowed premium features.','wpp');?>
+ 				<input type="button" value="<?php _e('Check Updates','wpp');?>" id="wpp_ajax_check_plugin_updates">
+			</div>
+			
+			<div class="wpp_settings_block">
 				<?php $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true'); ?>
 				Revalidate all addresses using <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> localization.
  				<input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
-			</p>
+			</div>
 
 			<?php do_action('wpp_settings_help_tab'); ?>
 		</div>

@@ -613,7 +613,7 @@ class UD_F {
 	 * @version 1.4
 	**/
 
-	 function array_merge_recursive_distinct () {
+	 static function array_merge_recursive_distinct () {
 	  $arrays = func_get_args();
 	  $base = array_shift($arrays);
 	  if(!is_array($base)) $base = empty($base) ? array() : array($base);
@@ -1086,8 +1086,7 @@ class UD_F {
 	 * @since 1.2
 	 * @return object
 	 */
-
-	 function geo_locate_address($address = false, $localization = "en") {
+	 function geo_locate_address($address = false, $localization = "en", $return_obj_on_fail = false) {
 
 
 		if(!$address)
@@ -1100,11 +1099,18 @@ class UD_F {
 
 		$url = str_replace(" ", "+" ,"http://maps.google.com/maps/api/geocode/json?address={$address}&sensor=true&language=$localization");
 
-
 		$obj = (json_decode(wp_remote_fopen($url)));
+		
 
-		if($obj->status != "OK")
+		if($obj->status != "OK") {
+		
+			// Return Google result if needed instead of just false
+			if($return_obj_on_fail)
+				return $obj;
+			
 			return false;
+			
+		}
 
 		//print_r($obj->results);
 		$results = $obj->results;
