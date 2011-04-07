@@ -123,13 +123,13 @@
 	}
 
 	function wpp_property_stats_input_for_rent_make_checkbox($content, $slug, $object) {
-		$checked = (get_post_meta($object->ID, $slug, true) == 'true' ? ' checked="true" ': false);
+		$checked = ($object[$slug] == 'true' ? ' checked="true" ': false);
 		return "<input type='hidden' name='wpp_data[meta][{$slug}]'  value='false'  /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>".__('This is a rental property.','wpp')."</label>";
 	}
 
 
 	function wpp_property_stats_input_for_sale_make_checkbox($content, $slug, $object) {
-		$checked = (get_post_meta($object->ID, $slug, true) == 'true' ? ' checked="true" ': false);
+		$checked = ($object[$slug] == 'true' ? ' checked="true" ': false);
 		return "<input type='hidden'  name='wpp_data[meta][{$slug}]'  value='false' /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>".__('This property is for sale.','wpp')."</label>";
 	}
 
@@ -139,7 +139,7 @@
 	 * @since 1.04
 	 */
 	function wpp_property_stats_input_address($content, $slug, $object) {
-		$checked = ((get_post_meta($object->ID, 'manual_coordinates', true) == 'true') ? 'checked="checked"' : false);
+		$checked = ($object['manual_coordinates'] == 'true' ? 'checked="checked"' : false);
 
 		ob_start();
 
@@ -153,12 +153,12 @@
     			<div id="wpp_coordinates" style="display:none;">
     				<ul>
     					<li>
-    			    		<input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo get_post_meta($object->ID, 'latitude', true); ?>" />
+    			    		<input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo $object['latitude']; ?>" />
     			    		<label><?php echo __('Latitude','wpp') ?></label>
     			    		<div class="wpp_clear"></div>
     			    	</li>
     			    	<li>
-    			    		<input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo get_post_meta($object->ID, 'longitude', true); ?>" />
+    			    		<input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo $object['longitude']; ?>" />
     			    		<label><?php echo __('Longitude','wpp') ?></label>
     			    		<div class="wpp_clear"></div>
     			    	</li>
@@ -196,9 +196,9 @@
 	 */
 	function save_property_coordinate_override($post_id, $post_data, $geo_data) {
 		global $wp_properties;
-    		
-		if (get_post_meta($post_id, 'manual_coordinates', true) != 'true' &&
-			get_post_meta($post_id, 'manual_coordinates', true) != '1') {
+ 
+        
+		if (get_post_meta($post_id, 'manual_coordinates', true) != 'true') {
 
       if($geo_data->latitude)
         update_post_meta($post_id, 'latitude', $geo_data->latitude);

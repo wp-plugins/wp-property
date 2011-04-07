@@ -4,6 +4,10 @@
 	
 	Version: 0.5
  */
+#primary.widget-area ul.wpp_search_elements input[type="text"] {
+  width: 50px;
+}
+
  
 .wpp_row_view .wpp_overview_right_column { 
 	width: 99%;

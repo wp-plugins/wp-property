@@ -171,7 +171,8 @@
 
 	$wp_properties['taxonomies'] = array(
 		'property_feature'  =>  array(
-             'hierarchical' => false,
+       'hierarchical' => false,
+       'label' => _x( 'Features', 'taxonomy general name' , 'wpp'),
 			 'labels' =>  array(
 				'name' => _x( 'Features', 'taxonomy general name' , 'wpp'),
 				'singular_name' => _x( 'Feature', 'taxonomy singular name', 'wpp'),
@@ -196,11 +197,12 @@
 				'new_item_name' => __( 'New Feature Name' , 'wpp'),
 				'menu_name' => __( 'Feature', 'wpp' )
 			),
-             'query_var' => 'property_feature',
-             'rewrite' => array('slug' => 'feature' )
-        ),
+         'query_var' => 'property_feature',
+         'rewrite' => array('slug' => 'feature' )
+    ),
 		'community_feature'  =>  array(
-             'hierarchical' => false,
+       'hierarchical' => false,
+       'label' => _x( 'Community Features', 'taxonomy general name' , 'wpp'),
 			 'labels' =>  array(
 				'name' => _x( 'Community Features', 'taxonomy general name' , 'wpp'),
 				'singular_name' => _x( 'Community Feature', 'taxonomy singular name' , 'wpp'),
@@ -225,9 +227,9 @@
 				'new_item_name' => __( 'New Community Feature Name' , 'wpp'),
 				'menu_name' => __( 'Community Feature', 'wpp' )
 			),			 
-             'query_var' => 'community_feature',
-             'rewrite' => array('slug' => 'community_feature' )
-        )
+       'query_var' => 'community_feature',
+       'rewrite' => array('slug' => 'community_feature' )
+      )
 	);
 	
 

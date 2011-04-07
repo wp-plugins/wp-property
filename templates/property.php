@@ -126,7 +126,7 @@ $map_image_type = $wp_properties[configuration][single_property_view][map_image_
 
  
 
-				<?php if(is_array($wp_properties[property_meta])): ?>
+				<?php if(is_array($wp_properties['property_meta'])): ?>
 				<?php foreach($wp_properties[property_meta] as $meta_slug => $meta_title): 
 					if(empty($post->$meta_slug) || $meta_slug == 'tagline')
 						continue;

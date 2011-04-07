@@ -3,7 +3,7 @@ Contributors: andypotanin
 Donate link: http://twincitiestech.com/plugins/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.1
+Tested up to: 3.1.1
 Stable tag: trunk
 
 
@@ -162,6 +162,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.14.2 =
+* Improtant change to 'wpp_property_stats_input_' filter, it no longer passed the $post object, but the $property array. Default API functions have been updated to reflect, but any custom functions will need to be updated.
+
 = 1.08 =
 * Some CSS changes to the default style sheet
 
@@ -189,7 +192,17 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
-= 1.14
+= 1.14.2  =
+* Updated 'wpp_property_stats_input_' filter to pass full $property array to function.
+* Fix to TwentyTen default styles.
+* Added 'wpp_post_init' action that runs after WPP is fully loaded and initialized -> good place to hook in WPP pre-header functions. 
+* Updated Default API functions to reflect changes to 'wpp_property_stats_input_' filter update.
+* Added "label" key back to default taxonomies in actions_hooks.php
+
+= 1.14.1 =
+* Public release of 1.14
+
+= 1.14 (non-public version) = 
 * Fix to search and sorting. 
 * Fixed typo in property editing screen.
 * Added filter: wpp_search_form_field_[slug] to filter elements in search widget / shortcode.
@@ -199,10 +212,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 * Fix to Google Maps link to use localization from back-end overview.
 * Added backup / restore backup features for WP-Property configuration on Properties -> Settings -> Help
 
-= 1.13.1
+= 1.13.1 =
 * Version fix.
 
-= 1.13
+= 1.13 = 
 * Public release of 1.12
 
 = 1.12 =

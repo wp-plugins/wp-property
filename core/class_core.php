@@ -45,7 +45,6 @@ class WPP_Core {
 	 * Called on init
 	 *
 	 * Creates and sets up the 'listing' post type.
-	 * Creates taxonomies: skills, geo_tag, and industry
 	 *
 	 * @todo  Find a way of not having to call $wp_rewrite->flush_rules(); on every load.
 	 * @since 1.11
@@ -258,6 +257,8 @@ class WPP_Core {
 		add_action('wpp_premium_feature_check', array('WPP_F', 'feature_check'));
 
 		// Has to be called everytime, or else the custom slug will not work
+		// Post-init action hook
+		 do_action('wpp_post_init');
 		$wp_rewrite->flush_rules();
 	}
 
@@ -543,8 +544,13 @@ class WPP_Core {
 		$coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
 		$new_location = $update_data[$wp_properties['configuration']['address_attribute']];
 
+    
+    if($update_data['manual_coordinates'] != get_post_meta($post_id, 'manual_coordinates', true))
+      $manual_coordinates_updated = true;
+    
+    
 	// Update Coordinates (skip if old address matches new address), but always do if no coordinates set
-		if(empty($coordinates) || ($old_location != $new_location && !empty($new_location))) {
+		if(empty($coordinates) || ($old_location != $new_location && !empty($new_location)) || $manual_coordinates_updated) {
 				
 			$geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
       

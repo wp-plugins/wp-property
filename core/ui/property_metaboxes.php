@@ -2,7 +2,15 @@
 
 class WPP_UI {
 
-
+/**
+ * Displays the primary metabox on property editing page.
+ *
+ *
+ * @version 1.14.2
+ * @author Andy Potanin <andy.potanin@twincitiestech.com>
+ * @package WP-Property
+ * 
+ */
 function page_attributes_meta_box($post) {
 
 	
@@ -155,8 +163,7 @@ function metabox_meta($object) {
 			<th><?php _e('Property Type','wpp'); ?></th>
 			<td> 
 			<?php
-			// Get property types
-				
+			// Get property types			
 				
 			?>
 				<select id="wpp_meta_property_type" name="wpp_data[meta][property_type]" id="property_type">
@@ -183,7 +190,7 @@ function metabox_meta($object) {
 					
 					<?php
 						$value = get_post_meta($object->ID, $slug, true);
-						echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $object);
+						echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $property);
 					?>
  
 
