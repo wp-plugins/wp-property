@@ -189,9 +189,24 @@ function metabox_meta($object) {
 					<span class="disabled_message"><?php echo sprintf(__('Editing %s is disabled, it may be inherited.','wpp'), $label ); ?></span>
 					
 					<?php
-						$value = get_post_meta($object->ID, $slug, true);
-						echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $property);
-					?>
+          
+              $value = get_post_meta($object->ID, $slug, true);
+            
+             // Check if attribute has predefine values
+             if(!empty($wp_properties['predefined_values'][$slug])) {            
+             
+               foreach(explode(',', $wp_properties['predefined_values'][$slug]) as $option)
+                $predefined_options[$slug][] = "<option ".selected($value, $option, false)." value='{$option}'>{$option}</option>";              
+ 
+                echo apply_filters("wpp_property_stats_input_$slug", "<select id='wpp_meta{$slug}' name='wpp_data[meta][{$slug}]'><option value=''> - </option>" . implode($predefined_options[$slug]) . "</select>", $slug, $property);
+              
+              echo $dropdown_element;
+             
+             } else {
+            
+              echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $property);
+            }
+          ?>
  
 
 					<?php if(!empty($wp_properties['descriptions'][$slug])): ?>

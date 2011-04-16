@@ -57,7 +57,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 * [property_overview template=detailed-overview] will load property-overview-detailed-overview.php from your theme folder.
 
 = New features =
-
+* Add predefined values for any attribute in Admin Tab that will create a dropdown input field on the property editing page.
 * Pagination back-button support.
 * Slovakian translation.
 
@@ -162,8 +162,16 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.15 =
+* Default property-pagination.php template is updated to reflect the below-the-content pagination.
+
+= 1.14.3 =
+* Fixed bug with Google Map zoom level not saving.
+* Updated search widget query to only include published properties in value calculation
+* Fixed bug with Google Map values not being mapped correctly to WPP attributes.
+
 = 1.14.2 =
-* Improtant change to 'wpp_property_stats_input_' filter, it no longer passed the $post object, but the $property array. Default API functions have been updated to reflect, but any custom functions will need to be updated.
+* Important change to 'wpp_property_stats_input_' filter, it no longer passed the $post object, but the $property array. Default API functions have been updated to reflect, but any custom functions will need to be updated.
 
 = 1.08 =
 * Some CSS changes to the default style sheet
@@ -191,6 +199,18 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.1 =
+* New feature to add predefined values that will create a drop-down on the property editing page.
+* Added option to show pagination below the property_overview content as well as the top. (Enable on Property Settings page under "Display" Tab)
+* Fixed Google map zooming issue.
+* Fixed bug with search values from trashed properties being used in search drop-downs.
+* Change to the property_overview shortcode to support date ranges in the form of mm/dd/yyyy for filtering.
+* Add localization tags for "Type:"  and "Property Types".
+* Fixed bug with Property Gallery header displaying even if there are no photos in gallery.
+
+= 1.15 =
+* Non-public release of 1.15.1
 
 = 1.14.2  =
 * Updated 'wpp_property_stats_input_' filter to pass full $property array to function.

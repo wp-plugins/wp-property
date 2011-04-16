@@ -91,62 +91,57 @@ class WP_Property_Tag_Cloud extends WP_Widget {
 /**
 Other Properties Widget
  */
- class OtherPropertiesWidget extends WP_Widget {
-    /** constructor */
-    function OtherPropertiesWidget() {
-        parent::WP_Widget(false, $name = __('Other Properties','wpp'), array('description' => __('Show other properties (if any) with the same Parent', 'wpp')));
-    }
+class OtherPropertiesWidget extends WP_Widget {
+  /** constructor */
+  function OtherPropertiesWidget() {
+    parent::WP_Widget(false, $name = __('Other Properties','wpp'), array('description' => __('Show other properties (if any) with the same Parent', 'wpp')));
+  }
 
-    /** @see WP_Widget::widget */
-    function widget($args, $instance) {
-        global $post, $wp_properties;
-        extract( $args );
-        $title 			= apply_filters('widget_title', $instance['title']);
-		$instance = apply_filters('OtherPropertiesWidget', $instance);
-        $show_title		= $instance['show_title'];
-        $image_type 	= $instance['image_type'];
-        $hide_image		= $instance['hide_image'];
-        $stats 			= $instance['stats'];
-        $address_format = $instance['address_format'];
-        $amount_items	= $instance['amount_items'];
-        
-       
+  /** @see WP_Widget::widget */
+  function widget($args, $instance) {
+    global $post, $wp_properties;
+    extract( $args );
+    $title 			= apply_filters('widget_title', $instance['title']);
+    $instance = apply_filters('OtherPropertiesWidget', $instance);
+    $show_title		= $instance['show_title'];
+    $image_type 	= $instance['image_type'];
+    $hide_image		= $instance['hide_image'];
+    $stats 			= $instance['stats'];
+    $address_format = $instance['address_format'];
+    $amount_items	= $instance['amount_items'];
 
-        if(!isset($post->ID))
-            return;
-			
+    if(!isset($post->ID))
+      return;
      
-		 $bill = $post->post_parent;
-		 
-		 $argus = array(
-            'post_type'			=> 'property',
-            'numberposts'		=> $amount_items +1,
-            'post_status'		=> 'publish',
-            'post_parent'		=> $bill, 
+    $bill = $post->post_parent;
+
+    $argus = array(
+      'post_type'			=> 'property',
+      'numberposts'		=> $amount_items +1,
+      'post_status'		=> 'publish',
+      'post_parent'		=> $bill
+    );
+    
+    $jams = get_posts($argus);
  
-           );
-		
-      
-        $jams = get_posts($argus);
-       
-        // Bail out if no children
-        if(count($jams) < 1)
-            return;
-		
-		//The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique
-        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-        
-        echo $before_widget;
-        echo "<div class='wpp_other_properties_widget'>";
+    // Bail out if no children
+    if(count($jams) < 2)
+        return;
+
+    //The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique
+    $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+    
+    echo $before_widget;
+    echo "<div class='wpp_other_properties_widget'>";
 
 
-        if ( $title )
-            echo $before_title . $title . $after_title;
+    if ( $title )
+        echo $before_title . $title . $after_title;
 
 
-        foreach($jams as $jam):
+    foreach($jams as $jam):
 		if ($jam->ID == $post->ID){ 
-			continue;
+        continue;
 			 }
 
         $this_property  = WPP_F::get_property($jam->ID, 'return_object=true');
@@ -168,14 +163,15 @@ Other Properties Widget
        
                 <ul class="wpp_widget_attribute_list">
 				<?php if(is_array($stats)): ?>					
-				<?php foreach($stats as $stat):
-                    $content = nl2br(apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format));
+        <?php foreach($stats as $stat):
+        $content = nl2br(apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format));
 
-                    if(empty($content)) continue; ?>
-                    
-                    <li class="<?php echo $stat ?>"><span class='attribute'><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>  <span class='value'><?php echo $content;  ?></span></li>
-				<?php endforeach; ?>
-				<?php endif; ?>
+        if(empty($content)) continue; ?>                    
+        <li class="<?php echo $stat ?>">
+          <span class='attribute'><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>  
+          <span class='value'><?php echo $content;  ?></span></li>
+        <?php endforeach; ?>
+        <?php endif; ?>
                 </ul>
                        
         <?php if ($instance['enable_more'] =='on')
@@ -1022,7 +1018,7 @@ jQuery(document).ready(function($){
           ?>
         <p>
             <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
-                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo (!empty($title)) ? $title : __('Property Search', 'wpp'); ?>" />
+                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
             </label>
         </p>
 
@@ -1064,7 +1060,7 @@ jQuery(document).ready(function($){
                 <?php if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) : ?>
                     <li class="property_type_checkbox_<?php echo $this->number;?>" style="display:none;">
                         <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_property_type" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" value="property_type" <?php echo ((is_array($searchable_attributes) && in_array('property_type', $searchable_attributes)) ? 'checked="checked"' : ''); ?> />
-                        <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_property_type">Property Types</label>
+                        <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_property_type"><?php _e('Property Types', 'wpp'); ?></label>
                         <script type="text/javascript">
                         // Show or hide 'property type' checkbox.
                         // If we have less then two selected property types to search
@@ -1173,11 +1169,12 @@ function wpp_search_widget($args = false, $custom = false){
 
         if(empty($image_type))
             $image_type = 'thumbnail';
-			
-			
+
+        if(empty($post->gallery))
+          return;
 
         $thumbnail_dimensions = WPP_F::image_sizes($image_type);
-		$before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
         echo $before_widget;
         echo "<div class='wpp_gallery_widget'>";
 

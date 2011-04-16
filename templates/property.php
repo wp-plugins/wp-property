@@ -18,7 +18,7 @@
 */
 
 global $wp_properties;
-$map_image_type = $wp_properties[configuration][single_property_view][map_image_type];
+$map_image_type = $wp_properties['configuration']['single_property_view']['map_image_type'];
 
 // Uncomment to disable fancybox script being loaded on this page
 //wp_deregister_script('jquery-fancybox');
@@ -55,7 +55,7 @@ $map_image_type = $wp_properties[configuration][single_property_view][map_image_
 		<?php if($coords = WPP_F::get_coordinates()): ?>
 		var myLatlng = new google.maps.LatLng(<?php echo $coords[latitude]; ?>,<?php echo $coords[longitude]; ?>);
 		var myOptions = {
-		  zoom: <?php echo (!empty($wp_properties[configuration][gm_zoom_level]) ? $wp_properties[configuration][gm_zoom_level] : 13); ?>,
+		  zoom: <?php echo (!empty($wp_properties['configuration']['gm_zoom_level']) ? $wp_properties['configuration']['gm_zoom_level'] : 13); ?>,
 		  center: myLatlng,
 		  mapTypeId: google.maps.MapTypeId.ROADMAP
 		}

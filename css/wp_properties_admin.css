@@ -1,3 +1,99 @@
+#wpp_inquiry_attribute_fields .wpp_attribute_name_col {
+  width: 175px;
+}
+#wpp_inquiry_attribute_fields .wpp_settings_col {
+  width: 80px;
+}
+
+#wpp_inquiry_attribute_fields .wpp_search_input_col {
+  width: 140px;
+}
+
+
+#wpp_inquiry_attribute_fields .wpp_delete_col {
+  width: 40px;
+}
+
+#metabox_profile_images .inside {
+  margin:0;
+
+}
+
+.wpp_widget_action {
+  background: none repeat scroll 0 0 #EBEBEB;
+  border-top: 1px solid #CECEDD;
+  padding: 10px;
+  text-align: right;
+  
+}
+
+.wpp_agent_image_gallery {
+  overflow:auto;
+  padding: 5px;
+  
+}
+
+.wpp_agent_page .has-right-sidebar #post-body-content {
+  margin-right: 350px;
+}
+.wpp_agent_page .has-right-sidebar #post-body {
+  margin-right: -390px;
+}
+
+.wpp_agent_page .inner-sidebar {
+  width: 330px;
+}
+
+.wpp_agent_image_gallery .wpp_agent_single_image {
+  float: left;
+  margin: 3px;
+}
+
+.wpp_agent_image_gallery .delete_image {
+  background: #F1F1F1;
+  padding: 4px;
+  text-align: center;
+}
+.wpp_agent_image_gallery .delete_image a {
+  text-decoration:none;
+  color: #464A4B;
+}
+
+#wpp_property_import_setup tr.step_one{
+  background: #F5F5F5;
+ 
+}
+div.wpp_property_import_setup .wpp_property_import_gs_options {
+  display:none;
+}
+div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
+  display:block;
+}
+
+#wpp_property_import_setup .wpp_property_import_gs_options {
+
+}
+
+#wpp_property_import_source_status {
+  padding: 3px 10px;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;   
+}
+
+#wpp_property_import_source_status.wpp_import_source_good{
+  background: #C4FFC3;
+  border: 1px solid #93ED87;
+}
+#wpp_property_import_source_status.wpp_import_source_processing {
+  background: #FFFFBC;
+  border: 1px solid #C5D574;
+}
+#wpp_property_import_source_status.wpp_import_source_bad{
+  background: #FFC6C6;
+  border: 1px solid #E39C9C;
+}
+
 #wpp_settings_tabs div.wpp_settings_block {
     background: none repeat scroll 0 0 #F7F7F7;
     border: 1px solid #E7E7E7;
@@ -55,7 +151,6 @@
 
 .wpp_draggable_handle_show {
 	padding:0 !important;
-	
 	cursor: move;
 	background:url("images/wpp_draggable.png") no-repeat scroll 7px center transparent;
 }
