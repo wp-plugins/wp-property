@@ -1339,9 +1339,9 @@ class WPP_F {
                                     $where_between = "`meta_key` = '$meta_key' AND `meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
                                 else
                                   if($adate)
-                                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= $hyphen_between[0]";
+                                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
                                   else
-                                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
+                                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` >= $hyphen_between[0]";
                                 $specific = $where_between;
                                 //print $specific;
                             }

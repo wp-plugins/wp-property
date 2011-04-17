@@ -200,6 +200,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.15.2 =
+* Fixed issue with certain attributes causing "No Result Found" search result.
+
 = 1.15.1 =
 * New feature to add predefined values that will create a drop-down on the property editing page.
 * Added option to show pagination below the property_overview content as well as the top. (Enable on Property Settings page under "Display" Tab)
