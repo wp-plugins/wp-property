@@ -1279,7 +1279,7 @@ class WPP_Core {
       $props_atts = array_merge( $to_use, $atts );
       // default values not used for getting properties
       extract(array(
-        'show_children'             => 'true',
+        'show_children'             => (isset($wp_properties['configuration']['property_overview']['show_children']) ? $wp_properties['configuration']['property_overview']['show_children'] : 'true'),
         'child_properties_title'    => __('Floor plans at location:','wpp'),
         'fancybox_preview'          => $wp_properties['configuration']['property_overview']['fancybox_preview'],
         'bottom_pagenation_flag'  => ($wp_properties['configuration']['bottom_insert_pagenation'] == 'true' ? true : false),
@@ -1301,6 +1301,10 @@ class WPP_Core {
           if ($attr == 'pagination') {$pagination = $value; continue;}
           if ($attr == 'ajax_call') {$ajax_call = $value; continue; }
           if ($attr == 'template') {$template = $value; continue; }
+          if ($attr == 'fancybox_preview') {$fancybox_preview = $value; continue; }
+          if ($attr == 'bottom_pagenation_flag') {$bottom_pagenation_flag = $value; continue; }
+          if ($attr == 'show_children') {$show_children = $value; continue; }
+          if ($attr == 'thumbnail_size') {$thumbnail_size = $value; continue; }
           if ($attr == 'child_properties_title') {$child_properties_title = $value; continue; }
           $query .= $attr.'='.$value;
           if (end($props_atts) !== $fixed) $query .= '&';

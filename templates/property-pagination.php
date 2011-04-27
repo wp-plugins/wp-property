@@ -92,22 +92,23 @@ else
                 success: function(data) {
                     ajaxloader_<?php echo $unique; ?>.hide();
                     if(data.indexOf('wpp_nothing_found') > 0){
-                        jQuery('.wpp_row_view').html(data);
+                        jQuery('.wpp_property_view_result').html(data);
                     }else{
                         var properties = jQuery(data).find('.property_div');
-                        var wpp_row_view = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_row_view');
-                        wpp_row_view.html('');
+                        var wpp_property_view_result = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_property_view_result');
+                        wpp_property_view_result.html('');
                         if(properties.length > 0) {
                             properties.each(function(i, el){
-                                wpp_row_view.append(el);
+                                wpp_property_view_result.append(el);
                             });
-                            wpp_row_view.find('a.fancybox_image').fancybox({
+                            wpp_property_view_result.find('a.fancybox_image').fancybox({
                                 'transitionIn'	:	'elastic',
                                 'transitionOut'	:	'elastic',
                                 'speedIn'	:	600, 
                                 'speedOut'	:	200, 
                                 'overlayShow'	:	false
                             });
+                        <?php do_action('wpp_js_on_property_overview_display', $template, 'ajax_result'); ?>
                         }
                     }
                 }

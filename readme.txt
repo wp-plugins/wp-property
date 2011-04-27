@@ -3,7 +3,7 @@ Contributors: andypotanin
 Donate link: http://twincitiestech.com/plugins/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.1.1
+Tested up to: 3.1.2
 Stable tag: trunk
 
 
@@ -199,6 +199,12 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.3 =
+* More advanced currency settings.
+* [property_overview show_children=true/false] tag added.
+* 'wpp_get_properties_query' filter added to the primary property query.
+* Bug fix in: prepare_property_for_display();
 
 = 1.15.2 =
 * Fixed issue with certain attributes causing "No Result Found" search result.

@@ -25,13 +25,11 @@ if(isset($_REQUEST['message'])) {
   switch($_REQUEST['message']) {
   
     case 'updated':    
-    $wp_messages['notice'][] = "Settings updated.";
+    $wp_messages['notice'][] = __("Settings updated.", 'wpp');
     break;
   }
-
-
-
 }
+
 ?>
 
  <script type="text/javascript">
@@ -249,16 +247,7 @@ if(isset($_REQUEST['message'])) {
       </td>
     </tr>
 
-    <tr>
-      <th><?php _e('Currency','wpp'); ?></th>
-      <td>
-        <?php
-            $currency_symbol_test = __('Currency symbol.','wpp');
-            echo UD_UI::input("name=currency_symbol&label=$currency_symbol_test&group=wpp_settings[configuration]&style=width: 50px;",$wp_properties['configuration']['currency_symbol']); ?>
-      </td>
-    </tr>
-
-
+    
     </table>
   </div>
 
@@ -392,7 +381,7 @@ if(isset($_REQUEST['message'])) {
            <li>
             <?php
               
-              echo UD_UI::checkbox("name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __('Show pagenation on bottom of results.','wpp'), $wp_properties['configuration']['bottom_insert_pagenation']);
+              echo UD_UI::checkbox("name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __('Show pagination on bottom of results.','wpp'), $wp_properties['configuration']['bottom_insert_pagenation']);
             ?>          
           </li>
          </ul>
@@ -454,6 +443,36 @@ if(isset($_REQUEST['message'])) {
         <span class="description">
                <?php _e('Available tags:','wpp') ?> [street_number] [street_name], [city], [state], [state_code], [county],  [country], [zip_code].
         </span>
+      </td>
+    </tr>
+
+    <tr>
+      <th><?php _e('Currency & Numbers','wpp'); ?></th>
+      <td>
+        <ul>
+          <li><?php echo UD_UI::input("name=currency_symbol&label=".__('Currency symbol.','wpp')."&group=wpp_settings[configuration]&style=width: 50px;",$wp_properties['configuration']['currency_symbol']); ?></li>
+          <li>
+            <?php _e('Thousands separator symbol:', 'wpp'); ?>
+            <select name="wpp_settings[configuration][thousands_sep]">
+              <option value=""> - </option>
+              <option value="." <?php selected($wp_properties['configuration']['thousands_sep'],'.'); ?>><?php _e('. (period)', 'wpp'); ?></option>
+              <option value="," <?php selected($wp_properties['configuration']['thousands_sep'],','); ?>><?php _e(', (comma)', 'wpp'); ?></option>
+             </select>
+             <span class="description"><?php _e('The character separating the 1 and the 5: $1<b>,</b>500'); ?></span>
+              
+          </li>          
+          
+          <li>
+            <?php _e('Currency symbol placement:', 'wpp'); ?>
+            <select name="wpp_settings[configuration][currency_symbol_placement]">
+              <option value=""> - </option>
+              <option value="before" <?php selected($wp_properties['configuration']['currency_symbol_placement'],'before'); ?>><?php _e('Before number', 'wpp'); ?></option>
+              <option value="after" <?php selected($wp_properties['configuration']['currency_symbol_placement'],'after'); ?>><?php _e('After number', 'wpp'); ?></option>
+             </select>
+               
+          </li>
+          
+       </ul>
       </td>
     </tr>
 
@@ -580,11 +599,9 @@ if(isset($_REQUEST['message'])) {
       </div>
 
 
-      <div class="wpp_settings_block">
-      
-       <?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />
-      <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e("Download Backup of Current WP-Property Configuration.");?></a>
-      
+      <div class="wpp_settings_block">      
+        <?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />
+        <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e("Download Backup of Current WP-Property Configuration.");?></a>
       </div>
 
       <div class="wpp_settings_block">

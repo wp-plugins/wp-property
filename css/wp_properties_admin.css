@@ -1,3 +1,28 @@
+.wpp_import_import_schedule {
+  background: none repeat scroll 0 0 #F4F4F1;
+  border: 1px solid #E0E0E0;
+  margin-top: 15px;
+  padding: 15px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;    
+}
+
+#wpp_import_object_preview .wp-tab-panel  {
+    background: none repeat scroll 0 0 #F6FFDC;
+    width: 98%;
+    height: 400px;
+ }
+#wpp_import_object_preview .wp-tab-panel  pre {
+    white-space: -moz-pre-wrap; /* Mozilla, supported since 1999 */
+    white-space: -pre-wrap; /* Opera */
+    white-space: -o-pre-wrap; /* Opera */
+    white-space: pre-wrap; /* CSS3 - Text module (Candidate Recommendation) http://www.w3.org/TR/css3-text/#white-space */
+    word-wrap: break-word; /* IE 5.5+ */
+ }
+    
+ 
+
 #wpp_inquiry_attribute_fields .wpp_attribute_name_col {
   width: 175px;
 }
@@ -103,6 +128,12 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
 }
 #wpp_settings_tabs div.wpp_settings_block h3 {
 
+}
+.property_page_show_agents #full_bio {
+  height: 120px;
+}
+.property_page_show_agents #widget_bio {
+  height: 120px;
 }
 
 .wpp_agent_page .wpp_agents_related_properties {
@@ -228,6 +259,11 @@ html[xmlns] .clearfix {
 
 
 /* Settings Page Begin */
+#wpp_settings_tabs table.ud_ui_dynamic_table tfoot td {
+  background: #F5F5F5;
+}
+
+
 #wpp_settings_tabs table.ud_ui_dynamic_table {
 	margin: 0;
 }

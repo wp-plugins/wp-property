@@ -47,8 +47,11 @@ if(!function_exists('prepare_property_for_display')):
 
     if(empty($property))
       return;
+      
+    if(is_object($property))
+      $property = (array)$property;
 
-    $property_id = $property[ID];
+    $property_id = $property['ID'];
 
     if($cache_property = wp_cache_get('property_for_display_' . $property_id))
       return $cache_property;

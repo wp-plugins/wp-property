@@ -981,6 +981,8 @@ jQuery(document).ready(function($){
 
                 if ( $title )
                     echo $before_title . $title . $after_title;
+        else
+          echo '<span class="wpp_widget_no_title"></span>';
 
                 draw_property_search_form($searchable_attributes, $searchable_property_types, $per_page, $widget_id);
 

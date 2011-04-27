@@ -15,11 +15,16 @@
 	}
  
 .wpp_agent_info_list  dd {
-	display: table-cell;
-	}
-	
-	
-	
+  
+  display: table-cell;
+  }
+.wpp_agent_info_list  dd .wpp_agent_attribute_link {
+  position: relative;
+  left: -3px;
+}
+  
+  
+  
 /* Version 1.04 Begin */
 #infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_left_col { padding: 10px; }
 #infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_right_col { }
@@ -699,13 +704,19 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
 	display: block;
 	position: absolute;
 	z-index: 50;
-	height: 100%; }
+  height: 100%; }
  
+ .nivo-box {
+  display:block;
+  position:absolute;
+  z-index:5;
+}
+
  .nivo-caption {
-	position: absolute;
-	font-size: 2em;
-	padding: 4px;
-	left: 0px;
+  position: absolute;
+  font-size: 2em;
+  padding: 4px;
+  left: 0px;
 	top: 0px;
 	height: 58px;
 	bottom: 0px;

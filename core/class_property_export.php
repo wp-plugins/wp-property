@@ -76,8 +76,10 @@ class wpi_property_export {
     require_once 'Serializer.php';
     require_once 'Unserializer.php';
     
+    $api_key = wpi_property_export::get_api_key();
+    
     // If the API key isn't valid, we quit
-    if($_REQUEST['api'] != wpi_property_export::get_api_key()) die(__('Invalid API key.', 'wpp'));
+    if($_REQUEST['api'] != $api_key) die(__('Invalid API key.', 'wpp'));
     // Start building our wp query object
     $args = array(
       'post_type' => 'property',
@@ -106,7 +108,7 @@ class wpi_property_export {
         $property->post_mime_type
       );
       // Set unique ID
-      $property->wpp_unique_id = md5(get_bloginfo('url') . $property->ID);
+      $property->wpp_unique_id = md5($api_key.$property->ID);
       
       $xml = new XML_Serializer();
       $xml->serialize($property);

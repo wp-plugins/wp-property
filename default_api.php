@@ -431,40 +431,42 @@
 	}
 
 
-	/**
-	 * Demonstrates how to add dollar signs before all prices and deposits
-	 *
-	 * @since 1.1
-	 * @uses WPP_F::get_coordinates() Creates an array from string $args.
-	 * @param string $listing_id Listing ID must be passed
-	 */
-	function add_dollar_sign($content) {
-		global $wp_properties;
+  /**
+   * Demonstrates how to add dollar signs before all prices and deposits
+   *
+   * @since 1.15.3
+   * @uses WPP_F::get_coordinates() Creates an array from string $args.
+   * @param string $listing_id Listing ID must be passed
+   */
+  function add_dollar_sign($content) {
+    global $wp_properties;
 
-		$currency_symbol = (!empty($wp_properties['configuration']['currency_symbol']) ? $wp_properties['configuration']['currency_symbol'] : "$");
+    $currency_symbol = (!empty($wp_properties['configuration']['currency_symbol']) ? $wp_properties['configuration']['currency_symbol'] : "$");
+    $dec_point  = (!empty($wp_properties['configuration']['dec_point']) ? $wp_properties['configuration']['dec_point'] : ".");
+    $thousands_sep  = (!empty($wp_properties['configuration']['thousands_sep']) ? $wp_properties['configuration']['thousands_sep'] : ",");
+    $currency_symbol_placement  = (!empty($wp_properties['configuration']['currency_symbol_placement']) ? $wp_properties['configuration']['currency_symbol_placement'] : "before");
 
-		$content = str_replace(",", "", $content);
+    $content = str_replace(",", "", $content);
 
-		if ( !is_numeric($content) && substr_count($content, '-')){
-			$hyphen_between = explode('-', $content);
-			return $currency_symbol . @number_format($hyphen_between[0]) . ' - ' . $currency_symbol . @number_format($hyphen_between[1]);
-				} elseif (!is_numeric($content)) {
+    if (!is_numeric($content) && substr_count($content, '-')){
+      $hyphen_between = explode('-', $content);
+      return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). @number_format($hyphen_between[0],0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . @number_format($hyphen_between[1],0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
+    } elseif (!is_numeric($content)) {
+        return $content;
 
-					return $content;
+    } else {
 
-				} else {
+      return ($currency_symbol_placement == 'before' ? $currency_symbol : '') . number_format($content,0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
+    }
+  }
 
-			return $currency_symbol . number_format($content);
-			}
-	}
-
-	/**
-	 * Display latitude and longitude on listing edit page below address field
-	 *
-	 * Echos html content to be displayed after location attribute on property edit page
-	 *
-	 * @since 1.0
-	 * @uses WPP_F::get_coordinates() Creates an array from string $args.
+  /**
+   * Display latitude and longitude on listing edit page below address field
+   *
+   * Echos html content to be displayed after location attribute on property edit page
+   *
+   * @since 1.0
+   * @uses WPP_F::get_coordinates() Creates an array from string $args.
 	 * @param string $listing_id Listing ID must be passed
 	 */
 		function wpp_show_coords($listing_id = false) {

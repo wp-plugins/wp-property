@@ -27,7 +27,7 @@
 
 if($properties): ?>
 	
-<div class="wpp_row_view">
+<div class="wpp_row_view wpp_property_view_result">
 <div class="all-properties">
     <?php
     unset($properties['total']); // VERY IMPORTANT!!!

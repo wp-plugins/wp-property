@@ -1161,6 +1161,7 @@ class WPP_F {
     */
 
     $query = wp_parse_args( $args, $defaults );
+    $query = apply_filters('wpp_get_properties_query', $query);
 
     /* Shows WP queries and errors */
     //$wpdb->show_errors();

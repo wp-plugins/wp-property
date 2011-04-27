@@ -1,22 +1,21 @@
 <?php
 /**
  * PDF Flyer default template
- *
- *
  */
  ?>
   <html>
     <head>
       <style type="text/css">
+        html{padding:0px;margin:0px;}
+        body {width: 800px;padding:0px;margin:0px}
         dl.stats dt {padding:0;margin:0;}
         hr, p {margin:0;}
         ul.no_list, ul.no_list li {margin:0;padding:0;}
         ul.no_list,   ul.side_gallery {list-style-type:none;}
-        body {width: 800px;}
         .heading_text {font-size: 1.7em; padding-bottom: 15px;border-bottom:0.5px solid #DADADA;}
         h1 {font-size: 2.5em;}
        .right_column {text-align: left;}
-       .google_map{border: 3px solid #EDEDED;}
+       .google_map{border: 3px solid #EDEDED;padding: 0px;margin: 0px;width:300px;height: 250px;}
       </style>
     </head>
   <body>
@@ -24,10 +23,7 @@
       <?php if( !empty( $wpp_pdf_flyer['logo_url'] ) ) { ?>
         <tr>
           <td colspan="2" valign="top">
-            <br />
-            <br />
-            <br />
-            <img class='header_logo_image' src="<?php echo $wpp_pdf_flyer['logo_url']; ?>" />
+            <img class='header_logo_image' src="<?php echo $wpp_pdf_flyer['logo_url']; ?>" alt=""/>
           </td>
         </tr>
       <?php } ?>
@@ -39,7 +35,8 @@
       <tr>
         <td valign="top" align="center" width="66%">
           <?php if( !empty( $wpp_pdf_flyer['featured_image_url']) ) { ?>
-            <img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>" width="<?php echo $wpp_pdf_flyer['featured_image_width']; ?>" valign="middle" />
+            <br/><br/><br/>
+            <div><img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>" width="<?php echo $wpp_pdf_flyer['featured_image_width']; ?>" valign="middle" alt="" /></div>
           <?php } ?>
         </td>
         <td valign="top"  rowspan="3" width="33%" align="right">
@@ -52,7 +49,7 @@
                 $counter++;
             ?>
             <img width="160" src="<?php echo $image[$wpp_pdf_flyer['secondary_photos']]; ?>" /><br /><br />
-        <?php endforeach; ?>    
+        <?php endforeach; ?>
       <?php endif; ?>
         <div class="right_column">
           <?php do_action( 'wpp_flyer_right_column', $property, $wpp_pdf_flyer );?>
