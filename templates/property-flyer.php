@@ -2,72 +2,122 @@
 /**
  * PDF Flyer default template
  */
- ?>
-  <html>
+?>
+<html>
     <head>
-      <style type="text/css">
-        html{padding:0px;margin:0px;}
-        body {width: 800px;padding:0px;margin:0px}
-        dl.stats dt {padding:0;margin:0;}
-        hr, p {margin:0;}
-        ul.no_list, ul.no_list li {margin:0;padding:0;}
-        ul.no_list,   ul.side_gallery {list-style-type:none;}
-        .heading_text {font-size: 1.7em; padding-bottom: 15px;border-bottom:0.5px solid #DADADA;}
-        h1 {font-size: 2.5em;}
-       .right_column {text-align: left;}
-       .google_map{border: 3px solid #EDEDED;padding: 0px;margin: 0px;width:300px;height: 250px;}
-      </style>
+        <title></title>
+        <style type="text/css">
+            div.heading_text {font-size:<?php echo $wpp_pdf_flyer['font_size_header']; ?>px;border-bottom:2px solid <?php echo (!empty($wpp_pdf_flyer['section_bgcolor']) ? $wpp_pdf_flyer['section_bgcolor'] : '#DADADA'); ?>;}
+            .pdf-text {font-size:<?php echo $wpp_pdf_flyer['font_size_content']; ?>px;}
+            .pdf-note {font-size:<?php echo $wpp_pdf_flyer['font_size_note']; ?>px;}
+            table.bg-header {background-color:<?php echo (!empty($wpp_pdf_flyer['header_color']) ? $wpp_pdf_flyer['header_color'] : '#EDEDED'); ?>;}
+            table.bg-section {background-color:<?php echo (!empty($wpp_pdf_flyer['section_bgcolor']) ? $wpp_pdf_flyer['section_bgcolor'] : '#EDEDED'); ?>;}
+        </style>
     </head>
-  <body>
-    <table cellspacing="0" cellpadding="5" style="font-size: 20px;" border="0">
-      <?php if( !empty( $wpp_pdf_flyer['logo_url'] ) ) { ?>
-        <tr>
-          <td colspan="2" valign="top">
-            <img class='header_logo_image' src="<?php echo $wpp_pdf_flyer['logo_url']; ?>" alt=""/>
-          </td>
-        </tr>
-      <?php } ?>
-      <tr>
-        <td colspan="2" valign="top">
-          <div style="font-size: 2.3em; text-align: left; padding: 0px;"><?php echo $property['post_title'];?></div>
-        </td>
-      </tr>
-      <tr>
-        <td valign="top" align="center" width="66%">
-          <?php if( !empty( $wpp_pdf_flyer['featured_image_url']) ) { ?>
-            <br/><br/><br/>
-            <div><img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>" width="<?php echo $wpp_pdf_flyer['featured_image_width']; ?>" valign="middle" alt="" /></div>
-          <?php } ?>
-        </td>
-        <td valign="top"  rowspan="3" width="33%" align="right">
-          <?php if(is_array($property['gallery'])): ?>
-          <?php $counter = 0;
-            if(!empty($property['gallery']))
-              foreach($property['gallery'] as $image):
-                if($counter == $wpp_pdf_flyer['num_pictures']) break;
-                if(empty($image[$wpp_pdf_flyer['secondary_photos']])) continue;
-                $counter++;
-            ?>
-            <img width="160" src="<?php echo $image[$wpp_pdf_flyer['secondary_photos']]; ?>" /><br /><br />
-        <?php endforeach; ?>
-      <?php endif; ?>
-        <div class="right_column">
-          <?php do_action( 'wpp_flyer_right_column', $property, $wpp_pdf_flyer );?>
-        </div>
-      </td>
-    </tr>
-    <tr>
-      <td valign="top" width="33%">
-        <div class="left_column">
-          <?php do_action( 'wpp_flyer_left_column', $property, $wpp_pdf_flyer ); ?>
-        </div>
-      </td>
-      <td valign="top"  width="33%" >
-        <div class="middle_column">
-          <?php do_action( 'wpp_flyer_middle_column', $property, $wpp_pdf_flyer ); ?>
-        </div>
-      </td>
-    </tr>
-</table>
-</body>
+    <body><table cellspacing="0" cellpadding="0" border="0" width="100%">
+            <tr>
+                <td height="15">&nbsp;
+                </td>
+            </tr>
+            <?php if( !empty( $wpp_pdf_flyer['logo_url'] ) ) : ?>
+            <tr>
+                <td><img class='header_logo_image' src="<?php echo $wpp_pdf_flyer['logo_url']; ?>" alt=""/>
+                </td>
+            </tr>
+            <tr>
+                <td height="15">&nbsp;
+                </td>
+            </tr>
+            <?php endif; ?>
+            <?php if ( !empty( $wpp_pdf_flyer['pr_title']) ) : ?>
+            <tr>
+                <td><table cellspacing="0" cellpadding="10" border="0" class="bg-header" style="text-align:left;" width="100%">
+                        <tr>
+                            <td><span style="font-size:<?php echo $wpp_pdf_flyer['font_size_header']; ?>px;"><b><?php echo $property['post_title'];?></b></span>
+                                <?php $tagline = $property['tagline']; ?>
+                                <?php if (!empty($wpp_pdf_flyer['pr_tagline']) && !empty($tagline)) : ?>
+                                <br/><span style="font-size:<?php echo $wpp_pdf_flyer['font_size_content']; ?>px;color:#797979;"><?php echo $tagline ?></span>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <?php endif; ?>
+            <tr>
+                <td height="15">&nbsp;
+                </td>
+            </tr>
+            <tr>
+                <td><table cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                            <td width="<?php echo $wpp_pdf_flyer['first_col_width'] ?>"><table>
+                                <?php if( !empty( $wpp_pdf_flyer['featured_image_url']) ) : ?>
+                                <tr>
+                                    <td colspan="3"><table cellspacing="0" cellpadding="10" border="0" class="bg-section">
+                                        <tr>
+                                            <td><img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>" width="<?php echo ($wpp_pdf_flyer['first_col_width']-20); ?>" alt="" />
+                                            </td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td height="15">&nbsp;
+                                    </td>
+                                </tr>
+                                <?php endif; ?>
+                                <tr>
+                                    <td id="left_column" border="0" width="<?php echo ($wpp_pdf_flyer['first_col_width'] / 2 - 7 ); ?>"><table cellspacing="0" cellpadding="0" border="0">
+                                        <?php do_action( 'wpp_flyer_left_column', $property, $wpp_pdf_flyer ); ?>
+                                        <tr>
+                                            <td></td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                    <td width="14">&nbsp;
+                                    </td>
+                                    <td id="middle_column" border="0" width="<?php echo ($wpp_pdf_flyer['first_col_width'] / 2 - 7 ); ?>"><table cellspacing="0" cellpadding="0" border="0">
+                                        <?php do_action( 'wpp_flyer_middle_column', $property, $wpp_pdf_flyer ); ?>
+                                        <tr>
+                                            <td></td>
+                                        </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                                </table>
+                            </td>
+                            <td width="15">&nbsp;
+                            </td>
+                            <td width=""><table cellspacing="0" cellpadding="0" width="100%">
+                                <?php if(is_array($property['gallery']) && !empty($property['gallery'])) : ?>
+                                    <?php $counter = 0; ?>
+                                    <?php foreach($property['gallery'] as $image) : ?>
+                                        <?php if($counter == $wpp_pdf_flyer['num_pictures']) break; ?>
+                                        <?php if(empty($image[$wpp_pdf_flyer['secondary_photos']])) continue; ?>
+                                        <?php $counter++; ?>
+                                        <tr>
+                                            <td><table cellspacing="0" cellpadding="10" border="0" class="bg-section">
+                                                <tr>
+                                                    <td><img width="<?php echo ($wpp_pdf_flyer['second_photo_width'] - 20 ); ?>" src="<?php echo $image[$wpp_pdf_flyer['secondary_photos']]; ?>" alt="" />
+                                                    </td>
+                                                </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td height="15">&nbsp;
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                <?php do_action( 'wpp_flyer_right_column', $property, $wpp_pdf_flyer );?>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>

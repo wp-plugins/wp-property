@@ -50,7 +50,7 @@ if($properties): ?>
         <div class="wpp_overview_left_column">
 
             <div class="property_image">
-                <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? " of " . $property[parent_title] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
+                <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? __(' of ', 'wpp') . $property[parent_title] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
                     <img width="<?php echo $thumbnail_sizes['width']; ?>" height="<?php echo $thumbnail_sizes['height']; ?>" src="<?php echo $property['images'][$thumbnail_size]; ?>" alt="<?php echo $property['post_title'];?>" />
                 </a>
             </div>

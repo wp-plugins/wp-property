@@ -112,7 +112,7 @@ class WPP_F {
 
       } else {
           // Try to figure out what went wrong
-   
+
           if($geo_data->status != 'OK') {
 
             // Break if daily geo-lookup limit is exceeded
@@ -121,17 +121,17 @@ class WPP_F {
             } else {
              $return['message'] = __("An error occured that prevented geo-location from working.", 'wpp');
             }
- 
+
           $return['success'] = 'false';
-          
+
           if($echo_result)
             echo json_encode($return);
           else
             return $return;
-          
+
           return;
       }
-      
+
       update_post_meta($post_id, 'address_is_formatted', false);
       }
 
@@ -139,12 +139,12 @@ class WPP_F {
 
     $return['success'] = 'true';
     $return['message'] = "Updated " . count($updated) . " properties using the " . $google_map_localizations[$wp_properties['configuration']['google_maps_localization']] .  " localization.";
-  
-    if($echo_result)            
+
+    if($echo_result)
       echo json_encode($return);
     else
       return $echo_result;
-      
+
     return;
    }
 
@@ -286,8 +286,8 @@ class WPP_F {
 
     if($meta_key == 'latitude' || $meta_key == 'longitude')
       return $input;
-      
-      
+
+
     /* If PHP version is newer than 4.3.0, else apply fix. */
     if ( strnatcmp(phpversion(),'4.3.0' ) >= 0 ) {
 
@@ -1161,6 +1161,7 @@ class WPP_F {
     */
 
     $query = wp_parse_args( $args, $defaults );
+    
     $query = apply_filters('wpp_get_properties_query', $query);
 
     /* Shows WP queries and errors */
@@ -1175,7 +1176,7 @@ class WPP_F {
 
     }
 
-        unset( $query['pagi'] );
+    unset( $query['pagi'] );
     unset( $query['pagination'] );
 
         /* Handles the sort_by parameter in the Short Code */
@@ -1188,9 +1189,10 @@ class WPP_F {
     else {
 
       $sql_sort_by = 'post_date';
-            $sql_sort_order = 'DESC';
+            $sql_sort_order = 'ASC';
 
     }
+    
         unset( $query['sort_by'] );
         unset( $query['sort_order'] );
 
@@ -1495,11 +1497,8 @@ class WPP_F {
 
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-
     //UD_F::log("Loading property id: $id");
-
     $post = get_post($id, ARRAY_A);
-
 
     if($post['post_type'] != 'property')
       return false;
@@ -1507,9 +1506,7 @@ class WPP_F {
     $return = array();
 
     if ( $keys = get_post_custom( $id ) ) {
-
         foreach ( $keys as $key => $value ) {
-
         if($allow_multiple_values == 'false') {
           $value = $value[0];
         } 
@@ -1595,7 +1592,6 @@ class WPP_F {
       }
     } /* end load_thumbnail */
 
-
     /*
       Load all attached images and their sizes
     */
@@ -1608,16 +1604,13 @@ class WPP_F {
             $this_url =  wp_get_attachment_image_src( $attachment_id, $image_name , true );
             $return['gallery'][$attachment->post_name][$image_name] = $this_url[0];
           }
-
-
         }
-
       } else {
         $return['gallery'] = false;
       }
     }
     // end load_gallery
-    
+
     /*
       Load parent if exists.
       Inherit Parent's Properties
@@ -1649,22 +1642,15 @@ class WPP_F {
       Load Children and their attributes
     */
     if($get_children == 'true') {
-
       // Calculate variables if based off children if children exist
       $children = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE  post_type = 'property' AND post_status = 'publish' AND post_parent = '$id' ORDER BY menu_order ASC ");
 
       //print_r($children);
       if(count($children) > 0) {
-
-
           // Cycle through children and get necessary variables
           foreach($children as $child_id) {
-
             $child_object = WPP_F::get_property($child_id, "load_parent=false");
-
             $return['children'][$child_id] = $child_object;
-
-
             // Exclude variables from searchable attributes (to prevent ranges)
             $excluded_attributes = array(
               $wp_properties['configuration']['address_attribute'],
@@ -1676,13 +1662,9 @@ class WPP_F {
               'state');
 
             foreach($wp_properties['searchable_attributes'] as $searchable_attribute)
-                 if(!empty($child_object[$searchable_attribute]) && !in_array($searchable_attribute, $excluded_attributes))
-                  $range[$searchable_attribute][]  = $child_object[$searchable_attribute];
-
-
+               if(!empty($child_object[$searchable_attribute]) && !in_array($searchable_attribute, $excluded_attributes))
+                $range[$searchable_attribute][]  = $child_object[$searchable_attribute];
           }
-
-
 
         // Cycle through every type of range (i.e. price, deposit, bathroom, etc) and fix-up the respective data arrays
         foreach((array)$range as $range_attribute => $range_values) {
@@ -1725,30 +1707,22 @@ class WPP_F {
           if(count($range[$range_attribute]) > 1) {
             $return[$range_attribute] = min($range[$range_attribute]) . " - " .  max($range[$range_attribute]);
           }
-
         }
-
-
       }
     } /* end get_children */
-
-
-
+ 
     // Another name for location
-        $return['address'] = $return['location'];
-
+    $return['address'] = $return['location'];
 
     $return['permalink'] = get_permalink($id);
 
     if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number']))
       $return['phone_number'] = $wp_properties['configuration']['phone_number'];
- 
- 
+
     if(is_array($return))
       ksort($return);
 
     $return = apply_filters('wpp_get_property', $return);
- 
 
     // Get rid of all empty values
     foreach($return as $key => $item) {
@@ -1963,7 +1937,7 @@ class WPP_F {
 
     }
 
-    $infobox_attributes = array_reverse($infobox_attributes);
+    //$infobox_attributes = array_reverse($infobox_attributes);
 
     $image_sizes = WPP_F::get_image_dimensions($map_image_type);
      ob_start();
@@ -2113,6 +2087,7 @@ class WPP_F {
 
     // Denali Theme
     __('Find your property', 'wpp');
+    __('Edit', 'wpp');
     __('City', 'wpp');
     __('Contact us', 'wpp');
     __('Login', 'wpp');
@@ -2126,6 +2101,13 @@ class WPP_F {
     __('Inquiry', 'wpp');
     __('Comment About', 'wpp');
     __('Inquire About', 'wpp');
+    __('Inquiry About:', 'wpp');
+    __('Inquiry message:', 'wpp');
+    __('You forgot to enter your e-mail.', 'wpp');
+    __('You forgot to enter a message.', 'wpp');
+    __('You forgot to enter your  name.', 'wpp');
+    __('Error with sending message. Please contact site administrator.', 'wpp');
+    __('Thank you for your message.', 'wpp');
 
 
 

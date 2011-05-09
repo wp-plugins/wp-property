@@ -2703,7 +2703,10 @@ class TCPDF {
 			// remove inherited values
 			unset($this->pagedim[$this->page]);
 		}
-		if (is_string($format)) {
+    if (is_array($format)){
+      $this->fwPt = $format[0];
+			$this->fhPt = $format[1];
+    } else if (is_string($format)) {
 			// get page measures from format name
 			$pf = $this->getPageSizeFromFormat($format);
 			$this->fwPt = $pf[0];

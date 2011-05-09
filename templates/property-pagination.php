@@ -96,19 +96,26 @@ else
                     }else{
                         var properties = jQuery(data).find('.property_div');
                         var wpp_property_view_result = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_property_view_result');
+                        var do_loop = true;
                         wpp_property_view_result.html('');
                         if(properties.length > 0) {
                             properties.each(function(i, el){
                                 wpp_property_view_result.append(el);
+                                if(properties.length - 1 == i) do_loop = false;
                             });
-                            wpp_property_view_result.find('a.fancybox_image').fancybox({
-                                'transitionIn'	:	'elastic',
-                                'transitionOut'	:	'elastic',
-                                'speedIn'	:	600, 
-                                'speedOut'	:	200, 
-                                'overlayShow'	:	false
-                            });
-                        <?php do_action('wpp_js_on_property_overview_display', $template, 'ajax_result'); ?>
+                            while(true){
+                                if(!do_loop){
+                                    wpp_property_view_result.find('a.fancybox_image').fancybox({
+                                        'transitionIn'	:	'elastic',
+                                        'transitionOut'	:	'elastic',
+                                        'speedIn'	:	600, 
+                                        'speedOut'	:	200, 
+                                        'overlayShow'	:	false
+                                    });
+                                    <?php do_action('wpp_js_on_property_overview_display', $template, 'ajax_result'); ?>
+                                    break;
+                                }
+                            }
                         }
                     }
                 }
@@ -170,8 +177,6 @@ else
             
             // Address handler
             if(typeof jQuery.address != 'undefined') {
-                //@TODO: address's logic can be used for multiple shortcodes
-                // Now it's used for first shortcode on the page (post)
                 var unique = <?php echo $unique; ?>;
                 var startPage = true;
                 jQuery.address.init(function(event) {

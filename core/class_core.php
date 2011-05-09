@@ -239,11 +239,11 @@ class WPP_Core {
     
     // Admin interface init
     add_action("admin_init", array(&$this, "admin_init"));
-        add_action('admin_print_styles', array('WPP_Core', 'admin_css'));
-  
+    add_action('admin_print_styles', array('WPP_Core', 'admin_css'));
+
     add_action("admin_menu", array(&$this, 'admin_menu'));
 
-     add_action("post_submitbox_misc_actions", array(&$this, "post_submitbox_misc_actions"));
+    add_action("post_submitbox_misc_actions", array(&$this, "post_submitbox_misc_actions"));
     add_action('save_post', array($this, 'save_property'));
     add_filter('post_updated_messages', array('WPP_Core', 'property_updated_messages'), 5);
 
@@ -610,8 +610,6 @@ class WPP_Core {
           // Determine child property_type
           $child_property_type = get_post_meta($child_id, 'property_type', true);
 
-
-
           // Check if child's property type has inheritence rules, and if meta_key exists in inheritance array
           if(is_array($wp_properties['property_inheritance'][$child_property_type]))
 
@@ -622,7 +620,8 @@ class WPP_Core {
 
               // inheritance rule exists for this property_type for this meta_key
               update_post_meta($child_id, $i_meta_key, $parent_meta_value);
-              UD_F::log("Updating inherited child meta_data: $i_meta_key - $parent_meta_value for $child_id");
+              // Don't enable this, it causes performance issues:
+              //UD_F::log("Updating inherited child meta_data: $i_meta_key - $parent_meta_value for $child_id");
 
             }
           }
@@ -961,13 +960,13 @@ class WPP_Core {
 
         // Scripts for both types of views
         if ($single_page || $wp_query->is_property_overview)  {
-            //wp_enqueue_script('jquery-ui-slider', WPP_URL . '/js/jquery.ui.slider.min.js', array('jquery-ui-core'), '1.7.3' );
-            wp_enqueue_script('jquery-fancybox');
-            wp_enqueue_script('wp-property-frontend');
-            wp_enqueue_script('jquery-address');
-            
-            wp_enqueue_style('jquery-fancybox-css');
-            wp_enqueue_style('jquery-ui');
+      //wp_enqueue_script('jquery-ui-slider', WPP_URL . '/js/jquery.ui.slider.min.js', array('jquery-ui-core'), '1.7.3' );
+      wp_enqueue_script('jquery-fancybox');
+      wp_enqueue_script('wp-property-frontend');
+      wp_enqueue_script('jquery-address');
+      
+      wp_enqueue_style('jquery-fancybox-css');
+      wp_enqueue_style('jquery-ui');
       // Check for and load conditional browser styles
       $conditional_styles = apply_filters('wpp_conditional_style_slugs', array('IE','IE 7','msie'));
 
@@ -1104,7 +1103,7 @@ class WPP_Core {
     
     WPP_F::fix_screen_options();
     
-      add_meta_box( 'property_meta', __('General Information','wpp'), array('WPP_UI','metabox_meta'), 'property', 'normal' );
+    add_meta_box( 'property_meta', __('General Information','wpp'), array('WPP_UI','metabox_meta'), 'property', 'normal' );
 
     // Add metaboxes
     do_action('wpp_metaboxes');

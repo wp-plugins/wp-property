@@ -91,8 +91,15 @@ class wpi_property_export {
     //Start the XML
     header('Content-type: text/xml');
     print '<?xml version="1.0"?><properties>';
+    $count = 0;
     foreach($wpq->posts as $post){
-      $property = WPP_F::get_property($post->ID, "return_object=true");
+      if(isset($_REQUEST['limit']) && $count == $_REQUEST['limit']) break;
+      $count++;
+      $property = WPP_F::get_property($post->ID, "return_object=true&load_parent=false");
+      // If we have a request for a certain type of property, fix the results
+      if(isset($_REQUEST['property_type']) && !empty($_REQUEST['property_type']) && $_REQUEST['property_type'] != $property->property_type){
+        continue;
+      }
       // Unset the children, as we'll get to those
       unset(
         $property->post_status,

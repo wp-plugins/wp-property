@@ -86,6 +86,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 
 * Supermap - an overview map of all your listings - http://sites.twincitiestech.com/the-denali/property-map/
 * Slideshow - home page slideshow and property specific slideshow - http://sites.twincitiestech.com/the-denali/all-properties/160-richmond-street/
+* Agent Module - Create agents and assign them to properties. Create agent-specific listing pages by using [property_overview wpp_agents=1] where 1 is the agent ID.
 * PDF Flyer - Instantly generate PDF flyers of your properties for printing.
 * XML Import - Map XML files to your WPP attributes, setup schedules, and import third-party listings.
 
@@ -199,6 +200,10 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.4 =
+* Property editing screen will show a checkbox for an attribute if the pre-defined values in Developer tab are set to 'true,false' or 'false,true' instead of a dropdown.
+* Fix to pre-defined values being trimmed automatically, before an issue was caused by spaces before or after the value not being recognized in search.
 
 = 1.15.3 =
 * More advanced currency settings.
