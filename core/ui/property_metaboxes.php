@@ -189,8 +189,11 @@ function metabox_meta($object) {
           <span class="disabled_message"><?php echo sprintf(__('Editing %s is disabled, it may be inherited.','wpp'), $label ); ?></span>
 
           <?php
-
+          
               $value = get_post_meta($object->ID, $slug, true);
+              if ($value === true || $value == '1') {
+                $value = 'true';
+              }
 
              // Check if attribute has predefine values
              if(!empty($wp_properties['predefined_values'][$slug])) {

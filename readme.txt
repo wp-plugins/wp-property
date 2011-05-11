@@ -201,6 +201,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.15.5 =
+* Properties -> Settings -> Plugins tab now displays the domain you should use when purchasing premium features.
+* Fix to property_overview query that had issues with sorting.
+
 = 1.15.4 =
 * Property editing screen will show a checkbox for an attribute if the pre-defined values in Developer tab are set to 'true,false' or 'false,true' instead of a dropdown.
 * Fix to pre-defined values being trimmed automatically, before an issue was caused by spaces before or after the value not being recognized in search.

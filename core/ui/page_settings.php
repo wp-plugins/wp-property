@@ -29,6 +29,9 @@ if(isset($_REQUEST['message'])) {
     break;
   }
 }
+    $parseUrl = parse_url(trim(get_bloginfo('url')));
+    $this_domain = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
+   
 
 ?>
 
@@ -519,7 +522,8 @@ if(isset($_REQUEST['message'])) {
         <tr>
           <td colspan="2" class="wpp_premium_feature_intro">
               <span class="header"><?php _e('WP-Property Premium Features','wpp') ?></span>
-              <p><?php _e('Premium features will become available shortly, we are still waiting on more feedback on the core of the plugin.','wpp') ?></p>
+              <p><?php _e('Premium features will become available shortly, we are still waiting on more feedback on the core of the plugin.','wpp'); ?></p>
+              <p><?php _e('When purchasing the premium features you will need to specify your domain to add the license correctly.  This if your domain:','wpp'); echo ' <b>'. $this_domain; ?></b></p>
               <?php /*<p><?php _e('If you're recently purchased a premium feature, <span id="wpp_check_premium_updates" class="wpp_link">download updates</a>.','wpp') ?></p> */ ?>
               <p id="wpp_plugins_ajax_response" class="hidden"></p>
           </td>
@@ -550,7 +554,7 @@ if(isset($_REQUEST['message'])) {
             <div class="wpp_box">
             <div class="wpp_box_header">
               <strong><?php echo $plugin_data['title']; ?></strong>
-              <p><?php echo $plugin_data['tagline']; ?> <a href="http://twincitiestech.com/plugins/wp-property/premium/"><?php _e('[learn more]','wpp') ?></a>
+              <p><?php echo $plugin_data['tagline']; ?> <a href="http://twincitiestech.com/plugins/wp-property/premium/?wp_checkout_payment_domain=<?php echo $this_domain; ?>"><?php _e('[purchase feature]','wpp') ?></a>
               </p>
             </div>
             <div class="wpp_box_content">

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WP Property\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-09 12:34-0500\n"
+"POT-Creation-Date: 2011-05-11 14:34-0500\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Andy Potanin\n"
 "Language-Team: \n"
@@ -53,7 +53,7 @@ msgid "Area"
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/action_hooks.php:78
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2096
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2068
 msgid "Phone Number"
 msgstr ""
 
@@ -234,7 +234,7 @@ msgid "Format phone number."
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/default_api.php:309
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:1772
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:1744
 msgid " sq ft."
 msgstr ""
 
@@ -397,7 +397,7 @@ msgid "Type"
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_core.php:767
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2091
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2063
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_property_import.php:958
 msgid "City"
 msgstr ""
@@ -491,90 +491,90 @@ msgid "Update ran successfully."
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:845
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2097
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2069
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:1392
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:96
 msgid "Name"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:1964
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:1936
 msgid "Get Directions"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2089
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2061
 msgid "Find your property"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2090
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2062
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:285
 msgid "Edit"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2092
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2064
 msgid "Contact us"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2093
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2065
 msgid "Login"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2094
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2066
 msgid "Explore"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2095
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2067
 msgid "Message"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2098
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2070
 msgid "E-mail"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2099
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2071
 msgid "Send Message"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2100
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2072
 msgid "Submit Inquiry"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2101
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2073
 msgid "Inquiry"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2102
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2074
 msgid "Comment About"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2103
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2075
 msgid "Inquire About"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2104
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2076
 msgid "Inquiry About:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2105
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2077
 msgid "Inquiry message:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2106
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2078
 msgid "You forgot to enter your e-mail."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2107
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2079
 msgid "You forgot to enter a message."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2108
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2080
 msgid "You forgot to enter your  name."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2109
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2081
 msgid "Error with sending message. Please contact site administrator."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2110
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/class_functions.php:2082
 msgid "Thank you for your message."
 msgstr ""
 
@@ -889,7 +889,7 @@ msgstr ""
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_admin_tools.php:284
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:682
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:97
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:288
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:291
 msgid "Slug"
 msgstr ""
 
@@ -915,7 +915,7 @@ msgstr ""
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:697
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_property_import.php:975
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:137
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:352
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:355
 msgid "Add Row"
 msgstr ""
 
@@ -975,7 +975,7 @@ msgstr ""
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:286
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:691
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:129
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:328
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:331
 msgid "Delete"
 msgstr ""
 
@@ -1058,7 +1058,7 @@ msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_agents.php:552
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_pdf_flyer.php:295
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:658
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:696
 msgid "Options"
 msgstr ""
 
@@ -1353,7 +1353,7 @@ msgid "Generate QR Code"
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_pdf_flyer.php:314
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:160
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:163
 msgid "Display"
 msgstr ""
 
@@ -1840,17 +1840,17 @@ msgstr ""
 msgid "Exclude property from supermap"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:736
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:746
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:765
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:775
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:785
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:804
 msgid "Any"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:739
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:778
 msgid "+"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:779
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/premium/class_wpp_supermap.php:818
 msgid "Loading"
 msgstr ""
 
@@ -1858,272 +1858,276 @@ msgstr ""
 msgid "Settings updated."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:134
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:137
 msgid "Property Settings"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:159
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:162
 msgid "Main"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:181
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:184
 msgid "Plugins"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:183
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:186
 msgid "Help"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:194
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:393
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:197
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:396
 msgid "Property Page"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:197
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:200
 msgid "Property (Default)"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:215
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:218
 msgid "Always overwrite this page's content with [property_overview]."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:222
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:225
 msgid "If checked, be sure to include [property_overview] somewhere in the content, or no properties will be displayed."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:225
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:228
 msgid "View list of available shortcodes."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:229
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:232
 msgid "The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is "
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:234
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:237
 msgid "Default Phone Number"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:237
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:240
 msgid "Phone number to use when a property-specific phone number is not specified."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:242
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:245
 msgid "Address Attribute"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:244
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:247
 msgid "Attribute to use for address:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:246
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:249
 msgid "and localize for:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:258
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:261
 msgid "General Settings"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:260
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:263
 msgid "These are the general display settings"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:263
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:266
 msgid "Automatically include default CSS."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:272
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:275
 msgid "Image Sizes"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:275
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:278
 msgid "Image sizes used throughout the plugin."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:277
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:280
 #, php-format
 msgid "After adding/removing image size, be sure to <a href=\"%s\">regenerate thumbnails</a> using the Regenerate Thumbnails plugin."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:281
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:284
 msgid "We strongly recommend to <a href=\"http://wordpress.org/extend/plugins/regenerate-thumbnails/\">Regenerate Thumbnails</a> plugin by Viper007Bond."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:289
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:292
 msgid "Width"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:290
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:293
 msgid "Height"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:366
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:369
 msgid "Overview Shortcode"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:369
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:372
 msgid ""
 "These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br />\n"
 "        The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property-overview.php</b> file.  To avoid losing your changes during updates, create a <b>property-overview.php</b> file in your template directory, which will be automatically loaded."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:373
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:489
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:376
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:492
 msgid "Thumbnail size:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:375
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:378
 msgid "Show children properties."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:378
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:381
 msgid "Show larger image of property when image is clicked using fancybox."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:384
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:387
 msgid "Show pagination on bottom of results."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:395
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:398
 msgid ""
 "These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br />\n"
 "        The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:399
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:402
 msgid "Display larger image, or slideshow, at the top of the property listing."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:410
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:413
 msgid "Google Maps"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:414
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:417
 msgid "Map Thumbnail Size:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:415
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:418
 msgid "Map Zoom Level:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:437
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:440
 msgid "Address Display"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:444
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:447
 msgid "Available tags:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:450
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:453
 msgid "Currency & Numbers"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:453
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:456
 msgid "Currency symbol."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:455
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:458
 msgid "Thousands separator symbol:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:458
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:461
 msgid ". (period)"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:459
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:462
 msgid ", (comma)"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:461
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:464
 msgid "The character separating the 1 and the 5: $1<b>,</b>500"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:466
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:469
 msgid "Currency symbol placement:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:469
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:472
 msgid "Before number"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:470
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:473
 msgid "After number"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:482
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:485
 msgid "Admin Overview Page"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:486
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:489
 msgid "These settings are for the main property page on the back-end."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:521
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:524
 msgid "WP-Property Premium Features"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:522
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:525
 msgid "Premium features will become available shortly, we are still waiting on more feedback on the core of the plugin."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:553
-msgid "[learn more]"
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:526
+msgid "When purchasing the premium features you will need to specify your domain to add the license correctly.  This if your domain:"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:566
-msgid "Disable plugin."
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:557
+msgid "[purchase feature]"
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:570
+msgid "Disable plugin."
+msgstr ""
+
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:574
 msgid "Feature installed, using version"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:572
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:576
 #, php-format
 msgid "Please visit <a href=\"%s\">TwinCitiesTech.com</a> to purchase this feature."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:587
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:591
 msgid "Enter in the ID of the property you want to look up, and the class will be displayed below."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:589
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:593
 msgid "Lookup"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:589
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:597
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:593
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:601
 msgid "Cancel"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:596
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:600
 msgid "Look up the <b>$wp_properties</b> global settings array.  This array stores all the default settings, which are overwritten by database settings, and custom filters."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:597
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:601
 msgid "Show $wp_properties"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:603
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:607
 msgid "Restore Backup of WP-Property Configuration"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:604
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:608
 msgid "Download Backup of Current WP-Property Configuration."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:608
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:612
 msgid "Force check of allowed premium features."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:609
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:613
 msgid "Check Updates"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:615
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:619
 msgid "Revalidate"
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:628
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/page_settings.php:632
 msgid "Save Changes"
 msgstr ""
 
@@ -2158,12 +2162,12 @@ msgid "Falls Under"
 msgstr ""
 
 #: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/property_metaboxes.php:189
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/property_metaboxes.php:234
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/property_metaboxes.php:237
 #, php-format
 msgid "Editing %s is disabled, it may be inherited."
 msgstr ""
 
-#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/property_metaboxes.php:200
+#: C:\wamp\www\usabilitydynamics.com\development\wp-property\wp-content\plugins\wp-property/core/ui/property_metaboxes.php:203
 msgid "Enable."
 msgstr ""
 

@@ -1137,301 +1137,273 @@ class WPP_F {
   }
 
 
-    /**
-     * Primary static function for queries properties  based on type and attributes
-     *
-     *
-     * @since 1.08
-     *
-     */
-    static function get_properties($args = "") {
-        global $wpdb;
-
-    //var_dump( debug_backtrace() );
-
-        $defaults = array('property_type' => 'all');
-
+  /**
+   * Primary static function for queries properties  based on type and attributes
+   *
+   *
+   * @since 1.08
+   *
+  */
+  static function get_properties($args = "") {
+    global $wpdb;
+    
+    $defaults = array('property_type' => 'all');
+    
     /* I haven't seen this doing anything yet, but leaving it to avoid unseen errors.
         if( is_array($maybe_array = unserialize($args)) ) {
             $query = $maybe_array;
-
         } else {
             $query = wp_parse_args( $args, $defaults );
         }
     */
-
+    
     $query = wp_parse_args( $args, $defaults );
     
     $query = apply_filters('wpp_get_properties_query', $query);
-
-    /* Shows WP queries and errors */
-    //$wpdb->show_errors();
-    //print_r($query);
-
-        if (substr_count($query['pagi'], '--')) {
-
-            $pagi = explode('--', $query['pagi']);
-            if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1]))
-                $limit_query = "LIMIT $pagi[0], $pagi[1];";
-
-    }
-
-    unset( $query['pagi'] );
-    unset( $query['pagination'] );
-
-        /* Handles the sort_by parameter in the Short Code */
-        if( $query['sort_by'] ) {
-
-            $sql_sort_by = $query['sort_by'];
-            $sql_sort_order = ($query['sort_order'])?strtoupper($query['sort_order']):'ASC';
-
-        }
-    else {
-
-      $sql_sort_by = 'post_date';
-            $sql_sort_order = 'ASC';
-
+    
+    if (substr_count($query['pagi'], '--')) {
+      $pagi = explode('--', $query['pagi']);
+      if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1])) {
+        $limit_query = "LIMIT $pagi[0], $pagi[1];";
+      }
     }
     
-        unset( $query['sort_by'] );
-        unset( $query['sort_order'] );
-
-        // Go down the array list narrowing down matching properties
-        foreach ($query as $meta_key => $criteria) {
-
+    unset( $query['pagi'] );
+    unset( $query['pagination'] );
+    
+    /* Handles the sort_by parameter in the Short Code */
+    if( $query['sort_by'] ) {
+      $sql_sort_by = $query['sort_by'];
+      $sql_sort_order = ($query['sort_order'])?strtoupper($query['sort_order']):'ASC';
+    } else {
+      $sql_sort_by = 'post_date';
+      $sql_sort_order = 'ASC';
+    }
+    
+    unset( $query['sort_by'] );
+    unset( $query['sort_order'] );
+    
+    // Go down the array list narrowing down matching properties
+    foreach ($query as $meta_key => $criteria) {
+      
       $criteria = WPP_F::encode_mysql_input( $criteria, $meta_key);
-
-      //printf( "Criteria: %s<br />", $criteria );
-
-            if (isset($matching_ids) && empty($matching_ids)) {
-                //UD_F::log("Stop filtering because no IDs left, count: " . count($matching_ids));
-                break;
+      
+      // Stop filtering (loop) because no IDs left
+      if (isset($matching_ids) && empty($matching_ids)) {
+        break;
+      }
+      
+      /*
+      // Allowed property_type array to $comma_and array
+      if (is_array($criteria) && $meta_key =='property_type') {
+        $comma_and = $criteria;
+      }
+      */
+      
+      if (substr_count($criteria, ',') || substr_count($criteria, '&ndash;') || substr_count($criteria, '--')) {
+        if (substr_count($criteria, ',') && !substr_count($criteria, '&ndash;')) {
+          $comma_and = explode(',', $criteria);
+        }
+        if (substr_count($criteria, '&ndash;') && !substr_count($criteria, ',')) {
+          $cr = explode('&ndash;', $criteria);
+          
+          // Check pieces of criteria. Array should contains 2 integer's elements
+          // In other way, it's just value of meta_key
+          if(count($cr) > 2 || ((int)$cr[0] == 0 && (int)$cr[1] == 0)) {
+            $specific = $criteria;
+          } else {
+            $hyphen_between = $cr;
+            // If min value doesn't exist, set 1
+            if(empty($hyphen_between[0])) {
+              $hyphen_between[0] = 1;
             }
-
-            //allowed property_type array to $comma_and array
-            // if (is_array($criteria) && $meta_key =='property_type') {
-            //     $comma_and = $criteria;
-            //  }
-
-            if (substr_count($criteria, ',') || substr_count($criteria, '&ndash;') || substr_count($criteria, '--')) {
-                if (substr_count($criteria, ',') && !substr_count($criteria, '&ndash;')) {
-                    $comma_and = explode(',', $criteria);
-                }
-                if (substr_count($criteria, '&ndash;') && !substr_count($criteria, ',')) {
-                    $cr = explode('&ndash;', $criteria);
-
-                    // Check pieces of criteria. Array should contains 2 integer's elements
-                    // In other way, it's just value of meta_key
-                    if(count($cr) > 2 || ((int)$cr[0] == 0 && (int)$cr[1] == 0)) {
-                        $specific = $criteria;
-                    } else {
-                        $hyphen_between = $cr;
-                        // If min value doesn't exist, set 1
-                        if(empty($hyphen_between[0])) {
-                            $hyphen_between[0] = 1;
-                        }
-                    }
-                }
-            }
-      else {
-                $specific = $criteria;
-            }
-
-            if (!$limit_query) $limit_query = '';
-
-            switch ($meta_key) {
-                case 'property_type':
-                    // Get all property types
-                    if ($specific == 'all') {
-                        if (isset($matching_ids)) {
-                            $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-                            $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = 'property_type')");
-                            $total = count($matching_ids);
-                        } else {
-                            $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = 'property_type')");
-                            $total = count($matching_ids);
-                        }
-                        break;
-                    }
-
-                    if ( !is_array($criteria) ) {
-                      $criteria = array($criteria);
           }
-
-                    if ( $comma_and ) {
-                        $where_string = implode("' OR meta_value ='", $comma_and);
-                    }
-
-          else {
-                        $where_string = $specific;
-                    }
-                    // See if mathinc_ids have already been filtered down
-                    if ( isset($matching_ids) ) {
-
-                        $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-                        $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = 'property_type' AND (meta_value ='$where_string'))");
-                        $total = count($matching_ids);
-
+        }
+      } else {
+        $specific = $criteria;
+      }
+      
+      if (!$limit_query) $limit_query = '';
+      
+      switch ($meta_key) {
+        
+        case 'property_type':
+          
+          // Get all property types
+          if ($specific == 'all') {
+            if (isset($matching_ids)) {
+              $matching_id_filter = implode("' OR post_id ='", $matching_ids);
+              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = 'property_type')");
+            } else {
+              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = 'property_type')");
+            }
+            break;
           }
+          
+          if ( !is_array($criteria) ) {
+            $criteria = array($criteria);
+          }
+          
+          if ( $comma_and ) {
+            $where_string = implode("' OR meta_value ='", $comma_and);
+          }
+          
           else {
-
+            $where_string = $specific;
+          }
+          
+          // See if mathinc_ids have already been filtered down
+          if ( isset($matching_ids) ) {
+            $matching_id_filter = implode("' OR post_id ='", $matching_ids);
+            $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = 'property_type' AND (meta_value ='$where_string'))");
+          } else {
             $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = 'property_type' AND (meta_value ='$where_string'))");
-                        $total = count($matching_ids);
-
-            $wpdb->print_error("Matching not set");
-
+            //$wpdb->print_error("Matching not set");
+          }
+          break;
+          
+        default:
+          
+          if (WPP_F::is_numeric_range($criteria)) {
+            
+            //UD_F::log("Filtering $meta_key which is numeric");
+            
+            // See if $matching_ids has already been filtered down
+            if (isset($matching_ids)) {
+              $matching_id_filter = implode("' OR post_id ='", $matching_ids);
+              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND (post_id ='$matching_id_filter') AND (meta_value BETWEEN  $min AND $max) $limit_query");
+              //$wpdb->print_error();
+            } else {
+              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND (meta_value BETWEEN $min AND $max)");
+              //$wpdb->print_error();
+            }
+            // UD_F::log($wpdb->last_query. " " . print_r($matching_ids, true));
+            
+          } else {
+            
+            // UD_F::log("Filtering $meta_key which is not numeric");
+            // Get all properties for that meta_key
+            if ($specific == 'all' && !$comma_and && !$hyphen_between) {
+              
+              if (isset($matching_ids)) {
+                $matching_id_filter = implode("' OR post_id ='", $matching_ids);
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key') AND meta_value != '' $limit_query");
+                //$wpdb->print_error();
+              } else {
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key') AND meta_value != ''");
+              }
+              break;
+              
+            } else {
+              
+              if ( $comma_and ) {
+                $where_and = "meta_key = '$meta_key' AND (meta_value ='" . implode("' OR meta_value ='", $comma_and)."')";
+                $specific = $where_and;
+              }
+              
+              if ( $hyphen_between ) {
+                // We are going to see if we are looking at some sort of date, in which case we have a special MySQL modifier
+                $adate = false;
+                if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[0])) $adate = true;
+                if(!empty($hyphen_between[1])) {
+                  if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[1])){
+                    foreach($hyphen_between as $key => $value) {
+                      $hyphen_between[$key] = "STR_TO_DATE('{$value}', '%c/%e/%Y')";
                     }
-
-                    break;
-
-                default:
-
-                    if (WPP_F::is_numeric_range($criteria)) {
-
-
-                        UD_F::log("Filtering $meta_key which is numeric");
-                        // See if $matching_ids has already been filtered down
-                        if (isset($matching_ids)) {
-                            $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-                            $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND (post_id ='$matching_id_filter') AND (meta_value BETWEEN  $min AND $max) $limit_query");
-
-              $wpdb->print_error();
-
-                            $total = count($matching_ids);
-                        } else {
-                            $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND (meta_value BETWEEN $min AND $max)");
-
-              $wpdb->print_error();
-
-                            $total = count($matching_ids);
-                        }
-                        // UD_F::log($wpdb->last_query. " " . print_r($matching_ids, true));
-                    } else {
-                        // UD_F::log("Filtering $meta_key which is not numeric");
-                        // Get all properties for that meta_key
-                        if ($specific == 'all' && !$comma_and && !$hyphen_between) {
-                            if (isset($matching_ids)) {
-                                $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-                                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key') AND meta_value != '' $limit_query");
-
-                $wpdb->print_error();
-
-                                $total = count($matching_ids);
-                            } else {
-                                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key') AND meta_value != ''");
-
-                                $total = count($matching_ids);
-                            }
-                            break;
-
-                        } else {
-                            if ( $comma_and ) {
-                                $where_and = "meta_key = '$meta_key' AND (meta_value ='" . implode("' OR meta_value ='", $comma_and)."')";
-                                $specific = $where_and;
-                            }
-                            if ( $hyphen_between ) {
-                                // We are going to see if we are looking at some sort of date, in which case we have a special MySQL modifier
-                                $adate = false;
-                                if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[0])) $adate = true;
-                                if(!empty($hyphen_between[1]))
-                                  if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[1])){
-                                    foreach($hyphen_between as $key => $value) $hyphen_between[$key] = "STR_TO_DATE('{$value}', '%c/%e/%Y')";
-                                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') BETWEEN " . implode(" AND ", $hyphen_between)."";
-                                  }
-                                  else
-                                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
-                                else
-                                  if($adate)
-                                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
-                                  else
-                                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` >= $hyphen_between[0]";
-                                $specific = $where_between;
-                                //print $specific;
-                            }
-                            if(!substr_count($specific, 'meta_value')) {
-                              //$specific = "meta_value LIKE '%".(str_replace(' ', '%', $specific))."%'";
-                              $specific = "meta_value = '". $wpdb->escape($specific) ."'";
-                            }
-
-                            if (isset($matching_ids)) {
-                                $matching_id_filter = implode(",", $matching_ids);
-                                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE post_id IN ($matching_id_filter) AND meta_key = '$meta_key' AND $specific");
-
-                                $wpdb->print_error();
-
-                                $total = count($specific);
-
-                            } else {
-                                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE $specific $sql_order");
-
-                $wpdb->print_error();
-
-                                $total = count($matching_ids);
-                            }
-                        }
-                        // Removed for performance improvement
-                        //UD_F::log($wpdb->last_query. " " . print_r($matching_ids, true));
-                        //print $wpdb->last_query;
-                    }
-                    break;
-            } // end switch
-            unset( $comma_and );
+                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') BETWEEN " . implode(" AND ", $hyphen_between)."";
+                  } else {
+                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
+                  }
+                } else {
+                  if($adate) {
+                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
+                  } else {
+                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` >= $hyphen_between[0]";
+                  }
+                }
+                $specific = $where_between;
+              }
+              
+              if ($specific == 'true') {
+                // If properties data were imported, meta value can be '1' instead of 'true'
+                // So we're trying to find also '1'
+                $specific = "meta_value IN ('true', '1')";
+              } elseif(!substr_count($specific, 'meta_value')) {
+                //$specific = "meta_value LIKE '%".(str_replace(' ', '%', $specific))."%'";
+                $specific = "meta_value = '". $wpdb->escape($specific) ."'";
+              }
+              
+              if (isset($matching_ids)) {
+                $matching_id_filter = implode(",", $matching_ids);
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE post_id IN ($matching_id_filter) AND meta_key = '$meta_key' AND $specific");
+                //$wpdb->print_error();
+              } else {
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE $specific $sql_order");
+                //$wpdb->print_error();
+              }
+              
+            }
+            
+          }
+          break;
+        
+      } // END switch
+      
+      unset( $comma_and );
       unset( $hyphen_between );
       //unset($specific);
-
-        } // endforeach
-
-        // remove duplicates
-        $matching_ids = array_unique( $matching_ids );
-
-        /* Stores the total Properties returned */
-        $total = $wpdb->get_var("SELECT COUNT(DISTINCT ID) FROM {$wpdb->prefix}posts WHERE (ID = '" . implode("' OR ID = '", $matching_ids) . "') AND post_status = 'publish'");
-
-        /* Sorts the returned Properties by the selected sort order */
-        if ( $sql_sort_by &&
-             $sql_sort_by != 'menu_order' &&
-        $sql_sort_by != 'post_date' &&
-             $sql_sort_by != 'post_title' ) {
-
-                $matching_ids = $wpdb->get_col("
-                    SELECT p.ID FROM {$wpdb->prefix}posts AS p, {$wpdb->prefix}postmeta AS pm
-                      WHERE p.ID IN (" . implode(",", $matching_ids) . ")
-                        AND p.ID = pm.post_id
-                        AND p.post_status = 'publish'
-                        AND pm.meta_key = '$sql_sort_by'
-                      ORDER BY CAST(pm.meta_value AS SIGNED) $sql_sort_order
-                      $limit_query");
-
-        }
-    else {
-
-      /* If the sorting order is not set, default to menu_order */
-            if( empty( $sql_sort_by ) ) {
-                $sql_sort_by = 'post_date';
-            }
-
-            $matching_ids = $wpdb->get_col("
-                SELECT ID FROM {$wpdb->prefix}posts
-                  WHERE ID IN (" . implode(",", $matching_ids) . ")
-                    AND post_status = 'publish'
-                  ORDER BY $sql_sort_by $sql_sort_order
-                  $limit_query"
-          );
-
-
-          //$wpdb->print_error();
-
-        }
-
-        if( !empty( $matching_ids ) ) {
-            $matching_ids['total'] = $total;
-            //UD_F::log("Search complete, returning: " . implode(" ,", $matching_ids));
-
-            return $matching_ids;
-        }
-
-        return false;
+      
+    } // END foreach
+    
+    // Return false, if there are any result using filter conditions
+    if (empty($matching_ids)) {
+      return false;
     }
+    
+    // Remove duplicates
+    $matching_ids = array_unique( $matching_ids );
+    
+    // Stores the total Properties returned
+    $total = $wpdb->get_var("SELECT COUNT(ID) FROM {$wpdb->prefix}posts WHERE ID IN ('" . implode("','", $matching_ids) . "') AND post_status = 'publish'");
+    
+    // Sorts the returned Properties by the selected sort order
+    if ($sql_sort_by &&
+        $sql_sort_by != 'menu_order' &&
+        $sql_sort_by != 'post_date' &&
+        $sql_sort_by != 'post_title' ) 
+    {
+      $result = $wpdb->get_col("
+        SELECT p.ID FROM {$wpdb->prefix}posts AS p, {$wpdb->prefix}postmeta AS pm
+          WHERE p.ID IN (" . implode(",", $matching_ids) . ")
+            AND p.ID = pm.post_id
+            AND p.post_status = 'publish'
+            AND pm.meta_key = '$sql_sort_by'
+          ORDER BY CAST(pm.meta_value AS SIGNED) $sql_sort_order
+          $limit_query
+      ");
+    } else {
+      // If the sorting order is not set, default to menu_order
+      if( empty( $sql_sort_by ) ) {
+        $sql_sort_by = 'post_date';
+      }
+      
+      $result = $wpdb->get_col("
+        SELECT ID FROM {$wpdb->prefix}posts
+          WHERE ID IN (" . implode(",", $matching_ids) . ")
+            AND post_status = 'publish'
+          ORDER BY $sql_sort_by $sql_sort_order
+          $limit_query
+      ");
+    }
+    
+    if( !empty( $result ) ) {
+      $result['total'] = $total;
+      //UD_F::log("Search complete, returning: " . implode(" ,", $matching_ids));
+      return $result;
+    }
+    
+    return false;
+  }
 
 
     /**
