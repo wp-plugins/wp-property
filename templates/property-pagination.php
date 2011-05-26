@@ -91,11 +91,13 @@ else
                 data: params_<?php echo $unique; ?>,
                 success: function(data) {
                     ajaxloader_<?php echo $unique; ?>.hide();
+                   
+                    
                     if(data.indexOf('wpp_nothing_found') > 0){
-                        jQuery('.wpp_property_view_result').html(data);
+                        jQuery('.wpp_property_view_result, .wpp_row_view').html(data);
                     }else{
                         var properties = jQuery(data).find('.property_div');
-                        var wpp_property_view_result = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_property_view_result');
+                        var wpp_property_view_result = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_property_view_result, #wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_row_view');
                         var do_loop = true;
                         wpp_property_view_result.html('');
                         if(properties.length > 0) {

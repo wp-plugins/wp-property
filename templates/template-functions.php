@@ -222,7 +222,8 @@ if(!function_exists('draw_stats')):
 
 
     $defaults = array(
-      'display' => 'dl_list'
+      'display' => 'dl_list',
+      'enable_shortcode' => 'false'
     );
 
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
@@ -247,6 +248,12 @@ if(!function_exists('draw_stats')):
       if($return_blank == 'false' && empty($value))
         continue;
 
+     $value = html_entity_decode($value);
+     
+      if($enable_shortcode == 'true')
+        $value = do_shortcode($value);
+      
+        
       // Make URLs into clickable links
       if($make_link == 'true' && WPP_F::isURL($value))
         $value = "<a href='{$value}' title='{$label}'>{$value}</a>";

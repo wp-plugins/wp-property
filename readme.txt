@@ -99,6 +99,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 * Spanish (ES)
 * Hungarian (HU)
 * Slovakian (SK)
+* Turkish (TR)
 
 == Installation ==
 
@@ -200,6 +201,11 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.6 =
+* Property meta can now execute shortcodes!
+* Made pagination backwards compatible to function with customized older versions of WP-Property themes
+* Added Turkish translation. 
 
 = 1.15.5 =
 * Properties -> Settings -> Plugins tab now displays the domain you should use when purchasing premium features.

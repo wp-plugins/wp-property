@@ -132,7 +132,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
 						continue;
 				?>
 					<h2><?php echo $meta_title; ?></h2>
-					<p><?php echo $post->$meta_slug; ?></p>
+          <p><?php echo  do_shortcode($post->$meta_slug); ?></p>
 				<?php endforeach; ?>
 				<?php endif; ?>
 

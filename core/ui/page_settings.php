@@ -37,7 +37,9 @@ if(isset($_REQUEST['message'])) {
 
  <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#wpp_settings_tabs").tabs({ cookie: { expires: 30 } });
+    jQuery("#wpp_settings_tabs").tabs();
+    
+    jQuery('#wpp_settings_tabs').tabs('option', 'cookie', { name: 'wpp_settings_tabs' });
 
   // Show settings array
   jQuery("#wpp_show_settings_array").click(function() {
