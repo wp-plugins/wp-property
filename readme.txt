@@ -164,6 +164,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.15.7 =
+* "For Sale" and "For Rent" attributes have been removed form the API.  These programmatically added attributes were causing some confusion amongst users.  If you need these attributes, add them using the Developer tab. 
+
 = 1.15 =
 * Default property-pagination.php template is updated to reflect the below-the-content pagination.
 
@@ -201,6 +204,11 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.7 =
+* Changed core to use load_plugin_textdomain() to load localization settings.
+* "For Sale" and "For Rent" attributes are no longer being added programmatically.  
+* Fixed default stylesheet for Supermap which was causing overflow issues with images.
 
 = 1.15.6 =
 * Property meta can now execute shortcodes!

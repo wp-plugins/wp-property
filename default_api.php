@@ -18,16 +18,22 @@
 	add_filter('wpp_get_property', 'add_display_address');
 
 	add_filter('wpp_property_inheritance', 'add_city_to_inheritance');
-	add_filter('wpp_searchable_attributes', 'add_city_to_searchable');
+  add_filter('wpp_searchable_attributes', 'add_city_to_searchable');
 
-	// Add sold/rented options
-	add_filter('wpp_property_stats', 'wpp_property_stats_add_sold_or_rented');
-	add_filter('wpp_property_stats_input_for_rent', 'wpp_property_stats_input_for_rent_make_checkbox', 0, 3);
-	add_filter('wpp_property_stats_input_for_sale', 'wpp_property_stats_input_for_sale_make_checkbox', 0, 3);
-	add_filter('wpp_stat_filter_for_rent', 'wpp_stat_filter_for_rent_fix');
-	add_filter('wpp_stat_filter_for_sale', 'wpp_stat_filter_for_sale_fix');
+  // Add sold/rented options
+  add_filter('wpp_property_stats', 'wpp_property_stats_add_sold_or_rented');
+  
+  /*
+    The following filters have been disabled on default (they were causing issues with users' customizations).  To enable, either place the following code
+    into your functions.php file, or create the attributes using the Developer tab.
+    
+    add_filter('wpp_property_stats_input_for_rent', 'wpp_property_stats_input_for_rent_make_checkbox', 0, 3);
+    add_filter('wpp_property_stats_input_for_sale', 'wpp_property_stats_input_for_sale_make_checkbox', 0, 3);
+    add_filter('wpp_stat_filter_for_rent', 'wpp_stat_filter_for_rent_fix');
+    add_filter('wpp_stat_filter_for_sale', 'wpp_stat_filter_for_sale_fix');
+  */
 
-	add_filter('the_password_form', 'wpp_password_protected_property_form');
+  add_filter('the_password_form', 'wpp_password_protected_property_form');
 
 	// Coordinate manual override
 	add_filter('wpp_property_stats_input_'. $wp_properties['configuration']['address_attribute'], 'wpp_property_stats_input_address', 0, 3);

@@ -34,21 +34,34 @@ if(!class_exists('UD_UI')):
 class UD_UI {
 
 
-	/**
-	 * Formats phone number for display
-	 *
- 	 *
-	 * @since 1.0
- 	 * @param string $phone_number
- 	 * @return string $phone_number
-	 */
-	function format_phone_number($phone_number) {
 
-	   $phone_number = ereg_replace("[^0-9]",'',$phone_number);
-		if(strlen($phone_number) != 10) return(False);
-		$sArea = substr($phone_number,0,3);
-		$sPrefix = substr($phone_number,3,3);
-		$sNumber = substr($phone_number,6,4);
+ /** 
+  * Formats phone number for display
+  *
+  *
+  * @since 1.5.17
+  */
+ function checked_in_array($item, $array) {
+   
+    if(is_array($array) && in_array($item, $array))
+      echo ' checked="checked" ';
+        
+ }
+ 
+  /**
+   * Formats phone number for display
+   *
+   * @since 1.0
+   * @param string $phone_number
+   * @return string $phone_number
+   */
+  function format_phone_number($phone_number) {
+
+     $phone_number = ereg_replace("[^0-9]",'',$phone_number);
+    if(strlen($phone_number) != 10) return(False);
+    $sArea = substr($phone_number,0,3);
+    $sPrefix = substr($phone_number,3,3);
+    $sNumber = substr($phone_number,6,4);
 		$phone_number = "(".$sArea.") ".$sPrefix."-".$sNumber;
 
 		return $phone_number;

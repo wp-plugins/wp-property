@@ -175,7 +175,7 @@ class class_admin_tools {
 
         <tfoot>
           <tr>
-            <td colspan='4'>
+            <td colspan='5'>
             <input type="button" class="wpp_add_row button-secondary" value="<?php _e('Add Row','wpp') ?>" />
             </td>
           </tr>
@@ -266,7 +266,7 @@ class class_admin_tools {
 
         <tfoot>
           <tr>
-            <td colspan='4'>
+            <td colspan='6'>
             <input type="button" class="wpp_add_row button-secondary" value="<?php _e('Add Row','wpp') ?>" />
             </td>
           </tr>

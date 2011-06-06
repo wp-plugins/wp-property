@@ -530,8 +530,14 @@ html[xmlns] .clearfix { display: block; }
  
 .super_map {
 	float: right;
-	width: 65%; }
- 
+  width: 65%; }
+  
+.super_map.no_sidebar {
+  width: 100%; }
+  
+.super_map .gmnoprint img {
+  background: none !important;}
+
 #content .super_map img { max-width: none; }
  
 input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 40px; }
@@ -563,25 +569,29 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
 	margin: 5px;
 	padding: 0;
 	font-size: 0.9em;
-	position: relative;
-	padding-left: 90px; }
+  position: relative;
+  width: 100%;
+   }
  
-	.super_map_list ul.property_in_list_items li {
-		display: block;
-		margin-right: 6px; }
+  .super_map_list ul.property_in_list_items li {
+    background: transparent;
+    list-style-type: none;
+    display: block;
+    margin-right: 6px; }
  
-		.super_map_list ul.property_in_list_items li.supermap_list_title span {
-			color: #004893;
-			font-size: 1.2em;
-			cursor: pointer;
-			text-decoration: none; }
+    .super_map_list ul.property_in_list_items li.supermap_list_title span {
+      color: #004893;
+      font-size: 1.2em;
+      cursor: pointer;
+      text-decoration: none; }
  
-		.super_map_list ul.property_in_list_items li.supermap_list_thumb {
-			position: absolute;
-			top: 5px;
-			left: 5px;
-			padding-left: 0;
-			margin-right: 10px; }
+    .super_map_list ul.property_in_list_items li.supermap_list_thumb {
+      float: left;
+      position: relative;
+      top: 5px;
+      left: 5px;
+      padding-left: 0;
+      margin-right: 10px; }
  
   
 #no_properties { background: #FF737A; }

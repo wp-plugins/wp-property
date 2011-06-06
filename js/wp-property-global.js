@@ -75,6 +75,9 @@ jQuery(document).ready(function() {
     // Don't allow to blank out slugs
     if(new_slug == "")
       return;
+      
+    //console.log('new_slug: ' + new_slug); 
+    //console.log('old_slug: ' + old_slug); 
 
     // If slug input.slug exists in row, we modify it
     jQuery(".slug" , this_row).val(new_slug);
@@ -115,20 +118,11 @@ jQuery(document).ready(function() {
   });
 
 
-
-
-  // Delete image type
+  // Delete dynamic row
   jQuery(".wpp_delete_row").live("click", function() {
     var parent = jQuery(this).parents('tr.wpp_dynamic_table_row');
     var row_count = jQuery(".wpp_delete_row:visible").length;
-    
-    var agents_field_name = jQuery("input[type=text]", parent).val();
-    var data = {
-      action: 'delete_agent_field_action',
-      agents_field_name: agents_field_name
-    }
-    jQuery.post(ajaxurl, data, function(response) {});
-    
+       
     // Blank out all values
     jQuery("input[type=text]", parent).val('');
     jQuery("input[type=checkbox]", parent).attr('checked', false);

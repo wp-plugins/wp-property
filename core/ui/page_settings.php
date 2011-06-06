@@ -37,10 +37,8 @@ if(isset($_REQUEST['message'])) {
 
  <script type="text/javascript">
   jQuery(document).ready(function() {
-    jQuery("#wpp_settings_tabs").tabs();
-    
-    jQuery('#wpp_settings_tabs').tabs('option', 'cookie', { name: 'wpp_settings_tabs' });
-
+    jQuery("#wpp_settings_tabs").tabs({ cookie: {  name: 'wpp_settings_tabs', expires: 30 } });    
+  
   // Show settings array
   jQuery("#wpp_show_settings_array").click(function() {
     jQuery("#wpp_show_settings_array_cancel").show();
@@ -621,6 +619,16 @@ if(isset($_REQUEST['message'])) {
          <input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
       </div>
 
+            
+      <div class="wpp_settings_block">
+        <?php if(function_exists('memory_get_usage')): ?>
+        <?php _e('Memory Usage:'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes. 
+        <?php endif; ?>
+        <?php if(function_exists('memory_get_peak_usage')): ?>
+        <?php _e('Peak Memory Usage:'); ?> <?php echo round((memory_get_peak_usage() / 1048576), 2); ?> megabytes. 
+        <?php endif; ?>     
+      </div>
+      
       <?php do_action('wpp_settings_help_tab'); ?>
     </div>
   </div>

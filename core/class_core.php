@@ -57,6 +57,7 @@ class WPP_Core {
  
     global $wp_properties, $wp_rewrite;
 
+    load_plugin_textdomain('wpp', WPP_Path . false, '/wp-property/langs');
     
     /** Making template-functions global but load after the premium features, giving the premium features priority. */
     include_once WPP_Templates . '/template-functions.php';
@@ -647,9 +648,7 @@ class WPP_Core {
     if($post->post_type == 'property') {
 
       $featured = get_post_meta($post->ID, 'featured', true);
-
-      if(class_exists('wpp_slideshow'))
-      $disable_slideshow = get_post_meta($post->ID, 'disable_slideshow', true);
+ 
       ?>
       <div class="misc-pub-section ">
 
@@ -935,8 +934,9 @@ class WPP_Core {
    */
   function template_redirect() {
     global $post, $property, $wp, $wp_query, $wp_properties, $wp_styles;
-
  
+     do_action('wpp_template_redirect');      
+     
     // Call on all pages because styles are used in widgets
     wp_enqueue_style('wp-property-frontend');
     wp_enqueue_style('wp-property-theme-specific');
@@ -945,8 +945,10 @@ class WPP_Core {
     if($post->post_type == "property")
       $single_page = true;
 
-     $is_search = (is_array($_REQUEST['wpp_search']) ? true : false);
+   $is_search = (is_array($_REQUEST['wpp_search']) ? true : false);
+ 
 
+ 
     // Determine if current request is for the overview page
     if(  $wp->request == $wp_properties['configuration']['base_slug'] || 
         $wp->query_string == "p=" . $wp_properties['configuration']['base_slug'] || 

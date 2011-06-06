@@ -39,8 +39,8 @@ body.property_page_show_agents .wp-list-table .column-id {
 }
 
 
-#wpp_inquiry_attribute_fields .wpp_delete_col {
-  width: 40px;
+ .wpp_delete_col {
+  width: 40px !important;
 }
 
 #metabox_profile_images .inside {
@@ -262,17 +262,13 @@ html[xmlns] .clearfix {
 
 
 
-/* Settings Page Begin */
-#wpp_settings_tabs table.ud_ui_dynamic_table tfoot td {
+table.ud_ui_dynamic_table tfoot td {
   background: #F5F5F5;
 }
 
-
-#wpp_settings_tabs table.ud_ui_dynamic_table {
+table.ud_ui_dynamic_table {
 	margin: 0;
 }
-
-/* Settings Page End */
 
 
 /*

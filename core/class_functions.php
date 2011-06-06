@@ -384,13 +384,21 @@ class WPP_F {
 
   }
 
-  static function draw_attribute_dropdown($args = '') {
+/**
+  * Render a dropdown of property attributes.
+  *
+  */
+  static function draw_attribute_dropdown($args = '', $extra_values) {
     global $wp_properties, $wpdb;
 
     $defaults = array('id' => 'wpp_attribute',  'name' => 'wpp_attribute',  'selected' => '');
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-
+    
     $attributes = $wp_properties['property_stats'];
+    
+    if(is_array($extra_values)) {
+     $attributes = array_merge($extra_values, $attributes);
+    }
 
     if(!is_array($attributes))
       return;
@@ -729,9 +737,8 @@ class WPP_F {
           $_REQUEST['wpp_settings'] = $decoded_settings;
       }
 
-
+      // Allow features to preserve their settings that are not configured on the settings page
       $wpp_settings = apply_filters('wpp_settings_save', $_REQUEST['wpp_settings'], $wp_properties);
-
 
       // Prevent removal of featured settings configurations if they are not present
       if(!empty($wp_properties['configuration']['feature_settings'])) {
