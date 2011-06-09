@@ -388,7 +388,7 @@ class WPP_F {
   * Render a dropdown of property attributes.
   *
   */
-  static function draw_attribute_dropdown($args = '', $extra_values) {
+  static function draw_attribute_dropdown($args = '', $extra_values = false) {
     global $wp_properties, $wpdb;
 
     $defaults = array('id' => 'wpp_attribute',  'name' => 'wpp_attribute',  'selected' => '');

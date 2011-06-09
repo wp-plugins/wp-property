@@ -205,6 +205,8 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.15.8 =
+* Bug fix with warning being displayed on Settings page 
 = 1.15.7 =
 * Changed core to use load_plugin_textdomain() to load localization settings.
 * "For Sale" and "For Rent" attributes are no longer being added programmatically.  

@@ -122,7 +122,13 @@ jQuery(document).ready(function() {
   jQuery(".wpp_delete_row").live("click", function() {
     var parent = jQuery(this).parents('tr.wpp_dynamic_table_row');
     var row_count = jQuery(".wpp_delete_row:visible").length;
-       
+    
+    if(jQuery(this).attr('verify_action') == 'true') {
+      if(!confirm('Are you sure?'))
+        return false;
+    }
+    
+    
     // Blank out all values
     jQuery("input[type=text]", parent).val('');
     jQuery("input[type=checkbox]", parent).attr('checked', false);

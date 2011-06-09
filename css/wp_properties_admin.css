@@ -409,6 +409,11 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
 	cursor: pointer;
 	text-decoration: underline; }
  
+.wpp_link.delete {
+  color: #FF0000;
+  text-decoration:underline;
+  
+}
 	.wpp_link:hover { color: #D54E21; }
  
 #property_meta.wpp_link {
