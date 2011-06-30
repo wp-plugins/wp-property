@@ -3,7 +3,7 @@ Contributors: andypotanin
 Donate link: http://twincitiestech.com/plugins/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.1.2
+Tested up to: 3.1.4
 Stable tag: trunk
 
 
@@ -204,6 +204,18 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.15.9 =
+* New: HTML code now rendered in meta fields on single property page.
+* Fixed issue spaces being removed from predefined values.
+* Fixed issue with 1 showing up on front-end instead of 'Yes'
+* Fixed issue with dashes in predefined values, they are now converted into HTML character.
+* Fixed bug with sorting for [property_overview] shortcode.
+* Added option to disable automatic feature download.
+* Added option to complete hide "Hidden Attributes" from property editing page - as opposed to being grayed out.
+* Added additional translation strings to property-pagination.php
+* Added new Google Map languages: Arabic, Bulgarian, and Thai
+* Added array_fill_keys() to support older versions of PHP (was causing errors when displaying [property_search] widget)
 
 = 1.15.8 =
 * Bug fix with warning being displayed on Settings page 

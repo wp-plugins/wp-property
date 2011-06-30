@@ -19,7 +19,7 @@ else
 
        <?php if(substr_count($query, 'pagi') && ($total > $per_page) && $pagination != 'off') : ?>
             <div class="properties_pagination" id="properties_pagination_<?php echo $unique; ?>">
-                <a class="nav prev disabled" href="javascript:;"><?php _e('Prev'); ?></a>
+                <a class="nav prev disabled" href="javascript:;"><?php _e('Prev', 'wpp'); ?></a>
                 <ul>
                     <?php
                     $page_number = 0;
@@ -36,7 +36,7 @@ else
                   }
                 } ?>
           </ul>
-          <a class="nav next" href="javascript:;"><?php _e('Next'); ?></a>
+          <a class="nav next" href="javascript:;"><?php _e('Next', 'wpp'); ?></a>
                 <div class="clear"></div>
             </div>
         <?php endif; ?>

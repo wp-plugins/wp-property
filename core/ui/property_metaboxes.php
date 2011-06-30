@@ -63,6 +63,13 @@ function metabox_meta($object) {
     $this_property_type = WPP_F::get_most_common_property_type();
 
   ?>
+  <style type="text/css">
+  <?php if($wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui'] == 'true'): ?>
+   .disabled_row {
+    display:none;
+   }
+  <?php endif; ?>
+  </style>
   <script type="text/javascript">
     jQuery(document).ready(function() {
 
@@ -190,26 +197,23 @@ function metabox_meta($object) {
 
           <?php
           
-              $value = get_post_meta($object->ID, $slug, true);
-              if ($value === true || $value == '1') {
+              $value = $property[$slug];
+              if ($value === true) {
                 $value = 'true';
               }
 
-             // Check if attribute has predefine values
-             if(!empty($wp_properties['predefined_values'][$slug])) {
-             
-               if(trim($wp_properties['predefined_values'][$slug]) == 'true,false' || trim($wp_properties['predefined_values'][$slug]) == 'false,true') {
-               
-                  echo apply_filters("wpp_property_stats_input_$slug", "<input type='hidden' name='wpp_data[meta][{$slug}]' value='false' /><input ".checked($value, 'true', false). "type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' value='true' /> <label for='wpp_meta_{$slug}'>".__('Enable.', 'wpp')."</label>", $slug, $property);               
-               
-               } else {
-
-                 foreach(explode(',', $wp_properties['predefined_values'][$slug]) as $option)
-                  $predefined_options[$slug][] = "<option ".selected($value, $option, false)." value='{$option}'>".trim($option)."</option>";
-
+              // Check if attribute has predefine values
+              if(!empty($wp_properties['predefined_values'][$slug])) {
+                $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$slug]));
+                if($predefined_values == 'true,false' || $predefined_values == 'false,true') {
+                  echo apply_filters("wpp_property_stats_input_$slug", "<input type='hidden' name='wpp_data[meta][{$slug}]' value='false' /><input ".checked($value, 'true', false). "type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' value='true' /> <label for='wpp_meta_{$slug}'>".__('Enable.', 'wpp')."</label>", $slug, $property);
+                } else {
+                  foreach(explode(',', $predefined_values) as $option) { 
+                  
+                    $predefined_options[$slug][] = "<option ".selected(esc_attr(trim($value)), esc_attr(trim(str_replace('-', '&ndash;', $option))), false)." value='" . esc_attr($option). "'>".trim(esc_attr($option))."</option>";
+                  }
                   echo apply_filters("wpp_property_stats_input_$slug", "<select id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'><option value=''> - </option>" . implode($predefined_options[$slug]) . "</select>", $slug, $property);
-                 
-              }
+                }
 
              } else {
 

@@ -385,6 +385,27 @@ class WPP_F {
   }
 
 /**
+  * Return an array of all available attributes and meta keys
+  *
+  */
+  static function get_total_attribute_array($args = '', $extra_values = false) {
+    global $wp_properties, $wpdb;
+
+    $defaults = array();
+    
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+    
+    $property_stats = $wp_properties['property_stats'];
+    $property_meta = $wp_properties['property_meta'];
+
+    $attributes = $property_stats + $property_stats + $property_meta;
+
+    return apply_filters('wpp_total_attribute_array', $attributes);
+
+
+  }
+
+/**
   * Render a dropdown of property attributes.
   *
   */
@@ -423,6 +444,8 @@ class WPP_F {
 
     $attributes = array(
       'en' => 'English',
+      'ar' => 'Arabic',
+      'bg' => 'Bulgarian',
       'cs' => 'Czech',
       'de' => 'German',
       'el' => 'Greek',
@@ -438,6 +461,7 @@ class WPP_F {
       'pt-PT' => 'Portuguese (Portugal)',
       'ru' => 'Russian',
       'sv' => 'Swedish',
+      'th' => 'Thai',
       'uk' => 'Ukranian');
 
     $attributes = apply_filters("wpp_google_maps_localizations", $attributes);
@@ -464,12 +488,14 @@ class WPP_F {
   /**
    * Checks for updates against TwinCitiesTech.com Server
    *
-    *
-    * @since 0.55
-    * @version 1.13.1
+   *
+   * @since 0.55
+   * @version 1.13.1
    *
     */
   static function feature_check($return = false) {
+    global $wp_properties;
+    
     $blogname = get_bloginfo('url');
     $blogname = urlencode(str_replace(array('http://', 'https://'), '', $blogname));
     $system = 'wpp';
@@ -481,7 +507,6 @@ class WPP_F {
      if(!$response)
       return;
 
-
     // Check for errors
     if(is_object($response) && !empty($response->errors)) {
 
@@ -490,35 +515,35 @@ class WPP_F {
         UD_F::log("Feature Update Error: " . $error_string);
       }
 
-      if($return)
+      if($return) {
         return sprintf(__('An error occured during premium feature check: <b> %s </b>.','wpp'), $error_string);
+      }
 
       return;
     }
 
     // Quit if failture
-    if($response[response][code] != '200')
+    if($response['response']['code'] != '200')
       return;
 
 
      $response = @json_decode($response[body]);
 
 
-    if(is_object($response->available_features)):
+    if(is_object($response->available_features)) {
 
       $response->available_features = UD_F::objectToArray($response->available_features);
 
-
       // Updata database
       $wpp_settings = get_option('wpp_settings');
-      $wpp_settings[available_features] =  UD_F::objectToArray($response->available_features);
+      $wpp_settings['available_features'] =  UD_F::objectToArray($response->available_features);
        update_option('wpp_settings', $wpp_settings);
 
 
-    endif;// available_features
+    } // available_features
 
 
-    if($response->features == 'eligible') {
+    if($response->features == 'eligible' && $wp_properties['configuration']['disable_automatic_feature_update'] != 'true') {
 
       // Try to create directory if it doesn't exist
       if(!is_dir(WPP_Premium)) {
@@ -529,15 +554,11 @@ class WPP_F {
       if(!is_dir(WPP_Premium))
         continue;
 
-
-
       // Save code
       if(is_object($response->code)) {
         foreach($response->code as $code) {
 
-
-
-           $filename = $code->filename;
+          $filename = $code->filename;
           $php_code = $code->code;
           $version = $code->version;
 
@@ -579,8 +600,12 @@ class WPP_F {
     // Update settings
     WPP_F::settings_action(true);
 
-    if($return)
+    if($return && $wp_properties['configuration']['disable_automatic_feature_update'] == 'true') {
+      return __('Update ran successfully but no features were downloaded because the setting is disabled. Enable in the "Developer" tab.','wpp');
+    
+    } elseif($return) {
       return __('Update ran successfully.','wpp');
+    }
   }
 
 
@@ -753,6 +778,7 @@ class WPP_F {
         }
       }
 
+      
       update_option('wpp_settings', $wpp_settings);
 
       $wp_rewrite->flush_rules();
@@ -801,6 +827,8 @@ class WPP_F {
     $wp_properties['property_types']       = apply_filters('wpp_property_types' , $wp_properties['property_types']);
     $wp_properties['taxonomies']         = apply_filters('wpp_taxonomies' , $wp_properties['taxonomies']);
 
+    $wp_properties = stripslashes_deep($wp_properties);
+     
     return $wp_properties;
 
   }
@@ -893,6 +921,35 @@ class WPP_F {
       }
     }
 
+  }
+  
+  /**
+   * Check if premium feature is installed or not
+   * @param string $slug. Slug of premium feature
+   * @return boolean.
+   */
+  static function check_premium($slug) {
+    global $wp_properties;
+    
+    if(empty($wp_properties['installed_features'][$slug]['version'])) {
+      return false;
+    }
+    
+    $file = WPP_Premium . "/" . $slug . ".php";
+    
+    $default_headers = array(
+      'Name' => __('Name','wpp'),
+      'Version' => __('Version','wpp'),
+      'Description' => __('Description','wpp')
+    );
+    
+    $plugin_data = @get_file_data( $file , $default_headers, 'plugin' );
+    
+    if(!is_array($plugin_data) || empty($plugin_data['Version'])) {
+      return false;
+    }
+    
+    return true;
   }
 
   static function check_plugin_updates() {
@@ -1385,7 +1442,7 @@ class WPP_F {
             AND p.ID = pm.post_id
             AND p.post_status = 'publish'
             AND pm.meta_key = '$sql_sort_by'
-          ORDER BY CAST(pm.meta_value AS SIGNED) $sql_sort_order
+          ORDER BY pm.meta_value $sql_sort_order
           $limit_query
       ");
     } else {
@@ -1818,8 +1875,11 @@ class WPP_F {
     $property_stats = $wp_properties['property_stats'];
 
     foreach($property_stats as $slug => $label) {
-      $value = $property_object->$slug;
-
+      $value = get_post_meta($property_object->ID, $slug, true);
+      if ($value === true) {
+        $value = 'true';
+      }
+      
       // Exclude passed variables
       if(is_array($exclude) && in_array($slug, $exclude))
         continue;
@@ -2204,4 +2264,31 @@ if(!class_exists('XmlToArray')){
 
   }//XmlToArray
 }
-?>
+
+
+
+/**
+ * Implementing this for old versions of PHP
+ *
+ * @since 1.15.9
+ *
+ */
+if(!function_exists('array_fill_keys')){
+
+  function array_fill_keys($target, $value = '') {
+
+    if(is_array($target)) {
+
+      foreach($target as $key => $val) {
+
+        $filledArray[$val] = is_array($value) ? $value[$key] : $value;
+
+      }
+
+    }
+
+    return $filledArray;
+
+  }
+
+}

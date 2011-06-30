@@ -2,7 +2,7 @@
 /*
 Name: Admin Tools
 Class: class_admin_tools
-Version: 2.8
+Version: 2.9
 Description: Tools for developing themes and extensions for WP-Property.
 */
 
@@ -316,10 +316,18 @@ class class_admin_tools {
 
 
     <tr>
-      <th><?php _e('Log','wpp'); ?></th>
+      <th><?php _e('Advanced Options','wpp'); ?></th>
       <td>
-        <?php $show_log_text = __('Show Log.','wpp');echo UD_UI::checkbox("name=wpp_settings[configuration][show_ud_log]&label=$show_log_text", $wp_properties['configuration']['show_ud_log']); ?> <br />
-        <span class="description"><?php _e('The log is always active, but the UI is hidden.  If enabled, it will be visible in the admin sidebar.','wpp'); ?></span>
+        <ul>
+          <li>
+            <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][show_ud_log]&label=" . __('Show Log.','wpp'), $wp_properties['configuration']['show_ud_log']); ?> <br />
+            <span class="description"><?php _e('The log is always active, but the UI is hidden.  If enabled, it will be visible in the admin sidebar.','wpp'); ?></span>
+          </li>
+          <li>
+            <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][disable_automatic_feature_update]&label=" . __('Disable automatic feature updates.','wpp'), $wp_properties['configuration']['disable_automatic_feature_update']); ?> <br />
+            <span class="description"><?php _e('If disabled, WP-Property will not automatically download updates to premium features.','wpp'); ?></span>
+          </li>
+        </ul>
       </td>
     </tr>
   </table>

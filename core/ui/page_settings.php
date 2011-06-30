@@ -32,7 +32,6 @@ if(isset($_REQUEST['message'])) {
     $parseUrl = parse_url(trim(get_bloginfo('url')));
     $this_domain = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
    
-
 ?>
 
  <script type="text/javascript">
@@ -418,7 +417,8 @@ if(isset($_REQUEST['message'])) {
           <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
         </ul>
 
-        <p>Attributes to display in popup after a property on a map is clicked.</p>
+        <p><?php _e('Attributes to display in popup after a property on a map is clicked.', 'wpp'); ?></p>
+        <div class="wp-tab-panel">
         <ul>
 
           <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_property_title]&label=Show Property Title", $wp_properties['configuration']['google_maps']['infobox_settings']['show_property_title']); ?></li>
@@ -433,6 +433,7 @@ if(isset($_REQUEST['message'])) {
           <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=Show Directions Link", $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
 
         </ul>
+        </div>
       </td>
     </tr>
 
@@ -482,14 +483,14 @@ if(isset($_REQUEST['message'])) {
 
     <tr>
       <th>
-        <?php _e('Admin Overview Page','wpp') ?>
+        <?php _e('Admin Settings','wpp') ?>
       </th>
         <td>
-        <p>
-          <?php _e('These settings are for the main property page on the back-end.','wpp') ?>
-        </p>
         <ul>
-          <li><?php _e('Thumbnail size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][admin_ui][overview_table_thumbnail_size]&selected=" . $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']); ?></li>
+          <li><?php _e('Thumbnail size for property images displayed on Properties page: ','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][admin_ui][overview_table_thumbnail_size]&selected=" . $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']); ?></li>
+          <li>
+          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][completely_hide_hidden_attributes_in_admin_ui]&label=" . __("Completely hide hidden attributes when editing properties."), $wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui']); ?>
+          </li>
         </ul>
       </td>
     </tr>
@@ -536,14 +537,17 @@ if(isset($_REQUEST['message'])) {
         <input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][image]" value="<?php echo $plugin_data['image']; ?>" />
         <input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $plugin_data['description']; ?>" />
         
+        <?php $installed = WPP_F::check_premium($plugin_slug); ?>
+        <?php $active = (@$wp_properties['installed_features'][$plugin_slug]['disabled'] != 'false' ? true : false); ?>
+        
+        <?php if($installed): ?> 
         <?php /* Do this to preserve settings after page save. */ ?>
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][disabled]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['disabled']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][name]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['name']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][version]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['description']; ?>" />
-
-        <?php $installed = (!empty($wp_properties['installed_features'][$plugin_slug]['version']) ? true : false); ?>
-        <?php $active = (@$wp_properties['installed_features'][$plugin_slug]['disabled'] != 'false' ? true : false); ?>
+        <?php endif; ?>
+        
         <tr class="wpp_premium_feature_block">
 
           <td valign="top" class="wpp_premium_feature_image">

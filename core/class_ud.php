@@ -581,7 +581,7 @@ class UD_F {
             
             // If the page doesn't exist, return default url (base_slug)
             if(empty($page)) {
-                return site_url() . "/" . $wp_properties['configuration']['base_slug'];
+                return site_url() . "/" . $wp_properties['configuration']['base_slug'] . '/';
             }
             
             return get_permalink($page);

@@ -2,6 +2,15 @@ body.property_page_show_agents .wp-list-table .column-id {
   width: 30px;
 }
 
+.wp-tab-panel {
+  border-style: solid;
+  border-width: 1px;
+  height: 200px;
+  overflow: auto;
+  padding: 0.5em 0.9em;
+  border-color: #DFDFDF;
+}
+
 .wpp_import_import_schedule {
   background: none repeat scroll 0 0 #F4F4F1;
   border: 1px solid #E0E0E0;
@@ -306,6 +315,10 @@ table.ud_ui_dynamic_table {
 	overflow: scroll;
 	width: 100%; }
  
+.wpp_class_pre ul {
+  padding: 10px;
+}
+
 .wpp_save_changes_row {
 	clear: both;
 	margin-top: 15px; }

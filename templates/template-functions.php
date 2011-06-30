@@ -161,11 +161,11 @@ if(!function_exists('get_features')):
     global $post;
 
     if(is_array($property))
-      $post = (object) $property;
+      $property = (object) $property;
 
     if(!$property)
       $property = $post;
-
+    
     $defaults = array('type' => 'property_feature', 'format' => 'comma', 'links' => true);
     $args = wp_parse_args( $args, $defaults );
 
@@ -235,12 +235,12 @@ if(!function_exists('draw_stats')):
 
         $alt = 'alt';
 
-        foreach($stats as $label => $value){
-            $labels_to_keys = array_flip($wp_properties['property_stats']);
-            if(empty($value))
-               return;
+      foreach($stats as $label => $value){
+          $labels_to_keys = array_flip($wp_properties['property_stats']);
+          if(empty($value))
+             return;
 
-            $tag = $labels_to_keys[$label];
+      $tag = $labels_to_keys[$label];
 
       $value =  trim(apply_filters("wpp_stat_filter_$tag", $value, $property));
 
@@ -248,20 +248,25 @@ if(!function_exists('draw_stats')):
       if($return_blank == 'false' && empty($value))
         continue;
 
-     $value = html_entity_decode($value);
+      $value = html_entity_decode($value);
      
       if($enable_shortcode == 'true')
         $value = do_shortcode($value);
       
-        
+      if($value == 'true') {
+        $value = __('Yes', 'wpp');
+      } else if ($value == 'false') {
+        $value = __('No', 'wpp');
+      }
+      
       // Make URLs into clickable links
       if($make_link == 'true' && WPP_F::isURL($value))
         $value = "<a href='{$value}' title='{$label}'>{$value}</a>";
 
-            if ($alt == '' )
-                $alt = "alt";
-            else
-                $alt = '';
+        if ($alt == '' )
+            $alt = "alt";
+        else
+            $alt = '';
 
       switch($display) {
 
