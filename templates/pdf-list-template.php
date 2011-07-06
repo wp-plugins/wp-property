@@ -45,7 +45,7 @@ foreach ($list_data['attributes'] as $attr_id => $attr_value) {
     // Check, if image's url exists we approve image
     if( !empty( $property['images']['thumbnail'] ) ) {
       $headers = @get_headers( $property['images']['thumbnail'] );
-      if( strpos( $headers[0], '200' ) ) {
+      if( strpos( $headers[0], '200' ) && strpos( $headers[8], 'image' ) ) {
         $image = '<table cellspacing="0" cellpadding="5" border="0" style="background-color:' . $list_data['background'] . '"><tr><td>';
         $image .= '<img width="'. $image_width .'" height="'. $image_height .'" src="'. $property['images']['thumbnail'] .'" alt="" />';
         $image .= '</td></tr></table>';

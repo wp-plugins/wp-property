@@ -11,6 +11,10 @@ add_action('wp_ajax_nopriv_wpp_export_properties', array('wpi_property_export', 
 
 /**
  * This is the actual object which peforms all of the functionality 
+ *
+ * @todo: wpp_agents data should include agent data not just ID
+ * @todo: Featured image is not being imported. Should be able to take from feed.
+ *
  */
 class wpi_property_export {
   /**
@@ -95,14 +99,17 @@ class wpi_property_export {
     foreach($wpq->posts as $post){
       if(isset($_REQUEST['limit']) && $count == $_REQUEST['limit']) break;
       $count++;
-      $property = WPP_F::get_property($post->ID, "return_object=true&load_parent=false");
-      // If we have a request for a certain type of property, fix the results
-      if(isset($_REQUEST['property_type']) && !empty($_REQUEST['property_type']) && $_REQUEST['property_type'] != $property->property_type){
-        continue;
+      $property = WPP_F::get_property($post->ID, "return_object=true&load_parent=false");      
+      
+      if($property->post_parent && !$property->parent_gpid) {
+        $property->parent_gpid = WPP_F::maybe_set_gpid($property->post_parent);
       }
+       
       // Unset the children, as we'll get to those
       unset(
-        $property->post_status,
+        $property->wpp_agents,
+        $property->comment_count,
+        $property->post_modified_gmt,
         $property->comment_status,
         $property->post_password,
         $property->children,
@@ -114,7 +121,8 @@ class wpi_property_export {
         $property->post_modified,
         $property->post_mime_type
       );
-      // Set unique ID
+      
+      // Set unique site ID
       $property->wpp_unique_id = md5($api_key.$property->ID);
       
       $xml = new XML_Serializer();

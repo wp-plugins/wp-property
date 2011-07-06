@@ -14,14 +14,16 @@
 	add_filter("wpp_stat_filter_deposit", 'add_dollar_sign');
 	add_filter("wpp_stat_filter_area", 'add_square_foot');
 	add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
-
-	add_filter('wpp_get_property', 'add_display_address');
-
-	add_filter('wpp_property_inheritance', 'add_city_to_inheritance');
+  
+  add_filter('wpp_get_property', 'add_display_address');
+  // Exclude hidden attributes from frontend
+  add_filter('wpp_get_property', 'wpp_exclude_hidden_attributes');
+  
+  add_filter('wpp_property_inheritance', 'add_city_to_inheritance');
   add_filter('wpp_searchable_attributes', 'add_city_to_searchable');
 
   // Add sold/rented options
-  add_filter('wpp_property_stats', 'wpp_property_stats_add_sold_or_rented');
+  //add_filter('wpp_property_stats', 'wpp_property_stats_add_sold_or_rented');
   
   /*
     The following filters have been disabled on default (they were causing issues with users' customizations).  To enable, either place the following code
@@ -142,55 +144,67 @@
 	/**
 	 * Add UI to set custom coordinates on property editing page
  	 *
-	 * @since 1.04
-	 */
-	function wpp_property_stats_input_address($content, $slug, $object) {
-		$checked = ($object['manual_coordinates'] == 'true' ? 'checked="checked"' : false);
-
-		ob_start();
-
+   * @since 1.04
+   */
+  function wpp_property_stats_input_address($content, $slug, $object) {
+ 
+    ob_start();
+ 
         ?>
         <div class="wpp_attribute_row_address">
-        	<?php echo $content; ?>
-			<div class="wpp_attribute_row_address_options">
-    			<input type="hidden" name="wpp_data[meta][manual_coordinates]" value="false" />
-    			<input type="checkbox" id="wpp_manual_coordinates" name="wpp_data[meta][manual_coordinates]" value="true" <?php echo $checked; ?> />
-    			<label for="wpp_manual_coordinates"><?php echo __('Set Coordinates Manually (When unchecked the coordinates will be set (and validated) by Google Maps)','wpp'); ?></label>
-    			<div id="wpp_coordinates" style="display:none;">
-    				<ul>
-    					<li>
-    			    		<input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo $object['latitude']; ?>" />
-    			    		<label><?php echo __('Latitude','wpp') ?></label>
-    			    		<div class="wpp_clear"></div>
-    			    	</li>
-    			    	<li>
-    			    		<input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo $object['longitude']; ?>" />
-    			    		<label><?php echo __('Longitude','wpp') ?></label>
-    			    		<div class="wpp_clear"></div>
-    			    	</li>
-    			    </ul>
-    			</div>
-			</div>
-		</div>
-		<script>
-			if(jQuery('input#wpp_manual_coordinates').attr('checked') == true){
-				jQuery('#wpp_coordinates').show();
-			}
-			jQuery('input#wpp_manual_coordinates').change(function(){
-				if(jQuery(this).attr('checked') == true){
-					jQuery('#wpp_coordinates').show();
-				}else{
-					jQuery('#wpp_coordinates').hide();
-				}
-			});
-		</script>
-		<?php
+          <?php echo $content; ?>
+      <div class="wpp_attribute_row_address_options">
+          <input type="hidden" name="wpp_data[meta][manual_coordinates]" value="false" />
+          <input type="checkbox" id="wpp_manual_coordinates" name="wpp_data[meta][manual_coordinates]" value="true" <?php checked($object['manual_coordinates'], 1); ?> />
+          <label for="wpp_manual_coordinates"><?php echo __('Set Coordinates Manually.','wpp'); ?></label>
+          <div id="wpp_coordinates" style="<?php if(!$object['manual_coordinates']) { ?>display:none;<?php } ?>">
+            <ul>
+              <li>
+                  <input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo $object['latitude']; ?>" />
+                  <label><?php echo __('Latitude','wpp') ?></label>
+                  <div class="wpp_clear"></div>
+                </li>
+                <li>
+                  <input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo $object['longitude']; ?>" />
+                  <label><?php echo __('Longitude','wpp') ?></label>
+                  <div class="wpp_clear"></div>
+                </li>
+              </ul>
+          </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+    
+      jQuery(document).ready(function() {
+      
+        jQuery('input#wpp_manual_coordinates').change(function() {
+      
+        var use_manual_coordinates;
+        
+        if(jQuery(this).is(":checked")) {
+          use_manual_coordinates = true;
+          jQuery('#wpp_coordinates').show();
+          
+        } else {
+          use_manual_coordinates = false;          
+          jQuery('#wpp_coordinates').hide();
+        }
+        
+ 
+      
+      });
+      
+ 
+      });
+      
+    </script>
+    <?php
 
-		$content = ob_get_contents();
+    $content = ob_get_contents();
         ob_end_clean();
 
         return $content;
-	}
+  }
 
 
 	/**
@@ -566,8 +580,28 @@
 		}
 		$result[] = $max;
 
-	    return $result;
-	}
+      return $result;
+  }
+  
+  /**
+   * Exclude Hidden Property Atributes from data to don't show them on frontend
+   * @param array $property
+   * @return array $property
+   */
+  function wpp_exclude_hidden_attributes($property) {
+    global $wp_properties;
+    
+    if(!is_admin()) {
+      foreach($property as $slug => $value) {
+        // Determine if the attribute is hidden for frontend
+        if(in_array($slug, (array)$wp_properties['hidden_frontend_attributes'])) {
+          unset($property[$slug]);
+        }
+      }
+    }
+    
+    return $property;
+  }
 
 
-	?>
+  ?>

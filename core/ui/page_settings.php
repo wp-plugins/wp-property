@@ -133,7 +133,8 @@ if(isset($_REQUEST['message'])) {
  </script>
 
 <div class="wrap">
-<h2><?php _e('Property Settings','wpp'); ?></h2>
+<?php screen_icon(); ?>
+<h2 class='wpp_settings_page_header'><?php _e('Property Settings','wpp'); ?></h2>
 
 <?php if(isset($wp_messages['error']) && $wp_messages['error']): ?>
 <div class="error">
@@ -259,13 +260,20 @@ if(isset($_REQUEST['message'])) {
     <tr>
       <th><?php _e('General Settings','wpp'); ?></th>
       <td>
-        <p><?php _e('These are the general display settings','wpp'); ?></p>
+
           <ul>
             <li><?php
                   $default_css_text = __('Automatically include default CSS.','wpp');
                   echo UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=$default_css_text", $wp_properties['configuration']['autoload_css']); ?></li>
+            
+            <?php if(WPP_F::has_theme_specific_stylesheet()) { ?>
+            <li>
+                 <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" .  __('Do not load theme-specific stylesheet.','wpp'), $wp_properties['configuration']['do_not_load_theme_specific_css']); ?>
+                 <div class="description"><?php _e('This version of WP-Property has a stylesheet made specifically for the theme you are using.', 'wpp'); ?></div>
+                 </li>
+            </li>
+            <?php } /* WPP_F::has_theme_specific_stylesheet() */  ?>
           </ul>
-
       </td>
     </tr>
 
@@ -571,12 +579,18 @@ if(isset($_REQUEST['message'])) {
 
                 <div class="alignleft">
                 <?php
-                   $disable_text = __('Disable plugin.','wpp');
-                   echo UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=$disable_text", $wp_properties['installed_features'][$plugin_slug]['disabled']); ?>
-                </div>
 
+                if($wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] == 'true')  { 
+                  printf(__('This feature is disabled because it requires WP-Property %1$s or higher.'), $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']);
+                } else {                    
+                  echo UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=" . __('Disable plugin.','wpp'), $wp_properties['installed_features'][$plugin_slug]['disabled']); 
+                
+                 ?>
+                </div>
                 <div class="alignright"><?php _e('Feature installed, using version','wpp') ?> <?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>.</div>
-              <?php else: ?>
+              <?php }
+              
+              else: ?>
                 <?php $pr_link = 'http://twincitiestech.com/plugins/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">TwinCitiesTech.com</a> to purchase this feature.','wpp'),$pr_link); ?>
               <?php endif; ?>
             </div>

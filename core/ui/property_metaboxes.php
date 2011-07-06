@@ -188,8 +188,24 @@ function metabox_meta($object) {
       </td>
     </tr>
 
-    <?php foreach($property_stats as $slug => $label): ?>
-      <tr class="wpp_attribute_row wpp_attribute_row_<?php echo $slug; ?> <?php if(is_array($wp_properties['hidden_attributes'][$property['property_type']]) && in_array('parent', $wp_properties['hidden_attributes'][$property['property_type']])) echo 'disabled_row;'; ?>">
+    <?php foreach($property_stats as $slug => $label): 
+    
+     // Setup row classes
+    $row_classes = array('wpp_attribute_row');
+    
+    $row_classes[] = "wpp_attribute_row_{$slug}";
+    
+    if(is_array($wp_properties['hidden_attributes'][$property['property_type']]) && in_array('parent', $wp_properties['hidden_attributes'][$property['property_type']])) {
+      $row_classes[] = 'disabled_row';    
+    }
+    
+    if(in_array($slug, (array)$wp_properties['hidden_frontend_attributes'])) {      
+      $row_classes[] = 'wpp_hidden_frontend_attribute';    
+    }
+    
+    
+    ?>
+      <tr class="  <?php echo implode(' ', $row_classes); ?>">
         <th><label for="wpp_meta_<?php echo $slug; ?>"><?php echo $label; ?></label></th>
         <td class="wpp_attribute_cell">
 
@@ -214,11 +230,9 @@ function metabox_meta($object) {
                   }
                   echo apply_filters("wpp_property_stats_input_$slug", "<select id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'><option value=''> - </option>" . implode($predefined_options[$slug]) . "</select>", $slug, $property);
                 }
-
-             } else {
-
-              echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $property);
-            }
+              } else {
+                echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input' value=\"{$value}\" />", $slug, $property);
+              }
           ?>
 
 

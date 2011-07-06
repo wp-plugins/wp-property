@@ -13,13 +13,88 @@
 class WPP_F {
 
 
+  /**
+   * Resizes (generate) image.
+   * @param integer(string) $attachment_id
+   * @param string $size. Size name
+   * @return array. Image data. Or FALSE if file could not be generated.
+   * @since 1.6
+   */
+  static function generate_image($attachment_id, $size) {
+    global $_wp_additional_image_sizes;
+
+    // Determine if params are empty
+    if(empty($attachment_id) || empty($size)) {
+      return false;
+    }
+
+    // Check if image file exists
+    $file = get_attached_file( $attachment_id );
+    if(empty($file)) {
+      return false;
+    }
+
+    // Get attachment metadata
+    $metadata = get_post_meta($attachment_id, '_wp_attachment_metadata');
+    if(empty($metadata)) {
+      return false;
+    }
+
+    // Get width, height and crop for new image
+    if ( isset( $_wp_additional_image_sizes[$size]['width'] ) ) {
+      $width = intval( $_wp_additional_image_sizes[$size]['width'] ); // For theme-added sizes
+    } else {
+      $width = get_option( "{$size}_size_w" ); // For default sizes set in options
+    } if ( isset( $_wp_additional_image_sizes[$size]['height'] ) ) {
+      $height = intval( $_wp_additional_image_sizes[$size]['height'] ); // For theme-added sizes
+    } else {
+      $height = get_option( "{$size}_size_h" ); // For default sizes set in options
+    } if ( isset( $_wp_additional_image_sizes[$size]['crop'] ) ) {
+      $crop = intval( $_wp_additional_image_sizes[$size]['crop'] ); // For theme-added sizes
+    } else {
+      $crop = get_option( "{$size}_crop" ); // For default sizes set in options
+    }
+
+    // Try to generate file and update attachment data
+    $resized = image_make_intermediate_size( $file, $width, $height, $crop );
+    if ( $resized ) {
+      $metadata['sizes'][$size] = $resized;
+      update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+      return $resized;
+    }
+
+    return false;
+  }
+
+
+  /**
+   * Check if theme-specific stylesheet exists.
+   *
+   * get_option('template') seems better choice than get_option('stylesheet'), which returns the current theme's slug
+   * which is a problem when a child theme is used. We want the parent theme's slug.
+   *
+   * @since 1.6
+   *
+   */
+   static function has_theme_specific_stylesheet() {
+
+    $theme_slug = get_option('template');
+
+    if(file_exists( WPP_Templates . "/theme-specific/{$theme_slug}.css")) {
+      return true;
+    }
+
+    return false;
+
+  }
+
 
   /**
    * Check permissions and ownership of premium folder.
    *
-    * @since 1.13
+   * @since 1.13
    *
-    */
+   */
    static function check_premium_folder_permissions() {
     global $wp_messages;
 
@@ -392,9 +467,9 @@ class WPP_F {
     global $wp_properties, $wpdb;
 
     $defaults = array();
-    
+
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-    
+
     $property_stats = $wp_properties['property_stats'];
     $property_meta = $wp_properties['property_meta'];
 
@@ -414,9 +489,9 @@ class WPP_F {
 
     $defaults = array('id' => 'wpp_attribute',  'name' => 'wpp_attribute',  'selected' => '');
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-    
+
     $attributes = $wp_properties['property_stats'];
-    
+
     if(is_array($extra_values)) {
      $attributes = array_merge($extra_values, $attributes);
     }
@@ -495,7 +570,7 @@ class WPP_F {
     */
   static function feature_check($return = false) {
     global $wp_properties;
-    
+
     $blogname = get_bloginfo('url');
     $blogname = urlencode(str_replace(array('http://', 'https://'), '', $blogname));
     $system = 'wpp';
@@ -602,7 +677,7 @@ class WPP_F {
 
     if($return && $wp_properties['configuration']['disable_automatic_feature_update'] == 'true') {
       return __('Update ran successfully but no features were downloaded because the setting is disabled. Enable in the "Developer" tab.','wpp');
-    
+
     } elseif($return) {
       return __('Update ran successfully.','wpp');
     }
@@ -778,7 +853,7 @@ class WPP_F {
         }
       }
 
-      
+
       update_option('wpp_settings', $wpp_settings);
 
       $wp_rewrite->flush_rules();
@@ -828,7 +903,7 @@ class WPP_F {
     $wp_properties['taxonomies']         = apply_filters('wpp_taxonomies' , $wp_properties['taxonomies']);
 
     $wp_properties = stripslashes_deep($wp_properties);
-     
+
     return $wp_properties;
 
   }
@@ -870,6 +945,7 @@ class WPP_F {
   /**
    * Check for premium features and load them
    *
+   * @updated 1.6
    * @since 0.624
    *
     */
@@ -879,7 +955,8 @@ class WPP_F {
     $default_headers = array(
       'Name' => __('Name','wpp'),
       'Version' => __('Version','wpp'),
-      'Description' => __('Description','wpp')
+      'Description' => __('Description','wpp'),
+      'Minimum WPP Version' => __('Minimum WPP Version','wpp')
     );
 
 
@@ -887,8 +964,10 @@ class WPP_F {
       return;
 
     if ($premium_dir = opendir(WPP_Premium)) {
-      if(file_exists(WPP_Premium . "/index.php"))
+      
+      if(file_exists(WPP_Premium . "/index.php")) {
         @include_once(WPP_Premium . "/index.php");
+      }
 
       while (false !== ($file = readdir($premium_dir))) {
 
@@ -899,30 +978,53 @@ class WPP_F {
 
           $plugin_slug = str_replace(array('.php'), '', $file);
 
-
-
           $plugin_data = @get_file_data( WPP_Premium . "/" . $file, $default_headers, 'plugin' );
           $wp_properties['installed_features'][$plugin_slug]['name'] = $plugin_data['Name'];
           $wp_properties['installed_features'][$plugin_slug]['version'] = $plugin_data['Version'];
           $wp_properties['installed_features'][$plugin_slug]['description'] = $plugin_data['Description'];
+          
+          if($plugin_data['Minimum WPP Version']) {
+            $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version'] = $plugin_data['Minimum WPP Version'];                        
+          }
+                   
+          //** If feature has a Minimum WPP Version and it is more than current version - we do not load **/
+          $feature_requires_upgrade = (!empty($wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) && (version_compare(WPP_Version, $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) < 0) ? true : false);
+ 
+          if($feature_requires_upgrade) {
+            
+            //** Disable feature if it requires a higher WPP version**/
+            
+            $wp_properties['installed_features'][$plugin_slug]['disabled'] = 'true';
+            $wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] = 'true';
+            
+          } elseif ($wp_properties['installed_features'][$plugin_slug]['disabled'] != 'true') {
+            
+            //** Load feature, everything is good**/
+            
+            $wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] = 'false';
 
-          // Check if the plugin is disabled
-          if($wp_properties['installed_features'][$plugin_slug]['disabled'] != 'true') {
-            @include_once(WPP_Premium . "/" . $file);
+            if(WP_DEBUG == true) {
+              include_once(WPP_Premium . "/" . $file);
+            } else {
+              @include_once(WPP_Premium . "/" . $file);
+            }
 
              // Disable plugin if class does not exists - file is empty
-            if(!class_exists($plugin_slug))
+            if(!class_exists($plugin_slug)) {
               unset($wp_properties['installed_features'][$plugin_slug]);
+            }
 
             $wp_properties['installed_features'][$plugin_slug]['disabled'] = 'false';
           }
 
         }
+ 
       }
     }
+ 
 
   }
-  
+
   /**
    * Check if premium feature is installed or not
    * @param string $slug. Slug of premium feature
@@ -930,25 +1032,25 @@ class WPP_F {
    */
   static function check_premium($slug) {
     global $wp_properties;
-    
+
     if(empty($wp_properties['installed_features'][$slug]['version'])) {
       return false;
     }
-    
+
     $file = WPP_Premium . "/" . $slug . ".php";
-    
+
     $default_headers = array(
       'Name' => __('Name','wpp'),
       'Version' => __('Version','wpp'),
       'Description' => __('Description','wpp')
     );
-    
+
     $plugin_data = @get_file_data( $file , $default_headers, 'plugin' );
-    
+
     if(!is_array($plugin_data) || empty($plugin_data['Version'])) {
       return false;
     }
-    
+
     return true;
   }
 
@@ -1007,8 +1109,7 @@ class WPP_F {
 
       // Get premium features on activation
       @WPP_F::feature_check();
-
-
+      
     }
 
     return;
@@ -1209,10 +1310,10 @@ class WPP_F {
    *
   */
   static function get_properties($args = "") {
-    global $wpdb;
-    
+    global $wpdb, $wp_properties;
+
     $defaults = array('property_type' => 'all');
-    
+
     /* I haven't seen this doing anything yet, but leaving it to avoid unseen errors.
         if( is_array($maybe_array = unserialize($args)) ) {
             $query = $maybe_array;
@@ -1220,21 +1321,21 @@ class WPP_F {
             $query = wp_parse_args( $args, $defaults );
         }
     */
-    
+
     $query = wp_parse_args( $args, $defaults );
-    
+
     $query = apply_filters('wpp_get_properties_query', $query);
-    
+
     if (substr_count($query['pagi'], '--')) {
       $pagi = explode('--', $query['pagi']);
       if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1])) {
         $limit_query = "LIMIT $pagi[0], $pagi[1];";
       }
     }
-    
+
     unset( $query['pagi'] );
     unset( $query['pagination'] );
-    
+
     /* Handles the sort_by parameter in the Short Code */
     if( $query['sort_by'] ) {
       $sql_sort_by = $query['sort_by'];
@@ -1243,34 +1344,34 @@ class WPP_F {
       $sql_sort_by = 'post_date';
       $sql_sort_order = 'ASC';
     }
-    
+
     unset( $query['sort_by'] );
     unset( $query['sort_order'] );
-    
+
     // Go down the array list narrowing down matching properties
     foreach ($query as $meta_key => $criteria) {
-      
+
       $criteria = WPP_F::encode_mysql_input( $criteria, $meta_key);
-      
+
       // Stop filtering (loop) because no IDs left
       if (isset($matching_ids) && empty($matching_ids)) {
         break;
       }
-      
+
       /*
       // Allowed property_type array to $comma_and array
       if (is_array($criteria) && $meta_key =='property_type') {
         $comma_and = $criteria;
       }
       */
-      
+
       if (substr_count($criteria, ',') || substr_count($criteria, '&ndash;') || substr_count($criteria, '--')) {
         if (substr_count($criteria, ',') && !substr_count($criteria, '&ndash;')) {
           $comma_and = explode(',', $criteria);
         }
         if (substr_count($criteria, '&ndash;') && !substr_count($criteria, ',')) {
           $cr = explode('&ndash;', $criteria);
-          
+
           // Check pieces of criteria. Array should contains 2 integer's elements
           // In other way, it's just value of meta_key
           if(count($cr) > 2 || ((int)$cr[0] == 0 && (int)$cr[1] == 0)) {
@@ -1286,13 +1387,13 @@ class WPP_F {
       } else {
         $specific = $criteria;
       }
-      
+
       if (!$limit_query) $limit_query = '';
-      
+
       switch ($meta_key) {
-        
+
         case 'property_type':
-          
+
           // Get all property types
           if ($specific == 'all') {
             if (isset($matching_ids)) {
@@ -1303,19 +1404,19 @@ class WPP_F {
             }
             break;
           }
-          
+
           if ( !is_array($criteria) ) {
             $criteria = array($criteria);
           }
-          
+
           if ( $comma_and ) {
             $where_string = implode("' OR meta_value ='", $comma_and);
           }
-          
+
           else {
             $where_string = $specific;
           }
-          
+
           // See if mathinc_ids have already been filtered down
           if ( isset($matching_ids) ) {
             $matching_id_filter = implode("' OR post_id ='", $matching_ids);
@@ -1325,13 +1426,13 @@ class WPP_F {
             //$wpdb->print_error("Matching not set");
           }
           break;
-          
+
         default:
-          
+
           if (WPP_F::is_numeric_range($criteria)) {
-            
+
             //UD_F::log("Filtering $meta_key which is numeric");
-            
+
             // See if $matching_ids has already been filtered down
             if (isset($matching_ids)) {
               $matching_id_filter = implode("' OR post_id ='", $matching_ids);
@@ -1342,13 +1443,13 @@ class WPP_F {
               //$wpdb->print_error();
             }
             // UD_F::log($wpdb->last_query. " " . print_r($matching_ids, true));
-            
+
           } else {
-            
+
             // UD_F::log("Filtering $meta_key which is not numeric");
             // Get all properties for that meta_key
             if ($specific == 'all' && !$comma_and && !$hyphen_between) {
-              
+
               if (isset($matching_ids)) {
                 $matching_id_filter = implode("' OR post_id ='", $matching_ids);
                 $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key') AND meta_value != '' $limit_query");
@@ -1357,14 +1458,14 @@ class WPP_F {
                 $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key') AND meta_value != ''");
               }
               break;
-              
+
             } else {
-              
+
               if ( $comma_and ) {
-                $where_and = "meta_key = '$meta_key' AND (meta_value ='" . implode("' OR meta_value ='", $comma_and)."')";
+                $where_and = "(meta_value ='" . implode("' OR meta_value ='", $comma_and)."')";
                 $specific = $where_and;
               }
-              
+
               if ( $hyphen_between ) {
                 // We are going to see if we are looking at some sort of date, in which case we have a special MySQL modifier
                 $adate = false;
@@ -1374,67 +1475,76 @@ class WPP_F {
                     foreach($hyphen_between as $key => $value) {
                       $hyphen_between[$key] = "STR_TO_DATE('{$value}', '%c/%e/%Y')";
                     }
-                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') BETWEEN " . implode(" AND ", $hyphen_between)."";
+                    $where_between = "STR_TO_DATE(`meta_value`, '%c/%e/%Y') BETWEEN " . implode(" AND ", $hyphen_between)."";
                   } else {
-                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
+                    $where_between = "`meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
                   }
                 } else {
                   if($adate) {
-                    $where_between = "`meta_key` = '$meta_key' AND STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
+                    $where_between = "STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
                   } else {
-                    $where_between = "`meta_key` = '$meta_key' AND `meta_value` >= $hyphen_between[0]";
+                    $where_between = "`meta_value` >= $hyphen_between[0]";
                   }
                 }
                 $specific = $where_between;
               }
-              
+
               if ($specific == 'true') {
                 // If properties data were imported, meta value can be '1' instead of 'true'
                 // So we're trying to find also '1'
                 $specific = "meta_value IN ('true', '1')";
               } elseif(!substr_count($specific, 'meta_value')) {
-                //$specific = "meta_value LIKE '%".(str_replace(' ', '%', $specific))."%'";
-                $specific = "meta_value = '". $wpdb->escape($specific) ."'";
+                // Adds conditions for Searching by partial value
+                $s = explode(' ', trim($specific));
+                $specific = '';
+                $count = 0;
+                foreach($s as $p) {
+                  if($count > 0) {
+                    $specific .= " AND ";
+                  }
+                  $specific .= "meta_value LIKE '%{$p}%'";
+                  $count++;
+                }
               }
-              
+
               if (isset($matching_ids)) {
                 $matching_id_filter = implode(",", $matching_ids);
                 $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE post_id IN ($matching_id_filter) AND meta_key = '$meta_key' AND $specific");
                 //$wpdb->print_error();
               } else {
-                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE $specific $sql_order");
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND $specific $sql_order");
                 //$wpdb->print_error();
               }
-              
+
             }
-            
+
           }
           break;
-        
+
       } // END switch
-      
+
       unset( $comma_and );
       unset( $hyphen_between );
       //unset($specific);
-      
+
     } // END foreach
-    
+
     // Return false, if there are any result using filter conditions
     if (empty($matching_ids)) {
       return false;
     }
-    
+
     // Remove duplicates
     $matching_ids = array_unique( $matching_ids );
-    
+
     // Stores the total Properties returned
     $total = $wpdb->get_var("SELECT COUNT(ID) FROM {$wpdb->prefix}posts WHERE ID IN ('" . implode("','", $matching_ids) . "') AND post_status = 'publish'");
-    
+
     // Sorts the returned Properties by the selected sort order
     if ($sql_sort_by &&
         $sql_sort_by != 'menu_order' &&
         $sql_sort_by != 'post_date' &&
-        $sql_sort_by != 'post_title' ) 
+        $sql_sort_by != 'post_title' )
     {
       $result = $wpdb->get_col("
         SELECT p.ID FROM {$wpdb->prefix}posts AS p, {$wpdb->prefix}postmeta AS pm
@@ -1450,7 +1560,7 @@ class WPP_F {
       if( empty( $sql_sort_by ) ) {
         $sql_sort_by = 'post_date';
       }
-      
+
       $result = $wpdb->get_col("
         SELECT ID FROM {$wpdb->prefix}posts
           WHERE ID IN (" . implode(",", $matching_ids) . ")
@@ -1459,13 +1569,13 @@ class WPP_F {
           $limit_query
       ");
     }
-    
+
     if( !empty( $result ) ) {
       $result['total'] = $total;
       //UD_F::log("Search complete, returning: " . implode(" ,", $matching_ids));
       return $result;
     }
-    
+
     return false;
   }
 
@@ -1545,8 +1655,8 @@ class WPP_F {
         foreach ( $keys as $key => $value ) {
         if($allow_multiple_values == 'false') {
           $value = $value[0];
-        } 
-        
+        }
+
         $keyt = trim($key);
 
         if ( '_' == $keyt{0} )
@@ -1586,20 +1696,19 @@ class WPP_F {
     $return = array_merge($return, $post);
 
     /*
-      Figure out what the thumbnail is, and load all sizes
-    */
+     * Figure out what the thumbnail is, and load all sizes
+     */
     if($load_thumbnail == 'true') {
       $wp_image_sizes = get_intermediate_image_sizes();
 
       $thumbnail_id = get_post_meta( $id, '_thumbnail_id', true );
       $attachments = get_children( array('post_parent' => $id, 'post_type' => 'attachment', 'post_mime_type' => 'image',  'orderby' => 'menu_order ASC, ID', 'order' => 'DESC') );
 
-
       if ($thumbnail_id) {
         foreach($wp_image_sizes as $image_name) {
           $this_url = wp_get_attachment_image_src( $thumbnail_id, $image_name , true );
           $return['images'][$image_name] = $this_url[0];
-          }
+        }
 
         $featured_image_id = $thumbnail_id;
 
@@ -1629,13 +1738,14 @@ class WPP_F {
     } /* end load_thumbnail */
 
     /*
-      Load all attached images and their sizes
-    */
+     * Load all attached images and their sizes
+     */
     if($load_gallery == 'true') {
       // Get gallery images
       if($attachments) {
         foreach ( $attachments as $attachment_id => $attachment ) {
           $return['gallery'][$attachment->post_name]['post_title'] = $attachment->post_title;
+          $return['gallery'][$attachment->post_name]['attachment_id'] = $attachment_id;
           foreach($wp_image_sizes as $image_name) {
             $this_url =  wp_get_attachment_image_src( $attachment_id, $image_name , true );
             $return['gallery'][$attachment->post_name][$image_name] = $this_url[0];
@@ -1657,13 +1767,10 @@ class WPP_F {
 
       $parent_object = WPP_F::get_property($post['post_parent'], "get_children=false");
 
-
-
-       $return['parent_id'] = $post['post_parent'];
+      $return['parent_id'] = $post['post_parent'];
       $return['parent_link'] = $parent_object['permalink'];
       $return['parent_title'] = $parent_object['post_title'];
-
-
+           
       // Inherit things
       if(is_array($wp_properties['property_inheritance'][$return['property_type']])) {
         foreach($wp_properties['property_inheritance'][$return['property_type']] as $inherit_attrib) {
@@ -1746,9 +1853,11 @@ class WPP_F {
         }
       }
     } /* end get_children */
- 
+
     // Another name for location
     $return['address'] = $return['location'];
+    
+    $return['wpp_gpid'] = WPP_F::maybe_set_gpid($id);
 
     $return['permalink'] = get_permalink($id);
 
@@ -1779,9 +1888,7 @@ class WPP_F {
 
     }
 
-
     wp_cache_add($id.$args, $return);
-
 
     return $return;
 
@@ -1875,11 +1982,16 @@ class WPP_F {
     $property_stats = $wp_properties['property_stats'];
 
     foreach($property_stats as $slug => $label) {
+      // Determine if it's frontend and the attribute is hidden for frontend
+      if(!is_admin() && in_array($slug, (array)$wp_properties['hidden_frontend_attributes'])) {
+        continue;
+      }
+
       $value = get_post_meta($property_object->ID, $slug, true);
       if ($value === true) {
         $value = 'true';
       }
-      
+
       // Exclude passed variables
       if(is_array($exclude) && in_array($slug, $exclude))
         continue;
@@ -2029,6 +2141,7 @@ class WPP_F {
     <?php
     $data = ob_get_contents();
     $data = preg_replace(array('/[\r\n]+/'), array(""), $data);
+    $data = addslashes($data);
 
     ob_end_clean();
 
@@ -2112,8 +2225,88 @@ class WPP_F {
 
     return $return;
 
+  }
+
+
+  /**
+   * Generates Global Property ID for standard reference point during imports.
+   *
+   * Property ID is currently not used.
+   *
+   * @return integer. Global ID number
+   * @param integer $property_id. Property ID.
+   * @todo API call to UD server to verify there is no duplicates
+   * @since 1.6
+   */
+  static function get_gpid($property_id = false, $check_existance = false) {
+
+    if($check_existance && $property_id) {
+      $exists = get_post_meta($property_id, 'wpp_gpid', true);
+
+      if($exists) {
+        return $exists;
+      }
+    }
+    return 'gpid_' . rand(1000000000,9999999999);
 
   }
+
+
+  /**
+   * Generates Global Property ID if it does not exist
+   *
+   * @return string | Returns GPID
+   * @since 1.6
+   */
+  static function maybe_set_gpid($property_id = false) {
+
+    if(!$property_id) {
+      return false;
+    }
+
+    $exists = get_post_meta($property_id, 'wpp_gpid', true);
+
+    if($exists) {
+      return $exists;
+    }
+
+    
+    $gpid = WPP_F::get_gpid($property_id, true);
+    
+    update_post_meta($property_id, 'wpp_gpid', $gpid);
+
+    return $gpid;
+
+    return false;
+
+  }
+
+  
+  /**
+   * Returns post_id fro GPID if it exists
+   *
+   * @since 1.6
+   */
+  static function get_property_from_gpid($gpid = false) {
+    global $wpdb;
+    
+    if(!$gpid) {
+      return false;
+    }
+    
+    $post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id  WHERE meta_key = 'wpp_gpid' AND meta_value = '{$gpid}' ");
+    
+    if(is_numeric($post_id)) {
+      return $post_id;
+    }
+    
+    return false;
+  
+  }
+
+
+
+
 
   /**
    * This static function is not actually used, it's only use to hold some common translations that may be used by our themes.

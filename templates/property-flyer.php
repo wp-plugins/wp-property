@@ -112,6 +112,10 @@
                                     <?php endforeach; ?>
                                 <?php endif; ?>
                                 <?php do_action( 'wpp_flyer_right_column', $property, $wpp_pdf_flyer );?>
+                                <tr>
+                                  <td width="15">&nbsp;
+                                  </td>
+                                </tr>
                                 </table>
                             </td>
                         </tr>

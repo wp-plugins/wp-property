@@ -205,6 +205,16 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.16 =
+* Added "Admin Only" attribute designator.  Using the Developer tab, an attribute can be marked as "Admin Only" and it will only be visible in control panel or to logged in administrators.  
+* Added an option to prevent loading the theme-specific stylesheet, if it exists in the first place. (Settings -> Display -> "Do not load theme-specific stylesheet.")
+* Ensured compatability with WordPress 3.2
+* Changed "Properties" label to "All Properties" to stay consistant with new semantics.
+* Fixed admin styles to match new admin design.
+* Added styles for Twenty Eleven theme.
+* Added on-the-fly image resizing.
+* Updated Nivo Slider and global JS files to avoid version conflicts. 
+
 = 1.15.9 =
 * New: HTML code now rendered in meta fields on single property page.
 * Fixed issue spaces being removed from predefined values.

@@ -82,8 +82,12 @@ var updateRowNames = function(instance, allowRandomSlug) {
   jQuery('input,select,textarea', this_row).each(function(element) {
     var old_name = jQuery(this).attr('name');
     var new_name =  old_name.replace(old_slug,new_slug);
-    var old_id = jQuery(this).attr('id');
-    var new_id =  old_id.replace(old_slug,new_slug);
+    
+    if(jQuery(this).attr('id')) {
+      var old_id = jQuery(this).attr('id');    
+      var new_id =  old_id.replace(old_slug,new_slug);
+    }
+    
     // Update to new name
     jQuery(this).attr('name', new_name);
     jQuery(this).attr('id', new_id);
@@ -91,10 +95,14 @@ var updateRowNames = function(instance, allowRandomSlug) {
     
   // Cycle through labels too
   jQuery('label', this_row).each(function(element) {
-    var old_for = jQuery(this).attr('for');
-    var new_for =  old_for.replace(old_slug,new_slug);
-    // Update to new name
-    jQuery(this).attr('for', new_for);
+    
+    if(jQuery(this).attr('id')) {
+      var old_for = jQuery(this).attr('for');
+      var new_for =  old_for.replace(old_slug,new_slug);
+      // Update to new name
+      jQuery(this).attr('for', new_for);
+    }
+    
   });
 }
 

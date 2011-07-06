@@ -1,0 +1,14 @@
+/*  
+  Theme-specific styles are introduced in WP-Property 1.08.
+  New styles specifically for Denali can be stored here.
+  This will prevent us form having to release a new version of Denali whenever we add new features to WPP that affect it.
+
+  WP-Property loads this stylesheet after the other Denali styles are loaded, so it has authority.  
+
+   This file is loaded for Denali child theme as well.  Loading can be disabled in Settings -> Display -> "Do not load theme-specific stylesheet."
+
+
+  Version: 0.1
+ */
+ 
+ 

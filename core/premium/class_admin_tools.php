@@ -229,12 +229,15 @@ class class_admin_tools {
             <ul>
             <li>
               <input <?php if(in_array($slug, ((!empty($wp_properties['sortable_attributes'])?$wp_properties['sortable_attributes']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[sortable_attributes][]" value="<?php echo $slug; ?>" />
-              <label>Sortable</label> 
+              <label><?php _('Sortable'); ?></label> 
             </li>
             <li>
               <input <?php if(is_array($wp_properties['searchable_attributes']) && in_array($slug, $wp_properties['searchable_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[searchable_attributes][]" value="<?php echo $slug; ?>" />
-              <label>Searchable</label> 
-              </li>
+              <label><?php _('Searchable'); ?></label> 
+            </li>
+              <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _('Admin Only'); ?></label> 
+            </li>
             <?php 
             /*<li>
               <input <?php if(in_array($slug, ((!empty($wp_properties['allow_multiple'])?$wp_properties['allow_multiple']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[allow_multiple][]" value="<?php echo $slug; ?>" />
