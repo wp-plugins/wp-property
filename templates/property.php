@@ -51,7 +51,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
     
   function initialize() {
     <?php if($coords = WPP_F::get_coordinates()): ?>
-    var myLatlng = new google.maps.LatLng(<?php echo $coords[latitude]; ?>,<?php echo $coords[longitude]; ?>);
+    var myLatlng = new google.maps.LatLng(<?php echo $coords['latitude']; ?>,<?php echo $coords['longitude']; ?>);
     var myOptions = {
       zoom: <?php echo (!empty($wp_properties['configuration']['gm_zoom_level']) ? $wp_properties['configuration']['gm_zoom_level'] : 13); ?>,
       center: myLatlng,

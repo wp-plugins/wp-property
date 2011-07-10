@@ -14,19 +14,147 @@ class WPP_F {
 
 
   /**
+   * Perform WPP related things when a post is being deleted
+   *
+   * Makes sure all attached files and images get deleted.
+   *
+   *
+   * @version 1.16.1
+   */
+   function before_delete_post($post_id) {
+      global $wpdb, $wp_properties;
+
+      if($wp_properties['configuration']['auto_delete_attachments'] != 'true') {
+        return;
+      }
+      
+      //* Make sure this is a property */
+      $is_property = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID = $post_id AND post_type = 'property'");
+      
+      if(!$is_property) {
+        return;
+      } 
+
+      //* Get Attachments */
+      $attachments = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent = $post_id AND post_type = 'attachment' ");
+
+      if($attachments) {
+        foreach($attachments as $attachment_id) {
+        
+          wp_delete_attachment($attachment_id, true);        
+
+        }
+
+      }
+
+   }
+
+
+
+  /**
+   * Get advanced details about an image (mostly for troubleshooting)
+   *
+   * @todo add some sort of light validating that the the passed item here is in fact an image
+   *
+   */
+   function get_property_image_data($requested_id) {
+      global $wpdb;
+
+      if(empty($requested_id)) {
+        return false;
+      }
+
+      ob_start();
+
+      if(is_numeric($requested_id)) {
+
+        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID = '$requested_id'");
+      } else {
+        //** Try and image search */
+        $image_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_title LIKE '%{$requested_id}%' ");
+
+
+        if($image_id) {
+          $post_type = 'image';
+          $requested_id = $image_id;
+        }
+      }
+
+      if($post_type == 'property') {
+
+        //** Get Property Images */
+        $property = WPP_F::get_property($requested_id);
+
+        echo 'Requested Property: ' . $property['post_title'];
+        $data = get_children( array('post_parent' => $requested_id, 'post_type' => 'attachment', 'post_mime_type' => 'image',  'orderby' => 'menu_order ASC, ID', 'order' => 'DESC') );
+        echo "\nProperty has: " . count($data) . ' images.';
+
+        foreach($data as $img) {
+          $image_data['ID'] = $img->ID;
+          $image_data['post_title'] = $img->post_title;
+
+          $img_meta = $wpdb->get_results("SELECT meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = '{$img->ID}'");
+
+          foreach($img_meta as $i_m) {
+            $image_data[$i_m->meta_key] = maybe_unserialize($i_m->meta_value);
+          }
+
+
+          print_r($image_data);
+
+        }
+
+
+
+      } else {
+
+        $data = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID = '$requested_id'");
+        $image_meta = $wpdb->get_results("SELECT meta_id, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = '$requested_id'");
+        foreach($image_meta  as $m_data) {
+
+          print_r($m_data->meta_id);
+          echo "<br />";
+          print_r($m_data->meta_key);
+          echo "<br />";
+          print_r(maybe_unserialize($m_data->meta_value));
+        }
+
+      }
+
+      $return_data = ob_get_contents();
+      ob_end_clean();
+
+      return $return_data;
+
+   }
+
+  /**
    * Resizes (generate) image.
+   *
+   * @todo add some sort of light validating that the the passed item here is in fact an image
+   *
+   * If image has no meta data (for instance, if imported via XML Importer), this function
+   * what _wp_attachment_metadata the wp_generate_attachment_metadata() function would ideally regenerate.
+   *
+   * @todo Update so when multiple images are passed the first requested image data is returned
+   *
    * @param integer(string) $attachment_id
-   * @param string $size. Size name
-   * @return array. Image data. Or FALSE if file could not be generated.
+   * @param array $sizes. Arrays with sizes, or single name, later converted into array
+   * @return array. Image data for first image size (if multiple provided). Or FALSE if file could not be generated.
    * @since 1.6
    */
-  static function generate_image($attachment_id, $size) {
+  static function generate_image($attachment_id, $sizes = array()) {
     global $_wp_additional_image_sizes;
 
     // Determine if params are empty
-    if(empty($attachment_id) || empty($size)) {
+    if(empty($attachment_id) || empty($sizes)) {
       return false;
     }
+
+    if(!is_array($sizes)) {
+      $sizes = array($sizes);
+    }
+
 
     // Check if image file exists
     $file = get_attached_file( $attachment_id );
@@ -34,33 +162,81 @@ class WPP_F {
       return false;
     }
 
-    // Get attachment metadata
-    $metadata = get_post_meta($attachment_id, '_wp_attachment_metadata');
+    //** Get attachment metadata */
+    $metadata = get_post_meta($attachment_id, '_wp_attachment_metadata', true);
+
     if(empty($metadata)) {
+
+        include_once  ABSPATH . 'wp-admin/includes/image.php';
+
+      /*
+        If image has been imported via XML it may not have meta data
+        Here we attempt tp replicate wp_generate_attachment_metadata() but only generate the
+        minimum requirements for image meta data and we do not create ALL variations of image, just the requested.
+      */
+
+      $metadata = array();
+      $imagesize = getimagesize( $file );
+      $metadata['width'] = $imagesize[0];
+      $metadata['height'] = $imagesize[1];
+
+      // Make the file path relative to the upload dir
+      $metadata['file'] = _wp_relative_upload_path($file);
+
+      if ( $image_meta = wp_read_image_metadata( $file ) ) {
+        $metadata['image_meta'] = $image_meta;
+      }
+
+    }
+
+
+    //** Get width, height and crop for new image */
+    foreach($sizes as $size) {
+      if ( isset( $_wp_additional_image_sizes[$size]['width'] ) ) {
+        $width = intval( $_wp_additional_image_sizes[$size]['width'] ); // For theme-added sizes
+      } else {
+        $width = get_option( "{$size}_size_w" ); // For default sizes set in options
+      } if ( isset( $_wp_additional_image_sizes[$size]['height'] ) ) {
+        $height = intval( $_wp_additional_image_sizes[$size]['height'] ); // For theme-added sizes
+      } else {
+        $height = get_option( "{$size}_size_h" ); // For default sizes set in options
+      } if ( isset( $_wp_additional_image_sizes[$size]['crop'] ) ) {
+        $crop = intval( $_wp_additional_image_sizes[$size]['crop'] ); // For theme-added sizes
+      } else {
+        $crop = get_option( "{$size}_crop" ); // For default sizes set in options
+      }
+
+      //** Try to generate file and update attachment data */
+      $resized[$size] = image_make_intermediate_size( $file, $width, $height, $crop );
+
+    }
+
+    if(empty($resized[$size])) {
       return false;
     }
 
-    // Get width, height and crop for new image
-    if ( isset( $_wp_additional_image_sizes[$size]['width'] ) ) {
-      $width = intval( $_wp_additional_image_sizes[$size]['width'] ); // For theme-added sizes
-    } else {
-      $width = get_option( "{$size}_size_w" ); // For default sizes set in options
-    } if ( isset( $_wp_additional_image_sizes[$size]['height'] ) ) {
-      $height = intval( $_wp_additional_image_sizes[$size]['height'] ); // For theme-added sizes
-    } else {
-      $height = get_option( "{$size}_size_h" ); // For default sizes set in options
-    } if ( isset( $_wp_additional_image_sizes[$size]['crop'] ) ) {
-      $crop = intval( $_wp_additional_image_sizes[$size]['crop'] ); // For theme-added sizes
-    } else {
-      $crop = get_option( "{$size}_crop" ); // For default sizes set in options
+
+    //** Cycle through resized and remove any blanks (would happen if image already exists)  */
+    foreach($resized as $key => $size_info) {
+      if(empty($size_info)) {
+        unset($resized[$key]);
+      }
     }
 
-    // Try to generate file and update attachment data
-    $resized = image_make_intermediate_size( $file, $width, $height, $crop );
-    if ( $resized ) {
-      $metadata['sizes'][$size] = $resized;
+
+    if (!empty( $resized )) {
+
+      foreach($resized as $size => $resize) {
+        $metadata['sizes'][$size] = $resize;
+      }
+
+
       update_post_meta($attachment_id, '_wp_attachment_metadata', $metadata);
+
+      //** Return first requested image **/
+
       return $resized;
+
     }
 
     return false;
@@ -964,7 +1140,7 @@ class WPP_F {
       return;
 
     if ($premium_dir = opendir(WPP_Premium)) {
-      
+
       if(file_exists(WPP_Premium . "/index.php")) {
         @include_once(WPP_Premium . "/index.php");
       }
@@ -982,25 +1158,25 @@ class WPP_F {
           $wp_properties['installed_features'][$plugin_slug]['name'] = $plugin_data['Name'];
           $wp_properties['installed_features'][$plugin_slug]['version'] = $plugin_data['Version'];
           $wp_properties['installed_features'][$plugin_slug]['description'] = $plugin_data['Description'];
-          
+
           if($plugin_data['Minimum WPP Version']) {
-            $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version'] = $plugin_data['Minimum WPP Version'];                        
+            $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version'] = $plugin_data['Minimum WPP Version'];
           }
-                   
+
           //** If feature has a Minimum WPP Version and it is more than current version - we do not load **/
           $feature_requires_upgrade = (!empty($wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) && (version_compare(WPP_Version, $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) < 0) ? true : false);
- 
+
           if($feature_requires_upgrade) {
-            
+
             //** Disable feature if it requires a higher WPP version**/
-            
+
             $wp_properties['installed_features'][$plugin_slug]['disabled'] = 'true';
             $wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] = 'true';
-            
+
           } elseif ($wp_properties['installed_features'][$plugin_slug]['disabled'] != 'true') {
-            
+
             //** Load feature, everything is good**/
-            
+
             $wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] = 'false';
 
             if(WP_DEBUG == true) {
@@ -1018,10 +1194,10 @@ class WPP_F {
           }
 
         }
- 
+
       }
     }
- 
+
 
   }
 
@@ -1109,7 +1285,7 @@ class WPP_F {
 
       // Get premium features on activation
       @WPP_F::feature_check();
-      
+
     }
 
     return;
@@ -1770,7 +1946,7 @@ class WPP_F {
       $return['parent_id'] = $post['post_parent'];
       $return['parent_link'] = $parent_object['permalink'];
       $return['parent_title'] = $parent_object['post_title'];
-           
+
       // Inherit things
       if(is_array($wp_properties['property_inheritance'][$return['property_type']])) {
         foreach($wp_properties['property_inheritance'][$return['property_type']] as $inherit_attrib) {
@@ -1856,10 +2032,11 @@ class WPP_F {
 
     // Another name for location
     $return['address'] = $return['location'];
-    
+
     $return['wpp_gpid'] = WPP_F::maybe_set_gpid($id);
 
     $return['permalink'] = get_permalink($id);
+
 
     if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number']))
       $return['phone_number'] = $wp_properties['configuration']['phone_number'];
@@ -2270,9 +2447,9 @@ class WPP_F {
       return $exists;
     }
 
-    
+
     $gpid = WPP_F::get_gpid($property_id, true);
-    
+
     update_post_meta($property_id, 'wpp_gpid', $gpid);
 
     return $gpid;
@@ -2281,7 +2458,7 @@ class WPP_F {
 
   }
 
-  
+
   /**
    * Returns post_id fro GPID if it exists
    *
@@ -2289,19 +2466,19 @@ class WPP_F {
    */
   static function get_property_from_gpid($gpid = false) {
     global $wpdb;
-    
+
     if(!$gpid) {
       return false;
     }
-    
+
     $post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id  WHERE meta_key = 'wpp_gpid' AND meta_value = '{$gpid}' ");
-    
+
     if(is_numeric($post_id)) {
       return $post_id;
     }
-    
+
     return false;
-  
+
   }
 
 

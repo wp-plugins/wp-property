@@ -255,6 +255,7 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   display: none !important;
 }
 
+/*
 .wpp_attribute_row_address {
   float:left;
 }
@@ -276,6 +277,7 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   width: 90px !important;
   margin-right: 6px;
 }
+*/
 
 #wpp_settings_tabs .form-table p, #wpp_settings_tabs .form-table h3 {
   margin-top: 0;

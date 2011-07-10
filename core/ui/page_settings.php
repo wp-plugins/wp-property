@@ -55,6 +55,12 @@ if(isset($_REQUEST['message'])) {
     jQuery("#wpp_ajax_property_result").hide();
     jQuery(this).hide();
   });
+  
+  // Hide image query
+  jQuery("#wpp_ajax_image_query_cancel").click(function() {
+    jQuery("#wpp_ajax_image_result").hide();
+    jQuery(this).hide();
+  });
 
   // Check plugin updates
   jQuery("#wpp_ajax_check_plugin_updates").click(function() {
@@ -107,6 +113,25 @@ if(isset($_REQUEST['message'])) {
         jQuery("#wpp_ajax_property_result").show();
         jQuery("#wpp_ajax_property_result").html(data);
         jQuery("#wpp_ajax_property_query_cancel").show();
+
+      });
+
+  }); 
+
+  // Show image data
+  jQuery("#wpp_ajax_image_query").click(function() {
+
+    var image_id = jQuery("#wpp_image_id").val();
+
+    jQuery("#wpp_ajax_image_result").html("");
+
+    jQuery.post(ajaxurl, {
+        action: 'wpp_ajax_image_query',
+				image_id: image_id
+       }, function(data) {
+        jQuery("#wpp_ajax_image_result").show();
+        jQuery("#wpp_ajax_image_result").html(data);
+        jQuery("#wpp_ajax_image_query_cancel").show();
 
       });
 
@@ -247,6 +272,19 @@ if(isset($_REQUEST['message'])) {
         <?php _e('Attribute to use for address:','wpp'); ?>
         <?php echo WPP_F::draw_attribute_dropdown("name=wpp_settings[configuration][address_attribute]&selected={$wp_properties['configuration']['address_attribute']}"); ?>
         <?php _e('and localize for:','wpp'); ?> <?php echo WPP_F::draw_localization_dropdown("name=wpp_settings[configuration][google_maps_localization]&selected={$wp_properties['configuration']['google_maps_localization']}"); ?>
+      </td>
+    </tr>   
+    
+    <tr>
+      <th><?php _e('Options','wpp'); ?></th>
+      <td>
+        <ul>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][auto_delete_attachments]&label=" . __('Automatically delete all property images and attachments when a property is deleted.', 'wpp'), $wp_properties['configuration']['auto_delete_attachments']); ?></li>
+          <li>
+          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?> 
+          <div class="description"><?php _e('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.',''); ?></div>
+          </li>
+        </ul>
       </td>
     </tr>
 
@@ -610,6 +648,14 @@ if(isset($_REQUEST['message'])) {
         <input type="text" id="wpp_property_class_id" />
         <input type="button" value="<?php _e('Lookup','wpp') ?>" id="wpp_ajax_property_query"> <span id="wpp_ajax_property_query_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
         <pre id="wpp_ajax_property_result" class="wpp_class_pre hidden"></pre>
+      </div>
+
+
+      <div class="wpp_settings_block"><?php _e('Get property image data.','wpp') ?>
+        <label for="wpp_image_id"><?php _e('Property ID:','wpp') ?></label>
+        <input type="text" id="wpp_image_id" />
+        <input type="button" value="<?php _e('Lookup','wpp') ?>" id="wpp_ajax_image_query"> <span id="wpp_ajax_image_query_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
+        <pre id="wpp_ajax_image_result" class="wpp_class_pre hidden"></pre>
       </div>
 
 

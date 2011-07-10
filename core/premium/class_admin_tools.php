@@ -2,7 +2,7 @@
 /*
 Name: Admin Tools
 Class: class_admin_tools
-Version: 2.9
+Version: 2.9.1
 Description: Tools for developing themes and extensions for WP-Property.
 */
 
@@ -229,14 +229,14 @@ class class_admin_tools {
             <ul>
             <li>
               <input <?php if(in_array($slug, ((!empty($wp_properties['sortable_attributes'])?$wp_properties['sortable_attributes']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[sortable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _('Sortable'); ?></label> 
+              <label><?php _e('Sortable'); ?></label> 
             </li>
             <li>
               <input <?php if(is_array($wp_properties['searchable_attributes']) && in_array($slug, $wp_properties['searchable_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[searchable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _('Searchable'); ?></label> 
+              <label><?php _e('Searchable'); ?></label> 
             </li>
               <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _('Admin Only'); ?></label> 
+              <label><?php _e('Admin Only'); ?></label> 
             </li>
             <?php 
             /*<li>
@@ -343,4 +343,3 @@ class class_admin_tools {
 }
 
 
-?>

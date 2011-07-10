@@ -205,11 +205,18 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.16.1 =
+* Option to automatically remove all associated property images when a property is deleted.  WordPress does not remove attached images when the post or page is deleted, so a custom function was added to do this for properties.
+* Improvements to the default property-overview.php template.
+* Fix to "Developer" tab, previous version did not show some labels. 
+* Semantic changes - "Properties" now labeled as "All Properties" on back-end. 
+* Improvements to automatic image regeneration function, wpp_get_image_link(), and an option to disable it completely.
+
 = 1.16 =
 * Added "Admin Only" attribute designator.  Using the Developer tab, an attribute can be marked as "Admin Only" and it will only be visible in control panel or to logged in administrators.  
 * Added an option to prevent loading the theme-specific stylesheet, if it exists in the first place. (Settings -> Display -> "Do not load theme-specific stylesheet.")
-* Ensured compatability with WordPress 3.2
-* Changed "Properties" label to "All Properties" to stay consistant with new semantics.
+* Ensured compatibility with WordPress 3.2
+* Changed "Properties" label to "All Properties" to stay consistent with new semantics.
 * Fixed admin styles to match new admin design.
 * Added styles for Twenty Eleven theme.
 * Added on-the-fly image resizing.
@@ -229,6 +236,7 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 = 1.15.8 =
 * Bug fix with warning being displayed on Settings page 
+
 = 1.15.7 =
 * Changed core to use load_plugin_textdomain() to load localization settings.
 * "For Sale" and "For Rent" attributes are no longer being added programmatically.  

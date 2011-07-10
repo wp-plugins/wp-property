@@ -43,30 +43,16 @@ if($properties): ?>
             $thumbnail_link = $property['permalink'];
         }
         
-        $image = wpp_get_image_link($property['featured_image'], $thumbnail_size);
-        // Check IMG (thumbnail) width and height to set css styles of blocks
-        if (!empty($image)) {
-            if(empty($img_width) || empty($img_height)) {
-                preg_match('/([\d]{2,3})x([\d]{2,3})\.(jpg|gif|png)/' , $image, $matches);
-                
-                if(empty($img_width) && !empty($matches[1])) {
-                    $img_width = $matches[1];
-                }
-                if(empty($img_height) && !empty($matches[2])) {
-                    $img_height = $matches[2];
-                }
-            }
-        }
-
+        $image = wpp_get_image_link($property['featured_image'], $thumbnail_size, array('return'=>'array'));
       ?>
-
+    
     <div class="property_div <?php echo $property['post_type']; ?> clearfix">
 
         <div class="wpp_overview_left_column">
             <?php if(!empty($image)): ?>
             <div class="property_image">
                 <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? __(' of ', 'wpp') . $property['parent_title'] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
-                    <img width="<?php echo $img_width; ?>" height="<?php echo $img_height; ?>" src="<?php echo $image; ?>" alt="<?php echo $property['post_title'];?>" />
+                    <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link']; ?>" alt="<?php echo $property['post_title'];?>" />
                 </a>
             </div>
             <?php endif; ?>

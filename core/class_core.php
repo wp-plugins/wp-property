@@ -131,9 +131,10 @@ class WPP_Core {
 
 
     $labels = array(
-      'name' => __('All Properties', 'wpp'),
+      'name' => __('Properties', 'wpp'),
+      'all_items' =>  __( 'All Properties', 'wpp'),
       'singular_name' => __('Property', 'wpp'),
-      'add_new' => __('New Property', 'wpp'),
+      'add_new' => __('Add Property', 'wpp'),
       'add_new_item' => __('Add New Property','wpp'),
       'edit_item' => __('Edit Property','wpp'),
       'new_item' => __('New Property','wpp'),
@@ -185,6 +186,7 @@ class WPP_Core {
 
     // Ajax functions
     add_action('wp_ajax_wpp_ajax_property_query', create_function("",' $class = WPP_F::get_property($_REQUEST["property_id"]); if($class)  print_r($class); else echo __("No property found.","wpp"); die();'));
+    add_action('wp_ajax_wpp_ajax_image_query', create_function("",' $class = WPP_F::get_property_image_data($_REQUEST["image_id"]); if($class)  print_r($class); else echo __("No image found.","wpp"); die();'));
     add_action('wp_ajax_wpp_ajax_check_plugin_updates', create_function("",'  echo WPP_F::check_plugin_updates(); die();'));
     add_action('wp_ajax_wpp_ajax_revalidate_all_addresses', create_function("",'  echo WPP_F::revalidate_all_addresses(); die();'));
 
@@ -247,6 +249,7 @@ class WPP_Core {
 
     add_action("post_submitbox_misc_actions", array(&$this, "post_submitbox_misc_actions"));
     add_action('save_post', array($this, 'save_property'));
+    add_action('before_delete_post', array('WPP_F', 'before_delete_post'));
     add_filter('post_updated_messages', array('WPP_Core', 'property_updated_messages'), 5);
 
     // Fix toggale row actions -> get rid of "Quick Edit" on property rows
@@ -878,15 +881,24 @@ class WPP_Core {
         }
       break;
 
-      case "thumbnail":
+      case "thumbnail":      
+      
         if($post->featured_image) {
-          $image_thumb_url = wpp_get_image_link($post->featured_image, $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']);
+        
+          $overview_thumb_type = $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size'];
+          
+          if(empty($overview_thumb_type)) {
+            $overview_thumb_type = 'thumbnail';
+          }         
+          
+           $image_thumb_obj = wpp_get_image_link($post->featured_image, $overview_thumb_type, array('return'=>'array'));
+            
+
         }
 
-        if(!empty($image_thumb_url)) {
-        ?>
+        if(!empty($image_thumb_obj)) { ?>
           <a href="<?php echo $post->images['large']; ?>" class="fancybox" rel="overview_group" title="<?php echo  $post->post_title; ?>">
-            <img src="<?php echo $image_thumb_url; ?>" />
+            <img src="<?php echo $image_thumb_obj['url']; ?>" width="<?php echo $image_thumb_obj['width']; ?>" height="<?php echo $image_thumb_obj['height']; ?>" />
           </a>
 
         <?php

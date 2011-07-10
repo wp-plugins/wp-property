@@ -48,7 +48,7 @@ if(!function_exists('prepare_property_for_display')):
 
     if(empty($property))
       return;
-      
+
     if(is_object($property))
       $property = (array)$property;
 
@@ -166,7 +166,7 @@ if(!function_exists('get_features')):
 
     if(!$property)
       $property = $post;
-    
+
     $defaults = array('type' => 'property_feature', 'format' => 'comma', 'links' => true);
     $args = wp_parse_args( $args, $defaults );
 
@@ -234,12 +234,12 @@ if(!function_exists('draw_stats')):
     if(!$stats) {
       return;
     }
-    
+
     $alt = 'alt';
 
     foreach($stats as $label => $value){
       $labels_to_keys = array_flip($wp_properties['property_stats']);
-      
+
       if(empty($value)) {
         continue;
       }
@@ -253,16 +253,16 @@ if(!function_exists('draw_stats')):
         continue;
 
       $value = html_entity_decode($value);
-     
+
       if($enable_shortcode == 'true')
         $value = do_shortcode($value);
-      
+
       if($value == 'true') {
         $value = __('Yes', 'wpp');
       } else if ($value == 'false') {
         $value = __('No', 'wpp');
       }
-      
+
       // Make URLs into clickable links
       if($make_link == 'true' && WPP_F::isURL($value))
         $value = "<a href='{$value}' title='{$label}'>{$value}</a>";
@@ -407,10 +407,10 @@ if(!function_exists('draw_property_search_form')):
           // Don't display search attributes that have no values
           if(!isset($search_values[$attrib]))
               continue;
-  
+
           $random_element_id = 'wpp_search_element_' . rand(1000,9999);
           $label = (empty($wp_properties['property_stats'][$attrib]) ? ucwords($attrib) : $wp_properties['property_stats'][$attrib])
-          
+
               ?>
             <li class="wpp_search_form_element seach_attribute_<?php echo $attrib; ?> <?php echo ((!empty($wp_properties['searchable_attr_fields'][$attrib]) && $wp_properties['searchable_attr_fields'][$attrib] == 'checkbox') ? 'wpp-checkbox-el' : ''); ?>">
 
@@ -448,11 +448,11 @@ if(!function_exists('draw_property_search_form')):
                       </select>
                       <?php
                     break;
-                    
+
                     case 'dropdown':
                       //$req_attr = htmlspecialchars((stripslashes($_REQUEST['wpp_search'][$attrib])), ENT_QUOTES);
                       $req_attr = htmlspecialchars(stripslashes($_REQUEST['wpp_search'][$attrib]), ENT_QUOTES); ?>
-                        
+
                     <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
 
                       <?php if( !isset( $_POST['wpp_search'][$attrib] ) || $_POST['wpp_search'][$attrib] == "-1" ) { ?>
@@ -477,10 +477,10 @@ if(!function_exists('draw_property_search_form')):
                       </option>
                       <?php } ?>
                     </select>
-              
+
                 <?php break;
-              
-              
+
+
                   case 'checkbox': ?>
                   <input id="<?php echo $random_element_id; ?>" type="checkbox" name="wpp_search[<?php echo $attrib; ?>][checked]" <?php checked($_REQUEST['wpp_search'][$attrib]['checked'], 'on'); ?> />
                   <?php
@@ -506,7 +506,7 @@ if(!function_exists('draw_property_search_form')):
                     </select>
               <?php } ?>
               </div><?php /* .wpp_search_attribute_wrap */ ?>
-  
+
             <?php endif; ?>
             <?php $this_field = ob_get_contents(); ?>
 
@@ -526,37 +526,124 @@ endif;
 if(!function_exists('wpp_get_image_link')):
   /*
    * Returns Image link (url)
-   * If image with the current size doesn't exist, we try to generate it
+   *
+   * If image with the current size doesn't exist, we try to generate it. 
+   * If image cannot be resized, the URL to the main image (original) is returned. 
+   *
+   * @todo Add something to check if requested image size is bigger than the original, in which case cannot be "resized"
+   * @todo Add a check to see if the specified image dimensions have changed. Right now only checks if slug exists, not the actualy size. 
+   *
    * @param string $size. Size name
    * @param string(integer) $thumbnail_link. attachment_id
    * @param string $args. Additional conditions
-   * @return string. Image url
+   * @return string or array. Default is string (image link)
    */
   function wpp_get_image_link($attachment_id, $size, $args = array()) {
+    global $wp_properties;
+    
     if(empty($size) || empty($attachment_id)) {
       return false;
     }
     
-    // Get Image data
-    $image = image_downsize( $attachment_id, $size);
-    if(!$image) {
-      return false;
+    //** Optional arguments */
+    $defaults = array(
+      'return' => 'string'
+    );
+    
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );      
+    
+    if($wp_properties['configuration']['do_not_automatically_regenerate_thumbnails'] == 'true') {
+      //* If on-the-fly image generation is specifically disabled, we simply return the default URL */
+      $default_return = wp_get_attachment_image_src( $attachment_id, $size , true );
+      
+      $i[0] = $default_return[0];
+      $i[1] = $default_return[1];
+      $i[2] = $default_return[2];
+
+    } else {
+      //* Do the default action of attempting to regenerate image if needed. */
+
+      $uploads_dir = wp_upload_dir();
+
+   
+
+      //** Get image path from meta table (if this doesn't exist, nothing we can do */
+      if($_wp_attached_file = get_post_meta($attachment_id, '_wp_attached_file', true)) {
+        $attachment_path = $uploads_dir['basedir'] . '/' . $_wp_attached_file;
+      } else {
+        return false;
+      }
+
+      //** Get meta of main image (may not exist if XML import) */
+      $image_meta = wp_get_attachment_metadata($attachment_id);
+
+      //** Real URL of full image */
+      $img_url = wp_get_attachment_url($attachment_id);
+
+      //** Filenme of image */
+      $img_url_basename = wp_basename($img_url);   
+
+
+      if(is_array($image_meta) && $image_meta['sizes'][$size]['file']) {
+      
+        //** Image image meta exists, we get the path and URL to the requested image size */
+        $requested_size_filepath = str_replace($img_url_basename, $image_meta['sizes'][$size]['file'], $attachment_path);
+        $requested_image_url = str_replace($img_url_basename, $image_meta['sizes'][$size]['file'], $img_url);
+
+        //** Meta is there, now check if file still exists on disk */
+
+        if (file_exists( $requested_size_filepath ) ) {
+          $requested_image_exists = true;
+        }
+      }
+
+      if($requested_image_exists) {
+        $i[0] = $requested_image_url;
+      } else {      
+
+        //** Image with the current size doesn't exist. Try generate file */
+        if ( WPP_F::generate_image($attachment_id, $size) ) {
+          //** Get Image data again */
+          $image = image_downsize($attachment_id, $size);
+          if(is_array($image)) {
+            $i = $image;
+          }
+        } else {
+   
+          //** Failure because image could not be resized. Return original URL */
+          $i[0] = $img_url;
+        }
+      }
+    
     }
     
-    if($image[3] != false) {
-      return $image[0];
-    } else {
-      // Image with the current size doesn't exist. Try generate file
-      if ( WPP_F::generate_image($attachment_id, $size) ) {
-        // Get Image data again
-        $image = image_downsize($attachment_id, $size);
-        if(is_array($image)) {
-          return $image[0];
-        }
-      } else {
-        return $image[0];
+ 
+    //** Return image data as requested */
+    if($i) {
+      switch ($return) {
+        case 'array':
+          if($i[1] == 0 || $i[2] == 0) {
+            $s = WPP_F::image_sizes($size);
+            $i[1] = $s['width'];
+            $i[2] = $s['height'];
+          }
+          return array (
+            'link' => $i[0],
+            'src' => $i[0],
+            'url' => $i[0],
+            'width' => $i[1],
+            'height' => $i[2]
+          );
+          break;
+
+        case 'string':
+        default:
+          return $i[0];
+          break;
       }
     }
+
+    return false;
   }
 endif;
 

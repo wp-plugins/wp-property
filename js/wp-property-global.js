@@ -79,28 +79,28 @@ var updateRowNames = function(instance, allowRandomSlug) {
   jQuery(this_row).attr('slug', new_slug);
   
   // Cycle through all child elements and fix names
-  jQuery('input,select,textarea', this_row).each(function(element) {
-    var old_name = jQuery(this).attr('name');
-    var new_name =  old_name.replace(old_slug,new_slug);
-    
-    if(jQuery(this).attr('id')) {
-      var old_id = jQuery(this).attr('id');    
-      var new_id =  old_id.replace(old_slug,new_slug);
+  jQuery('input,select,textarea', this_row).each(function(i,e) {
+    var old_name = jQuery(e).attr('name');
+    if (typeof old_name != 'undefined') {
+      var new_name =  old_name.replace(old_slug,new_slug);
+      if(jQuery(e).attr('id')) {
+        var old_id = jQuery(e).attr('id');    
+        var new_id =  old_id.replace(old_slug,new_slug);
+      }
+      // Update to new name
+      jQuery(e).attr('name', new_name);
+      jQuery(e).attr('id', new_id);
     }
-    
-    // Update to new name
-    jQuery(this).attr('name', new_name);
-    jQuery(this).attr('id', new_id);
   });
     
   // Cycle through labels too
-  jQuery('label', this_row).each(function(element) {
+  jQuery('label', this_row).each(function(i,e) {
     
-    if(jQuery(this).attr('id')) {
-      var old_for = jQuery(this).attr('for');
+    if(jQuery(e).attr('id')) {
+      var old_for = jQuery(e).attr('for');
       var new_for =  old_for.replace(old_slug,new_slug);
       // Update to new name
-      jQuery(this).attr('for', new_for);
+      jQuery(e).attr('for', new_for);
     }
     
   });
