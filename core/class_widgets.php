@@ -146,20 +146,20 @@ class OtherPropertiesWidget extends WP_Widget {
 
         $this_property  = WPP_F::get_property($jam->ID, 'return_object=true');
         $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+     
         ?>
-            <div class="property_widget_block apartment_entry clearfix" style="width: <?php echo ($image_sizes['width']+5); ?>px;" >
+        <div class="property_widget_block apartment_entry clearfix" style="width: <?php echo ($image['width']+5); ?>px;" >
             
-            <?php if ($hide_image !=='on'){ ?>
-                <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
+      <?php if ($hide_image !=='on'){ ?>
+          <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
         <?php if ($show_title == 'on'): ?>            
           <p class="title"><a href="<?php echo $this_property->permalink; ?>"><?php echo $this_property->post_title; ?></a></p>
         <?php endif; ?>
-                    <?php if(!empty($image)){ ?>
-                        <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
-                    <?php } ?>
-                </a>
-            <?php
-            } ?>
+            <?php if(!empty($image)){ ?>
+              <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
+            <?php } ?>
+          </a>
+      <?php } ?>
        
         <ul class="wpp_widget_attribute_list">
         <?php if(is_array($stats)): ?>          
@@ -354,7 +354,7 @@ jQuery(document).ready(function($){
             $this_property = WPP_F::get_property($attached->ID, 'return_object=true');
             $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
             ?>
-            <div class="property_widget_block apartment_entry clearfix" style="width: width: <?php echo ($image_sizes['width']+5); ?>px;">
+            <div class="property_widget_block apartment_entry clearfix" style="width: width: <?php echo ($image['width']+5); ?>px;">
             
              <?php if ($hide_image !== 'on'){ ?>
                 <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
@@ -566,7 +566,7 @@ jQuery(document).ready(function($){
             $this_property = WPP_F::get_property($featured, 'return_object=true');
             $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
             ?>
-            <div class="property_widget_block  clearfix"  style="width: <?php echo ($image_sizes['width']+5); ?>px; min-height: <?php echo $image_sizes['height']; ?>px;">
+            <div class="property_widget_block  clearfix"  style="width: <?php echo ($image['width']+5); ?>px; min-height: <?php echo $image['height']; ?>px;">
         
         <?php if ($hide_image !=='on'){ ?>
                 <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
@@ -783,13 +783,12 @@ function wpp_featured_properties($args = false, $custom = false){
           if ( $title )
                echo $before_title . $title . $after_title;
       
-         $image_sizes = WPP_F::image_sizes($image_type);
-       
+        
        foreach ($postslist as $post){
          
           ?>
        
-       <div class="property_widget_block latest_entry clearfix" style="width: <?php echo ($image_sizes['width']+5); ?>px;">
+       <div class="property_widget_block latest_entry clearfix" style="width: <?php echo ($image['width']+5); ?>px;">
        
        <?php
           
@@ -799,33 +798,32 @@ function wpp_featured_properties($args = false, $custom = false){
         if ($hide_image !=='on'){ ?>
                 <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
                     <?php if(!empty($image)){ ?>
-                        <img width="<?php echo $image_sizes['width']; ?>" height="<?php echo $image_sizes['height']; ?>" src="<?php echo $image;?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
+                        <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image;?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
                     <?php } ?>
                 </a>
             <?php
             }
             
        if ($show_title == 'on'){
-                echo '<p class="title"><a href="'. $this_property->permalink.'">'. $post->post_title .'</a></p>';
-            }
+          echo '<p class="title"><a href="'. $this_property->permalink.'">'. $post->post_title .'</a></p>';
+        }
       
-            echo '<ul class="wpp_widget_attribute_list">';
-            if(is_array($stats)){   
-             foreach($stats as $stat){
-                    $content = apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format);
-                    if(empty($content)) continue;
-                    echo '<li class="'. $stat .'"><span class="attribute">'. $wp_properties['property_stats'][$stat] .':</span> <span class="value">'. $content .'</span></li>';
-                }
-            }
-
-
+      echo '<ul class="wpp_widget_attribute_list">';
+      if(is_array($stats)){   
+       foreach($stats as $stat){
+        $content = apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format);
+        if(empty($content)) continue;
+        echo '<li class="'. $stat .'"><span class="attribute">'. $wp_properties['property_stats'][$stat] .':</span> <span class="value">'. $content .'</span></li>';
+      }
+      }  
+     echo '</ul>';
   
-            echo '</ul>';
-  
-     if ($instance['enable_more'] =='on')
-                  echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>'; ?>
+     if ($instance['enable_more'] =='on') {
+      echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>';
+      }
+      ?>
            </div>
-            <?php
+      <?php
                 unset($this_property);
         
         }

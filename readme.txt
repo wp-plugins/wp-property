@@ -3,7 +3,7 @@ Contributors: andypotanin
 Donate link: http://twincitiestech.com/plugins/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.1.4
+Tested up to: 3.2.1
 Stable tag: trunk
 
 
@@ -204,6 +204,9 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.16.2 =
+* Fix to widget image sizes (overlapping issue).
 
 = 1.16.1 =
 * Option to automatically remove all associated property images when a property is deleted.  WordPress does not remove attached images when the post or page is deleted, so a custom function was added to do this for properties.

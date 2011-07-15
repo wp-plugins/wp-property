@@ -506,10 +506,16 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
     margin: 0 5px 5px 0;
     padding: 6px; }
  
+ #property_meta .inside .wpp_attribute_row.wpp_attribute_row_admin_notes th {
+  background: #EDE6C0;
+ }
+ #property_meta .inside .wpp_attribute_row.wpp_attribute_row_admin_notes td {
+  background: #FFF8CC;
+ }
  
 #property_meta input.text-input {  }
  
-#property_meta .inside { margin: 0; }
+#property_meta .inside { margin: 0; padding: 0;}
  
   #property_meta .inside .widefat { border: 0; }
  

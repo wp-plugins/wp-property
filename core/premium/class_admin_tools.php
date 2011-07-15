@@ -2,7 +2,7 @@
 /*
 Name: Admin Tools
 Class: class_admin_tools
-Version: 2.9.1
+Version: 2.9.2
 Description: Tools for developing themes and extensions for WP-Property.
 */
 
@@ -276,6 +276,7 @@ class class_admin_tools {
         </tfoot>
 
         </table>
+        <br class="cb" />
         <h3><?php _e('Property Meta','wpp') ?></h3>
         <p><?php _e('Meta is used for descriptions,  on the back-end  meta fields will be displayed as textareas.  On the front-end they will be displayed as individual sections.','wpp') ?></p>
 
@@ -283,9 +284,10 @@ class class_admin_tools {
         <thead>
           <tr>
             <th class='wpp_draggable_handle'>&nbsp;</th>
-            <th><?php _e('Property Type','wpp') ?></th>
-            <th><?php _e('Slug','wpp') ?></th>
-             <th>&nbsp;</th>
+            <th class='wpp_attribute_name_col'><?php _e('Attribute Name','wpp') ?></th>
+            <th class='wpp_attribute_slug_col'><?php _e('Attribute Slug','wpp') ?></th>
+            <th class='wpp_settings_col'><?php _e('Settings','wpp') ?></th>
+            <th class='wpp_delete_col'>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
@@ -294,10 +296,25 @@ class class_admin_tools {
           <tr class="wpp_dynamic_table_row" slug="<?php echo $slug; ?>" new_row='false'>
           <th class='wpp_draggable_handle'>&nbsp;</th>
           <td >
-            <input class="slug_setter" type="text" name="wpp_settings[property_meta][<?php echo $slug; ?>]" value="<?php echo $label; ?>" />
+           <ul>
+            <li>
+               <input class="slug_setter" type="text" name="wpp_settings[property_meta][<?php echo $slug; ?>]" value="<?php echo $label; ?>" />
+            </li>              
+            </ul>
+          <td>
+            <ul>
+            <li>
+               <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
+            </li>
+            </ul>
           </td>
           <td>
-            <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
+            <ul>
+              </li>
+              <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Admin Only'); ?></label> 
+            </li>
+            </ul>            
           </td>
            <td><span class="wpp_delete_row wpp_link"><?php _e('Delete','wpp') ?></span></td>
         </tr>

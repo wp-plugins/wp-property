@@ -440,15 +440,11 @@ if(isset($_REQUEST['message'])) {
     <tr>
       <th><?php _e('Property Page','wpp') ?></th>
       <td>
-        <p><?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br />
-        The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
+        <p><?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br /> The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
         <ul>
-          <li><?php
-                  $display_larger_img_text = __('Display larger image, or slideshow, at the top of the property listing.','wpp');
-                  echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=$display_larger_img_text", $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
-          <li><?php
-          do_action('wpp_settings_page_property_page');?></li>
-         </ul>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=" .__('Display larger image, or slideshow, at the top of the property listing.','wpp'), $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
+          <?php do_action('wpp_settings_page_property_page');?>
+        </ul>
 
       </td>
     </tr>
