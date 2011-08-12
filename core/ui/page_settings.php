@@ -222,9 +222,9 @@ if(isset($_REQUEST['message'])) {
       <th><?php _e('Property Page','wpp'); ?></th>
       <td>
         <select name="wpp_settings[configuration][base_slug]" id="wpp_settings_base_slug">
-          <option <?php if($wp_properties['configuration']['base_slug'] == 'property') echo "SELECTED"; ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
+          <option <?php selected($wp_properties['configuration']['base_slug'], 'property'); ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
           <?php foreach(get_pages() as $page): ?>
-            <option <?php if($wp_properties['configuration']['base_slug'] == $page->post_name) echo "SELECTED"; ?> value="<?php echo $page->post_name; ?>"><?php echo $page->post_title; ?></option>
+            <option <?php selected($wp_properties['configuration']['base_slug'],$page->post_name); ?> value="<?php echo $page->post_name; ?>"><?php echo $page->post_title; ?></option>
           <?php endforeach; ?>
         </select>
       </td>

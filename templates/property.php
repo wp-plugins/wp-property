@@ -93,14 +93,8 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
         <h1 class="property-title entry-title"><?php the_title(); ?></h1>
         <h3 class="entry-subtitle"><?php the_tagline(); ?></h3>
       </div>
+ 
     
-            <?php 
-            $slideshow = property_slideshow(false, true);
-            preg_match('/\[\s*property_slideshow\s*\]/', $post->post_content, $slideshow_matches);
-            if ($slideshow && empty($slideshow_matches)) {
-                echo $slideshow;
-            } ?>
-            
       <div class="entry-content">
         <?php @the_content(); ?>
         
@@ -110,7 +104,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
           <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
           <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
           <?php endif; ?>
-          <?php @draw_stats("exclude={$wp_properties['configuration']['address_attribute']}"); ?>
+          <?php @draw_stats("make_link=true&exclude={$wp_properties['configuration']['address_attribute']}"); ?>
         </dl>
         
       <?php if(!empty($wp_properties['taxonomies'])) foreach($wp_properties['taxonomies'] as $tax_slug => $tax_data): ?>
@@ -118,7 +112,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
         <div class="<?php echo $tax_slug; ?>_list">
         <h2><?php echo $tax_data['label']; ?></h2>
         <ul class="clearfix">
-        <?php get_features("type=$tax_slug&format=list&links=false"); ?>
+        <?php get_features("type=$tax_slug&format=list&links=true"); ?>
         </ul>
         </div>
         <?php endif; ?>

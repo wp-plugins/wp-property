@@ -370,11 +370,14 @@ if(!function_exists('draw_property_search_form')):
         if(!$search_attributes)
             return;
 
-        if (!empty($search_attributes) && !empty($searchable_property_types))
-            $search_values = WPP_F::get_search_values($search_attributes, $searchable_property_types, $cache, $instance_id);
+        if (!empty($search_attributes) && !empty($searchable_property_types)) {
+          $search_values = WPP_F::get_search_values($search_attributes, $searchable_property_types, $cache, $instance_id);
+        }
 
+/*
             if($search_values['property_type'])
                 unset ($search_values['property_type']);
+*/
 
             if(array_key_exists('property_type', array_fill_keys($search_attributes, 1)) && is_array($searchable_property_types) && count($searchable_property_types) > 1 ) {
                 $spt = array_fill_keys($searchable_property_types, 1);
@@ -397,22 +400,22 @@ if(!function_exists('draw_property_search_form')):
         <?php
         if(is_array($searchable_property_types) && !array_key_exists('property_type', array_fill_keys($search_attributes, 1))) {
             foreach($searchable_property_types as $this_property) {
-                echo '<input type="hidden" name="wpp_search[property_type][]" value="'. $this_property .'" />';
-            }
+          echo '<input type="hidden" name="wpp_search[property_type][]" value="'. $this_property .'" />';
         }
-    //echo "<pre>";print_r($search_values);    print_r($_REQUEST['wpp_search']);echo "</pre>";
-        ?>
-          <ul class="wpp_search_elements">
+      }
+    
+    ?>
+      <ul class="wpp_search_elements">
         <?php if(is_array($search_attributes)) foreach($search_attributes as $attrib) {
-          // Don't display search attributes that have no values
-          if(!isset($search_values[$attrib]))
-              continue;
+          
+          //** Don't display search attributes that have no values */
+          if(!isset($search_values[$attrib])) {
+            continue;
+          }
 
           $random_element_id = 'wpp_search_element_' . rand(1000,9999);
-          $label = (empty($wp_properties['property_stats'][$attrib]) ? ucwords($attrib) : $wp_properties['property_stats'][$attrib])
-
-              ?>
-            <li class="wpp_search_form_element seach_attribute_<?php echo $attrib; ?> <?php echo ((!empty($wp_properties['searchable_attr_fields'][$attrib]) && $wp_properties['searchable_attr_fields'][$attrib] == 'checkbox') ? 'wpp-checkbox-el' : ''); ?>">
+          $label = (empty($wp_properties['property_stats'][$attrib]) ? ucwords($attrib) : $wp_properties['property_stats'][$attrib]) ?>
+            <li class="wpp_search_form_element seach_attribute_<?php echo $attrib; ?>  wpp_search_attribute_type_<?php echo $wp_properties['searchable_attr_fields'][$attrib]; ?> <?php echo ((!empty($wp_properties['searchable_attr_fields'][$attrib]) && $wp_properties['searchable_attr_fields'][$attrib] == 'checkbox') ? 'wpp-checkbox-el' : ''); ?>">
 
             <?php ob_start(); ?>
 
@@ -431,7 +434,8 @@ if(!function_exists('draw_property_search_form')):
                       break;
                   case 'range_input':
                       ?>
-                      <input id="<?php echo $random_element_id; ?>" class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> -
+                      
+                      <input id="<?php echo $random_element_id; ?>" class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> <span class="wpp_dash">-</span>
                       <input class="wpp_search_input_field_max wpp_search_input_field_<?php echo $attrib; ?>"  type="text" name="wpp_search[<?php echo $attrib; ?>][max]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['max']; ?>" />
                       <?php
                       break;
@@ -461,14 +465,9 @@ if(!function_exists('draw_property_search_form')):
 
                       <?php  } else { ?>
 
-                      <?php
-                      // What is the point of this??
-                      /* <option value="<?php _e( $_POST['wpp_search'][$attrib] ,'wpp' ) ?>"><?php _e( $_POST['wpp_search'][$attrib], 'wpp' ) ?></option> */
-                      ?>
                       <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
 
                       <?php } ?>
-
 
                       <?php foreach( $search_values[$attrib] as $value ) { ?>
                       <?php // echo 'value: ' . $value . '|req_attr: '  . $req_attr; ?>
@@ -478,8 +477,34 @@ if(!function_exists('draw_property_search_form')):
                       <?php } ?>
                     </select>
 
-                <?php break;
+                <?php break;                   
 
+                case 'multi_checkbox': ?>
+
+                    <ul class="wpp_multi_checkbox">
+                      <?php
+                      // ** Load Values */
+                      if(!empty($wp_properties['predefined_values'][$attrib])) {
+                      
+                        $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$attrib]));
+                        $predefined_values = explode(',', $predefined_values);                        
+                      } else {
+                        $predefined_values = $search_values[$attrib];
+                      }
+
+                      if(is_array($predefined_values)) {
+                        foreach($predefined_values as $value_label) { $unique_id = rand(10000,99999);?>
+                        <li>
+                          <input name="wpp_search[<?php  echo $attrib; ?>][options][]" <?php echo (is_array($_REQUEST['wpp_search'][$attrib]['options']) && in_array($value_label, $_REQUEST['wpp_search'][$attrib]['options']) ? 'checked="true"' : '');?> id="wpp_attribute_checkbox_<?php echo $unique_id; ?>" type="checkbox" value="<?php echo $value_label; ?>" />
+                          <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>"><?php echo $value_label; ?></label>
+                        </li>
+                      <?php } } ?>
+                    
+                    </ul>
+
+                    
+
+                <?php break;
 
                   case 'checkbox': ?>
                   <input id="<?php echo $random_element_id; ?>" type="checkbox" name="wpp_search[<?php echo $attrib; ?>][checked]" <?php checked($_REQUEST['wpp_search'][$attrib]['checked'], 'on'); ?> />
@@ -527,11 +552,11 @@ if(!function_exists('wpp_get_image_link')):
   /*
    * Returns Image link (url)
    *
-   * If image with the current size doesn't exist, we try to generate it. 
-   * If image cannot be resized, the URL to the main image (original) is returned. 
+   * If image with the current size doesn't exist, we try to generate it.
+   * If image cannot be resized, the URL to the main image (original) is returned.
    *
    * @todo Add something to check if requested image size is bigger than the original, in which case cannot be "resized"
-   * @todo Add a check to see if the specified image dimensions have changed. Right now only checks if slug exists, not the actualy size. 
+   * @todo Add a check to see if the specified image dimensions have changed. Right now only checks if slug exists, not the actualy size.
    *
    * @param string $size. Size name
    * @param string(integer) $thumbnail_link. attachment_id
@@ -540,22 +565,22 @@ if(!function_exists('wpp_get_image_link')):
    */
   function wpp_get_image_link($attachment_id, $size, $args = array()) {
     global $wp_properties;
-    
+
     if(empty($size) || empty($attachment_id)) {
       return false;
     }
-    
+
     //** Optional arguments */
     $defaults = array(
       'return' => 'string'
     );
-    
-    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );      
-    
+
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
     if($wp_properties['configuration']['do_not_automatically_regenerate_thumbnails'] == 'true') {
       //* If on-the-fly image generation is specifically disabled, we simply return the default URL */
       $default_return = wp_get_attachment_image_src( $attachment_id, $size , true );
-      
+
       $i[0] = $default_return[0];
       $i[1] = $default_return[1];
       $i[2] = $default_return[2];
@@ -564,8 +589,6 @@ if(!function_exists('wpp_get_image_link')):
       //* Do the default action of attempting to regenerate image if needed. */
 
       $uploads_dir = wp_upload_dir();
-
-   
 
       //** Get image path from meta table (if this doesn't exist, nothing we can do */
       if($_wp_attached_file = get_post_meta($attachment_id, '_wp_attached_file', true)) {
@@ -581,14 +604,15 @@ if(!function_exists('wpp_get_image_link')):
       $img_url = wp_get_attachment_url($attachment_id);
 
       //** Filenme of image */
-      $img_url_basename = wp_basename($img_url);   
+      $img_url_basename = wp_basename($img_url);
 
 
       if(is_array($image_meta) && $image_meta['sizes'][$size]['file']) {
-      
+
         //** Image image meta exists, we get the path and URL to the requested image size */
         $requested_size_filepath = str_replace($img_url_basename, $image_meta['sizes'][$size]['file'], $attachment_path);
         $requested_image_url = str_replace($img_url_basename, $image_meta['sizes'][$size]['file'], $img_url);
+        $image_path = $requested_size_filepath;
 
         //** Meta is there, now check if file still exists on disk */
 
@@ -599,30 +623,39 @@ if(!function_exists('wpp_get_image_link')):
 
       if($requested_image_exists) {
         $i[0] = $requested_image_url;
-      } else {      
+ 
+      } else {
 
         //** Image with the current size doesn't exist. Try generate file */
-        if ( WPP_F::generate_image($attachment_id, $size) ) {
+        if ( WPP_F::generate_image($attachment_id, $size) ) { 
           //** Get Image data again */
           $image = image_downsize($attachment_id, $size);
           if(is_array($image)) {
             $i = $image;
           }
         } else {
-   
+
           //** Failure because image could not be resized. Return original URL */
-          $i[0] = $img_url;
+          $i[0] = $img_url; 
+          $image_path = str_replace($uploads_dir['baseurl'], $uploads_dir['basedir'], $img_url);
+
         }
       }
-    
+
     }
     
+    //** Get true image dimensions or returned URL */
+    $getimagesize =@getimagesize($image_path);
+    $i[1] = $getimagesize[0];
+    $i[2] = $getimagesize[1];
+
  
     //** Return image data as requested */
     if($i) {
       switch ($return) {
         case 'array':
           if($i[1] == 0 || $i[2] == 0) {
+ 
             $s = WPP_F::image_sizes($size);
             $i[1] = $s['width'];
             $i[2] = $s['height'];
@@ -647,4 +680,108 @@ if(!function_exists('wpp_get_image_link')):
   }
 endif;
 
-?>
+if(!function_exists('wpp_inquiry_form')):
+  /*
+   * Overwtites default Wordpress function comment_form()
+   * @param array $args Options for strings, fields etc in the form
+   * @param mixed $post_id Post ID to generate the form for, uses the current post if null
+   * @return void
+   */
+  function wpp_inquiry_form( $args = array(), $post_id = null ) {
+    global $post, $user_identity, $id;
+    
+    $inquiry = true;
+    
+    /* Determine if post is property */
+    if($post->post_type != 'property') {
+      $inquiry = false;
+    }
+    
+    $inquiry = apply_filters('pre_render_inquiry_form', $inquiry);
+    
+    if(!$inquiry) {
+      /* If conditions are failed, use default Wordpress function */
+      comment_form($args, $post_id);
+    } else {
+      /* The functionality below based on comment_form() function */
+      if ( null === $post_id ) {
+        $post_id = $id;
+      } else {
+        $id = $post_id;
+      }
+      
+      $commenter = wp_get_current_commenter();
+      
+      $req = get_option( 'require_name_email' );
+      $aria_req = ( $req ? " aria-required='true'" : '' );
+      $fields =  array(
+        'author' => '<p class="comment-form-author">' . '<label for="author">' . __( 'Name' ) . '</label> ' . ( $req ? '<span class="required">*</span>' : '' ) .
+                    '<input id="author" name="author" type="text" value="' . esc_attr( $commenter['comment_author'] ) . '" size="30"' . $aria_req . ' /></p>',
+        'email'  => '<p class="comment-form-email"><label for="email">' . __( 'Email' ) . '</label> ' . ( $req ? '<span class="required">*</span>' : '' ) .
+                    '<input id="email" name="email" type="text" value="' . esc_attr(  $commenter['comment_author_email'] ) . '" size="30"' . $aria_req . ' /></p>',
+        'url'    => '<p class="comment-form-url"><label for="url">' . __( 'Website' ) . '</label>' .
+                    '<input id="url" name="url" type="text" value="' . esc_attr( $commenter['comment_author_url'] ) . '" size="30" /></p>',
+      );
+      
+      $required_text = sprintf( ' ' . __('Required fields are marked %s'), '<span class="required">*</span>' );
+      $defaults = array(
+        'fields'               => apply_filters( 'comment_form_default_fields', $fields ),
+        'comment_field'        => '<p class="comment-form-comment"><label for="comment">' . _x( 'Comment', 'noun' ) . '</label><textarea id="comment" name="comment" cols="45" rows="8" aria-required="true"></textarea></p>',
+        'must_log_in'          => '<p class="must-log-in">' .  sprintf( __( 'You must be <a href="%s">logged in</a> to post a comment.' ), wp_login_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</p>',
+        'logged_in_as'         => '<p class="logged-in-as">' . sprintf( __( 'Logged in as <a href="%1$s">%2$s</a>. <a href="%3$s" title="Log out of this account">Log out?</a>' ), admin_url( 'profile.php' ), $user_identity, wp_logout_url( apply_filters( 'the_permalink', get_permalink( $post_id ) ) ) ) . '</p>',
+        'comment_notes_before' => '<p class="comment-notes">' . __( 'Your email address will not be published.' ) . ( $req ? $required_text : '' ) . '</p>',
+        'comment_notes_after'  => '<p class="form-allowed-tags">' . sprintf( __( 'You may use these <abbr title="HyperText Markup Language">HTML</abbr> tags and attributes: %s' ), ' <code>' . allowed_tags() . '</code>' ) . '</p>',
+        'id_form'              => 'commentform',
+        'id_submit'            => 'submit',
+        'title_reply'          => __( 'Leave a Reply' ),
+        'title_reply_to'       => __( 'Leave a Reply to %s' ),
+        'cancel_reply_link'    => __( 'Cancel reply' ),
+        'label_submit'         => __( 'Post Comment' ),
+      );
+      
+      $args = wp_parse_args( $args, apply_filters( 'comment_form_defaults', $defaults ) );
+      
+      ?>
+      <?php if ( comments_open() ) : ?>
+        <?php do_action( 'comment_form_before' ); ?>
+        <div id="respond">
+          <h3 id="reply-title"><?php comment_form_title( $args['title_reply'], $args['title_reply_to'] ); ?> <small><?php cancel_comment_reply_link( $args['cancel_reply_link'] ); ?></small></h3>
+          <?php if ( get_option( 'comment_registration' ) && !is_user_logged_in() ) : ?>
+            <?php echo $args['must_log_in']; ?>
+            <?php do_action( 'comment_form_must_log_in_after' ); ?>
+          <?php else : ?>
+            <form action="<?php echo site_url( '/wp-comments-post.php' ); ?>" method="post" id="<?php echo esc_attr( $args['id_form'] ); ?>">
+              <?php do_action( 'comment_form_top' ); ?>
+              
+              <?php if ( is_user_logged_in() ) : ?>
+                <?php echo apply_filters( 'comment_form_logged_in', $args['logged_in_as'], $commenter, $user_identity ); ?>
+                <?php do_action( 'comment_form_logged_in_after', $commenter, $user_identity ); ?>
+              <?php endif; ?>
+              
+              <?php echo $args['comment_notes_before']; ?>
+              <?php
+              do_action( 'comment_form_before_fields' );
+              foreach ( (array) $args['fields'] as $name => $field ) {
+                echo apply_filters( "comment_form_field_{$name}", $field ) . "\n";
+              }
+              do_action( 'comment_form_after_fields' );
+              ?>
+                
+              <?php echo apply_filters( 'comment_form_field_comment', $args['comment_field'] ); ?>
+              <?php echo $args['comment_notes_after']; ?>
+              <p class="form-submit">
+                <input name="submit" type="submit" id="<?php echo esc_attr( $args['id_submit'] ); ?>" value="<?php echo esc_attr( $args['label_submit'] ); ?>" />
+                <?php comment_id_fields( $post_id ); ?>
+              </p>
+              <?php do_action( 'comment_form', $post_id ); ?>
+            </form>
+          <?php endif; ?>
+        </div><!-- #respond -->
+        <?php do_action( 'comment_form_after' ); ?>
+      <?php else : ?>
+        <?php do_action( 'comment_form_comments_closed' ); ?>
+      <?php endif; ?>
+      <?php
+    }
+  }
+endif;

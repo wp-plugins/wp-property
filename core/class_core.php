@@ -74,13 +74,14 @@ class WPP_Core {
     wp_register_script('jquery-colorpicker', WPP_URL. '/third-party/colorpicker/colorpicker.js', array('jquery'));
     wp_register_script('jquery-easing', WPP_URL. '/third-party/fancybox/jquery.easing-1.3.pack.js', array('jquery'), '1.7.3' );
     wp_register_script('jquery-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery'), '1.7.3' );
-    wp_register_script('jquery-cookie', WPP_URL. '/js/jquery.cookie.js', array('jquery'), '1.7.3' );
+    wp_register_script('jquery-cookie', WPP_URL. '/js/jquery.smookie.js', array('jquery'), '1.7.3' );
     wp_register_script('wp-property-admin-overview', WPP_URL. '/js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
     wp_register_script('wp-property-global', WPP_URL. '/js/wp-property-global.js', array('jquery'),WPP_Version);
     wp_register_script('google-maps', 'http://maps.google.com/maps/api/js?sensor=true');
     wp_register_script('jquery-quicksand', WPP_URL. '/third-party/jquery.quicksand.js', array('jquery'));
     wp_register_script('jquery-nivo-slider', WPP_URL. '/third-party/jquery.nivo.slider.pack.js', array('jquery'));
     wp_register_script('jquery-address', WPP_URL. '/js/jquery.address-1.3.2.js', array('jquery'));
+    wp_register_script('jquery-scrollTo', WPP_URL. '/js/jquery.scrollTo-min.js', array('jquery'));
 
 
     // Find and register stylesheet
@@ -102,12 +103,12 @@ class WPP_Core {
 
     // Find front-end JavaScript and register the script
     if ( file_exists( STYLESHEETPATH . '/wp_properties.js') ) {
-      wp_register_script('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.js', array(),'1.13' );
-     } elseif( file_exists( TEMPLATEPATH . '/wp_properties.js') ) {
-      wp_register_script('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.js', array(),'1.13' );
-     } elseif (file_exists( WPP_Templates . '/wp_properties.js')) {
-      wp_register_script('wp-property-frontend', WPP_URL . '/templates/wp_properties.js', array(),WPP_Version);
-     }
+      wp_register_script('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.js', array('jquery-ui-core'),'1.13' );
+    } elseif( file_exists( TEMPLATEPATH . '/wp_properties.js') ) {
+      wp_register_script('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.js', array('jquery-ui-core'),'1.13' );
+    } elseif (file_exists( WPP_Templates . '/wp_properties.js')) {
+      wp_register_script('wp-property-frontend', WPP_URL . '/templates/wp_properties.js', array('jquery-ui-core'),WPP_Version);
+    }
 
 
         // Check settings data on accord with existing wp_properties data before option updates
@@ -122,12 +123,12 @@ class WPP_Core {
     //UD_UI::use_ud_scripts();
 
     // Add troubleshoot log page
-    if(isset($wp_properties['configuration']['show_ud_log']) && $wp_properties['configuration']['show_ud_log'] == 'true')
+    if(isset($wp_properties['configuration']['show_ud_log']) && $wp_properties['configuration']['show_ud_log'] == 'true') {
       UD_F::add_log_page();
+    }
 
     // Setup taxonomies
     $wp_properties['taxonomies'] = apply_filters('wpp_taxonomies', $wp_properties['taxonomies']);
-
 
 
     $labels = array(
@@ -191,9 +192,11 @@ class WPP_Core {
     add_action('wp_ajax_wpp_ajax_revalidate_all_addresses', create_function("",'  echo WPP_F::revalidate_all_addresses(); die();'));
 
     // Make Property Featured Via AJAX
-    if(isset($_REQUEST['_wpnonce']))
-      if(wp_verify_nonce($_REQUEST['_wpnonce'], "wpp_make_featured_" . $_REQUEST['post_id']))
+    if(isset($_REQUEST['_wpnonce'])) {
+      if(wp_verify_nonce($_REQUEST['_wpnonce'], "wpp_make_featured_" . $_REQUEST['post_id'])) {
         add_action('wp_ajax_wpp_make_featured', create_function("",'  $post_id = $_REQUEST[post_id]; echo WPP_F::toggle_featured($post_id); die();'));
+      }
+    }
 
 
     //add_action('wp_ajax_wpp_setup_default_widgets', create_function("",'  echo WPP_F::setup_default_widgets(); die();'));
@@ -352,10 +355,10 @@ class WPP_Core {
 
     if($current_screen->id == 'property_page_property_settings') {
       wp_enqueue_script('jquery');
-      wp_enqueue_script('jquery-ui');
+      wp_enqueue_script('jquery-ui-core');
       wp_enqueue_script('jquery-ui-sortable');
-            wp_enqueue_script('jquery-colorpicker');
-            wp_enqueue_style('jquery-colorpicker-css');
+      wp_enqueue_script('jquery-colorpicker');
+      wp_enqueue_style('jquery-colorpicker-css');
     }
   }
 
@@ -760,7 +763,7 @@ class WPP_Core {
 
     $columns['cb'] = "<input type=\"checkbox\" />";
     $columns['title'] = __('Title','wpp');
-    $columns['type'] = __('Type','wpp');
+    $columns['property_type'] = __('Type','wpp');
 
     if(is_array($wp_properties['property_stats'])) {
       foreach($wp_properties['property_stats'] as $slug => $title)
@@ -816,13 +819,12 @@ class WPP_Core {
     global $post, $wp_properties;
     $post_id = $post->ID;
 
-    switch ($column)
-    {
+    switch ($column)    {
       case "description":
         the_excerpt();
       break;
 
-      case "type":
+      case "property_type": 
         $property_type = $post->property_type;
         echo $wp_properties['property_types'][$property_type];
       break;
@@ -978,11 +980,12 @@ class WPP_Core {
 
     // Scripts for both types of views
     if ($single_page || $wp_query->is_property_overview)  {
-      //wp_enqueue_script('jquery-ui-slider', WPP_URL . '/js/jquery.ui.slider.min.js', array('jquery-ui-core'), '1.7.3' );
-      wp_enqueue_script('jquery-fancybox');
-      wp_enqueue_script('wp-property-frontend');
-      wp_enqueue_script('jquery-address');
-
+  
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-fancybox');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
+ 
       wp_enqueue_style('jquery-fancybox-css');
       wp_enqueue_style('jquery-ui');
       // Check for and load conditional browser styles
@@ -1006,15 +1009,12 @@ class WPP_Core {
 
       }
 
-        }
+    }
 
     if ($single_page && empty($post->post_password))  {
-
-      // Load Map Scripts
-      wp_enqueue_script('google-maps');
-      wp_enqueue_script('jquery');
-      wp_enqueue_script('jquery-ui');
-      wp_enqueue_script('jquery-mouse');
+   
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-mouse');"));
 
       // Allow plugins to insert header scripts/styles using wp_head_single_property hook
       do_action('template_redirect_single_property');
@@ -1277,7 +1277,7 @@ class WPP_Core {
         static $unique = 100;
       }
       // Initialize result (content which will be shown) and open wrap (div) with unique id
-      $result = '<div id="wpp_shortcode_'. $unique .'">';
+      $result = '<div id="wpp_shortcode_'. $unique .'" class="wpp_property_overview_shortcode">';
       $default_property_type = WPP_F::get_most_common_property_type();
 
       // convert all saved attributes into useful array
@@ -1342,13 +1342,7 @@ class WPP_Core {
                   $sortable_attrs[$slug] = $label;
               }
           }
-          //@TODO: Don't understand, why do we need it?
-          //If default ORDER_BY attr doesn't exist in sortable attributes we set ORDER_BY by first sortable attribute.
-          /*
-          if(!empty($sortable_attrs) && !in_array($sort_by, $wp_properties['sortable_attributes'])) {
-              $sort_by = key($sortable_attrs);
-          }
-          */
+
       }
 
       if( empty($props_atts['ajax_call']) ) {
@@ -1367,6 +1361,9 @@ class WPP_Core {
               $searchable_attributes[$k] = 'true';
             } elseif( isset($v['min']) && ($v['min']=='' || $v['min']=='0' || $v['min']=='-1')  && $v['max']=='' ) {
               continue;
+            } elseif (isset($v['options']) && is_array($v['options'])) {              
+              
+              $searchable_attributes[$k] = implode(',', $v['options']);
             } else if ( is_array($v) ) {
               $searchable_attributes[$k] = $v;
             }	else {
@@ -1430,6 +1427,7 @@ class WPP_Core {
           // Adds template with pagination and sort (order by)
           $top_page_unique = $unique;
           $bottom_page_unique = $unique + 1;
+          $pagination_type = 'top';
           ob_start();
           // 1. Try custom pagination template in theme folder
           if(file_exists(STYLESHEETPATH . "/property-pagination-$template.php")) {
@@ -1459,6 +1457,7 @@ class WPP_Core {
           ob_end_clean();
           if ($bottom_pagenation_flag){
             $unique++;
+            $pagination_type = 'bottom';
             ob_start();
             // 1. Try custom pagination template in theme folder
             if(file_exists(STYLESHEETPATH . "/property-pagination-$template.php")) {

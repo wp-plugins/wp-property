@@ -4,7 +4,7 @@ Plugin Name: WP-Property
 Plugin URI: http://twincitiestech.com/plugins/wp-property/
 Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
 Author: TwinCitiesTech.com, Inc.
-Version: 1.16.2
+Version: 1.17
 Author URI: http://twincitiestech.com
 
 Copyright 2011  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.com)
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** This Version  */
-define('WPP_Version', '1.16.2');
+define('WPP_Version', '1.17');
 
 /** Path for Includes */
 define('WPP_Path', WP_PLUGIN_DIR . '/wp-property');
@@ -68,6 +68,9 @@ include_once WPP_Path . '/core/ui/property_metaboxes.php';
  
 /** Loads all the metaboxes for the property page */
 include_once WPP_Path . '/core/class_core.php';
+
+/** Bring in the RETS library */
+include_once WPP_Path . '/core/class_rets.php';
 
 // Register activation hook -> has to be in the main plugin file
 register_activation_hook(__FILE__,array('WPP_F', 'activation'));

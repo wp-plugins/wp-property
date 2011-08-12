@@ -205,6 +205,21 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.17 =
+* After pagination, user's browser is automatically scrolled to the top of the paginated properties.
+* Fixed phone number formatting issue where the number would not be displayed if it was not 10 characters.
+* Added multi-checkbox search option.
+* Added automatically generated ALT and TITLE to sidebar widgets for improved image SEO.
+* Image captions and descriptions can not be displayed in Gallery widgets.
+* Renamed jQuery Cookie file to jquery.smookie.js (to avoid some hosts from blocking the file for security reasons)
+* Links in Property Meta are displayed as clickable links on front-end. 
+* revalidate_all_addresses() function updated to skip any properties with valid addresses, if argument passed.
+* More tweaking and fixes to the sorting issues with numerical values (i.e. prices).
+
+
+= 1.16.3 =
+* Added cron.php to run imports from the command line
+* Image fixes for the XML importer
 = 1.16.2 =
 * Fix to widget image sizes (overlapping issue).
 

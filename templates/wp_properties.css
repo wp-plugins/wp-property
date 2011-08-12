@@ -417,7 +417,7 @@ html[xmlns] .clearfix { display: block; }
           color: orange;
           text-decoration: underline; }
  
-  .wpp_row_view .property_image img { border: 6px solid #F5F5F5; }
+  .wpp_row_view .property_image img { border: 6px solid #F5F5F5; width: auto;}
  
   .wpp_row_view .property_image .property_overview_thumb {
     background: none repeat scroll 0 0 #EFEFEF;
@@ -519,7 +519,13 @@ html[xmlns] .clearfix { display: block; }
   background: #DAE0FF;
   margin-bottom: 0px;
   line-height: 12px; }
- 
+
+.super_map_list .map_filters li ul {
+  margin-left:20px;}
+
+.super_map_list .map_filters li ul li {
+  list-style: none;}
+
 .hide_filter {
   background: #DAE0FF;
   border: 2px ridge grey;
@@ -593,7 +599,12 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
       left: 5px;
       padding-left: 0;
       margin-right: 10px; }
- 
+    
+    .super_map_list ul.property_in_list_items li.supermap_list_view_property {
+      color: #004893;
+      font-size: 1em;
+      cursor: pointer;
+      text-decoration: underline; }
   
 #no_properties { background: #FF737A; }
  

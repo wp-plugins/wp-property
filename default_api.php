@@ -263,7 +263,9 @@
 
     if($wp_properties['configuration']['property_overview']['format_phone_number'] == 'true') {
             $phone_number = preg_replace("[^0-9]",'',$phone_number);
-            if(strlen($phone_number) != 10) return(False);
+            if(strlen($phone_number) != 10) { 
+              return $phone_number;
+            }
             $sArea = substr($phone_number,0,3);
             $sPrefix = substr($phone_number,3,3);
             $sNumber = substr($phone_number,6,4);
@@ -319,8 +321,9 @@
    */
   function add_city_to_searchable($array) {
 
-    if(is_array($array))
-    array_push($array, 'city');
+    if(is_array($array) && !in_array('city', $array)) {
+      array_push($array, 'city');
+    }
 
     return $array;
   }
@@ -476,7 +479,7 @@
     $thousands_sep  = (!empty($wp_properties['configuration']['thousands_sep']) ? $wp_properties['configuration']['thousands_sep'] : ",");
     $currency_symbol_placement  = (!empty($wp_properties['configuration']['currency_symbol_placement']) ? $wp_properties['configuration']['currency_symbol_placement'] : "before");
 
-    $content = str_replace(",", "", $content);
+    $content = trim(str_replace(",", "", $content));
 
     if (!is_numeric($content) && substr_count($content, '-')){
       $hyphen_between = explode('-', $content);

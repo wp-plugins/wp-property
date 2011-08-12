@@ -749,64 +749,63 @@ function wpp_featured_properties($args = false, $custom = false){
         parent::WP_Widget(false, $name = __('Latest Properties','wpp'), array('description' => __('List of the latest properties created on this site', 'wpp')));
     }
     
-        /** @see WP_Widget::widget */
+    /** @see WP_Widget::widget */
     function widget($args, $instance) {
       global $wp_properties;
       
       extract( $args );
       
       $title       = apply_filters('widget_title', $instance['title']);
-    $instance = apply_filters('LatestPropertiesWidget', $instance);
+      $instance = apply_filters('LatestPropertiesWidget', $instance);
       $stats       = $instance['stats'];
       $image_type    = $instance['image_type'];
       $hide_image   = $instance['hide_image'];
       $show_title   = $instance['show_title'];
       $address_format = $instance['address_format'];
       
-      if(!$image_type)
-            $image_type == '';
+      if(!$image_type) {
+        $image_type == '';
+      }
 
-        $arg = array(
-            'post_type'      => 'property',
-            'numberposts'    => $instance['amount_items'],
-            'post_status'    => 'publish',
-            'post_parent'    => null, // any parent
-            'order'        => 'DESC',
-            'orderby'      => 'post_date'
-        );
+      $arg = array(
+        'post_type'      => 'property',
+        'numberposts'    => $instance['amount_items'],
+        'post_status'    => 'publish',
+        'post_parent'    => null, // any parent
+        'order'        => 'DESC',
+        'orderby'      => 'post_date'
+      );
 
-        $postslist = get_posts($arg);
+    $postslist = get_posts($arg);
     $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
     echo $before_widget;
-      echo "<div class='wpp_latest_properties_widget'>";
+    echo "<div class='wpp_latest_properties_widget'>";
          
-          if ( $title )
-               echo $before_title . $title . $after_title;
+    if ( $title ) {
+      echo $before_title . $title . $after_title;
+    }
       
         
-       foreach ($postslist as $post){
-         
+     foreach ($postslist as $post) { 
+       $this_property = WPP_F::get_property($post->ID, 'return_object=true');
+       $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+
           ?>
        
        <div class="property_widget_block latest_entry clearfix" style="width: <?php echo ($image['width']+5); ?>px;">
        
-       <?php
-          
-           $this_property = WPP_F::get_property($post->ID, 'return_object=true');
-           $image = wpp_get_image_link($this_property->featured_image, $image_type);
-           
-        if ($hide_image !=='on'){ ?>
-                <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
-                    <?php if(!empty($image)){ ?>
-                        <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image;?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
-                    <?php } ?>
-                </a>
-            <?php
-            }
-            
-       if ($show_title == 'on'){
-          echo '<p class="title"><a href="'. $this_property->permalink.'">'. $post->post_title .'</a></p>';
+       <?php if ($hide_image !=='on'){ ?>
+          <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
+            <?php if(!empty($image)){ ?>
+            <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['url'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
+            <?php } ?>
+          </a>
+        <?php
         }
+            
+      if ($show_title == 'on'){
+        echo '<p class="title"><a href="'. $this_property->permalink.'">'. $post->post_title .'</a></p>';
+      }
       
       echo '<ul class="wpp_widget_attribute_list">';
       if(is_array($stats)){   
@@ -853,8 +852,10 @@ function wpp_featured_properties($args = false, $custom = false){
         $show_title      = $instance['show_title'];
         $enable_more     = $instance['enable_more'];
         $enable_view_all   = $instance['enable_view_all'];
-        if(empty($address_format))
-            $address_format = "[street_number] [street_name],[city], [state]";
+        
+        if(empty($address_format)) {
+          $address_format = "[street_number] [street_name],[city], [state]";
+        }
 ?>
 <script type="text/javascript">
 //hide and show dropdown whith thumb settings
@@ -1163,6 +1164,8 @@ function wpp_search_widget($args = false, $custom = false){
         $image_type = esc_attr($instance['image_type']);
         $big_image_type = esc_attr($instance['big_image_type']);
         $gallery_count = esc_attr($instance['gallery_count']);
+        $show_caption = esc_attr($instance['show_caption']);
+        $show_description = esc_attr($instance['show_description']);
 
         if(empty($big_image_type))
             $big_image_type = 'large';
@@ -1170,39 +1173,51 @@ function wpp_search_widget($args = false, $custom = false){
         if(empty($image_type))
             $image_type = 'thumbnail';
 
-        if(empty($post->gallery))
+        if(empty($post->gallery)) {
           return;
+        }
 
         $thumbnail_dimensions = WPP_F::image_sizes($image_type);
         $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
         echo $before_widget;
         echo "<div class='wpp_gallery_widget'>";
 
-
-        if ( $title )
-            echo $before_title . $title . $after_title;
+        if ( $title ) {
+          echo $before_title . $title . $after_title;
+        }
 
         if($post->gallery) {
-            $real_count = 0;
-            foreach($post->gallery as $image) {
-                $big_image = wpp_get_image_link($image['attachment_id'], $big_image_type);
-                $thumb_image = wpp_get_image_link($image['attachment_id'], $image_type);
-                
+        
+        $real_count = 0;
+        foreach($post->gallery as $image) {
+          
+          $big_image = wpp_get_image_link($image['attachment_id'], $big_image_type);
+          $thumb_image = wpp_get_image_link($image['attachment_id'], $image_type);
+  
 
-                ?>
-                <div class="sidebar_gallery_item">
-                <a href="<?php echo $big_image; ?>"  class="fancybox_image" rel="property_gallery">
-                    <img src="<?php echo $thumb_image; ?>" alt="<?php echo $image['post_title']; ?>" class="size-thumbnail "  width="<?php echo $thumbnail_dimensions['width']; ?>" height="<?php echo $thumbnail_dimensions['height']; ?>" />
-                </a>
-                </div>
-                <?php
-                $real_count++;
+          ?>
+          <div class="sidebar_gallery_item">
+            <a href="<?php echo $big_image; ?>" class="fancybox_image" rel="property_gallery">
+                <img src="<?php echo $thumb_image; ?>" title="<?php echo esc_attr($image['post_excerpt'] ? $image['post_excerpt'] : $image['post_title'] . ' - ' . $post->post_title); ?>" alt="<?php echo esc_attr($image['post_excerpt'] ? $image['post_excerpt'] : $image['post_title']); ?>" class="size-thumbnail "  width="<?php echo $thumbnail_dimensions['width']; ?>" height="<?php echo $thumbnail_dimensions['height']; ?>" />
+            </a>
+            <?php if($show_caption == 'on') { ?>            
+              <div class="wpp_image_widget_caption"><?php echo $image['post_excerpt']; ?></div>
+            <?php } ?>            
+            
+            <?php if($show_description == 'on') { ?>            
+              <div class="wpp_image_widget_description"><?php echo $image['post_content']; ?></div>
+            <?php } ?>
+             
+          </div>
+          <?php
+          $real_count++;
 
 
-                if(!empty($gallery_count) && $gallery_count == $real_count)
-                    break;
+          if(!empty($gallery_count) && $gallery_count == $real_count) {
+            break;
+          }
 
-            }
+          }
         }
 
         echo "</div>";
@@ -1222,38 +1237,43 @@ function wpp_search_widget($args = false, $custom = false){
         $title = esc_attr($instance['title']);
         $image_type = $instance['image_type'];
         $big_image_type = $instance['big_image_type'];
-        $gallery_count = $instance['gallery_count'];
+        $show_caption = $instance['show_caption'];
+        $show_description = $instance['show_description'];
+        $gallery_count = $instance['gallery_count']; ?>
+        
+       <p>
+        <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?></label>
+        <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />                
+      </p>
 
-          ?>
-             <p>
-                <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:'); ?>
-                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
-                </label>
-            </p>
-
-            <p>
-                <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Thumbnail Size:'); ?>
-                <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
-            </label>
-
-            </p>
-            <p>
-                <label for="<?php echo $this->get_field_id('big_image_type'); ?>"><?php _e('Popup Image Size:'); ?>
-                <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('big_image_type') . "&selected=" . $big_image_type); ?>
-            </label>
-
-            </p>
-            <p>
-            <label for="<?php echo $this->get_field_id('gallery_count') ?>">
-               <?php $number_of_images = '<input size="3" type="text" id="'. $this->get_field_id('gallery_count') .'" name="'. $this->get_field_name('gallery_count').'" value="'. $gallery_count.'" />'; ?>
-               <?php echo sprintf(__('Show %s Images','wpp'), $number_of_images); ?>
-            </label>
-
-            </p>
+      <p>
+        <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Thumbnail Size:'); ?></label>
+        <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
+      </p>
+      
+      <p>
+        <label for="<?php echo $this->get_field_id('big_image_type'); ?>"><?php _e('Popup Image Size:'); ?></label>
+        <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('big_image_type') . "&selected=" . $big_image_type); ?></p>
+      <p>
+      
+        <p>
+        <label for="<?php echo $this->get_field_id('gallery_count') ?>"></label>
+        <?php $number_of_images = '<input size="3" type="text" id="'. $this->get_field_id('gallery_count') .'" name="'. $this->get_field_name('gallery_count').'" value="'. $gallery_count.'" />'; ?>
+        <?php echo sprintf(__('Show %s Images','wpp'), $number_of_images); ?>
+       </p>    
+       
+        <p>
+        <input name="<?php echo $this->get_field_name('show_caption'); ?>"  id="<?php echo $this->get_field_id('show_caption') ?>" type="checkbox" <?php checked('on', $show_caption); ?> value="on" />
+        <label for="<?php echo $this->get_field_id('show_caption') ?>"><?php _e('Show Image Captions'); ?></label>
+       </p>
+       
+        <p>
+        <input name="<?php echo $this->get_field_name('show_description'); ?>"  id="<?php echo $this->get_field_id('show_description') ?>" type="checkbox" <?php checked('on', $show_description); ?> value="on" />
+        <label for="<?php echo $this->get_field_id('show_description') ?>"><?php _e('Show Image Descriptions.'); ?></label>
+       </p>
 
 
          <?php
 
     }
 }
-?>

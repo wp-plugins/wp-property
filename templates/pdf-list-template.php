@@ -1,6 +1,5 @@
 <?php
 
-$image = '&nbsp;';
 $descr = '&nbsp;';
 $title = '&nbsp;';
 $info = '&nbsp;';
@@ -44,11 +43,13 @@ foreach ($list_data['attributes'] as $attr_id => $attr_value) {
     // Thumbnail (Image)
     // Check, if image's url exists we approve image
     if( !empty( $property['images']['thumbnail'] ) ) {
-      $headers = @get_headers( $property['images']['thumbnail'] );
-      if( strpos( $headers[0], '200' ) && strpos( $headers[8], 'image' ) ) {
-        $image = '<table cellspacing="0" cellpadding="5" border="0" style="background-color:' . $list_data['background'] . '"><tr><td>';
-        $image .= '<img width="'. $image_width .'" height="'. $image_height .'" src="'. $property['images']['thumbnail'] .'" alt="" />';
-        $image .= '</td></tr></table>';
+      $headers = @get_headers( $property['images']['thumbnail'], 1 );
+      if( strpos( $headers[0], '200' ) ) {
+        if(!isset($headers['Content-Type']) || (isset($headers['Content-Type']) && strpos( $headers['Content-Type'], 'image' ) !== false)) {
+          $image = '<table cellspacing="0" cellpadding="5" border="0" style="background-color:' . $list_data['background'] . '"><tr><td>';
+          $image .= '<img width="'. $image_width .'" height="'. $image_height .'" src="'. $property['images']['thumbnail'] .'" alt="" />';
+          $image .= '</td></tr></table>';
+        }
       }
     }
   } elseif( $attr_id == 'post_content' && !empty( $property['post_content'] ) ) {
@@ -78,18 +79,37 @@ foreach ($list_data['attributes'] as $attr_id => $attr_value) {
   }
 }
 
+
 echo '<table cellspacing="0" cellpadding="0" width="100%" border="0"><tr>';
-echo '<td colspan="7" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
-echo '</tr><tr>';
-echo '<td width="2%">$nbsp;</td>';
-echo '<td width="12%" align="left" valign="middle">' . $image . '</td>';
-echo '<td width="2%">$nbsp;</td>';
-echo '<td width="25%"><b>'. $title .'</b>'.$info . '</td>';
-echo '<td width="2%">$nbsp;</td>';
-echo '<td width="54%">'. $tagline . $descr .'</td>';
-echo '<td width="2%">$nbsp;</td>';
-echo '</tr><tr>';
-echo '<td colspan="7" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
-echo '</tr></table>'
+
+if (!empty($image)) {
+
+  echo '<td colspan="7" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
+  echo '</tr><tr>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '<td width="12%" align="left" valign="middle">' . $image . '</td>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '<td width="25%"><b>'. $title .'</b>'.$info . '</td>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '<td width="54%">'. $tagline . $descr .'</td>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '</tr><tr>';
+  echo '<td colspan="7" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
+
+} else {
+
+  echo '<td colspan="5" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
+  echo '</tr><tr>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '<td width="39%"><b>'. $title .'</b>'.$info . '</td>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '<td width="54%">'. $tagline . $descr .'</td>';
+  echo '<td width="2%">$nbsp;</td>';
+  echo '</tr><tr>';
+  echo '<td colspan="5" style="font-size:8px;height:8px;line-height:8px;">$nbsp;</td>';
+
+}
+
+echo '</tr></table>';
 
 ?>

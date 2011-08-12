@@ -1,12 +1,12 @@
 /* WordPress 3.2 Compatibility Begin */
-body.version-3-2  {
+body  {
 
 }
-body.version-3-2  #normal-sortables #property_meta .inside {
+body  #normal-sortables #property_meta .inside {
   padding: 0;
 }
 
-body.version-3-2  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
+body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
     margin-left: -11px;
     margin-right: -10px;
 }

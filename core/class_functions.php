@@ -14,6 +14,60 @@ class WPP_F {
 
 
   /**
+   * Setup default property page.
+   *
+   *
+   * @version 1.16.3
+   */
+   function setup_default_property_page() { 
+      global $wpdb, $wp_properties,  $user_ID;
+      
+      $base_slug = $wp_properties['configuration']['base_slug'];
+           
+      //** Check if this page actually exists */
+      $post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name = '{$base_slug}'");
+      
+      
+      if($post_id) {
+        //** Page already exists */
+        return $post_id;
+      }
+      
+      //** Check if page with this post name already exists */
+      if($post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name = 'properties'")) {             
+        return array(
+          'post_id' => $post_id,
+          'post_name' => 'properties'
+        );        
+      }
+      
+      $property_page = array(
+        'post_title' => __('Properties', 'wpp'),
+        'post_content' => '[property_overview]',
+        'post_name' => 'properties',
+        'post_type' => 'page',
+        'post_status' => 'publish',
+        'post_author' =>  $user_ID
+      );
+
+      $post_id = wp_insert_post($property_page);
+      
+      if(!is_wp_error($post_id)) {        
+        //** get post_name of new page */
+        $post_name = $wpdb->get_var("SELECT post_name FROM {$wpdb->posts} WHERE ID = '{$post_id}'");
+        
+        return array(
+          'post_id' => $post_id,
+          'post_name' => $post_name
+        );
+ 
+      }
+      
+      return false;
+
+  }
+
+   /**
    * Perform WPP related things when a post is being deleted
    *
    * Makes sure all attached files and images get deleted.
@@ -324,8 +378,15 @@ class WPP_F {
     * @since 1.05
    *
     */
-   static function revalidate_all_addresses($echo_result = true) {
+   static function revalidate_all_addresses($args = '') {
     global $wp_properties, $wpdb;
+    
+    $defaults = array(
+      'echo_result' => 'true',
+      'skip_existing' => 'false'
+    );
+    
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
     $all_properties = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type = 'property' AND post_status = 'publish'");
 
@@ -333,8 +394,14 @@ class WPP_F {
 
      foreach($all_properties as $post_id) {
 
+      $current_coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
+      
+      if($skip_existing == 'true' && !empty($current_coordinates)) {
+        continue;
+      }
+      
       $address = get_post_meta($post_id, $wp_properties['configuration']['address_attribute'], true);
-
+ 
       $geo_data = UD_F::geo_locate_address($address, $wp_properties['configuration']['google_maps_localization'], true);
 
       $coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
@@ -364,40 +431,28 @@ class WPP_F {
       } else {
           // Try to figure out what went wrong
 
-          if($geo_data->status != 'OK') {
-
-            // Break if daily geo-lookup limit is exceeded
-            if($geo_data->status == 'OVER_QUERY_LIMIT') {
-             $return['message'] = __("Address revalidation failed because the Google daily address look-up limit has been exceeded.", 'wpp');
-            } else {
-             $return['message'] = __("An error occured that prevented geo-location from working.", 'wpp');
-            }
-
-          $return['success'] = 'false';
-
-          if($echo_result)
-            echo json_encode($return);
-          else
-            return $return;
-
-          return;
-      }
-
-      update_post_meta($post_id, 'address_is_formatted', false);
+        $failed[] = $post_id;
+        update_post_meta($post_id, 'address_is_formatted', false);
       }
 
     }
+ 
 
     $return['success'] = 'true';
     $return['message'] = "Updated " . count($updated) . " properties using the " . $google_map_localizations[$wp_properties['configuration']['google_maps_localization']] .  " localization.";
-
-    if($echo_result)
+    
+    if($failed) {
+      $return['message'] .= "<br />" . count($failed) . " properties could not be updated.";
+    }
+    
+    if($echo_result == 'true') {
       echo json_encode($return);
-    else
-      return $echo_result;
+    } else {
+      return $return;
+    }
 
     return;
-   }
+  }
 
   /**
    * Minify JavaScript
@@ -478,8 +533,9 @@ class WPP_F {
     $default_hidden[] = 'featured';
     $default_hidden[] = 'menu_order';
 
-    if(empty($current))
+    if(empty($current)) {
       update_user_meta($user_id, 'manageedit-propertycolumnshidden', $default_hidden);
+    }
 
 
   }
@@ -752,7 +808,7 @@ class WPP_F {
     $system = 'wpp';
     $wpp_version = get_option( "wpp_version" );
 
-    $check_url = "http://updates.twincitiestech.com/?system=$system&site=$blogname&system_version=$wpp_version";
+    $check_url = "http://updates.usabilitydynamics.com/?system=$system&site=$blogname&system_version=$wpp_version";
     $response = @wp_remote_get($check_url);
 
      if(!$response)
@@ -788,7 +844,7 @@ class WPP_F {
       // Updata database
       $wpp_settings = get_option('wpp_settings');
       $wpp_settings['available_features'] =  UD_F::objectToArray($response->available_features);
-       update_option('wpp_settings', $wpp_settings);
+      update_option('wpp_settings', $wpp_settings);
 
 
     } // available_features
@@ -901,7 +957,12 @@ class WPP_F {
   static function image_sizes_dropdown($args = "") {
     global $wp_properties;
 
-    $defaults = array('name' => 'wpp_image_sizes',  'selected' => 'none');
+    $defaults = array(
+      'name' => 'wpp_image_sizes',  
+      'selected' => 'none',
+      'blank_selection_label' => ' - '
+      );
+      
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
     if(empty($id) && !empty($name)) {
@@ -914,7 +975,7 @@ class WPP_F {
 
     ?>
       <select id="<?php echo $id ?>" name="<?php echo $name ?>" >
-        <option> - </option>
+        <option value=""><?php echo $blank_selection_label; ?></option>
           <?php
             foreach($image_array as $name) {
             $sizes = WPP_F::image_sizes($name);
@@ -1489,17 +1550,8 @@ class WPP_F {
     global $wpdb, $wp_properties;
 
     $defaults = array('property_type' => 'all');
-
-    /* I haven't seen this doing anything yet, but leaving it to avoid unseen errors.
-        if( is_array($maybe_array = unserialize($args)) ) {
-            $query = $maybe_array;
-        } else {
-            $query = wp_parse_args( $args, $defaults );
-        }
-    */
-
+ 
     $query = wp_parse_args( $args, $defaults );
-
     $query = apply_filters('wpp_get_properties_query', $query);
 
     if (substr_count($query['pagi'], '--')) {
@@ -1533,13 +1585,7 @@ class WPP_F {
       if (isset($matching_ids) && empty($matching_ids)) {
         break;
       }
-
-      /*
-      // Allowed property_type array to $comma_and array
-      if (is_array($criteria) && $meta_key =='property_type') {
-        $comma_and = $criteria;
-      }
-      */
+ 
 
       if (substr_count($criteria, ',') || substr_count($criteria, '&ndash;') || substr_count($criteria, '--')) {
         if (substr_count($criteria, ',') && !substr_count($criteria, '&ndash;')) {
@@ -1628,10 +1674,10 @@ class WPP_F {
 
               if (isset($matching_ids)) {
                 $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key') AND meta_value != '' $limit_query");
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key') $limit_query");
                 //$wpdb->print_error();
               } else {
-                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key') AND meta_value != ''");
+                $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key')");
               }
               break;
 
@@ -1722,15 +1768,30 @@ class WPP_F {
         $sql_sort_by != 'post_date' &&
         $sql_sort_by != 'post_title' )
     {
+      
+      /* 
+       * Determine if all values of meta_key are numbers 
+       * we use CAST in SQL query to avoid sort issues 
+       */
+      if(self::meta_has_number_data_type ($matching_ids, $sql_sort_by)) {
+        $meta_value = "CAST(pm.meta_value AS SIGNED)";
+      } else {
+        $meta_value = "pm.meta_value";
+      }
+  
       $result = $wpdb->get_col("
-        SELECT p.ID FROM {$wpdb->prefix}posts AS p, {$wpdb->prefix}postmeta AS pm
+        SELECT p.ID FROM {$wpdb->prefix}posts AS p
+          LEFT JOIN {$wpdb->prefix}postmeta AS pm
+          ON p.ID = pm.post_id
           WHERE p.ID IN (" . implode(",", $matching_ids) . ")
             AND p.ID = pm.post_id
             AND p.post_status = 'publish'
             AND pm.meta_key = '$sql_sort_by'
-          ORDER BY pm.meta_value $sql_sort_order
+          ORDER BY $meta_value $sql_sort_order
           $limit_query
       ");
+      //echo $wpdb->last_query;
+      //die();
     } else {
       // If the sorting order is not set, default to menu_order
       if( empty( $sql_sort_by ) ) {
@@ -1921,6 +1982,8 @@ class WPP_F {
       if($attachments) {
         foreach ( $attachments as $attachment_id => $attachment ) {
           $return['gallery'][$attachment->post_name]['post_title'] = $attachment->post_title;
+          $return['gallery'][$attachment->post_name]['post_excerpt'] = $attachment->post_excerpt;
+          $return['gallery'][$attachment->post_name]['post_content'] = $attachment->post_content;
           $return['gallery'][$attachment->post_name]['attachment_id'] = $attachment_id;
           foreach($wp_image_sizes as $image_name) {
             $this_url =  wp_get_attachment_image_src( $attachment_id, $image_name , true );
@@ -1971,18 +2034,21 @@ class WPP_F {
             $child_object = WPP_F::get_property($child_id, "load_parent=false");
             $return['children'][$child_id] = $child_object;
             // Exclude variables from searchable attributes (to prevent ranges)
-            $excluded_attributes = array(
+            $excluded_attributes = array(            
               $wp_properties['configuration']['address_attribute'],
               'city',
               'country_code',
               'country',
               'state',
               'state_code',
-              'state');
+              'state'
+            );
 
-            foreach($wp_properties['searchable_attributes'] as $searchable_attribute)
-               if(!empty($child_object[$searchable_attribute]) && !in_array($searchable_attribute, $excluded_attributes))
+            foreach($wp_properties['searchable_attributes'] as $searchable_attribute) {
+              if(!empty($child_object[$searchable_attribute]) && !in_array($searchable_attribute, $excluded_attributes)) {
                 $range[$searchable_attribute][]  = $child_object[$searchable_attribute];
+              }
+            }
           }
 
         // Cycle through every type of range (i.e. price, deposit, bathroom, etc) and fix-up the respective data arrays
@@ -2517,13 +2583,54 @@ class WPP_F {
     __('You forgot to enter your  name.', 'wpp');
     __('Error with sending message. Please contact site administrator.', 'wpp');
     __('Thank you for your message.', 'wpp');
-
-
-
-
   }
 
-
+  /**
+   * Determine if all values of meta key have 'number type'
+   * If yes, returns boolean true
+   * 
+   * @param mixed $property_ids
+   * @param string $meta_key
+   * @return boolean
+   * @since 1.16.2
+   * @author Maxim Peshkov
+   */
+  function meta_has_number_data_type ($property_ids, $meta_key) {
+    global $wpdb;
+    
+    /* There is no sense to continue if no ids */
+    if(empty($property_ids)) {
+      return false;
+    }
+    
+    if(is_array($property_ids)) {
+      $property_ids = implode(",", $property_ids);
+    }
+    
+    $values = $wpdb->get_col("
+      SELECT pm.meta_value 
+      FROM {$wpdb->prefix}posts AS p
+      JOIN {$wpdb->prefix}postmeta AS pm ON pm.post_id = p.ID
+        WHERE p.ID IN (" . $property_ids . ") 
+          AND p.post_status = 'publish'
+          AND pm.meta_key = '$meta_key'
+    ");
+    
+    foreach($values as $value) {
+      $value = trim($value);
+      
+      if(empty($value)) {
+        continue;
+      }
+      
+      preg_match('#^[\d,\.\,]+$#', $value, $matches );
+      if(empty($matches)) {
+        return false;
+      }
+    }
+    
+    return true;
+  }
 
 }
 

@@ -248,11 +248,12 @@ class class_admin_tools {
           </td>
           <td>
             <select name="wpp_settings[searchable_attr_fields][<?php echo $slug; ?>]">
-              <option value="input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'input'); ?>><?php _e('input','wpp') ?></option>
-              <option value="range_input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_input'); ?>><?php _e('range (input)','wpp') ?></option>
-              <option value="range_dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_dropdown'); ?>><?php _e('range (dropdown)','wpp') ?></option>
-              <option value="dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'dropdown'); ?>><?php _e('dropdown','wpp') ?></option>
-              <option value="checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'checkbox'); ?>><?php _e('checkbox','wpp') ?></option>
+              <option value="input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'input'); ?>><?php _e('Text Input','wpp') ?></option>
+              <option value="range_input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_input'); ?>><?php _e('Text Input Range','wpp') ?></option>
+              <option value="range_dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_dropdown'); ?>><?php _e('Range (dropdown)','wpp') ?></option>
+              <option value="dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'dropdown'); ?>><?php _e('Dropdown','wpp') ?></option>
+              <option value="checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'checkbox'); ?>><?php _e('Checkbox','wpp') ?></option>
+              <option value="multi_checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'multi_checkbox'); ?>><?php _e('Multi-Checkbox','wpp') ?></option>
             </select>
           </td>
           

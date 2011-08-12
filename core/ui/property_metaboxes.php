@@ -176,7 +176,7 @@ function metabox_meta($object) {
         <select id="wpp_meta_property_type" name="wpp_data[meta][property_type]" id="property_type">
           <option value=""></option>
           <?php foreach($wp_properties['property_types'] as $slug => $label): ?>
-          <option <?php if($this_property_type == $slug) echo "SELECTED"; ?> value="<?php echo $slug; ?>"><?php echo $label; ?></option>
+          <option <?php selected(strtolower($this_property_type), strtolower($slug)); ?> value="<?php echo $slug; ?>"><?php echo $label; ?></option>
           <?php endforeach; ?>
           </select>
         <?php if(!empty($wp_properties['descriptions']['property_type'])): ?>

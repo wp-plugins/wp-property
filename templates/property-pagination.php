@@ -8,35 +8,38 @@
  * You can also customize it based on property type.
  *
 */
-if ($bottom_pagenation_flag)
+if ($bottom_pagenation_flag) {
   $tmp_unique = $unique == $top_page_unique ? $bottom_page_unique : $top_page_unique;
-else
+} else {
   $tmp_unique = $unique;
+}
+
+if($pagination_type == 'top') {
+  $this_class = 'wpp_top_pagination';
+} else {
+  $this_class = 'wpp_bottom_pagination';
+}
 
  ?>
-    <div class="properties-handling">
+    <div class="properties-handling <?php echo $this_class; ?>">
         <div class="ajax_loader" id="ajax_loader_<?php echo $unique; ?>"><span><?php _e('Loading','wpp') ?></span></div>
 
        <?php if(substr_count($query, 'pagi') && ($total > $per_page) && $pagination != 'off') : ?>
             <div class="properties_pagination" id="properties_pagination_<?php echo $unique; ?>">
-                <a class="nav prev disabled" href="javascript:;"><?php _e('Prev', 'wpp'); ?></a>
                 <ul>
+                <li><a class="nav prev disabled" href="javascript:;"><?php _e('Prev', 'wpp'); ?></a></li>
                     <?php
                     $page_number = 0;
                     for($i=0; $i<$total; $i++) {
                   if(($i % $per_page) == 0) {
                     ++$page_number;
             ?>
-              <li>
-                <a href="#s<?php echo $unique; ?>p<?php echo $page_number; ?>" class="page_button <?php echo ($page_number == 1)?"selected":""; ?>" id="page_<?php echo $unique; ?>_<?php echo $i; ?>">
-                  <?php echo $page_number; ?>
-                </a>
-              </li>
+              <li><a href="#s<?php echo $unique; ?>p<?php echo $page_number; ?>" class="page_button <?php echo ($page_number == 1)?"selected":""; ?>" id="page_<?php echo $unique; ?>_<?php echo $i; ?>"><?php echo $page_number; ?></a></li>
             <?php
                   }
                 } ?>
+            <li><a class="nav next" href="javascript:;"><?php _e('Next', 'wpp'); ?></a></li>
           </ul>
-          <a class="nav next" href="javascript:;"><?php _e('Next', 'wpp'); ?></a>
                 <div class="clear"></div>
             </div>
         <?php endif; ?>
@@ -96,6 +99,7 @@ else
                     if(data.indexOf('wpp_nothing_found') > 0){
                         jQuery('.wpp_property_view_result, .wpp_row_view').html(data);
                     }else{
+                       jQuery(document).trigger('wpp_pagination_complete', {'overview_id' : <?php echo $top_page_unique; ?>});
                         var properties = jQuery(data).find('.property_div');
                         var wpp_property_view_result = jQuery('#wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_property_view_result, #wpp_shortcode_<?php echo $top_page_unique; ?> .wpp_row_view');
                         var do_loop = true;
@@ -259,8 +263,23 @@ else
                   });
                 <?php endif; ?>
                 getProperties_<?php echo $unique; ?>();
+                jQuery(document).trigger('wpp_pagination_change', {'overview_id' : <?php echo $top_page_unique; ?>});
 
                 return false;
             });
         }
+        
+        jQuery(document).ready(function(){
+          /* 
+           * HACK. Determine if Pagination (History event) Links are broken and Fix them.
+           * The reason: 'Google Analytics for WordPress' plugin breaks them.
+           */
+          jQuery('.properties_pagination').find('a.page_button').each(function(i, e){
+            var href = jQuery(e).attr('href');
+            if(/http:\/\//.test(href)) {
+              href = href.replace(/^.*\/#(.*)$/, '#$1');
+              jQuery(e).attr('href', href);
+            }
+          });
+        });
     </script>
