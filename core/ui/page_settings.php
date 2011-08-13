@@ -625,7 +625,7 @@ if(isset($_REQUEST['message'])) {
               <?php }
               
               else: ?>
-                <?php $pr_link = 'http://twincitiestech.com/plugins/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">TwinCitiesTech.com</a> to purchase this feature.','wpp'),$pr_link); ?>
+                <?php $pr_link = 'https://usabilitydynamics.com/products/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">UsabilityDynamics.com</a> to purchase this feature.','wpp'),$pr_link); ?>
               <?php endif; ?>
             </div>
             </div>

@@ -560,28 +560,35 @@ class WPP_Core {
     if($update_data['manual_coordinates'] != get_post_meta($post_id, 'manual_coordinates', true)) {
       $manual_coordinates_updated = true;
     }
-
+ 
     // Update Coordinates (skip if old address matches new address), but always do if no coordinates set
     if(empty($coordinates) || ($old_location != $new_location && !empty($new_location)) || $manual_coordinates_updated) {
 
       $geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
-
+ 
       if(!empty($geo_data->formatted_address)) {
         update_post_meta($post_id, 'address_is_formatted', true);
 
-        if(!empty($wp_properties['configuration']['address_attribute']))
-          update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));
+        if(!empty($wp_properties['configuration']['address_attribute'])) {
+          update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));         
+        }
 
-
-        foreach($geo_data as $geo_type => $this_data)
+        foreach($geo_data as $geo_type => $this_data) {
           update_post_meta($post_id, $geo_type, WPP_F::encode_mysql_input( $this_data, $geo_type));
-
+        }
 
       } else {
         // Try to figure out why it failed
         update_post_meta($post_id, 'address_is_formatted', false);
       }
 
+    } else {
+ 
+    }
+ 
+    
+    if($geo_data->status == 'OVER_QUERY_LIMIT') {
+      //** Could add some sort of user notification that over limit */    
     }
 
     foreach($update_data as $meta_key => $meta_value) {
@@ -1286,7 +1293,8 @@ class WPP_Core {
 
       //$unique_dom_element = ($atts['dom_element'] ? $atts['dom_element'] : "wpp_" . rand(1000,9999) . "_overview_element");
       if( empty($atts) ) {
-        $atts['type'] = 'all';
+        $atts = array();
+        //$atts['type'] = 'all';
       }
 
       $to_use['per_page'] = '10';
@@ -1311,7 +1319,7 @@ class WPP_Core {
       $query_array = array();
       foreach($props_atts as $attr => $value) {
         if ($value != '') {
-          if ($attr == 'type') $attr = 'property_type'; // need this for better UI and to avoid mistakes
+          //if ($attr == 'type') $attr = 'property_type'; // need this for better UI and to avoid mistakes
           if ($attr == 'per_page') {$per_page = $value; continue; }
           if ($attr == 'starting_row') {$offset = $value; continue; }
           if ($attr == 'sorter') {$sorter = $value; continue; }
@@ -1436,14 +1444,14 @@ class WPP_Core {
               include TEMPLATEPATH . "/property-pagination-$template.php";
           } elseif(file_exists(WPP_Templates . "/property-pagination-$template.php")) {
               include WPP_Templates . "/property-pagination-$template.php";
-          // 1.1 Try template based on type
-          } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$type.php")) {
-              include STYLESHEETPATH . "/property-pagination-$type.php";
-          } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$type.php")) {
-              include TEMPLATEPATH . "/property-pagination-$type.php";
+          // 1.1 Try template based on property_type
+          } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$property_type.php")) {
+              include STYLESHEETPATH . "/property-pagination-$property_type.php";
+          } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$property_type.php")) {
+              include TEMPLATEPATH . "/property-pagination-$property_type.php";
           // 2. Try custom template in defaults folder
-          } elseif(file_exists(WPP_Templates . "/property-pagination-$type.php")) {
-              include WPP_Templates . "/property-pagination-$type.php";
+          } elseif(file_exists(WPP_Templates . "/property-pagination-$property_type.php")) {
+              include WPP_Templates . "/property-pagination-$property_type.php";
           // 3. Try general template in theme folder
           }elseif(file_exists(STYLESHEETPATH . "/property-pagination.php")) {
               include STYLESHEETPATH . "/property-pagination.php";
@@ -1466,14 +1474,14 @@ class WPP_Core {
                 include TEMPLATEPATH . "/property-pagination-$template.php";
             } elseif(file_exists(WPP_Templates . "/property-pagination-$template.php")) {
                 include WPP_Templates . "/property-pagination-$template.php";
-            // 1.1 Try template based on type
-            } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$type.php")) {
-                include STYLESHEETPATH . "/property-pagination-$type.php";
-            } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$type.php")) {
-                include TEMPLATEPATH . "/property-pagination-$type.php";
+            // 1.1 Try template based on property_type
+            } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$property_type.php")) {
+                include STYLESHEETPATH . "/property-pagination-$property_type.php";
+            } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$property_type.php")) {
+                include TEMPLATEPATH . "/property-pagination-$property_type.php";
             // 2. Try custom template in defaults folder
-            } elseif(file_exists(WPP_Templates . "/property-pagination-$type.php")) {
-                include WPP_Templates . "/property-pagination-$type.php";
+            } elseif(file_exists(WPP_Templates . "/property-pagination-$property_type.php")) {
+                include WPP_Templates . "/property-pagination-$property_type.php";
             // 3. Try general template in theme folder
             }elseif(file_exists(STYLESHEETPATH . "/property-pagination.php")) {
                 include STYLESHEETPATH . "/property-pagination.php";
@@ -1519,13 +1527,13 @@ class WPP_Core {
         } elseif (file_exists(WPP_Templates . "/property-overview-$template.php")) {
             include WPP_Templates  . "/property-overview-$template.php";
         // 3. Try custom template in theme folder
-        } elseif(file_exists(STYLESHEETPATH . "/property-overview-$type.php")) {
-            include STYLESHEETPATH . "/property-overview-$type.php";
-        } elseif(file_exists(TEMPLATEPATH . "/property-overview-$type.php")) {
-            include TEMPLATEPATH . "/property-overview-$type.php";
+        } elseif(file_exists(STYLESHEETPATH . "/property-overview-$property_type.php")) {
+            include STYLESHEETPATH . "/property-overview-$property_type.php";
+        } elseif(file_exists(TEMPLATEPATH . "/property-overview-$property_type.php")) {
+            include TEMPLATEPATH . "/property-overview-$property_type.php";
         // 4. Try custom template in defaults folder
-        } elseif(file_exists(WPP_Templates . "/property-overview-$type.php")) {
-            include WPP_Templates . "/property-overview-$type.php";
+        } elseif(file_exists(WPP_Templates . "/property-overview-$property_type.php")) {
+            include WPP_Templates . "/property-overview-$property_type.php";
         // 5. Try general template in theme folder
         } elseif(file_exists(STYLESHEETPATH . "/property-overview.php")) {
             include STYLESHEETPATH . "/property-overview.php";
@@ -1618,5 +1626,3 @@ class WPP_Core {
 }
 
 
-
-?>

@@ -14,6 +14,33 @@ class WPP_F {
 
 
   /**
+   * Checks if an file exists in the uploads directory from a URL
+   *
+   * Only works for files in uploads folder.
+   *
+   * @todo update to handle images outside the uploads folder
+   * 
+   * @version 1.16.3
+   */
+   function file_in_uploads_exists_by_url($image_url = '') { 
+   
+    if(empty($image_url)) {
+      return false;
+    }
+   
+    $upload_dir = wp_upload_dir();
+    $image_path = str_replace($upload_dir['baseurl'], $upload_dir['basedir'], $image_url);
+ 
+    if(file_exists($image_path)) {
+      return true;
+    }
+    
+    return false;
+   
+   }
+   
+   
+  /**
    * Setup default property page.
    *
    *
@@ -230,7 +257,7 @@ class WPP_F {
       */
 
       $metadata = array();
-      $imagesize = getimagesize( $file );
+      $imagesize = @getimagesize( $file );
       $metadata['width'] = $imagesize[0];
       $metadata['height'] = $imagesize[1];
 
@@ -382,13 +409,18 @@ class WPP_F {
     global $wp_properties, $wpdb;
     
     $defaults = array(
+      'property_ids' => false,
       'echo_result' => 'true',
       'skip_existing' => 'false'
     );
     
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-    $all_properties = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type = 'property' AND post_status = 'publish'");
+    if(is_array($property_ids)) {
+      $all_properties = $property_ids;
+    } else {
+      $all_properties = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE post_type = 'property' AND post_status = 'publish'");
+    }
 
     $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true');
 
@@ -1549,6 +1581,18 @@ class WPP_F {
   static function get_properties($args = "") {
     global $wpdb, $wp_properties;
 
+    
+    //** added to avoid range and "LIKE" searches on single numeric values * 
+    
+    if(is_array($args)){
+      foreach($args as $thing => $value) {
+        if(is_numeric($value)) {
+          $args[$thing] = $value .'-'. $value;        
+        }
+      }
+    }
+     
+    
     $defaults = array('property_type' => 'all');
  
     $query = wp_parse_args( $args, $defaults );
@@ -2096,8 +2140,9 @@ class WPP_F {
       }
     } /* end get_children */
 
-    // Another name for location
-    $return['address'] = $return['location'];
+    if(!empty($return['location']) && !isset($return['address'])) {
+      $return['address'] = $return['location'];
+    }
 
     $return['wpp_gpid'] = WPP_F::maybe_set_gpid($id);
 

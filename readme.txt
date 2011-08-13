@@ -1,6 +1,6 @@
 === WP-Property - WordPress Powered Real Estate and Property Management ===
 Contributors: andypotanin
-Donate link: http://twincitiestech.com/plugins/wp-property/
+Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
 Tested up to: 3.2.1
@@ -15,30 +15,20 @@ Developed by the same people who brought you [WP-Invoice](http://wordpress.org/e
 
 This is not a "collection" of plugins, but one full suite. You will not have to download and match together a plethora of other plugins, in the hopes of them working well together, to have all the features you need.
 
-The only requirement, you have to use WordPress 3.0 or newer.
-
-As of version 0.60 we have added a "Developer" tab to the settings page which lets you create new property types, real estate listings for example, alongside rental properties.
-
 http://www.vimeo.com/14473894
 
-Listing Demo: http://sites.twincitiestech.com/wp-property/properties/crossing-town-center/
+Check out our [premium WordPress real estate theme](https://usabilitydynamics.com/products/wp-property/the-denali-premium-theme/).
 
-Property Overview Demo: http://sites.twincitiestech.com/wp-property/properties/
-
-Premium Theme Example: http://sites.twincitiestech.com/the-denali/
-
-Be sure to check out the  [WP-Property Forum](http://forums.twincitiestech.com/forum/wp-property) if you need help. 
+Be sure to check out the  [WP-Property Forum](http://usabilitydynamics.com/products/wp-property/forum/) if you need help. 
 
 = Common Shortcodes =
 
-We have setup a  ["Shortcode Cheatsheet" page](http://sites.twincitiestech.com/the-denali/help/wp-property-shortcode-overview/) for your convenience. 
+We have setup a  ["Shortcode Cheatsheet" page](http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet/) for your convenience. 
 
 Include search form into page/post content.
 
 * [property_search] Include search widget on content of a page or a post.
 * [property_search searchable_attributes=bedrooms,bathrooms searchable_property_types=single_family_home per_page=10] Show search options for bedrooms and bathrooms; return only Single Family Homes, and show 10 results per page.
-
-Watch [property_search shortcode screencast](http://sites.twincitiestech.com/the-denali/using-wp-property/using-address-attributes-in-shortcodes/) for instructions on using address attributes in search.
 
 Shortcodes are used to display listings. Simply put a shortcode into the body of a post or page, and a list of properties will be displayed in its place on the front-end of your website.
 
@@ -84,11 +74,14 @@ Usage of custom attributes added in the Developer tab for queries, example:
 
 = Premium features =
 
-* Supermap - an overview map of all your listings - http://sites.twincitiestech.com/the-denali/property-map/
-* Slideshow - home page slideshow and property specific slideshow - http://sites.twincitiestech.com/the-denali/all-properties/160-richmond-street/
+ Learn more about the [WP-Property Premium Features](https://usabilitydynamics.com/products/wp-property/premium/).
+
+* Supermap - an overview map of all your listings.
+* Slideshow - home page slideshow and property specific slideshow.
 * Agent Module - Create agents and assign them to properties. Create agent-specific listing pages by using [property_overview wpp_agents=1] where 1 is the agent ID.
 * PDF Flyer - Instantly generate PDF flyers of your properties for printing.
 * XML Import - Map XML files to your WPP attributes, setup schedules, and import third-party listings.
+
 
 = Translations =
 
@@ -205,6 +198,11 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.17.1 =
+* Fix to searching - when a single numeric value is in search, system looks for exact match, not "like" match as with strings.
+* Minor fix with widgets - properties without thumbnails were showing up incorrectly.
+* Modified WPP_F::revalidate_all_addresses() so an array of property IDs can be passed in to validate. 
+
 = 1.17 =
 * After pagination, user's browser is automatically scrolled to the top of the paginated properties.
 * Fixed phone number formatting issue where the number would not be displayed if it was not 10 characters.
@@ -220,6 +218,7 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 = 1.16.3 =
 * Added cron.php to run imports from the command line
 * Image fixes for the XML importer
+
 = 1.16.2 =
 * Fix to widget image sizes (overlapping issue).
 

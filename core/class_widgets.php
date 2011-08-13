@@ -148,7 +148,7 @@ class OtherPropertiesWidget extends WP_Widget {
         $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
      
         ?>
-        <div class="property_widget_block apartment_entry clearfix" style="width: <?php echo ($image['width']+5); ?>px;" >
+        <div class="property_widget_block apartment_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>" >
             
       <?php if ($hide_image !=='on'){ ?>
           <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
@@ -354,7 +354,7 @@ jQuery(document).ready(function($){
             $this_property = WPP_F::get_property($attached->ID, 'return_object=true');
             $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
             ?>
-            <div class="property_widget_block apartment_entry clearfix" style="width: width: <?php echo ($image['width']+5); ?>px;">
+            <div class="property_widget_block apartment_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>">
             
              <?php if ($hide_image !== 'on'){ ?>
                 <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
@@ -515,46 +515,47 @@ jQuery(document).ready(function($){
 
     /** @see WP_Widget::widget */
     function widget($args, $instance) {
-        global  $wp_properties;
-        extract( $args );
-        $title       = apply_filters('widget_title', $instance['title']);
-    $instance = apply_filters('FeaturedPropertiesWidget', $instance);
-        $show_title   = $instance['show_title'];
-        $image_type   = $instance['image_type'];
-        $amount_items  = $instance['amount_items'];
-        $stats       = $instance['stats'];
-        $address_format = $instance['address_format'];
-        $hide_image   = $instance['hide_image'];
-        $amount_items  = $instance['amount_items'];
-        if(empty($address_format))
-            $address_format = "[street_number] [street_name], [city], [state]";        
+      global  $wp_properties;
+      extract( $args );
+      $title       = apply_filters('widget_title', $instance['title']);
+      $instance = apply_filters('FeaturedPropertiesWidget', $instance);
+      $show_title   = $instance['show_title'];
+      $image_type   = $instance['image_type'];
+      $amount_items  = $instance['amount_items'];
+      $stats       = $instance['stats'];
+      $address_format = $instance['address_format'];
+      $hide_image   = $instance['hide_image'];
+      $amount_items  = $instance['amount_items'];
+      if(empty($address_format))
+          $address_format = "[street_number] [street_name], [city], [state]";        
 
-        if(!$image_type) {
-            $image_type == '';
-      
-    }
-        $all_featured = WPP_F::get_properties("featured=true&property_type=all&pagi=0--$amount_items");
-        
-           if (isset($all_featured['total'])) : unset($all_featured['total']);
-           endif;
-           
+      if(!$image_type) {
+          $image_type == '';
+      }
 
-        // Bail out if no children
-        if(!$all_featured)
-            return;
+      $all_featured = WPP_F::get_properties("featured=true&property_type=all&pagi=0--$amount_items");
+
+      if (isset($all_featured['total'])) {
+      unset($all_featured['total']);
+      }      
+
+      // Bail out if no children
+      if(!$all_featured) {
+      return;
+      }
 
     $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-        echo $before_widget;
-        echo "<div class='wpp_featured_properties_widget'>";
+    echo $before_widget;
+    echo "<div class='wpp_featured_properties_widget'>";
 
 
-        if ( $title )
-            echo $before_title . $title . $after_title;
+      if ( $title )
+          echo $before_title . $title . $after_title;
 
 
     $count = 0;
     
-        foreach($all_featured as $featured):
+      foreach($all_featured as $featured):
 
       
        
@@ -566,7 +567,7 @@ jQuery(document).ready(function($){
             $this_property = WPP_F::get_property($featured, 'return_object=true');
             $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
             ?>
-            <div class="property_widget_block  clearfix"  style="width: <?php echo ($image['width']+5); ?>px; min-height: <?php echo $image['height']; ?>px;">
+            <div class="property_widget_block  clearfix"  style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?> min-height: <?php echo $image['height']; ?>px;">
         
         <?php if ($hide_image !=='on'){ ?>
                 <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
@@ -792,7 +793,7 @@ function wpp_featured_properties($args = false, $custom = false){
 
           ?>
        
-       <div class="property_widget_block latest_entry clearfix" style="width: <?php echo ($image['width']+5); ?>px;">
+       <div class="property_widget_block latest_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>">
        
        <?php if ($hide_image !=='on'){ ?>
           <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">

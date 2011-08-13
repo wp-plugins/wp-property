@@ -3,6 +3,8 @@
 Name: Admin Tools
 Class: class_admin_tools
 Version: 2.9.2
+Feature ID: 1
+Minimum Version: 1.17
 Description: Tools for developing themes and extensions for WP-Property.
 */
 
