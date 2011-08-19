@@ -361,189 +361,218 @@ endif;
    *
     */
 if(!function_exists('draw_property_search_form')):
-  function draw_property_search_form($search_attributes = false, $searchable_property_types = false, $per_page = false, $instance_id = false, $cache = true) {
-        global $wp_properties;
+  function draw_property_search_form($args = false) {
+    global $wp_properties;
+    
+     $defaults = array(
+      'search_attributes' => false,
+      'searchable_property_types' => false,
+      'per_page' => false,
+      'instance_id' => false,
+      'sort_order' => false,
+      'cache' => true
+    );
+    
+    $args = wp_parse_args( $args, $defaults );
+    extract( $args, EXTR_SKIP );
+ 
+    //echo "<pre style='color: white;'>";print_r($args); echo "</pre>";
+ 
+    $search_values = array();
+    $property_type_flag = false;
 
-        $search_values = array();
-        $property_type_flag = false;
+    if(!$search_attributes) {
+      return;
+    }
 
-        if(!$search_attributes)
-            return;
+    if (!empty($search_attributes) && !empty($searchable_property_types)) {
+      $search_values = WPP_F::get_search_values($search_attributes, $searchable_property_types, $cache, $instance_id);
+    } 
 
-        if (!empty($search_attributes) && !empty($searchable_property_types)) {
-          $search_values = WPP_F::get_search_values($search_attributes, $searchable_property_types, $cache, $instance_id);
+    if(array_key_exists('property_type', array_fill_keys($search_attributes, 1)) && is_array($searchable_property_types) && count($searchable_property_types) > 1 ) {
+      $spt = array_fill_keys($searchable_property_types, 1);
+      if(!empty($wp_properties['property_types'])) {
+        foreach ($wp_properties['property_types'] as $key => $value) {
+          if(array_key_exists($key, $spt)) {
+            $search_values['property_type'][$key] = $value;
+          }
         }
+        if(count($search_values['property_type']) <= 1) {
+          unset ($search_values['property_type']);
+        }
+      }
+    } ?>
 
-/*
-            if($search_values['property_type'])
-                unset ($search_values['property_type']);
-*/
+    <form action="<?php echo  UD_F::base_url($wp_properties['configuration']['base_slug']); ?>" method="post">
+    
+    <?php if($sort_order){ ?>        
+    <input type="hidden" name="wpp_search[sort_order]" value ="<?php echo esc_attr($sort_order); ?>" />
+    <?php } ?>
+            
+    <?php if($sort_by){ ?>        
+    <input type="hidden" name="wpp_search[sort_by]" value ="<?php echo esc_attr($sort_by); ?>" />
+    <?php } ?>
+    
 
-            if(array_key_exists('property_type', array_fill_keys($search_attributes, 1)) && is_array($searchable_property_types) && count($searchable_property_types) > 1 ) {
-                $spt = array_fill_keys($searchable_property_types, 1);
-                if(!empty($wp_properties['property_types'])) {
-                    foreach ($wp_properties['property_types'] as $key => $value) {
-                        if(array_key_exists($key, $spt)) {
-                            $search_values['property_type'][$key] = $value;
-                        }
-                    }
-                    if(count($search_values['property_type']) <= 1) {
-                        unset ($search_values['property_type']);
-                    }
-                }
-            }
-
-        ?>
-
-        <form action="<?php echo  UD_F::base_url($wp_properties['configuration']['base_slug']); ?>" method="post">
-
-        <?php
-        if(is_array($searchable_property_types) && !array_key_exists('property_type', array_fill_keys($search_attributes, 1))) {
-            foreach($searchable_property_types as $this_property) {
+    <?php     
+      
+      if(is_array($searchable_property_types) && !array_key_exists('property_type', array_fill_keys($search_attributes, 1))) {
+        foreach($searchable_property_types as $this_property) {
           echo '<input type="hidden" name="wpp_search[property_type][]" value="'. $this_property .'" />';
         }
       }
-    
+  
     ?>
-      <ul class="wpp_search_elements">
-        <?php if(is_array($search_attributes)) foreach($search_attributes as $attrib) {
+    <ul class="wpp_search_elements">
+    <?php if(is_array($search_attributes)) foreach($search_attributes as $attrib) {
+      
+      //** Override search values if they are set in the developer tab */
+        if(!empty($wp_properties['predefined_search_values'][$attrib])) {
+          $maybe_search_values = explode(',', $wp_properties['predefined_search_values'][$attrib]);
           
-          //** Don't display search attributes that have no values */
-          if(!isset($search_values[$attrib])) {
-            continue;
+          if(is_array($maybe_search_values)) {
+            $search_values[$attrib] = $maybe_search_values;
           }
+        }
+        
+        
+        //echo "<pre style='color: white;'>";print_r($maybe_search_values); echo "</pre>";
+        //predefined_se
+    
+      //** Don't display search attributes that have no values */
+      if(!isset($search_values[$attrib])) {
+        continue;
+      }
 
-          $random_element_id = 'wpp_search_element_' . rand(1000,9999);
-          $label = (empty($wp_properties['property_stats'][$attrib]) ? ucwords($attrib) : $wp_properties['property_stats'][$attrib]) ?>
-            <li class="wpp_search_form_element seach_attribute_<?php echo $attrib; ?>  wpp_search_attribute_type_<?php echo $wp_properties['searchable_attr_fields'][$attrib]; ?> <?php echo ((!empty($wp_properties['searchable_attr_fields'][$attrib]) && $wp_properties['searchable_attr_fields'][$attrib] == 'checkbox') ? 'wpp-checkbox-el' : ''); ?>">
+      $random_element_id = 'wpp_search_element_' . rand(1000,9999);
+      $label = (empty($wp_properties['property_stats'][$attrib]) ? ucwords($attrib) : $wp_properties['property_stats'][$attrib]) ?>
+        <li class="wpp_search_form_element seach_attribute_<?php echo $attrib; ?>  wpp_search_attribute_type_<?php echo $wp_properties['searchable_attr_fields'][$attrib]; ?> <?php echo ((!empty($wp_properties['searchable_attr_fields'][$attrib]) && $wp_properties['searchable_attr_fields'][$attrib] == 'checkbox') ? 'wpp-checkbox-el' : ''); ?>">
 
-            <?php ob_start(); ?>
+        <?php ob_start(); ?>
 
-            <?php if($attrib == 'property_type') : ?>
-            <label for="<?php echo $random_element_id; ?>" class="wpp_search_label wpp_search_label_<?php echo $attrib; ?>"><?php _e('Type:', 'wpp'); ?></label>
-            <?php else : ?>
-            <label for="<?php echo $random_element_id; ?>" class="wpp_search_label wpp_search_label_<?php echo $attrib; ?>"><?php echo $label; ?>:</label>
-            <?php endif; ?>
-            <div class="wpp_search_attribute_wrap">
-            <?php if(!empty($wp_properties['searchable_attr_fields'][$attrib])) : ?>
-              <?php switch($wp_properties['searchable_attr_fields'][$attrib]) {
-                  case 'input' :
-                      ?>
-                      <input id="<?php echo $random_element_id; ?>" name="wpp_search[<?php echo $attrib; ?>]" value="<?php echo $_REQUEST['wpp_search'][$attrib]; ?>" type="text" />
-                     <?php
-                      break;
-                  case 'range_input':
-                      ?>
-                      
-                      <input id="<?php echo $random_element_id; ?>" class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> <span class="wpp_dash">-</span>
-                      <input class="wpp_search_input_field_max wpp_search_input_field_<?php echo $attrib; ?>"  type="text" name="wpp_search[<?php echo $attrib; ?>][max]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['max']; ?>" />
-                      <?php
-                      break;
-                  case 'range_dropdown':
-                      ?>
-                      <?php $grouped_values = group_search_values($search_values[$attrib]); ?>
-                      <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>][min]" >
-                      <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
-                      <?php foreach($grouped_values as $value) { ?>
-                          <option value='<?php echo (int)$value; ?>' <?php if($_REQUEST['wpp_search'][$attrib]['min'] == $value) echo " selected='true' "; ?>>
-                              <?php echo apply_filters("wpp_stat_filter_$attrib", $value); ?> +
-                          </option>
-                      <?php } ?>
-                      </select>
-                      <?php
-                    break;
-
-                    case 'dropdown':
-                      //$req_attr = htmlspecialchars((stripslashes($_REQUEST['wpp_search'][$attrib])), ENT_QUOTES);
-                      $req_attr = htmlspecialchars(stripslashes($_REQUEST['wpp_search'][$attrib]), ENT_QUOTES); ?>
-
-                    <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
-
-                      <?php if( !isset( $_POST['wpp_search'][$attrib] ) || $_POST['wpp_search'][$attrib] == "-1" ) { ?>
-
-                      <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
-
-                      <?php  } else { ?>
-
-                      <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
-
-                      <?php } ?>
-
-                      <?php foreach( $search_values[$attrib] as $value ) { ?>
-                      <?php // echo 'value: ' . $value . '|req_attr: '  . $req_attr; ?>
-                      <option value='<?php echo $value; ?>' <?php selected($req_attr,$value); ?>>
-                        <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_$attrib", $value) ); ?>
-                      </option>
-                      <?php } ?>
-                    </select>
-
-                <?php break;                   
-
-                case 'multi_checkbox': ?>
-
-                    <ul class="wpp_multi_checkbox">
-                      <?php
-                      // ** Load Values */
-                      if(!empty($wp_properties['predefined_values'][$attrib])) {
-                      
-                        $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$attrib]));
-                        $predefined_values = explode(',', $predefined_values);                        
-                      } else {
-                        $predefined_values = $search_values[$attrib];
-                      }
-
-                      if(is_array($predefined_values)) {
-                        foreach($predefined_values as $value_label) { $unique_id = rand(10000,99999);?>
-                        <li>
-                          <input name="wpp_search[<?php  echo $attrib; ?>][options][]" <?php echo (is_array($_REQUEST['wpp_search'][$attrib]['options']) && in_array($value_label, $_REQUEST['wpp_search'][$attrib]['options']) ? 'checked="true"' : '');?> id="wpp_attribute_checkbox_<?php echo $unique_id; ?>" type="checkbox" value="<?php echo $value_label; ?>" />
-                          <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>"><?php echo $value_label; ?></label>
-                        </li>
-                      <?php } } ?>
-                    
-                    </ul>
-
-                    
-
-                <?php break;
-
-                  case 'checkbox': ?>
-                  <input id="<?php echo $random_element_id; ?>" type="checkbox" name="wpp_search[<?php echo $attrib; ?>][checked]" <?php checked($_REQUEST['wpp_search'][$attrib]['checked'], 'on'); ?> />
-                  <?php
-                  break; } ?>
-
-                  <?php else: ?>
-
-                  <?php
-                  // Determine if attribute is a numeric range
-                  if(WPP_F::is_numeric_range($search_values[$attrib])) {
+        <?php if($attrib == 'property_type') : ?>
+        <label for="<?php echo $random_element_id; ?>" class="wpp_search_label wpp_search_label_<?php echo $attrib; ?>"><?php _e('Type:', 'wpp'); ?></label>
+        <?php else : ?>
+        <label for="<?php echo $random_element_id; ?>" class="wpp_search_label wpp_search_label_<?php echo $attrib; ?>"><?php echo $label; ?>:</label>
+        <?php endif; ?>
+        <div class="wpp_search_attribute_wrap">
+        <?php if(!empty($wp_properties['searchable_attr_fields'][$attrib])) : ?>
+          <?php switch($wp_properties['searchable_attr_fields'][$attrib]) {
+              case 'input' :
                   ?>
-                      <input class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> -
-                      <input class="wpp_search_input_field_max wpp_search_input_field_<?php echo $attrib; ?>"  type="text" name="wpp_search[<?php echo $attrib; ?>][max]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['max']; ?>" />
+                  <input id="<?php echo $random_element_id; ?>" name="wpp_search[<?php echo $attrib; ?>]" value="<?php echo $_REQUEST['wpp_search'][$attrib]; ?>" type="text" />
+                 <?php
+                  break;
+              case 'range_input':
+                  ?>
+                  
+                  <input id="<?php echo $random_element_id; ?>" class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> <span class="wpp_dash">-</span>
+                  <input class="wpp_search_input_field_max wpp_search_input_field_<?php echo $attrib; ?>"  type="text" name="wpp_search[<?php echo $attrib; ?>][max]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['max']; ?>" />
                   <?php
-                  }  else { /* Not a numeric range */ ?>
-                    <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
-                    <option value="<?php echo (($attrib == 'property_type' && is_array($search_values[$attrib])) ? implode(',',(array_flip($search_values[$attrib]))) : '-1' ); ?>"><?php _e('Any','wpp') ?></option>
-                    <?php foreach($search_values[$attrib] as $key => $value) { ?>
-                      <option value='<?php echo (($attrib=='property_type')?$key:$value); ?>' <?php if($_REQUEST['wpp_search'][$attrib] == (($attrib=='property_type')?$key:$value)) echo " selected='true' "; ?>>
-                          <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_$attrib", $value) ); ?>
+                  break;
+              case 'range_dropdown':
+                  ?>
+                  <?php $grouped_values = group_search_values($search_values[$attrib]); ?>
+                  <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>][min]" >
+                  <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
+                  <?php foreach($grouped_values as $value) { ?>
+                      <option value='<?php echo (int)$value; ?>' <?php if($_REQUEST['wpp_search'][$attrib]['min'] == $value) echo " selected='true' "; ?>>
+                          <?php echo apply_filters("wpp_stat_filter_$attrib", $value); ?> +
                       </option>
-                        <?php } ?>
-                    </select>
-              <?php } ?>
-              </div><?php /* .wpp_search_attribute_wrap */ ?>
+                  <?php } ?>
+                  </select>
+                  <?php
+                break;
 
-            <?php endif; ?>
-            <?php $this_field = ob_get_contents(); ?>
+                case 'dropdown':
+                  //$req_attr = htmlspecialchars((stripslashes($_REQUEST['wpp_search'][$attrib])), ENT_QUOTES);
+                  $req_attr = htmlspecialchars(stripslashes($_REQUEST['wpp_search'][$attrib]), ENT_QUOTES); ?>
 
-            <?php ob_end_clean(); ?>
-            <?php echo apply_filters('wpp_search_form_field_'. $attrib, $this_field, $attrib, $label, $_REQUEST['wpp_search'][$attrib], $wp_properties['searchable_attr_fields'][$attrib], $random_element_id); ?>
+                <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
+
+                  <?php if( !isset( $_POST['wpp_search'][$attrib] ) || $_POST['wpp_search'][$attrib] == "-1" ) { ?>
+
+                  <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
+
+                  <?php  } else { ?>
+
+                  <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
+
+                  <?php } ?>
+
+                  <?php foreach( $search_values[$attrib] as $value ) { ?>
+                  <?php // echo 'value: ' . $value . '|req_attr: '  . $req_attr; ?>
+                  <option value='<?php echo $value; ?>' <?php selected($req_attr,$value); ?>>
+                    <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_$attrib", $value) ); ?>
+                  </option>
+                  <?php } ?>
+                </select>
+
+            <?php break;                   
+
+            case 'multi_checkbox': ?>
+
+                <ul class="wpp_multi_checkbox">
+                  <?php
+                  // ** Load Values */
+                  if(!empty($wp_properties['predefined_values'][$attrib])) {
+                  
+                    $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$attrib]));
+                    $predefined_values = explode(',', $predefined_values);                        
+                  } else {
+                    $predefined_values = $search_values[$attrib];
+                  }
+
+                  if(is_array($predefined_values)) {
+                    foreach($predefined_values as $value_label) { $unique_id = rand(10000,99999);?>
+                    <li>
+                      <input name="wpp_search[<?php  echo $attrib; ?>][options][]" <?php echo (is_array($_REQUEST['wpp_search'][$attrib]['options']) && in_array($value_label, $_REQUEST['wpp_search'][$attrib]['options']) ? 'checked="true"' : '');?> id="wpp_attribute_checkbox_<?php echo $unique_id; ?>" type="checkbox" value="<?php echo $value_label; ?>" />
+                      <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>"><?php echo $value_label; ?></label>
                     </li>
-                <?php } ?>
-                <li class="wpp_search_form_element submit"><input type="submit" class="wpp_search_button submit" value="<?php _e('Search','wpp') ?>" /></li>
-            </ul>
-            <?php if($per_page) echo '<input type="hidden" name="wpp_search[pagi]" value="0--'. $per_page .'" />'; ?>
-        </form>
-    <?php }
+                  <?php } } ?>
+                
+                </ul>
+                
+            <?php break;
+
+              case 'checkbox': ?>
+              <input id="<?php echo $random_element_id; ?>" type="checkbox" name="wpp_search[<?php echo $attrib; ?>][checked]" <?php checked($_REQUEST['wpp_search'][$attrib]['checked'], 'on'); ?> />
+              <?php
+              break; } ?>
+
+              <?php else: ?>
+
+              <?php
+              // Determine if attribute is a numeric range
+              if(WPP_F::is_numeric_range($search_values[$attrib])) {
+              ?>
+                  <input class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?>" type="text" name="wpp_search[<?php  echo $attrib; ?>][min]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['min']; ?>" /> -
+                  <input class="wpp_search_input_field_max wpp_search_input_field_<?php echo $attrib; ?>"  type="text" name="wpp_search[<?php echo $attrib; ?>][max]" value="<?php echo $_REQUEST['wpp_search'][$attrib]['max']; ?>" />
+              <?php
+              }  else { /* Not a numeric range */ ?>
+                <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
+                <option value="<?php echo (($attrib == 'property_type' && is_array($search_values[$attrib])) ? implode(',',(array_flip($search_values[$attrib]))) : '-1' ); ?>"><?php _e('Any','wpp') ?></option>
+                <?php foreach($search_values[$attrib] as $key => $value) { ?>
+                  <option value='<?php echo (($attrib=='property_type')?$key:$value); ?>' <?php if($_REQUEST['wpp_search'][$attrib] == (($attrib=='property_type')?$key:$value)) echo " selected='true' "; ?>>
+                      <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_$attrib", $value) ); ?>
+                  </option>
+                    <?php } ?>
+                </select>
+          <?php } ?>
+          </div><?php /* .wpp_search_attribute_wrap */ ?>
+
+        <?php endif; ?>
+        <?php $this_field = ob_get_contents(); ?>
+
+        <?php ob_end_clean(); ?>
+        <?php echo apply_filters('wpp_search_form_field_'. $attrib, $this_field, $attrib, $label, $_REQUEST['wpp_search'][$attrib], $wp_properties['searchable_attr_fields'][$attrib], $random_element_id); ?>
+                </li>
+            <?php } ?>
+            <li class="wpp_search_form_element submit"><input type="submit" class="wpp_search_button submit" value="<?php _e('Search','wpp') ?>" /></li>
+        </ul>
+        <?php if($per_page) echo '<input type="hidden" name="wpp_search[pagi]" value="0--'. $per_page .'" />'; ?>
+    </form>
+  <?php }
 
 endif;
 

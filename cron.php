@@ -7,9 +7,12 @@ if (empty($argv[0])) return;
 
 ######### init WP #####################
 set_time_limit(0);
+ini_set( "display_errors", 0);
 ignore_user_abort(true);
 define('DOING_CRON', true);
-require_once('../../../wp-load.php');
+$dir = dirname(__FILE__) . "/../../../";
+//echo $dir;
+require_once($dir.'wp-load.php');
 
 /** Switch based on task needed */
 if($argv[1] == 'do_xml_import' && class_exists('class_wpp_property_import')){
@@ -77,7 +80,7 @@ SCRIPT USAGE: php ./" . $argv[0] . " <action> <variables>
   do_xml_import: 
     Premium feature to pull in properties from an external source
     php ./". $argv[0] ." do_xml_import <hash>
-    where <hash> is hash ID of the sheduled import task of XML Property Importer.
+    where <hash> is hash ID of the scheduled import task of XML Property Importer.
   erase_all_properties:
     !WARNING! This command clears out all properties from your database !WARNING!
 ");

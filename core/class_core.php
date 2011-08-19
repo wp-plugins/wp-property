@@ -100,7 +100,6 @@ class WPP_Core {
     }
 
 
-
     // Find front-end JavaScript and register the script
     if ( file_exists( STYLESHEETPATH . '/wp_properties.js') ) {
       wp_register_script('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.js', array('jquery-ui-core'),'1.13' );
@@ -111,8 +110,8 @@ class WPP_Core {
     }
 
 
-        // Check settings data on accord with existing wp_properties data before option updates
-        add_filter('wpp_settings_save', array('WPP_Core', 'check_wp_settings_data'), 0, 2);
+    // Check settings data on accord with existing wp_properties data before option updates
+    add_filter('wpp_settings_save', array('WPP_Core', 'check_wp_settings_data'), 0, 2);
 
 
     // Init action hook
@@ -257,6 +256,7 @@ class WPP_Core {
 
     // Fix toggale row actions -> get rid of "Quick Edit" on property rows
     add_filter('page_row_actions', array('WPP_Core', 'property_row_actions'),0,2);
+    add_action('pre_get_posts', array('WPP_F', 'pre_get_posts'));
 
     // Fix 404 errors
     add_filter("parse_query", array($this, "fix_404"));
@@ -359,6 +359,13 @@ class WPP_Core {
       wp_enqueue_script('jquery-ui-sortable');
       wp_enqueue_script('jquery-colorpicker');
       wp_enqueue_style('jquery-colorpicker-css');
+      
+      $contextual_help['content'][] = '<h3>' . __('WP-Property Help') .'</h3>';
+      $contextual_help['content'][] = '<p>' . __('The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is ' . get_bloginfo('url') . '<b>/real_estate/</b>, then you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp') .'</p>';
+      $contextual_help['content'][] = '<p>' . __('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.','wpp') .'</p>';
+
+      $contextual_help = apply_filters('wpp_contextual_help', array('page' => $current_screen->id, 'content' => $contextual_help['content']));
+      add_contextual_help($current_screen->id, implode("\n", $contextual_help['content']));      
     }
   }
 
@@ -392,7 +399,8 @@ class WPP_Core {
    */
   function overview_page_scripts() {
     global $current_screen, $wp_properties;
-
+ 
+    
     switch ($current_screen->id) {
 
       // Property Overview Page
@@ -443,6 +451,7 @@ class WPP_Core {
       case 'property':
       // Property Editing Page
       break;
+
     }
   }
 
@@ -715,11 +724,10 @@ class WPP_Core {
   function admin_css() {
     global $current_screen;
 
-        if ( file_exists( WPP_Path . '/css/wp_properties_admin.css') ) {
-            wp_register_style('myStyleSheets', WPP_URL . '/css/wp_properties_admin.css');
+    if ( file_exists( WPP_Path . '/css/wp_properties_admin.css') ) {
+      wp_register_style('myStyleSheets', WPP_URL . '/css/wp_properties_admin.css');
       wp_enqueue_style( 'myStyleSheets');
-
-        }
+    }
 
   }
 
@@ -1252,7 +1260,13 @@ class WPP_Core {
 
     ob_start();
     echo "<div class='wpp_shortcode_search'>";
-    draw_property_search_form($searchable_attributes, $searchable_property_types, $per_page, $widget_id, false);
+
+    $search_args['searchable_attributes'] = $searchable_attributes;
+    $search_args['searchable_property_types'] = $searchable_property_types;
+    $search_args['per_page'] = $per_page;
+    $search_args['instance_id'] = $widget_id;
+        
+    draw_property_search_form($search_args);
     echo "</div>";
     $content = ob_get_contents();
     ob_end_clean();

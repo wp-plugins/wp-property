@@ -33,9 +33,43 @@ class class_admin_tools {
 
     // Add Settings Page
     add_action('wpp_settings_content_admin_tools', array('class_admin_tools', 'settings_page'));
+    
+    add_action('wpp_contextual_help', array('class_admin_tools', 'wpp_contextual_help'));
 
   }
+ 
 
+  /**
+   * Adds admin tools manu to settings page navigation
+   *
+   * @version 1.0
+   * Copyright 2010 Andy Potanin, TwinCitiesTech.com, Inc.  <andy.potanin@twincitiestech.com>
+   */
+  function wpp_contextual_help($contextual_help) {
+    
+    if($contextual_help['page'] != 'property_page_property_settings') {
+      return $contextual_help;
+    }
+      
+    $contextual_help['content'][] = '<h3>' . __('Developer Tab Help') .'</h3>';    
+    $contextual_help['content'][] = '<p>' . __('The <b>slug</b> is automatically created from the title and is used in the back-end.  It is also used for template selection, example: floorplan will look for a template called property-floorplan.php in your theme folder, or default to property.php if nothing is found.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('If <b>Searchable</b> is checked then the property will be loaded for search, and available on the property search widget.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('If <b>Location Matters</b> is checked, then an address field will be displayed for the property, and validated against Google Maps API.  Additionally, the property will be displayed on the SuperMap, if the feature is installed.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('<b>Hidden Attributes</b> determine which attributes are not applicable to the given property type, and will be grayed out in the back-end.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('<b>Inheritance</b> determines which attributes should be automatically inherited from the parent property') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('Property attributes are meant to be short entries that can be searchable, on the back-end attributes will be displayed as single-line input boxes. On the front-end they are displayed using a definitions list.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('Making an attribute as "searchable" will list it as one of the searchable options in the Property Search widget settings.') .'</p>';
+    $contextual_help['content'][] = '<p>' . __('Be advised, attributes added via add_filter() function supercede the settings on this page.') .'</p>';
+    
+    
+    
+    return $contextual_help;
+    
+
+  
+  }
+  
+  
   /**
    * Adds admin tools manu to settings page navigation
    *
@@ -86,16 +120,9 @@ class class_admin_tools {
   </style>
 
   <table class="form-table">
-    <tr>
-      <th><?php _e('Property Types','wpp') ?></th>
-      <td>
-        <?php _e('<p>Create new property types using this menu. </p>
-        <p>The <b>slug</b> is automatically created from the title and is used in the back-end.  It is also used for template selection, example: floorplan will look for a template called property-floorplan.php in your theme folder, or default to property.php if nothing is found.</p>
-        <p>If <b>Searchable</b> is checked then the property will be loaded for search, and available on the property search widget.</p>
-        <p>If <b>Location Matters</b> is checked, then an address field will be displayed for the property, and validated against Google Maps API.  Additionally, the property will be displayed on the SuperMap, if the feature is installed.</p>
-        <p><b>Hidden Attributes</b> determine which attributes are not applicable to the given property type, and will be grayed out in the back-end.</p>
-        <p><b>Inheritance</b> determines which attributes should be automatically inherited from the parent property.</p>','wpp') ?>
-
+    <tr>      
+      <td>        
+        <h3><?php _e('Property Types','wpp') ?></h3>
         <table id="wpp_inquiry_property_types" class="ud_ui_dynamic_table widefat">
         <thead>
           <tr>
@@ -132,8 +159,9 @@ class class_admin_tools {
             </ul>
           </td>
 
+
           <td >
-            <ul class="wpp_hidden_property_attributes">
+            <ul class="wp-tab-panel wpp_hidden_property_attributes">
             <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label): ?>
             <li>
               <input id="<?php echo $property_slug . "_" .$property_stat_slug;?>_hidden_attributes" <?php if(isset($wp_properties['hidden_attributes'][$property_slug]) && in_array($property_stat_slug, $wp_properties['hidden_attributes'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[hidden_attributes][<?php echo $property_slug;?>][]" value="<?php echo $property_stat_slug; ?>" />
@@ -156,7 +184,7 @@ class class_admin_tools {
           </td>
 
            <td >
-            <ul class="wpp_inherited_property_attributes">
+            <ul class="wp-tab-panel wpp_inherited_property_attributes">
             <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label): ?>
             <li>
               <input id="<?php echo $property_slug . "_" .$property_stat_slug;?>_inheritance" <?php if(isset($wp_properties['property_inheritance'][$property_slug]) && in_array($property_stat_slug, $wp_properties['property_inheritance'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[property_inheritance][<?php echo $property_slug;?>][]" value="<?php echo $property_stat_slug; ?>" />
@@ -187,84 +215,112 @@ class class_admin_tools {
       </td>
     </tr>
 
-
     <tr>
-      <th><?php _e('Property Fields','wpp') ?></th>
       <td>
         <h3><?php _e('Property Stats','wpp') ?></h3>
-        <?php _e('<p>Property attributes are meant to be short entries that can be searchable, on the back-end attributes will be displayed as single-line input boxes. On the front-end they are displayed using a definitions list.</p>
-        <p>Making an attribute as "searchable" will list it as one of the searchable options in the Property Search widget settings.</p>
-        <p>Be advised, attributes added via add_filter() function supercede the settings on this page.</p>','wpp') ?>
 
-        <p><?php _e('If an attribute has <b>Admin Predefined Values</b>, a list of comma-separated words, a dropdown will be displayed instead of an input box on the property editing page for the given attribute.', 'wpp'); ?></p>
-        
         <table id="wpp_inquiry_attribute_fields" class="ud_ui_dynamic_table widefat">
         <thead>
           <tr>
-            <th class='wpp_draggable_handle'>&nbsp;</th>
             <th class='wpp_attribute_name_col'><?php _e('Attribute Name','wpp') ?></th>
-            <th class='wpp_settings_col'><?php _e('Settings','wpp') ?></th>
-            <th class='wpp_search_input_col'><?php _e('Search Input','wpp') ?></th>
-            <th class='wpp_admin_input_col'><?php _e('Admin Dropdown Values','wpp') ?></th>
-            <th class='wpp_delete_col'>&nbsp;</th>
+             <th class='wpp_settings_input_col'><?php _e('Settings','wpp') ?></th>
+             <th class='wpp_search_input_col'><?php _e('Search Settings and Values ','wpp') ?></th>
+            <th class='wpp_admin_input_col'><?php _e('Admin Pre-defined Values','wpp') ?></th>
+            <th class='wpp_draggable_handle'>&nbsp;</th>
           </tr>
         </thead>
         <tbody>
         <?php  foreach($wp_properties['property_stats'] as $slug => $label):  ?>
 
           <tr class="wpp_dynamic_table_row" slug="<?php echo $slug; ?>"  new_row='false'>
-          <th class="wpp_draggable_handle">&nbsp;</th>
+          
 
-          <td >
+          <td class="wpp_attribute_name_col" >
             <ul>
             <li>
-              <label>Title </label>
               <input class="slug_setter" type="text" name="wpp_settings[property_stats][<?php echo $slug; ?>]" value="<?php echo $label; ?>" />
-            </li>              
-            <li>
-              <label>Slug </label>
+            </li>
+            <li class="wpp_development_advanced_option">
               <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
             </li>
-            </ul>
-          </td>
-          <td>
-            <ul>
+
             <li>
-              <input <?php if(in_array($slug, ((!empty($wp_properties['sortable_attributes'])?$wp_properties['sortable_attributes']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[sortable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Sortable'); ?></label> 
+              <span class="wpp_show_advanced"><?php _e('Toggle Advanced Settings'); ?></span>
             </li>
-            <li>
-              <input <?php if(is_array($wp_properties['searchable_attributes']) && in_array($slug, $wp_properties['searchable_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[searchable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Searchable'); ?></label> 
-            </li>
-              <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Admin Only'); ?></label> 
-            </li>
-            <?php 
-            /*<li>
-              <input <?php if(in_array($slug, ((!empty($wp_properties['allow_multiple'])?$wp_properties['allow_multiple']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[allow_multiple][]" value="<?php echo $slug; ?>" />
-              <label>Allow Multiple</label> 
-            </li>
-            */ ?>
+
             </ul>
-          </td>
-          <td>
-            <select name="wpp_settings[searchable_attr_fields][<?php echo $slug; ?>]">
-              <option value="input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'input'); ?>><?php _e('Text Input','wpp') ?></option>
-              <option value="range_input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_input'); ?>><?php _e('Text Input Range','wpp') ?></option>
-              <option value="range_dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_dropdown'); ?>><?php _e('Range (dropdown)','wpp') ?></option>
-              <option value="dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'dropdown'); ?>><?php _e('Dropdown','wpp') ?></option>
-              <option value="checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'checkbox'); ?>><?php _e('Checkbox','wpp') ?></option>
-              <option value="multi_checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'multi_checkbox'); ?>><?php _e('Multi-Checkbox','wpp') ?></option>
-            </select>
-          </td>
-          
-          <td class="wpp_admin_input_col">
-          <textarea  name="wpp_settings[predefined_values][<?php echo $slug; ?>]"><?php echo $wp_properties['predefined_values'][$slug]; ?></textarea>
-          
           </td>
 
-           <td><span class="wpp_delete_row wpp_link"><?php _e('Delete','wpp') ?></span></td>
+          <td class="wpp_settings_input_col">
+
+          <ul>
+            <li>
+              <input <?php if(in_array($slug, ((!empty($wp_properties['sortable_attributes'])?$wp_properties['sortable_attributes']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[sortable_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Sortable'); ?></label>
+            </li>
+            
+            <li>
+              <input <?php if(is_array($wp_properties['searchable_attributes']) && in_array($slug, $wp_properties['searchable_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[searchable_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Searchable'); ?></label>
+            </li>
+
+            <li class="wpp_development_advanced_option">
+              <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Admin Only'); ?></label>
+            </li>
+
+            <li class="wpp_development_advanced_option">
+              <input <?php if(is_array($wp_properties['numeric_attributes']) && in_array($slug, $wp_properties['numeric_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[numeric_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Format as number'); ?></label>
+            </li>            
+
+            <li class="wpp_development_advanced_option">
+              <input <?php if(is_array($wp_properties['currency_attributes']) && in_array($slug, $wp_properties['currency_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[currency_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Format as currency'); ?></label>
+            </li>            
+            
+            
+            <li class="wpp_development_advanced_option">
+              <span class="wpp_delete_row wpp_link"><?php _e('Delete Attribute','wpp') ?></span>
+            </li>
+            
+          </ul>
+            
+          </td>
+          <td class="wpp_search_input_col">
+            <ul>
+                        
+            <li class="wpp_development_advanced_option">
+              <textarea name="wpp_settings[predefined_search_values][<?php echo $slug; ?>]"><?php echo $wp_properties['predefined_search_values'][$slug]; ?></textarea>
+            </li>
+
+            <li class="">
+              <select name="wpp_settings[searchable_attr_fields][<?php echo $slug; ?>]">
+                <option value="input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'input'); ?>><?php _e('Text Input','wpp') ?></option>
+                <option value="range_input" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_input'); ?>><?php _e('Text Input Range','wpp') ?></option>
+                <option value="range_dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'range_dropdown'); ?>><?php _e('Range (dropdown)','wpp') ?></option>
+                <option value="dropdown" <?php selected($wp_properties['searchable_attr_fields'][$slug],'dropdown'); ?>><?php _e('Dropdown','wpp') ?></option>
+                <option value="checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'checkbox'); ?>><?php _e('Checkbox','wpp') ?></option>
+                <option value="multi_checkbox" <?php selected($wp_properties['searchable_attr_fields'][$slug], 'multi_checkbox'); ?>><?php _e('Multi-Checkbox','wpp') ?></option>
+              </select>
+            </li>
+
+
+          </ul>
+          </td>
+
+          <td class="wpp_admin_input_col">
+          <ul>
+            <li class="wpp_development_advanced_option">
+              <textarea name="wpp_settings[predefined_values][<?php echo $slug; ?>]"><?php echo $wp_properties['predefined_values'][$slug]; ?></textarea>
+            </li>
+
+
+          </ul>
+
+          </td>
+
+           <td class="wpp_draggable_handle">&nbsp;</td>          
         </tr>
 
         <?php endforeach; ?>
@@ -302,7 +358,7 @@ class class_admin_tools {
            <ul>
             <li>
                <input class="slug_setter" type="text" name="wpp_settings[property_meta][<?php echo $slug; ?>]" value="<?php echo $label; ?>" />
-            </li>              
+            </li>
             </ul>
           <td>
             <ul>
@@ -315,11 +371,14 @@ class class_admin_tools {
             <ul>
               </li>
               <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Admin Only'); ?></label> 
+              <label><?php _e('Show in Admin Only'); ?></label>
             </li>
-            </ul>            
+            </ul>
           </td>
-           <td><span class="wpp_delete_row wpp_link"><?php _e('Delete','wpp') ?></span></td>
+  
+            <td>
+            <span class="wpp_delete_row wpp_link"><?php _e('Delete Meta Attribute','wpp') ?></span>
+            </td>
         </tr>
 
         <?php endforeach; ?>
@@ -339,8 +398,8 @@ class class_admin_tools {
 
 
     <tr>
-      <th><?php _e('Advanced Options','wpp'); ?></th>
       <td>
+        <h3><?php _e('Advanced Options','wpp'); ?></h3>
         <ul>
           <li>
             <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][show_ud_log]&label=" . __('Show Log.','wpp'), $wp_properties['configuration']['show_ud_log']); ?> <br />
@@ -350,6 +409,11 @@ class class_admin_tools {
             <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][disable_automatic_feature_update]&label=" . __('Disable automatic feature updates.','wpp'), $wp_properties['configuration']['disable_automatic_feature_update']); ?> <br />
             <span class="description"><?php _e('If disabled, WP-Property will not automatically download updates to premium features.','wpp'); ?></span>
           </li>
+          <li>
+            <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][disable_wordpress_postmeta_cache]&label=" . __('Disable WordPress update_post_caches() function.','wpp'), $wp_properties['configuration']['disable_wordpress_postmeta_cache']); ?> <br />
+            <span class="description"><?php _e('This may solve Out of Memory issues if you have a lot of properties.','wpp'); ?></span>
+          </li>
+          
         </ul>
       </td>
     </tr>

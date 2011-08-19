@@ -13,6 +13,42 @@
 class WPP_F {
 
 
+
+  /**
+   * Pre post query - for now mostly to disable caching
+   * 
+   * @version 1.17.2
+   */
+    function pre_get_posts($query){
+      global $wp_properties;
+ 
+      if($wp_properties['configuration']['disable_wordpress_postmeta_cache'] != 'true') {
+        return;
+      }
+ 
+      if($query->query_vars['post_type'] == 'property') {
+        $query->query_vars['cache_results'] = false;
+      }     
+      
+    }
+
+
+
+  /**
+   * Format a number as numeric
+   * 
+   * @version 1.16.3
+   */
+   function format_numeric($content = '') { 
+    global $wp_properties;
+      
+      $dec_point  = (!empty($wp_properties['configuration']['dec_point']) ? $wp_properties['configuration']['dec_point'] : ".");
+      $thousands_sep  = (!empty($wp_properties['configuration']['thousands_sep']) ? $wp_properties['configuration']['thousands_sep'] : ",");
+   
+      return number_format($content,0,$dec_point,$thousands_sep);
+    }
+ 
+
   /**
    * Checks if an file exists in the uploads directory from a URL
    *
@@ -1580,17 +1616,43 @@ class WPP_F {
   */
   static function get_properties($args = "") {
     global $wpdb, $wp_properties;
-
-    
-    //** added to avoid range and "LIKE" searches on single numeric values * 
-    
+ 
+    //** added to avoid range and "LIKE" searches on single numeric values *     
     if(is_array($args)){
       foreach($args as $thing => $value) {
-        if(is_numeric($value)) {
+      
+        $value = trim($value);
+ 
+        $original_value = $value;
+        
+        /* 
+          We only remove commas and pluses because those are the only two situations as of now this may be needed          
+          A search may be: 30,033 => which should be 30033
+          Or it may be 300+ => where user is looking for all values over 300        
+        */
+        
+        $no_bad_chars = str_replace(array('+', ','), '', $value);
+        
+        //** If original value is not numeric, but without commas it is numeric, we remove the bad chars */
+        if(!is_numeric($value) && is_numeric($no_bad_chars)) {
+          $value = $no_bad_chars;
+        }
+        
+     
+        //** Look for open-ended ranges, i.e. bedrooms: 5+ */
+        $last_char = substr($original_value, -1, 1);
+        
+        if($last_char == '+') {
+          //** User requesting an open ended range, we leave it off with a dash, i.e. 500- */
+          $args[$thing] = $value .'-';                  
+        } elseif(is_numeric($value)) {
+          //** If number is numeric, we do a specific serach, i.e. 500-500 */
           $args[$thing] = $value .'-'. $value;        
         }
       }
     }
+    
+    echo '<script type="text/javascript">console.log('.json_encode($args).');</script>';
      
     
     $defaults = array('property_type' => 'all');

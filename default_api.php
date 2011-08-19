@@ -12,6 +12,21 @@
   // Add some default actions
   add_filter("wpp_stat_filter_price", 'add_dollar_sign');
   add_filter("wpp_stat_filter_deposit", 'add_dollar_sign');
+  
+  //** Add dollar sign to all attributes marked as currency */
+  if(is_array($wp_properties['currency_attributes'])) {
+    foreach($wp_properties['currency_attributes'] as $attribute) {
+      add_filter("wpp_stat_filter_{$attribute}", 'add_dollar_sign');      
+    }
+  }
+  
+  //** Format values as numeric if marked as numeric_attributes */
+  if(is_array($wp_properties['numeric_attributes'])) {
+    foreach($wp_properties['numeric_attributes'] as $attribute) {
+      add_filter("wpp_stat_filter_{$attribute}", array('WPP_F', 'format_numeric'));      
+    }
+  }
+  
   add_filter("wpp_stat_filter_area", 'add_square_foot');
   add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
   
@@ -475,24 +490,27 @@
     global $wp_properties;
 
     $currency_symbol = (!empty($wp_properties['configuration']['currency_symbol']) ? $wp_properties['configuration']['currency_symbol'] : "$");
-    $dec_point  = (!empty($wp_properties['configuration']['dec_point']) ? $wp_properties['configuration']['dec_point'] : ".");
-    $thousands_sep  = (!empty($wp_properties['configuration']['thousands_sep']) ? $wp_properties['configuration']['thousands_sep'] : ",");
     $currency_symbol_placement  = (!empty($wp_properties['configuration']['currency_symbol_placement']) ? $wp_properties['configuration']['currency_symbol_placement'] : "before");
 
     $content = trim(str_replace(",", "", $content));
 
+    
+    
     if (!is_numeric($content) && substr_count($content, '-')){
       $hyphen_between = explode('-', $content);
-      return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). @number_format($hyphen_between[0],0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . @number_format($hyphen_between[1],0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
+      return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). WPP_F::format_numeric($hyphen_between[0]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($hyphen_between[0]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     } elseif (!is_numeric($content)) {
-        return $content;
+    
+      //** Not numeric, cannot format */
+      return $content;
 
     } else {
 
-      return ($currency_symbol_placement == 'before' ? $currency_symbol : '') . number_format($content,0,$dec_point,$thousands_sep) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
+      return ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($content) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     }
   }
-
+  
+  
   /**
    * Display latitude and longitude on listing edit page below address field
    *

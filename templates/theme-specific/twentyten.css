@@ -2,13 +2,56 @@
 	Theme-specific styles are introduced in WP-Property 1.08.
 	In order to avoid breaking existing sites, not all TwentyTen theme elements are transfered here yet.
 	
-	Version: 0.5
+	Version: 0.6
  */
-#primary.widget-area ul.wpp_search_elements input[type="text"] {
-  width: 50px;
+ 
+div.sidebar_gallery_item .wpp_image_widget_caption  {
+    background: none repeat scroll 0 0 #F4F4F4;
+    margin: 0 9px 10px 0;
+    padding: 9px 6px 11px;
+    position: relative;
+    text-align: center;
+    top: -13px;
+}
+    
+#primary.widget-area ul.wpp_search_elements  .wpp_search_attribute_type_range_input  input[type="text"] {
+  width: 40px;
+}
+    
+#primary.widget-area ul.wpp_search_elements  .wpp_search_attribute_type_input   input[type="text"] {
+  width: 90px;
 }
 
+.widget-area .wpp_search_attribute_wrap  {
+  float: left;
+}
  
+#main .widget-area ul.wpp_search_elements {
+  margin-top: 10px;
+}
+
+#main .widget-area  .wpp_search_attribute_wrap  .wpp_multi_checkbox {
+  margin: 0;
+  padding:0;
+}
+
+.widget-area .wpp_search_attribute_wrap  .wpp_multi_checkbox input{
+  float: left;
+}
+
+.widget-area .wpp_search_attribute_wrap  .wpp_multi_checkbox label {
+  float: none;
+  width: auto;
+}
+
+.widget-area .wpp_search_properties_widget .wpp_search_elements .wpp_multi_checkbox li{
+  margin-bottom: 2px;
+}
+
+.widget-area .wpp_search_properties_widget .wpp_search_elements li {
+  overflow: auto;
+  margin-bottom: 10px;
+}
 .wpp_row_view .wpp_overview_right_column { 
 	width: 99%;
 }

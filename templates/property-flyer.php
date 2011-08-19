@@ -56,7 +56,7 @@
                                 <tr>
                                     <td colspan="3"><table cellspacing="0" cellpadding="10" border="0" class="bg-section">
                                         <tr>
-                                            <td><img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>" width="<?php echo ($wpp_pdf_flyer['first_col_width']-20); ?>" alt="" />
+                                            <td><img src="<?php echo $wpp_pdf_flyer['featured_image_url']; ?>"   alt="" />
                                             </td>
                                         </tr>
                                         </table>
@@ -95,11 +95,15 @@
                                     <?php foreach($property['gallery'] as $image) : ?>
                                         <?php if($counter == $wpp_pdf_flyer['num_pictures']) break; ?>
                                         <?php if(empty($image[$wpp_pdf_flyer['secondary_photos']])) continue; ?>
-                                        <?php $counter++; ?>
+                                        <?php 
+                                          $counter++; 
+                                          $this_image = wpp_get_image_link($image['attachment_id'], $wpp_pdf_flyer['secondary_photos'], array('return' => 'array'));
+                                
+                                        ?>
                                         <tr>
                                             <td><table cellspacing="0" cellpadding="10" border="0" class="bg-section">
                                                 <tr>
-                                                    <td><img width="<?php echo ($wpp_pdf_flyer['second_photo_width'] - 20 ); ?>" src="<?php echo $image[$wpp_pdf_flyer['secondary_photos']]; ?>" alt="" />
+                                                    <td><img width="<?php echo ($this_image['width'] - 20 ); ?>" src="<?php echo $this_image['link']; ?>" alt="" />
                                                     </td>
                                                 </tr>
                                                 </table>

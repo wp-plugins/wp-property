@@ -1,5 +1,5 @@
 === WP-Property - WordPress Powered Real Estate and Property Management ===
-Contributors: andypotanin
+Contributors:  Usability Dynamics Inc., andypotanin
 Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
@@ -85,6 +85,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 
 = Translations =
 
+* Danish (DK)
 * German (DE)
 * Italian (IT)
 * Portuguese (BR)
@@ -157,6 +158,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.17.2 =
+* draw_property_search_form() has been changed where arguments passed to it are in array format.
+
 = 1.15.7 =
 * "For Sale" and "For Rent" attributes have been removed form the API.  These programmatically added attributes were causing some confusion amongst users.  If you need these attributes, add them using the Developer tab. 
 
@@ -197,6 +201,17 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.17.2 =
+* Added additional TwentyTen style fixes.
+* Search widget improvements - default sort attribute and order can be set.
+* Added ability to do "open ended search"
+* Changed draw_property_search_form() to allow default sort attribute and sort order.
+* Added Danish translation
+* Improved the UI on the settings page, especially in the Developer tab
+* Added ability to mark attributes as numeric or monetary, which will make WPP format them properly when displayed on the front-end.
+* Added function to (optionally) disable the WordPress update_post_caches() function from being ran on the property overview page
+* Moved a lot of help text from the body of the settings page into the dropdown "Text" tab
 
 = 1.17.1 =
 * Fix to searching - when a single numeric value is in search, system looks for exact match, not "like" match as with strings.

@@ -17,7 +17,14 @@ body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
     top: -2px;
 }
 
+.wpp_show_advanced {
+  cursor: pointer;
+  color: #8C8989;
+}
 
+.wpp_development_advanced_option {
+  display:none;
+}
 
 
 /* WordPress 3.2 Compatibility End */
@@ -79,23 +86,27 @@ body.property_page_show_agents .wp-list-table .column-id {
     word-wrap: break-word; /* IE 5.5+ */
  }
     
- 
+.wpp_attribute_name_col input.slug {
+    width: 96%;
+}
+
+.wpp_attribute_name_col input.slug_setter {
+    font-size: 1.1em;
+    width: 96%;
+}
 
 #wpp_inquiry_attribute_fields .wpp_attribute_name_col {
-  width: 175px;
+  width: 150px;
 }
-#wpp_inquiry_attribute_fields .wpp_settings_col {
-  width: 80px;
-}
+ 
 
+#wpp_inquiry_attribute_fields .wpp_admin_input_col,
 #wpp_inquiry_attribute_fields .wpp_search_input_col {
-  width: 140px;
+  width: 160px;
 }
 
 
- .wpp_delete_col {
-  width: 40px !important;
-}
+ 
 
 #metabox_profile_images .inside {
   margin:0;
@@ -238,10 +249,8 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   padding:0 !important;
 }
 
-.wpp_draggable_handle_show {
-  padding:0 !important;
-  cursor: move;
-  background:url("images/wpp_draggable.png") no-repeat scroll 7px center transparent;
+.wpp_draggable_handle_show .wpp_draggable_handle {
+  background:url("images/wpp_draggable.png") no-repeat center center transparent;
 }
 
 .wpp_clear {

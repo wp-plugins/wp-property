@@ -250,12 +250,9 @@ if(isset($_REQUEST['message'])) {
             <span class="description"><?php _e('If checked, be sure to include [property_overview] somewhere in the content, or no properties will be displayed.','wpp'); ?></span>
           </li>
           <li>
-            <a href="http://twincitiestech.com/wp-property/wpp-shortcode-cheatsheet/"><?php _e('View list of available shortcodes.','wpp'); ?></a>
+            <a href="http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet/"><?php _e('View list of available shortcodes.','wpp'); ?></a>
           </li>
-				</ul>
-        <span class="description">
-        <?php _e('The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is ' . get_bloginfo('url') . '<b>/real_estate/</b>, then you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp'); ?>
-        </span>
+      </ul>
       </td>
     </tr>
     <tr>
@@ -282,7 +279,6 @@ if(isset($_REQUEST['message'])) {
           <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][auto_delete_attachments]&label=" . __('Automatically delete all property images and attachments when a property is deleted.', 'wpp'), $wp_properties['configuration']['auto_delete_attachments']); ?></li>
           <li>
           <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?> 
-          <div class="description"><?php _e('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.',''); ?></div>
           </li>
         </ul>
       </td>
@@ -566,7 +562,7 @@ if(isset($_REQUEST['message'])) {
           <td colspan="2" class="wpp_premium_feature_intro">
               <span class="header"><?php _e('WP-Property Premium Features','wpp') ?></span>
               <p><?php _e('Premium features will become available shortly, we are still waiting on more feedback on the core of the plugin.','wpp'); ?></p>
-              <p><?php _e('When purchasing the premium features you will need to specify your domain to add the license correctly.  This if your domain:','wpp'); echo ' <b>'. $this_domain; ?></b></p>
+              <p><?php _e('When purchasing the premium features you will need to specify your domain to add the license correctly.  This is your domain:','wpp'); echo ' <b>'. $this_domain; ?></b></p>
               <?php /*<p><?php _e('If you're recently purchased a premium feature, <span id="wpp_check_premium_updates" class="wpp_link">download updates</a>.','wpp') ?></p> */ ?>
               <p id="wpp_plugins_ajax_response" class="hidden"></p>
           </td>
@@ -639,7 +635,13 @@ if(isset($_REQUEST['message'])) {
 
   <div id="tab_troubleshooting">
     <div class="wpp_inner_tab">
+    
+      <div class="wpp_settings_block">
+        <?php _e('Force check of allowed premium features.','wpp');?>
+         <input type="button" value="<?php _e('Check Updates','wpp');?>" id="wpp_ajax_check_plugin_updates">
+      </div>
 
+      
       <div class="wpp_settings_block"><?php _e('Enter in the ID of the property you want to look up, and the class will be displayed below.','wpp') ?>
         <input type="text" id="wpp_property_class_id" />
         <input type="button" value="<?php _e('Lookup','wpp') ?>" id="wpp_ajax_property_query"> <span id="wpp_ajax_property_query_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
@@ -668,10 +670,6 @@ if(isset($_REQUEST['message'])) {
         <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e("Download Backup of Current WP-Property Configuration.");?></a>
       </div>
 
-      <div class="wpp_settings_block">
-        <?php _e('Force check of allowed premium features.','wpp');?>
-         <input type="button" value="<?php _e('Check Updates','wpp');?>" id="wpp_ajax_check_plugin_updates">
-      </div>
       
       <div class="wpp_settings_block">
         <?php $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true'); ?>

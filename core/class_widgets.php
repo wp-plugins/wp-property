@@ -960,33 +960,47 @@ jQuery(document).ready(function($){
         $title = apply_filters('widget_title', $instance['title']);
 
         $instance = apply_filters('SearchPropertiesWidget', $instance);
-        $searchable_attributes = $instance['searchable_attributes'];
-
+        $search_attributes = $instance['searchable_attributes'];
+        $sort_by = $instance['sort_by'];
+        $sort_order = $instance['sort_order'];
         $searchable_property_types = $instance['searchable_property_types'];
-        if(isset($instance['use_pagi']) && $instance['use_pagi']=='on')
-            $per_page = $instance['per_page'];
+         
+        if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
+          $per_page = $instance['per_page'];
+        }
       
-        if(!is_array($searchable_attributes))
-            return;
+        if(!is_array($search_attributes)) {
+          return;
+        }
                 
-        if(!function_exists('draw_property_search_form'))
-            return;
+        if(!function_exists('draw_property_search_form')) {
+          return;
+        }
 
-        //The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique
+        //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
         $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
         
         echo $before_widget;
-        echo "<div class='wpp_search_properties_widget'>";
-            
+        
+        echo '<div class="wpp_search_properties_widget">';            
 
-        if ( $title )
+        if ( $title ) {
           echo $before_title . $title . $after_title;
-        else
+        } else  {
           echo '<span class="wpp_widget_no_title"></span>';
+        }
 
-        draw_property_search_form($searchable_attributes, $searchable_property_types, $per_page, $widget_id);
+        $search_args['search_attributes'] = $search_attributes;
+        $search_args['searchable_property_types'] = $searchable_property_types;
+        $search_args['per_page'] = $per_page;
+        $search_args['instance_id'] = $widget_id;
+        $search_args['sort_by'] = $sort_by;
+        $search_args['sort_order'] = $sort_order;
+        
+        draw_property_search_form($search_args);
 
         echo "</div>";
+        
         echo $after_widget;
     }
 
@@ -1009,6 +1023,8 @@ jQuery(document).ready(function($){
         $searchable_attributes = $instance['searchable_attributes'];
         $use_pagi = $instance['use_pagi'];
         $per_page = $instance['per_page'];
+        $sort_by = $instance['sort_by'];
+        $sort_order = $instance['sort_order'];
 
         $all_searchable_property_types = array_unique($wp_properties['searchable_property_types']);
         $searchable_property_types = $instance['searchable_property_types'];
@@ -1026,12 +1042,31 @@ jQuery(document).ready(function($){
 
         
         <ul>
+          <?php if(is_array($wp_properties['sortable_attributes'])) { ?>
             <li>
+              <div><label for="<?php echo $this->get_field_id('sort_by'); ?>"><?php _e('Default Sort Order','wpp'); ?></label></div>
+              <select id="<?php echo $this->get_field_id('sort_by'); ?>" name="<?php echo $this->get_field_name('sort_by'); ?>">
+                <option></option>
+                <?php foreach($wp_properties['sortable_attributes'] as $attribute) { ?>
+                  <option value="<?php echo esc_attr($attribute); ?>"  <?php selected($sort_by, $attribute); ?> ><?php echo $wp_properties['property_stats'][$attribute]; ?></option>
+                <?php } ?>
+              </select>
+              
+              <select id="<?php echo $this->get_field_id('sort_order'); ?>" name="<?php echo $this->get_field_name('sort_order'); ?>">
+                <option></option>                
+                <option value="DESC"  <?php selected($sort_order, 'DESC'); ?> ><?php _e('Descending'); ?></option>
+                <option value="ASC"  <?php selected($sort_order, 'ASC'); ?> ><?php _e('Acending'); ?></option>                
+              </select>
+              
+            </li>
+          <?php } ?>
+              <li>
                 <label for="<?php echo $this->get_field_id('use_pagi'); ?>">
                     <input id="<?php echo $this->get_field_id('use_pagi'); ?>" name="<?php echo $this->get_field_name('use_pagi'); ?>" type="checkbox" value="on" <?php if($use_pagi=='on') echo " checked='checked';"; ?> />
                     <?php _e('Use pagination','wpp'); ?>
                 </label>
             </li>
+            
             <li>
                 <label for="<?php echo $this->get_field_id('per_page'); ?>"><?php _e('Items per page', 'wpp'); ?>
                     <input style="width:30px" id="<?php echo $this->get_field_id('per_page'); ?>" name="<?php echo $this->get_field_name('per_page'); ?>" type="text" value="<?php echo $per_page; ?>" />
@@ -1042,6 +1077,7 @@ jQuery(document).ready(function($){
 
             <p><?php _e('Property types to search:','wpp'); ?></p>
             <p>
+
                 <ul>
                 <?php if(is_array($all_searchable_property_types))
                  foreach($all_searchable_property_types as $property_type): ?>
@@ -1057,6 +1093,7 @@ jQuery(document).ready(function($){
             <br />
             <p><?php _e('Select the attributes you want to search.','wpp'); ?></p>
             <p>
+              <div class="wp-tab-panel">
                 <?php if(is_array($all_searchable_attributes)) : ?>
                 <ul>
                 <?php if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) : ?>
@@ -1102,8 +1139,9 @@ jQuery(document).ready(function($){
                 <?php endforeach; ?>
                 </ul>
                 <?php endif; ?>
+                </div>
             </p>
-            <p><?php _e('City is an automatically created attribute once the address is validated.','wpp'); ?></p>
+            
          <?php
 
     }
