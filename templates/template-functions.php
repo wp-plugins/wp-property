@@ -374,6 +374,11 @@ if(!function_exists('draw_property_search_form')):
     );
     
     $args = wp_parse_args( $args, $defaults );
+    
+    if(empty($args['search_attributes']) && isset($args['searchable_attributes'])) {
+      $args['search_attributes'] = $args['searchable_attributes'];
+    }   
+    
     extract( $args, EXTR_SKIP );
  
     //echo "<pre style='color: white;'>";print_r($args); echo "</pre>";

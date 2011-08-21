@@ -202,6 +202,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.17.2.1 =
+* Patch release to fix issues with [property_search] shortcode.
+
 = 1.17.2 =
 * Added additional TwentyTen style fixes.
 * Search widget improvements - default sort attribute and order can be set.
