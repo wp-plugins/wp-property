@@ -1,7 +1,55 @@
-/* WordPress 3.2 Compatibility Begin */
-body  {
-
+.property_page_page_feps  .wpp_feps_tabs .wpp_add_tab {
+    background: none;
+    border: none;
+    float: right;
+    margin:0;
+    }
+    
+    
+.property_page_page_feps  .feps_form_info label {
+  width: 150px;
+  float: left;
 }
+
+.property_page_page_feps  .feps_form_info input[type=text] {
+  width: 24em;
+}
+
+.property_page_page_feps  .feps_form_info input[type=text],
+.property_page_page_feps  .feps_form_info label {
+  
+}
+
+.property_page_page_feps  .wpp_feps_tabs .main_feps {
+  width: 350px;
+}
+
+.property_page_page_feps  .wpp_feps_tabs .main_feps label{
+    float: left;
+    line-height: 2em;
+    padding-right: 7px;
+    text-align: right;
+    width: 61px;
+}
+.property_page_page_feps  .wpp_feps_tabs .main_feps ul li input[type=checkbox]{
+    float: left;
+    margin-left: 69px;
+    position: relative;
+    top: 5px;
+  }
+  
+.property_page_page_feps  .wpp_feps_tabs .main_feps ul li {
+  overflow: auto;
+  clear: both;
+}
+
+.property_page_page_feps  .wpp_feps_tabs .main_feps ul li .wpp_show_advanced {
+    left: 69px;
+    position: relative;
+  }
+
+/* WordPress 3.2 Compatibility Begin */
+
 body  #normal-sortables #property_meta .inside {
   padding: 0;
 }
@@ -16,7 +64,11 @@ body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
     position: relative;
     top: -2px;
 }
-
+.wpp_i_import_actions_bar {
+    background: none repeat scroll 0 0 #FFF7DD;
+    border: 1px solid #BABABA;
+    padding: 7px;
+}
 .wpp_show_advanced {
   cursor: pointer;
   color: #8C8989;
@@ -24,6 +76,10 @@ body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
 
 .wpp_development_advanced_option {
   display:none;
+}
+
+div.wpp_tabs .wpp_padded_tab_content {
+  padding: 10px;
 }
 
 
@@ -157,9 +213,10 @@ body.property_page_show_agents .wp-list-table .column-id {
   background: #F5F5F5;
  
 }
-div.wpp_property_import_setup .wpp_property_import_gs_options {
+div.wpp_property_import_setup .wpp_property_import_gs_options, div.wpp_property_import_setup .wpp_property_import_rets_options {
   display:none;
 }
+
 div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   display:block;
 }
@@ -188,14 +245,14 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   border: 1px solid #E39C9C;
 }
 
-#wpp_settings_tabs div.wpp_settings_block {
+.wpp_tabs div.wpp_settings_block {
     background: none repeat scroll 0 0 #F7F7F7;
     border: 1px solid #E7E7E7;
     margin-bottom: 10px;
     overflow: auto;
     padding: 10px;
 }
-#wpp_settings_tabs div.wpp_settings_block h3 {
+.wpp_tabs div.wpp_settings_block h3 {
 
 }
 .property_page_show_agents #full_bio {
@@ -249,6 +306,10 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   padding:0 !important;
 }
 
+textarea.wpp_full_width {
+  width: 99%;
+}
+
 .wpp_draggable_handle_show .wpp_draggable_handle {
   background:url("images/wpp_draggable.png") no-repeat center center transparent;
 }
@@ -288,11 +349,11 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
 }
 */
 
-#wpp_settings_tabs .form-table p, #wpp_settings_tabs .form-table h3 {
+.wpp_tabs .form-table p, .wpp_tabs .form-table h3 {
   margin-top: 0;
 }
 
-#wpp_settings_tabs select option{
+.wpp_tabs select option{
   padding-right: 10px;
 }
 
@@ -345,32 +406,35 @@ table.ud_ui_dynamic_table {
  
 .wpp_overview  .tablenav #post-query-submit { display: none; }
  
-.wpp_overview .widefat input.wpp_is_featured {
+input.wpp_is_featured {
   background: none repeat scroll 0 0 #FF8104 !important;
   border-color: #E89A00 !important;
   color: #FFF !important;
   text-decoration: none !important; }
  
-.wpp_overview .widefat input.wpp_featured_toggle {
+input.wpp_featured_toggle {
   background: transparent;
   border: 0;
   color: #B2B2B4;
   cursor: pointer; }
  
-.wpp_overview  .column-thumbnail a.fancybox img { border: 4px solid #D9D9D9; }
+.column-thumbnail a.fancybox img { border: 4px solid #D9D9D9; }
  
 .cb { clear: both; }
  
 .wpp_class_pre {
-
-  background: none repeat scroll 0 0 #F4F9BC;
-  border: 2px solid #D6D9C1;
-  color: black;
-  font-size: 12px;
-  height: 600px;
-  margin-top: 17px;
-  overflow: scroll;
-  width: 100%; }
+   background: none repeat scroll 0 0 #323232;
+    border: 2px solid #D6D9C1;
+    color: #FEFFD5;
+    font-size: 12px;
+    height: 600px;
+    line-height: 1.1em;
+    margin-top: 17px;
+    overflow: scroll;
+    padding: 0;
+    white-space: pre-wrap;
+    width: 99%;
+    }
  
 .wpp_class_pre ul {
   padding: 10px;
@@ -380,11 +444,11 @@ table.ud_ui_dynamic_table {
   clear: both;
   margin-top: 15px; }
  
-#wpp_settings_tabs  {
+.wpp_tabs  {
   margin-top: 10px;
 }
 
-#wpp_settings_tabs  ul.tabs {
+.wpp_tabs  ul.tabs {
   border-bottom: 1px solid #CBCBCB;
   float: left;
   height: 33px;
@@ -395,7 +459,7 @@ table.ud_ui_dynamic_table {
   padding: 0;
   width: 100%; }
  
-  #wpp_settings_tabs  ul.tabs li {
+  .wpp_tabs  ul.tabs li {
     -moz-border-radius-topleft: 5px;
     -moz-border-radius-topright: 5px;
     -webkit-border-top-left-radius: 5px;
@@ -414,7 +478,7 @@ table.ud_ui_dynamic_table {
     padding: 3px;
     position: relative; }
  
-    #wpp_settings_tabs  ul.tabs li a {
+    .wpp_tabs  ul.tabs li a {
       color: #000;
       display: block;
    
@@ -422,24 +486,24 @@ table.ud_ui_dynamic_table {
       padding: 0 10px;
       text-decoration: none; }
  
-      #wpp_settings_tabs  ul.tabs li a:hover { color: #9D611D; }
+      .wpp_tabs  ul.tabs li a:hover { color: #9D611D; }
  
-    #wpp_settings_tabs  ul.tabs li.ui-tabs-selected {
+    .wpp_tabs  ul.tabs li.ui-tabs-selected {
       height: 26px;
       background: none repeat scroll 0 0 #FFFFFF;
       border-bottom: 1px solid #FFFFFF; }
  
-      #wpp_settings_tabs  ul.tabs li.ui-tabs-selected a:hover {
+      .wpp_tabs  ul.tabs li.ui-tabs-selected a:hover {
         background: #FFFFFF;
         border-bottom: 1px solid #FFFFFF; }
  
-html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.active a:hover {
+html .wpp_tabs  ul.tabs li.active, html .wpp_tabs  ul.tabs li.active a:hover {
   background: #fff;
   border-bottom: 1px solid #fff; }
  
-#wpp_settings_tabs  .ui-tabs-panel table {  }
+.wpp_tabs  .ui-tabs-panel table {  }
  
-#wpp_settings_tabs  .ui-tabs-panel {
+.wpp_tabs  .ui-tabs-panel {
   -khtml-border-radius-bottomleft: 5px;
   -khtml-border-radius-bottomright: 5px;
   -moz-border-radius-bottomleft: 5px;
@@ -456,21 +520,21 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
     padding: 0 0 20px;
     width: 100%;}
  
-#wpp_settings_tabs  .wpp_inner_tab {
+.wpp_tabs  .wpp_inner_tab {
   font-size: 1.2em;
   padding: 20px; }
  
-#wpp_settings_tabs .ui-tabs-hide {
+.wpp_tabs .ui-tabs-hide {
   ;
   display: none !important; }
  
-#wpp_settings_tabs ul.navigation { list-style-type: none; }
+.wpp_tabs ul.navigation { list-style-type: none; }
  
-  #wpp_settings_tabs ul.navigation li {
+  .wpp_tabs ul.navigation li {
     display: block;
     padding: 10px; }
  
-#wpp_settings_tabs .wpp_permanent_image {
+.wpp_tabs .wpp_permanent_image {
   background: none repeat scroll 0 0 #F5F5F5;
   border: 1px solid #B4B4B4;
   font-size: 12px;
@@ -539,16 +603,18 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
     #property_meta .inside .widefat textarea { width: 100%; }
  
     #property_meta .inside .widefat .description {
-      display: block;
-      padding: 5px 0 5px 0; }
- 
-    #property_meta .inside .widefat input[type=text] { width: 250px; }
- 
+      color: #C1C1C1;
+      float: right;
+      font-style: normal;
+      padding: 5px 0;}
+      
     #property_meta .inside .widefat #wpp_meta_location { width: 400px; }
  
     #property_meta .inside .widefat option { padding-right: 15px; }
  
-    #property_meta .inside .widefat #wpp_meta_price { width: 75px; }
+    #property_meta .inside .widefat input.text-input  { width: 250px; }
+    #property_meta .inside .widefat input.text-input.wpp_numeric,
+    #property_meta .inside .widefat input.text-input.wpp_currency { width: 125px; }
  
 .disabled_message { display: none; }
  
@@ -559,6 +625,14 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
   color: #BFBFBF;
   cursor: default; }
   
+.wpp_attribute_row_address_options {
+  margin-top: 5px;
+}
+
+.wpp_attribute_row_address_options #wpp_coordinates {
+  margin-top: 5px;
+}
+
 .disabled_row .wpp_attribute_row_address_options {
   display:none;
 }
@@ -575,7 +649,7 @@ html #wpp_settings_tabs  ul.tabs li.active, html #wpp_settings_tabs  ul.tabs li.
   padding: 4px 4px 4px 8px;
   width: auto; }
  
-#wpp_settings_tabs #wpp_plugins_ajax_response {
+.wpp_tabs #wpp_plugins_ajax_response {
   background: none repeat scroll 0 0 #FFFFAA;
   border: 1px solid #B6B7B1;
   margin: 5px 0;
@@ -639,4 +713,71 @@ td.wpp_premium_feature_image { width: 250px; }
     height:16px;
     display:none;
     margin-left:5px;
+}
+
+/* Filter styles */
+.major-publishing-actions {
+  border-top: medium none;
+  clear: both;
+  padding: 10px 10px 8px;
+}
+
+#propetry_filter.postbox  .inside {
+  padding: 0;
+  margin:0;
+}
+
+#propetry_filter.postbox  .inside .publishing-action {
+  float: right;
+  line-height: 23px;
+  text-align: right;
+}
+
+#propetry_filter p.search-box {
+  float: none;
+  margin:0;
+}
+
+#propetry_filter p.search-box input {
+  width: 100%;
+}
+
+.tablenav .wpp_bulk {
+  display:none;
+}
+
+.wpp_filter_section_title {
+  margin: 0 0 2px 0;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+}
+ 
+.wpp_overview_filters{
+  clear: both;
+  margin: 5px 0 5px 0;
+}
+
+.wpp_overview_filters select {
+  width: 100%;
+}
+
+.wpp_overview_filters .wpp_checkbox_filter {
+  display:none;
+  padding: 0px 10px;
+}
+
+.wpp_overview_filters .wpp_checkbox_filter label{
+  margin-left: 1px;
+}
+
+.wpp_sidebar  .subsubsub li {
+	float: none;
+	display: list-item;
+}
+.wpp_filter_show{
+  float: right;
+  margin-right: 5px;
+  cursor: pointer;
+  font-weight: normal;
 }

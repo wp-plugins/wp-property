@@ -1,5 +1,5 @@
 === WP-Property - WordPress Powered Real Estate and Property Management ===
-Contributors:  Usability Dynamics Inc., andypotanin
+Contributors:  usability_dynamics, anton-korotkoff, andypotanin
 Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
@@ -85,6 +85,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 
 = Translations =
 
+* French (FR)
 * Danish (DK)
 * German (DE)
 * Italian (IT)
@@ -158,6 +159,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.20.0 =
+* Major changes to the way pagination is handled.  Pagination is no longer loaded from a file but from wpi_draw_pagination().
+
 = 1.17.2 =
 * draw_property_search_form() has been changed where arguments passed to it are in array format.
 
@@ -202,8 +206,18 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
-= 1.17.2.1 =
-* Patch release to fix issues with [property_search] shortcode.
+= 1.20.0 =
+* Redesigned pagination and sorting for front-end.
+* New back-end UI for dynamic property filtering.
+* Added new template functions such as have_properties(), returned_properties() and wpi_draw_pagination().
+* Attributes marked as numeric or currency filter our bad characters as you type on the property editing screen.
+* Fixed issue with price ranges in drop-downs and in property overview displaying incorrectly.
+* draw_stats("show_true_as_image=true") will render a checkbox on front-end for attributes with value of "true".
+* draw_stats("hide_false=true") will hide any attributes that have a value of 'false'.
+* Added property capability management (Premium Feature).
+* Added 'view_details' argument to the [property_overview] shortcode which renders a "View Details" button.
+* Improved XML Importer cycle time nearly tripling import speed on large feeds (over 10,000 objects).
+* Fixed issue with Supermap "auto-fix" button not working.
 
 = 1.17.2 =
 * Added additional TwentyTen style fixes.

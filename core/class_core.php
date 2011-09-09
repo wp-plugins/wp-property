@@ -27,10 +27,10 @@ class WPP_Core {
    */
   function WPP_Core() {
     global $wp_properties;
-
-      // Load premium features
+    
+    // Load premium features
     WPP_F::load_premium();
-
+    
     // Hook in init
     add_action('init', array($this, 'init'));
 
@@ -39,6 +39,9 @@ class WPP_Core {
 
     // Pre-init action hook
     do_action('wpp_pre_init');
+    
+    /* set WPP capabilities */
+    $this->set_capabilities();
   }
 
   /**
@@ -61,11 +64,10 @@ class WPP_Core {
 
     /** Making template-functions global but load after the premium features, giving the premium features priority. */
     include_once WPP_Templates . '/template-functions.php';
-
-
+    
     // Load settings into $wp_properties and save settings if nonce exists
     WPP_F::settings_action();
-
+    
     // Load early so plugins can use them as well
     wp_register_style('jquery-fancybox-css', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.css');
     wp_register_style('jquery-colorpicker-css', WPP_URL. '/third-party/colorpicker/colorpicker.css');
@@ -73,8 +75,8 @@ class WPP_Core {
     wp_register_script('jquery-fancybox', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array('jquery'), '1.7.3' );
     wp_register_script('jquery-colorpicker', WPP_URL. '/third-party/colorpicker/colorpicker.js', array('jquery'));
     wp_register_script('jquery-easing', WPP_URL. '/third-party/fancybox/jquery.easing-1.3.pack.js', array('jquery'), '1.7.3' );
-    wp_register_script('jquery-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery'), '1.7.3' );
     wp_register_script('jquery-cookie', WPP_URL. '/js/jquery.smookie.js', array('jquery'), '1.7.3' );
+    wp_register_script('jquery-ajaxupload', WPP_URL. '/js/fileuploader.js', array('jquery'));
     wp_register_script('wp-property-admin-overview', WPP_URL. '/js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
     wp_register_script('wp-property-global', WPP_URL. '/js/wp-property-global.js', array('jquery'),WPP_Version);
     wp_register_script('google-maps', 'http://maps.google.com/maps/api/js?sensor=true');
@@ -82,8 +84,15 @@ class WPP_Core {
     wp_register_script('jquery-nivo-slider', WPP_URL. '/third-party/jquery.nivo.slider.pack.js', array('jquery'));
     wp_register_script('jquery-address', WPP_URL. '/js/jquery.address-1.3.2.js', array('jquery'));
     wp_register_script('jquery-scrollTo', WPP_URL. '/js/jquery.scrollTo-min.js', array('jquery'));
-
-
+    wp_register_script('jquery-validate', WPP_URL. '/js/jquery.validate.min.js', array('jquery'));
+    
+    wp_register_script('jquery-ui-widget', WPP_URL. '/js/jquery.ui.widget.min.js', array('jquery-ui-core'));
+    wp_register_script('jquery-ui-mouse', WPP_URL. '/js/jquery.ui.mouse.min.js', array('jquery-ui-core'));
+    wp_register_script('jquery-ui-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
+    
+    wp_register_script('jquery-data-tables', WPP_URL . "/third-party/dataTables/jquery.dataTables.min.js", array('jquery'));
+    wp_register_style('jquery-data-tables', WPP_URL . "/third-party/dataTables/wpp-data-tables.css");
+    
     // Find and register stylesheet
     if ( file_exists( STYLESHEETPATH . '/wp_properties.css') ) {
       wp_register_style('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.css',   array(),'1.13' );
@@ -91,22 +100,20 @@ class WPP_Core {
       wp_register_style('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.css',  array(),WPP_Version);
     } elseif (file_exists( WPP_Templates . '/wp_properties.css') && $wp_properties['configuration']['autoload_css'] == 'true') {
       wp_register_style('wp-property-frontend', WPP_URL . '/templates/wp_properties.css',  array(),WPP_Version);
-
+      
       // Find and register theme-specific style if a custom wp_properties.css does not exist in theme
       if($wp_properties['configuration']['do_not_load_theme_specific_css'] != 'true' && WPP_F::has_theme_specific_stylesheet()) {
         wp_register_style('wp-property-theme-specific', WPP_URL . "/templates/theme-specific/".get_option('template').".css",  array('wp-property-frontend'),WPP_Version);
       }
-
     }
-
-
+    
     // Find front-end JavaScript and register the script
     if ( file_exists( STYLESHEETPATH . '/wp_properties.js') ) {
-      wp_register_script('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.js', array('jquery-ui-core'),'1.13' );
+      wp_register_script('wp-property-frontend', get_bloginfo('stylesheet_directory') . '/wp_properties.js', array('jquery-ui-core'),WPP_Version, true);
     } elseif( file_exists( TEMPLATEPATH . '/wp_properties.js') ) {
-      wp_register_script('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.js', array('jquery-ui-core'),'1.13' );
+      wp_register_script('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.js', array('jquery-ui-core'), WPP_Version, true);
     } elseif (file_exists( WPP_Templates . '/wp_properties.js')) {
-      wp_register_script('wp-property-frontend', WPP_URL . '/templates/wp_properties.js', array('jquery-ui-core'),WPP_Version);
+      wp_register_script('wp-property-frontend', WPP_URL . '/templates/wp_properties.js', array('jquery-ui-core'),WPP_Version, true);
     }
 
 
@@ -144,6 +151,8 @@ class WPP_Core {
       'not_found_in_trash' => __('No properties found in Trash','wpp'),
       'parent_item_colon' => ''
     );
+    
+    $labels = apply_filters('wpp_object_labels', $labels);
 
     // Modify admin body class
     add_filter('admin_body_class', array('WPP_Core', 'admin_body_class'));
@@ -159,51 +168,54 @@ class WPP_Core {
       'show_ui' => true,
       '_builtin' => false,
       '_edit_link' => 'post.php?post=%d',
-      'capability_type' => 'post',
+      'capability_type' => array('wpp_property','wpp_properties'),
       'hierarchical' => true,
       'rewrite' => array('slug'=>$wp_properties['configuration']['base_slug']),
       'query_var' => $wp_properties['configuration']['base_slug'],
       'supports' => array('title','editor', 'thumbnail'),
       'menu_icon' => WPP_URL . '/images/pp_menu-1.6.png'
     ));
-
-
-
-    if($wp_properties['taxonomies'])
+    
+    if($wp_properties['taxonomies']) {
       foreach($wp_properties['taxonomies'] as $taxonomy => $taxonomy_data) {
-
+        
+        /* 
+        // Commented out for now. Because Taxonomy was modified (Custom Capability was added). 
+        // And now it should be overwrited to implement changes. Maxim Peshkov
         if(taxonomy_exists($taxonomy))
           continue;
-
+        //*/
+        
         register_taxonomy( $taxonomy, 'property', array(
            'hierarchical' => $taxonomy_data['hierarchical'],
            'label' => $taxonomy_data['label'],
            'labels' => $taxonomy_data['labels'],
            'query_var' => $taxonomy,
-           'rewrite' => array('slug' => $taxonomy )
+           'rewrite' => array('slug' => $taxonomy ),
+           'capabilities' => array('manage_terms' => 'manage_wpp_categories')
         ));
+      }
     }
-
+    
     // Ajax functions
     add_action('wp_ajax_wpp_ajax_property_query', create_function("",' $class = WPP_F::get_property($_REQUEST["property_id"]); if($class)  print_r($class); else echo __("No property found.","wpp"); die();'));
     add_action('wp_ajax_wpp_ajax_image_query', create_function("",' $class = WPP_F::get_property_image_data($_REQUEST["image_id"]); if($class)  print_r($class); else echo __("No image found.","wpp"); die();'));
     add_action('wp_ajax_wpp_ajax_check_plugin_updates', create_function("",'  echo WPP_F::check_plugin_updates(); die();'));
     add_action('wp_ajax_wpp_ajax_revalidate_all_addresses', create_function("",'  echo WPP_F::revalidate_all_addresses(); die();'));
-
+    add_action('wp_ajax_wpp_ajax_list_table', create_function("", ' die(WPP_F::list_table());'));
+    
     // Make Property Featured Via AJAX
     if(isset($_REQUEST['_wpnonce'])) {
       if(wp_verify_nonce($_REQUEST['_wpnonce'], "wpp_make_featured_" . $_REQUEST['post_id'])) {
         add_action('wp_ajax_wpp_make_featured', create_function("",'  $post_id = $_REQUEST[post_id]; echo WPP_F::toggle_featured($post_id); die();'));
       }
     }
-
-
+    
     //add_action('wp_ajax_wpp_setup_default_widgets', create_function("",'  echo WPP_F::setup_default_widgets(); die();'));
-
+    
     // Plug page actions -> Add Settings Link to plugin overview page
     add_filter('plugin_action_links', array('WPP_Core', 'plugin_action_links'), 10, 2 );
-
-
+    
     // Register a sidebar for each property type
     foreach($wp_properties['property_types'] as $property_slug => $property_title) {
       register_sidebar( array(
@@ -216,57 +228,69 @@ class WPP_Core {
         'after_title' => '</h3>',
       ));
     }
-
+    
     add_shortcode('property_overview', array($this, 'shortcode_property_overview'));
     add_shortcode('property_search', array($this, 'shortcode_property_search'));
     add_shortcode('featured_properties', array($this, 'shortcode_featured_properties'));
-
-     //Ajax pagination for property_overview
+    
+    //Ajax pagination for property_overview
     add_action("wp_ajax_wpp_property_overview_pagination", array($this, "ajax_property_overview"));
     add_action("wp_ajax_nopriv_wpp_property_overview_pagination", array($this, "ajax_property_overview"));
-
-    foreach($wp_properties['image_sizes'] as $image_name => $image_sizes)
+    
+    foreach($wp_properties['image_sizes'] as $image_name => $image_sizes) {
       add_image_size($image_name, $image_sizes['width'], $image_sizes['height'], true);
-
-
+    }
+    
     register_taxonomy_for_object_type('property_features', 'property');
-
+    
     add_filter("manage_edit-property_sortable_columns", array(&$this, "sortable_columns"));
     add_filter("manage_edit-property_columns", array(&$this, "edit_columns"));
     add_action("manage_pages_custom_column", array(&$this, "custom_columns"));
-
+    
     // Called in setup_postdata().  We add property values here to make available in global $post variable on frontend
     add_action('the_post', array('WPP_F','the_post'));
-
+    
     // Register custom taxonomy
     //register_taxonomy("speaker", array("podcast"), array("hierarchical" => true, "label" => __('Speakers','wpp'), "singular_label" => __('Speaker','wpp'), "rewrite" => true));
-
+    
     add_action("the_content", array(&$this, "the_content"));
-
+    
     // Admin interface init
     add_action("admin_init", array(&$this, "admin_init"));
     add_action('admin_print_styles', array('WPP_Core', 'admin_css'));
-
+    
     add_action("admin_menu", array(&$this, 'admin_menu'));
-
+    
     add_action("post_submitbox_misc_actions", array(&$this, "post_submitbox_misc_actions"));
     add_action('save_post', array($this, 'save_property'));
     add_action('before_delete_post', array('WPP_F', 'before_delete_post'));
     add_filter('post_updated_messages', array('WPP_Core', 'property_updated_messages'), 5);
-
+    
     // Fix toggale row actions -> get rid of "Quick Edit" on property rows
     add_filter('page_row_actions', array('WPP_Core', 'property_row_actions'),0,2);
+    
     add_action('pre_get_posts', array('WPP_F', 'pre_get_posts'));
-
+    
     // Fix 404 errors
     add_filter("parse_query", array($this, "fix_404"));
-
+    
+    //* Hack. Used to avoid issues of some WPP capabilities */
+    add_filter('current_screen', array($this, 'current_screen'));
+    
     // Load admin header scripts
     add_action('admin_enqueue_scripts', array($this, 'admin_enqueue_scripts'));
-
+    
     // Check premium feature availability
     add_action('wpp_premium_feature_check', array('WPP_F', 'feature_check'));
-
+    
+    // process bulk actions
+    add_action('load-property_page_all_properties', array( 'WPP_F', 'property_page_all_properties_load' ));
+    
+    add_filter("manage_property_page_all_properties_columns", array( 'WPP_F', 'overview_columns' ));
+    add_filter("wpp_overview_columns", array('WPP_F', 'custom_attribute_columns'));
+    
+    add_filter("wpp_attribute_filter", array('WPP_F', 'attribute_filter'), 10, 2);
+    
     // Has to be called everytime, or else the custom slug will not work
     // Post-init action hook
     do_action('wpp_post_init');
@@ -318,7 +342,7 @@ class WPP_Core {
     wp_enqueue_script('wp-property-global');
 
     // Property Overview Page
-    if($current_screen->id == 'edit-property') {
+    if($current_screen->id == 'property_page_all_properties' || $current_screen->id == 'edit-property') {
 
       // Get width of overview table thumbnail, and set css
       $thumbnail_attribs = WPP_F::image_sizes($wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']);
@@ -329,18 +353,20 @@ class WPP_Core {
       wp_enqueue_script('jquery-fancybox');
       wp_enqueue_script('wp-property-admin-overview');
       wp_enqueue_style('jquery-fancybox-css');
+      wp_enqueue_script('jquery-data-tables');
+      wp_enqueue_style('jquery-data-tables');
 
 
 
       if($thumbnail_width):
       ?>
       <style typ="text/css">
-      .wpp_overview .column-thumbnail {width: <?php echo $thumbnail_width + 10; ?>px;}
-      .wpp_overview .column-type {width: 90px;}
-      .wpp_overview .column-title {width: 230px;}
-      .wpp_overview .column-menu_order {width: 50px; }
-      .wpp_overview td.column-menu_order {text-align: center; }
-      .wpp_overview .column-featured {width: 100px;}
+      #wp-list-table.wp-list-table .column-thumbnail {width: <?php echo $thumbnail_width + 10; ?>px;}
+      #wp-list-table.wp-list-table .column-type {width: 90px;}
+       #wp-list-table.wp-list-table .column-menu_order {width: 50px; }
+      #wp-list-table.wp-list-table td.column-menu_order {text-align: center; }
+      #wp-list-table.wp-list-table .column-featured {width: 100px;}
+      #wp-list-table.wp-list-table .check-column  {width: 26px;}
        </style>
       <?php
       endif;
@@ -359,13 +385,13 @@ class WPP_Core {
       wp_enqueue_script('jquery-ui-sortable');
       wp_enqueue_script('jquery-colorpicker');
       wp_enqueue_style('jquery-colorpicker-css');
-      
+
       $contextual_help['content'][] = '<h3>' . __('WP-Property Help') .'</h3>';
       $contextual_help['content'][] = '<p>' . __('The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is ' . get_bloginfo('url') . '<b>/real_estate/</b>, then you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp') .'</p>';
       $contextual_help['content'][] = '<p>' . __('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.','wpp') .'</p>';
 
       $contextual_help = apply_filters('wpp_contextual_help', array('page' => $current_screen->id, 'content' => $contextual_help['content']));
-      add_contextual_help($current_screen->id, implode("\n", $contextual_help['content']));      
+      add_contextual_help($current_screen->id, implode("\n", $contextual_help['content']));
     }
   }
 
@@ -376,16 +402,36 @@ class WPP_Core {
    *
    */
   function admin_menu() {
-    global $wp_properties;
+    global $wp_properties, $submenu;
 
     do_action('wpp_admin_menu');
 
     // Create property settings page
-    $settings_page =  add_submenu_page( 'edit.php?post_type=property', __('Settings','wpp'), __('Settings','wpp'), 'manage_options', 'property_settings', create_function('','global $wp_properties; include "ui/page_settings.php";'));
-
+    $settings_page  = add_submenu_page( 'edit.php?post_type=property', __('Settings','wpp'), __('Settings','wpp'), 'manage_wpp_settings', 'property_settings', create_function('','global $wp_properties; include "ui/page_settings.php";'));
+    $all_properties = add_submenu_page( 'edit.php?post_type=property', __('All Properties','wpp'), __('All Properties','wpp'), 'edit_wpp_properties', 'all_properties', create_function('','global $wp_properties; include "ui/page_all_properties.php";'));
+    /**
+     * Next used to add custom submenu page 'All Properties' with Javascript dataTable
+     * @author Anton K
+     */
+    //*
+    if(!empty($submenu['edit.php?post_type=property'])) {
+      
+      // Comment next line if you want to get back old Property list page.
+      array_shift($submenu['edit.php?post_type=property']);
+      
+      foreach ($submenu['edit.php?post_type=property'] as $key => $page) {
+        if ( $page[2] == 'all_properties' ) {
+          unset( $submenu['edit.php?post_type=property'][ $key ] );
+          array_unshift( $submenu['edit.php?post_type=property'], $page );
+        }
+      }
+    }
+    /**  */
+    
     // Load jQuery UI Tabs and Cookie into settings page (settings_page_property_settings)
     add_action('admin_print_scripts-' . $settings_page, create_function('', "wp_enqueue_script('jquery-ui-tabs');wp_enqueue_script('jquery-cookie');"));
     add_action('admin_head-edit.php', array("WPP_Core", "overview_page_scripts"));
+    add_action('admin_head-'.$all_properties, array("WPP_Core", "overview_page_scripts"));
 
   }
 
@@ -399,12 +445,11 @@ class WPP_Core {
    */
   function overview_page_scripts() {
     global $current_screen, $wp_properties;
- 
-    
+
     switch ($current_screen->id) {
 
-      // Property Overview Page
-      case 'edit-property':
+      // Property overview page
+      case 'property_page_all_properties':
 
         $contextual_help = '
         <h3>Theme Problems</h3>
@@ -414,7 +459,10 @@ class WPP_Core {
         <h3>Shortcodes</h3>
         For examples of how to use shortcodes, visit the <a href="http://sites.twincitiestech.com/the-denali/help/wp-property-shortcode-overview/">shortcode cheatsheet page<a>.
         ';
-        add_contextual_help('edit-property', $contextual_help);
+        
+        $contextual_help = apply_filters('wpp_contextual_help_overview', $contextual_help);
+                
+        add_contextual_help('property_page_all_properties', $contextual_help);
 
         // If settings not configured
         if(get_option('wpp_settings') == ""):
@@ -433,7 +481,7 @@ class WPP_Core {
               "<?php echo $permalink_problem; ?></p>" +
               "<p><?php _e('You may also visit <a href="http://twincitiestech.com/plugins/wp-property/">TwinCitiesTech.com</a> for more information, and <a href="http://twincitiestech.com/plugins/wp-property/screencasts/">screencasts</a>.', 'wpp') ?></p></div>";
 
-             jQuery(message).insertAfter(".wpp_overview  h2");
+             jQuery(message).insertAfter(".wp-list-table   h2");
           });
         </script>
 
@@ -445,7 +493,7 @@ class WPP_Core {
         </script>
 
       <?php
-
+        
       break;
 
       case 'property':
@@ -469,7 +517,7 @@ class WPP_Core {
 
     if($current_screen->id == 'edit-property') {
 
-      return 'wpp_overview';
+      return 'wp-list-table ';
     }
 
     if($current_screen->id == 'property') {
@@ -516,11 +564,13 @@ class WPP_Core {
   function the_content($content) {
     global $post, $wp_properties;
 
-    if(empty($wp_properties['configuration']['base_slug']))
+    if(empty($wp_properties['configuration']['base_slug'])) {
       return $content;
+    }
 
-    if($wp_properties['configuration']['base_slug'] == $post->post_name && $wp_properties['configuration']['automatically_insert_overview'] == 'true')
+    if($wp_properties['configuration']['base_slug'] == $post->post_name && $wp_properties['configuration']['automatically_insert_overview'] == 'true') {
       return WPP_Core::shortcode_property_overview();
+    }
 
     return $content;
   }
@@ -528,6 +578,8 @@ class WPP_Core {
   /**
    * Hooks into save_post function and saves additional property data
    *
+   *
+   * @todo Add some sort of custom capability so not only admins can make properties as featured. i.e. Agents can make their own properties featured.
    * @since 1.04
    *
    */
@@ -542,12 +594,12 @@ class WPP_Core {
     $directory = WPP_Path . '/cache/searchwidget';
 
     if(is_dir($directory)) {
-            $dir = opendir($directory);
-            while(($cachefile = readdir($dir))){
-                if ( is_file ($directory."/".$cachefile)) {
-                    unlink ($directory."/".$cachefile);
-                }
-            }
+      $dir = opendir($directory);
+        while(($cachefile = readdir($dir))){
+          if ( is_file ($directory."/".$cachefile)) {
+              unlink ($directory."/".$cachefile);
+          }
+        }
     }
 
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) {
@@ -569,17 +621,17 @@ class WPP_Core {
     if($update_data['manual_coordinates'] != get_post_meta($post_id, 'manual_coordinates', true)) {
       $manual_coordinates_updated = true;
     }
- 
+
     // Update Coordinates (skip if old address matches new address), but always do if no coordinates set
     if(empty($coordinates) || ($old_location != $new_location && !empty($new_location)) || $manual_coordinates_updated) {
 
       $geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
- 
+
       if(!empty($geo_data->formatted_address)) {
         update_post_meta($post_id, 'address_is_formatted', true);
 
         if(!empty($wp_properties['configuration']['address_attribute'])) {
-          update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));         
+          update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));
         }
 
         foreach($geo_data as $geo_type => $this_data) {
@@ -592,34 +644,32 @@ class WPP_Core {
       }
 
     } else {
- 
+
     }
- 
-    
+
     if($geo_data->status == 'OVER_QUERY_LIMIT') {
-      //** Could add some sort of user notification that over limit */    
+      //** Could add some sort of user notification that over limit */
     }
 
     foreach($update_data as $meta_key => $meta_value) {
 
+      $attribute_data = WPP_F::get_attribute_data($meta_key);
+      
       /* Cleans the user input */
       $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key);
 
-      // Only admins can make features
+      // Only admins can mark properties as featured.
       if( $meta_key == 'featured' && !current_user_can('manage_options') ) {
-
         continue;
-
-        }
+      }
 
       //Remove certain characters
-      if($meta_key == 'price')
-         $meta_value = str_replace("$" , '', $meta_value);
+      
+      if($attribute_data['currency'] || $attribute_data['numeric']) {
+        $meta_value = str_replace(array("$", ","), '', $meta_value);      
+      }
 
-      if($meta_key == 'deposit')
-         $meta_value = str_replace("$" , '', $meta_value);
-
-       // Overwrite old post meta allowing only one value
+       //** Overwrite old post meta allowing only one value */
       delete_post_meta($post_id, $meta_key);
       add_post_meta($post_id, $meta_key, $meta_value);
      }
@@ -839,7 +889,7 @@ class WPP_Core {
         the_excerpt();
       break;
 
-      case "property_type": 
+      case "property_type":
         $property_type = $post->property_type;
         echo $wp_properties['property_types'][$property_type];
       break;
@@ -898,18 +948,18 @@ class WPP_Core {
         }
       break;
 
-      case "thumbnail":      
-      
+      case "thumbnail":
+
         if($post->featured_image) {
-        
+
           $overview_thumb_type = $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size'];
-          
+
           if(empty($overview_thumb_type)) {
             $overview_thumb_type = 'thumbnail';
-          }         
-          
+          }
+
            $image_thumb_obj = wpp_get_image_link($post->featured_image, $overview_thumb_type, array('return'=>'array'));
-            
+
 
         }
 
@@ -974,16 +1024,28 @@ class WPP_Core {
     wp_enqueue_style('wp-property-frontend');
     wp_enqueue_style('wp-property-theme-specific');
 
+    if($wp_properties['configuration']['load_scripts_everywhere'] == 'true') {
+      wp_enqueue_style('jquery-fancybox-css');
+      wp_enqueue_style('jquery-ui');
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-fancybox');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
+    }
 
-    if($post->post_type == "property")
+    //** Must include these everywhere since do_action() property_overview calls cannot be detected */
+
+    if($post->post_type == "property") {
       $single_page = true;
+    }
 
-   $is_search = (is_array($_REQUEST['wpp_search']) ? true : false);
-
-
+    $is_search = (is_array($_REQUEST['wpp_search']) ? true : false);
 
     // Determine if current request is for the overview page
-    if(  $wp->request == $wp_properties['configuration']['base_slug'] ||
+    if($wp->request == $wp_properties['configuration']['base_slug'] ||
         $wp->query_string == "p=" . $wp_properties['configuration']['base_slug'] ||
           strpos($post->post_content, "property_overview")) {
 
@@ -994,13 +1056,13 @@ class WPP_Core {
 
 
     // Scripts for both types of views
-    if ($single_page || $wp_query->is_property_overview)  {
-  
+    if ($single_page || $wp_query->is_property_overview) {
+
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-fancybox');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
- 
+
       wp_enqueue_style('jquery-fancybox-css');
       wp_enqueue_style('jquery-ui');
       // Check for and load conditional browser styles
@@ -1027,9 +1089,9 @@ class WPP_Core {
     }
 
     if ($single_page && empty($post->post_password))  {
-   
+
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
-      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-mouse');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
 
       // Allow plugins to insert header scripts/styles using wp_head_single_property hook
       do_action('template_redirect_single_property');
@@ -1073,6 +1135,10 @@ class WPP_Core {
     }
 
      if($wp_query->is_property_overview) {
+
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
 
       // Allow plugins to insert header scripts/styles using wp_head_single_property hook
       do_action('template_redirect_property_overview');
@@ -1133,11 +1199,11 @@ class WPP_Core {
   function admin_init() {
     global $wp_rewrite;
 
-
     WPP_F::fix_screen_options();
 
     add_meta_box( 'property_meta', __('General Information','wpp'), array('WPP_UI','metabox_meta'), 'property', 'normal' );
-
+    add_meta_box( 'propetry_filter', __('Property Search','wpp'), array('WPP_UI','metabox_property_filter'), 'property_page_all_properties', 'normal' );
+    
     // Add metaboxes
     do_action('wpp_metaboxes');
     WPP_F::manual_activation();
@@ -1170,8 +1236,10 @@ class WPP_Core {
    * Performs searching/filtering functions, provides template with $properties file
    * Retirms html content to be displayed after location attribute on property edit page
    *
+   * @todo Consider making this function depend on shortcode_property_overview() more so pagination and sorting functions work.
+   *
    * @since 0.60
-    * @param string $listing_id Listing ID must be passed
+   * @param string $listing_id Listing ID must be passed
    *
    * @uses WPP_F::get_properties()
    *
@@ -1186,11 +1254,12 @@ class WPP_Core {
       'class' => 'shortcode_featured_properties',
       'stats' => '',
       'image_type' => 'thumbnail'
-            ),$atts));
+    ),$atts));
 
     // Convert shortcode multi-property-type string to array
-    if(strpos($type, ","))
+    if(strpos($type, ",")) {
       $type = explode(",", $type);
+    }
 
     // Convert shortcode multi-property-type string to array
     if(!empty($stats)) {
@@ -1239,22 +1308,28 @@ class WPP_Core {
     global $post, $wp_properties;
 
     extract(shortcode_atts(array(
-       'searchable_attributes' => '',
+      'searchable_attributes' => '',
       'searchable_property_types' => '',
+      'pagination' => 'on',
       'per_page' => '10'
-            ),$atts));
+    ),$atts));
 
-    if(empty($searchable_attributes))
-      $searchable_attributes = $wp_properties[searchable_attributes];
-    else
+    if(empty($searchable_attributes)) {
+      
+      //** get first 3 attributes to prevent people from accidentally loading them all (long query) */      
+      $searchable_attributes = array_slice($wp_properties['searchable_attributes'], 0, 5);
+      
+    } else {
       $searchable_attributes = explode(",", $searchable_attributes);
+    }
 
-      $searchable_attributes = array_unique($searchable_attributes);
+    $searchable_attributes = array_unique($searchable_attributes);
 
-    if(empty($searchable_property_types))
-      $searchable_property_types = $wp_properties[searchable_property_types];
-    else
+    if(empty($searchable_property_types)) {
+      $searchable_property_types = $wp_properties['searchable_property_types'];
+    } else {
       $searchable_property_types = explode(",", $searchable_property_types);
+    }
 
     $widget_id = $post->ID . "_search";
 
@@ -1264,9 +1339,11 @@ class WPP_Core {
     $search_args['searchable_attributes'] = $searchable_attributes;
     $search_args['searchable_property_types'] = $searchable_property_types;
     $search_args['per_page'] = $per_page;
+    $search_args['pagination'] = $pagination;
     $search_args['instance_id'] = $widget_id;
-        
+
     draw_property_search_form($search_args);
+    
     echo "</div>";
     $content = ob_get_contents();
     ob_end_clean();
@@ -1286,317 +1363,269 @@ class WPP_Core {
      * @since 1.081
      * @param string $listing_id Listing ID must be passed
      * @return string $result
-   *
-   * @uses WPP_F::get_properties()
-   *
+     *
+     * @uses WPP_F::get_properties()
+     *
      */
     function shortcode_property_overview($atts = "")  {
-      global $wp_properties;
-
-      // It's used for multiple shortcode
-      if(empty($unique)) {
-        static $unique = 100;
+      global $wp_properties, $wpp_query, $property;
+      
+      WPP_F::force_script_inclusion('jquery-ui-widget');
+      WPP_F::force_script_inclusion('jquery-ui-mouse');
+      WPP_F::force_script_inclusion('jquery-ui-slider');
+      WPP_F::force_script_inclusion('jquery-address');
+      WPP_F::force_script_inclusion('jquery-scrollTo');
+      WPP_F::force_script_inclusion('jquery-fancybox');
+      WPP_F::force_script_inclusion('wp-property-frontend');
+      
+      //** Load all queriable attributes **/
+      foreach(WPP_F::get_queryable_keys() as $key) {
+        //** This needs to be done because a key has to exist in the $deafult array for shortcode_atts() to load passed value */
+        $queryable_keys[$key] = false;
       }
-      // Initialize result (content which will be shown) and open wrap (div) with unique id
-      $result = '<div id="wpp_shortcode_'. $unique .'" class="wpp_property_overview_shortcode">';
-      $default_property_type = WPP_F::get_most_common_property_type();
-
-      // convert all saved attributes into useful array
-      foreach($wp_properties['property_stats'] as $k => $v)
-        $to_use[$k] = '';
-
-      //$unique_dom_element = ($atts['dom_element'] ? $atts['dom_element'] : "wpp_" . rand(1000,9999) . "_overview_element");
-      if( empty($atts) ) {
-        $atts = array();
-        //$atts['type'] = 'all';
+      
+      //** Allow the shorthand of "type" as long as there is not a custom attribute of "type". If "type" does exist as an attribute, then users need to use the full "property_type" query tag. **/
+      if ( !array_key_exists( 'type', $queryable_keys ) && (is_array($atts) && array_key_exists( 'type', $atts ) ) ) {
+        $atts['property_type'] = $atts['type'];
+        unset( $atts['type'] );
       }
 
-      $to_use['per_page'] = '10';
-      $to_use['starting_row'] = '0';
-
-      // merge with specified by user
-      $props_atts = array_merge( $to_use, $atts );
-      // default values not used for getting properties
-      extract(array(
-        'show_children'             => (isset($wp_properties['configuration']['property_overview']['show_children']) ? $wp_properties['configuration']['property_overview']['show_children'] : 'true'),
-        'child_properties_title'    => __('Floor plans at location:','wpp'),
-        'fancybox_preview'          => $wp_properties['configuration']['property_overview']['fancybox_preview'],
-        'bottom_pagenation_flag'  => ($wp_properties['configuration']['bottom_insert_pagenation'] == 'true' ? true : false),
-        'thumbnail_size'            => $wp_properties['configuration']['property_overview']['thumbnail_size'],
-        'ajax_call'                 => false,
-        'sort_by'                   => ($props_atts['sort_by'])?$props_atts['sort_by']:'menu_order',
-        'sort_order'                => ($props_atts['sort_order'] && (strtoupper($props_atts['sort_order']) == 'ASC' || strtoupper($props_atts['sort_order']) == 'DESC'))? strtoupper($props_atts['sort_order']):'ASC'
-      ));
-
-      $query = ''; // get the query string from an array with nt empty values
-      /* EDIT: The new array used to pass on the variables. Passing a string is not good. */
-      $query_array = array();
-      foreach($props_atts as $attr => $value) {
-        if ($value != '') {
-          //if ($attr == 'type') $attr = 'property_type'; // need this for better UI and to avoid mistakes
-          if ($attr == 'per_page') {$per_page = $value; continue; }
-          if ($attr == 'starting_row') {$offset = $value; continue; }
-          if ($attr == 'sorter') {$sorter = $value; continue; }
-          if ($attr == 'pagination') {$pagination = $value; continue;}
-          if ($attr == 'ajax_call') {$ajax_call = $value; continue; }
-          if ($attr == 'template') {$template = $value; continue; }
-          if ($attr == 'fancybox_preview') {$fancybox_preview = $value; continue; }
-          if ($attr == 'bottom_pagenation_flag') {$bottom_pagenation_flag = $value; continue; }
-          if ($attr == 'show_children') {$show_children = $value; continue; }
-          if ($attr == 'thumbnail_size') {$thumbnail_size = $value; continue; }
-          if ($attr == 'child_properties_title') {$child_properties_title = $value; continue; }
-          $query .= $attr.'='.$value;
-          if (end($props_atts) !== $fixed) $query .= '&';
-          $query_array[$attr] = $value;
+      //** Get ALL allowed attributes that may be passed via shortcode (to include property attributes) */
+      $defaults['show_children'] = (isset($wp_properties['configuration']['property_overview']['show_children']) ? $wp_properties['configuration']['property_overview']['show_children'] : 'true');
+      $defaults['child_properties_title'] = __('Floor plans at location:','wpp');
+      $defaults['fancybox_preview'] = $wp_properties['configuration']['property_overview']['fancybox_preview'];
+      $defaults['bottom_pagination_flag'] = ($wp_properties['configuration']['bottom_insert_pagenation'] == 'true' ? true : false);
+      $defaults['thumbnail_size'] = $wp_properties['configuration']['property_overview']['thumbnail_size'];
+      $defaults['sort_by'] = 'menu_order';
+      $defaults['sort_order'] = 'ASC';
+      $defaults['template'] = false;
+      $defaults['ajax_call'] = false;
+      $defaults['pagination'] = 'on';
+      $defaults['per_page'] = 10;
+      $defaults['starting_row'] = 0;
+      $defaults['unique_hash'] = rand(10000,99900);
+      $defaults['detail_button'] = false;
+      
+      if($atts['ajax_call']) {
+        //** If AJAX call then the passed args have all the data we need */
+        $wpp_query = $atts;
+        
+        //* Fix ajax data. Boolean value false is returned as string 'false'. */
+        foreach($wpp_query as $key => $value) {
+          if($value == 'false') {
+            $wpp_query[$key] = false;
+          }
         }
-      }
-      // Get image sizes for overview/search page
-      $thumbnail_sizes = WPP_F::image_sizes($thumbnail_size);
-      // If not set, menu_order will not be used at all if any of the attributes are marked as searchable
-      $sortable_attrs = array(
-        'menu_order' => __('Default', 'wpp'),
-        'post_title' => __('Title', 'wpp')
-      );
-
-      if (!empty($wp_properties['property_stats']) && $wp_properties['sortable_attributes']) {
-          foreach ($wp_properties['property_stats'] as $slug => $label) {
-              if(in_array($slug, $wp_properties['sortable_attributes'])) {
-                  $sortable_attrs[$slug] = $label;
-              }
+        
+        $wpp_query['ajax_call'] =  true;
+        
+        //** Everything stays the same except for sort order and page */
+        $wpp_query['starting_row']  =   (($wpp_query['requested_page'] - 1) * $wpp_query['per_page']);
+        
+        //** Figure out current page */
+        $wpp_query['current_page'] =  $wpp_query['requested_page'];
+        
+      } else {
+        //** Merge defaults with passed arguments */
+        $wpp_query = shortcode_atts($defaults, $atts);  
+        $wpp_query['query'] = shortcode_atts($queryable_keys, $atts);
+        
+        //** Handle search */
+        if($wpp_search = $_REQUEST['wpp_search']) {
+        
+          $non_numeric_chars = apply_filters('wpp_non_numeric_chars', array('-', '$', ','));
+          
+          if($wp_properties['configuration']['developer_mode'] == 'true' && !$wpp_query['ajax_call']) {
+            //  echo '<script type="text/javascript">console.log('.json_encode($wpp_search) . ' ); </script>'; 
           }
-
-      }
-
-      if( empty($props_atts['ajax_call']) ) {
-        /* NOT SEARCH i.e we are handling a NORMAL shortcode request */
-        if( !isset($_REQUEST['wpp_search']) ) {
-          $query .= '&pagi='.$offset.'--'.$per_page; // get back limits per page
-          $query_array['pagi'] = $offset.'--'.$per_page;
-          $properties = WPP_F::get_properties( $query_array );
-          $total = $properties['total'];
-          unset( $properties['total'] ); // VERY IMPORTANT!!!
-        } else {
-          // SEARCH RESULTS
-          // Get rid of empty data that are not inputed by user in search form
-          foreach( $_REQUEST['wpp_search'] as $k => $v ) {
-            if(is_array($v) && !empty($v['checked'])) {
-              $searchable_attributes[$k] = 'true';
-            } elseif( isset($v['min']) && ($v['min']=='' || $v['min']=='0' || $v['min']=='-1')  && $v['max']=='' ) {
-              continue;
-            } elseif (isset($v['options']) && is_array($v['options'])) {              
-              
-              $searchable_attributes[$k] = implode(',', $v['options']);
-            } else if ( is_array($v) ) {
-              $searchable_attributes[$k] = $v;
-            }	else {
-              if( $v != '' ) {
-                // Had to change this to make the search work properly, not sure why urlencode is here.
-                //$searchable_attributes[$k] = urlencode($v);
-                $searchable_attributes[$k] = $v;
-              }
-            }
-          }
-          $query = ''; // now we need to form a query string that will get found properties
-          if( isset($searchable_attributes) ) {
-            foreach( $searchable_attributes as $attr => $value ) {
-              if( $attr == 'property_type' ) {
-                if( is_array( $value ) ) {
-                  $query .= $attr.'=';
-                  $count = count($value);
-                  $tmp = '';
-                  for( $i = 0; $i < $count; $i++ ) {
-                    $query .= $value[$i] . ',';
-                    $tmp .= $value[$i] . ',';
-                  }
-                  $query = (substr($query, -1, 1) == ',') ? substr_replace($query,'', -1, 1) : $query;
-                  $tmp = (substr($tmp, -1, 1) == ',') ? substr_replace($tmp,'', -1, 1) : $tmp;
-                  $query_array[$attr] = $tmp;
+          
+          foreach($wpp_search as $search_key => $search_query) {
+            //** Fix search form passed paramters to be usable by get_properties();
+            
+            if(is_array($search_query)) {
+              //** Array variables are either option lists or minimum and maxim variables
+              if(is_numeric(array_shift(array_keys($search_query)))) {
+                //** get regular arrays (non associative) */
+                $search_query = implode(',', $search_query);
+              } elseif(is_array($search_query['options'])) {
+                //** Get queries with options */
+                $search_query = implode(',', $search_query['options']);
+              } elseif(in_array('min', array_keys($search_query))) {
+                //** Get arrays with minimum and maxim ranges */
+                
+                //** Ranges are always numeric, so we clear it up */
+                foreach($search_query as $range_indicator => $value) {
+                  $search_query[$range_indicator] = str_replace($non_numeric_chars, '', $value);
+                }
+                
+                if(empty($search_query['min']) && empty($search_query['max'])) {
+                  unset($wpp_query['query'][$search_key]);
+                  continue;
+                }
+                
+                if(empty($search_query['min'])) {
+                  $search_query['min'] = '0';
+                }
+                
+                if(empty($search_query['max'])) {
+                  $search_query = $search_query['min'] . '+';
                 } else {
-                  $query .= $attr . '=' . $value;
-                  $query_array[$attr] = $value;
+                  $search_query = str_replace($non_numeric_chars, '', $search_query['min']) . '-' .  str_replace($non_numeric_chars, '', $search_query['max']);
                 }
-              } elseif( is_array( $value ) ) {
-                $query .= $attr.'='.$value['min'].'-'.$value['max'];
-                $query_array[$attr] = $value['min'].'-'.$value['max'];
-              }	else {
-                // Any is selected
-                if( $value=='-1' ) continue;
-                  if( $attr == 'pagi' ) {
-                    $pagi = '&'.$attr.'='.$value;
-                    $limits = explode('--', $value);
-                    $starting_row = $limits[0];
-                    $per_page = $limits[1];
-                    $query_array[$attr] = $value;
-                    continue;
-                  }
-                  if( $query == "" ) {
-                    $query .= $attr.'='.$value;
-                  }	else {
-                    $query .= "&" . $attr.'='.$value;
-                  }
-                  $query_array[$attr] = $value;
-                }
-                if(end($searchable_attributes) !== $value) $query .= '&';
               }
             }
-            $query = (substr($query, -1, 1) == '&') ? substr_replace($query,'', -1, 1) : $query;
-            $query .= $pagi;
-            /* Using Array now, much better. BUT can give some error results, so have to keep an eye on it. */
-            $properties = WPP_F::get_properties( $query_array );
-            $total = $properties['total'];
-            unset($properties['total']); // VERY IMPORTANT!!!
-          } // end isset($_REQUEST['wpp_search']
-          // Adds template with pagination and sort (order by)
-          $top_page_unique = $unique;
-          $bottom_page_unique = $unique + 1;
-          $pagination_type = 'top';
-          ob_start();
-          // 1. Try custom pagination template in theme folder
-          if(file_exists(STYLESHEETPATH . "/property-pagination-$template.php")) {
-              include STYLESHEETPATH . "/property-pagination-$template.php";
-          }elseif(file_exists(TEMPLATEPATH . "/property-pagination-$template.php")) {
-              include TEMPLATEPATH . "/property-pagination-$template.php";
-          } elseif(file_exists(WPP_Templates . "/property-pagination-$template.php")) {
-              include WPP_Templates . "/property-pagination-$template.php";
-          // 1.1 Try template based on property_type
-          } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$property_type.php")) {
-              include STYLESHEETPATH . "/property-pagination-$property_type.php";
-          } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$property_type.php")) {
-              include TEMPLATEPATH . "/property-pagination-$property_type.php";
-          // 2. Try custom template in defaults folder
-          } elseif(file_exists(WPP_Templates . "/property-pagination-$property_type.php")) {
-              include WPP_Templates . "/property-pagination-$property_type.php";
-          // 3. Try general template in theme folder
-          }elseif(file_exists(STYLESHEETPATH . "/property-pagination.php")) {
-              include STYLESHEETPATH . "/property-pagination.php";
-          }elseif(file_exists(TEMPLATEPATH . "/property-pagination.php")) {
-              include TEMPLATEPATH . "/property-pagination.php";
-          // 4. If all else fails, try the default general template
-          }elseif(file_exists(WPP_Templates . "/property-pagination.php")) {
-              include WPP_Templates . "/property-pagination.php";
-          }
-          $result .= ob_get_contents();
-          ob_end_clean();
-          if ($bottom_pagenation_flag){
-            $unique++;
-            $pagination_type = 'bottom';
-            ob_start();
-            // 1. Try custom pagination template in theme folder
-            if(file_exists(STYLESHEETPATH . "/property-pagination-$template.php")) {
-                include STYLESHEETPATH . "/property-pagination-$template.php";
-            }elseif(file_exists(TEMPLATEPATH . "/property-pagination-$template.php")) {
-                include TEMPLATEPATH . "/property-pagination-$template.php";
-            } elseif(file_exists(WPP_Templates . "/property-pagination-$template.php")) {
-                include WPP_Templates . "/property-pagination-$template.php";
-            // 1.1 Try template based on property_type
-            } elseif(file_exists(STYLESHEETPATH . "/property-pagination-$property_type.php")) {
-                include STYLESHEETPATH . "/property-pagination-$property_type.php";
-            } elseif(file_exists(TEMPLATEPATH . "/property-pagination-$property_type.php")) {
-                include TEMPLATEPATH . "/property-pagination-$property_type.php";
-            // 2. Try custom template in defaults folder
-            } elseif(file_exists(WPP_Templates . "/property-pagination-$property_type.php")) {
-                include WPP_Templates . "/property-pagination-$property_type.php";
-            // 3. Try general template in theme folder
-            }elseif(file_exists(STYLESHEETPATH . "/property-pagination.php")) {
-                include STYLESHEETPATH . "/property-pagination.php";
-            }elseif(file_exists(TEMPLATEPATH . "/property-pagination.php")) {
-                include TEMPLATEPATH . "/property-pagination.php";
-            // 4. If all else fails, try the default general template
-            }elseif(file_exists(WPP_Templates . "/property-pagination.php")) {
-                include WPP_Templates . "/property-pagination.php";
+            
+            if(is_string($search_query)) {
+              $wpp_query['query'][$search_key] = trim($search_query);
             }
-            $bottom_pagenation = ob_get_contents();
-            ob_end_clean();
+            
+            if($search_query == '-') {
+              unset($wpp_query['query'][$search_key]);
+            }
+            
+            if($search_query == '-1') {
+              unset($wpp_query['query'][$search_key]);
+            }
+          
           }
-        }
-        /* Triggers when pagination is done via Ajax, i.e Next page is selected */
-        else {
-          /* Keeping the old variables in there for refrences. But using arrays now. */
-          $query .= '&pagi='.$offset.'--'.$per_page;
-          $query_array['pagi']= $offset . '--' . $per_page;
-
-          $properties = WPP_F::get_properties( $query_array );
-          if($properties['total']) {
-              $total = $properties['total'];
+          
+          if(isset($_REQUEST['wpp_search']['sort_by'])) {
+            $wpp_query['sort_by'] = $_REQUEST['wpp_search']['sort_by'];
           }
-          unset($properties['total']);
+          
+          if(isset($_REQUEST['wpp_search']['sort_order'])) {
+            $wpp_query['sort_order'] = $_REQUEST['wpp_search']['sort_order'];
+          }       
+          
+          if(isset($_REQUEST['wpp_search']['pagination'])) {
+            $wpp_query['pagination'] = $_REQUEST['wpp_search']['pagination'];
+          }
+          
+          if(isset($_REQUEST['wpp_search']['per_page'])) {
+            $wpp_query['per_page'] = $_REQUEST['wpp_search']['per_page'];
+          }
+        
         }
-        // Set value to false if nothing returned.
-        if(!is_array($properties)) {
-          $properties = false;
-        }
-        // Convert variables to booleans
-        $ajax_call          = ($ajax_call == 'true' ? true : false);
-        $show_children 		= ($show_children == 'true' ? true : false);
-        $fancybox_preview   = ($fancybox_preview == 'true' ? true : false);
-        // Adds template with list of properties
-        ob_start();
-        // 1. Try custom template in theme folder ("template=" in shortcode)
-        if(file_exists(STYLESHEETPATH . "/property-overview-$template.php")) {
-            include STYLESHEETPATH  . "/property-overview-$template.php";
-        // 1. Try custom template in theme folder ("template=" in shortcode)
-        } elseif (file_exists(TEMPLATEPATH . "/property-overview-$template.php")) {
-            include TEMPLATEPATH  . "/property-overview-$template.php";
-        // 2. Try custom template in defaults folder ("template=" in shortcode)
-        } elseif (file_exists(WPP_Templates . "/property-overview-$template.php")) {
-            include WPP_Templates  . "/property-overview-$template.php";
-        // 3. Try custom template in theme folder
-        } elseif(file_exists(STYLESHEETPATH . "/property-overview-$property_type.php")) {
-            include STYLESHEETPATH . "/property-overview-$property_type.php";
-        } elseif(file_exists(TEMPLATEPATH . "/property-overview-$property_type.php")) {
-            include TEMPLATEPATH . "/property-overview-$property_type.php";
-        // 4. Try custom template in defaults folder
-        } elseif(file_exists(WPP_Templates . "/property-overview-$property_type.php")) {
-            include WPP_Templates . "/property-overview-$property_type.php";
-        // 5. Try general template in theme folder
-        } elseif(file_exists(STYLESHEETPATH . "/property-overview.php")) {
-            include STYLESHEETPATH . "/property-overview.php";
-        } elseif(file_exists(TEMPLATEPATH . "/property-overview.php")) {
-            include TEMPLATEPATH . "/property-overview.php";
-        // 6. If all else fails, try the default general template
-        } elseif(file_exists(WPP_Templates . "/property-overview.php")) {
-            include WPP_Templates . "/property-overview.php";
-        }
-        $property_content = ob_get_contents();
-        ob_end_clean();
-        if ($bottom_pagenation_flag){
-          $result .= $property_content.$bottom_pagenation.'</div>';
-        } else {
-          $result .= $property_content. '</div>';
-        }
-        $unique++;
-        return $result;
+      
       }
-
-    /**
-     *
-     * @since 0.723
-     *
-   * @uses WPP_Core::shortcode_property_overview()
-   *
-     */
-    function ajax_property_overview()  {
-    $params = $_REQUEST;
-    if(!empty($params['action']))
-      unset($params['action']);
-
-    if(!empty($params['pagination']))
-      unset($params['pagination']);
-
-    $params['ajax_call'] = true;
-
-    /* We are going to check if the params have been url encoded */
-    if(!empty($params['url_encoded']) && $params['url_encoded'] == 'true') {
-      unset($params['url_encoded']);
-      foreach($params as $key => $value){
-        $params[$key] = urldecode($value);
+      
+      //** Load certain settings into query for get_properties() to use */
+      $wpp_query['query']['sort_by'] = $wpp_query['sort_by'];
+      $wpp_query['query']['sort_order'] = $wpp_query['sort_order'];
+      
+      $wpp_query['query']['pagi'] = $wpp_query['starting_row'] . '--' . $wpp_query['per_page'];
+      
+      if(!isset($wpp_query['current_page'])) {
+        $wpp_query['current_page'] =  ($wpp_query['starting_row'] / $wpp_query['per_page']) + 1;
+      }
+      
+      //** Load settings that are not passed via shortcode atts */
+      $wpp_query['sortable_attrs'] = WPP_F::get_sortable_keys();
+      
+      //** Remove all blank values */
+      $wpp_query['query'] = array_filter($wpp_query['query']);
+      
+      //** Unset this because it gets passed with query (for back-button support) but not used by get_properties() */
+      unset($wpp_query['query']['per_page']);
+      unset($wpp_query['query']['pagination']);
+      unset($wpp_query['query']['requested_page']);
+      
+      //** Load the results */
+      $wpp_query['properties'] = WPP_F::get_properties($wpp_query['query'], true);
+      
+      //** Calculate number of pages */
+      if($wpp_query['pagination'] == 'on') {
+        $wpp_query['pages'] = round($wpp_query['properties']['total'] / $wpp_query['per_page']);
+      }
+      
+      //** Set for quick access (for templates */
+      $property_type = $wpp_query['query']['property_type'];
+      
+      //** Legacy Support - include variables so old templates still work */
+      $properties = $wpp_query['properties']['results'];
+      //$properties['total'] = $wpp_query['properties']['total'];
+      $unique = $wpp_query['unique_hash'];
+      $thumbnail_size = $wpp_query['thumbnail_size'];
+      
+      //* Debugger */
+      if($wp_properties['configuration']['developer_mode'] == 'true' && !$wpp_query['ajax_call']) {
+       echo '<script type="text/javascript">console.log( ' .json_encode($wpp_query) . ' ); </script>'; 
+      }
+      
+      ob_start();
+      
+      $template = $wpp_query['template'];
+      
+      // 1. Try custom template in theme folder ("template=" in shortcode)
+      if(file_exists(STYLESHEETPATH . "/property-overview-$template.php")) {
+        include STYLESHEETPATH  . "/property-overview-$template.php";
+      // 1. Try custom template in theme folder ("template=" in shortcode)
+      } elseif (file_exists(TEMPLATEPATH . "/property-overview-$template.php")) {
+        include TEMPLATEPATH  . "/property-overview-$template.php";
+      // 2. Try custom template in defaults folder ("template=" in shortcode)
+      } elseif (file_exists(WPP_Templates . "/property-overview-$template.php")) {
+        include WPP_Templates  . "/property-overview-$template.php";
+      // 3. Try custom template in theme folder
+      } elseif(file_exists(STYLESHEETPATH . "/property-overview-$property_type.php")) {
+        include STYLESHEETPATH . "/property-overview-$property_type.php";
+      } elseif(file_exists(TEMPLATEPATH . "/property-overview-$property_type.php")) {
+        include TEMPLATEPATH . "/property-overview-$property_type.php";
+      // 4. Try custom template in defaults folder
+      } elseif(file_exists(WPP_Templates . "/property-overview-$property_type.php")) {
+        include WPP_Templates . "/property-overview-$property_type.php";
+      // 5. Try general template in theme folder
+      } elseif(file_exists(STYLESHEETPATH . "/property-overview.php")) {
+        include STYLESHEETPATH . "/property-overview.php";
+      } elseif(file_exists(TEMPLATEPATH . "/property-overview.php")) {
+        include TEMPLATEPATH . "/property-overview.php";
+      // 6. If all else fails, try the default general template
+      } elseif(file_exists(WPP_Templates . "/property-overview.php")) {
+        include WPP_Templates . "/property-overview.php";
+      }
+      
+      $ob_get_contents = ob_get_contents();
+      ob_end_clean();
+      
+      // Initialize result (content which will be shown) and open wrap (div) with unique id
+      $result['top'] = '<div id="wpp_shortcode_'. $defaults['unique_hash'] .'" class="wpp_ui wpp_property_overview_shortcode">';
+      $result['top_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_top_pagination'));
+      $result['result'] = $ob_get_contents;
+      
+      if($wpp_query['bottom_pagination_flag'] == 'true') {
+        $result['bottom_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_bottom_pagination'));
+      }
+      
+      $result['bottom'] = '</div>';
+      
+      $result = apply_filters('wpp_property_overview_render', $result);
+      
+      if($wpp_query['ajax_call']) {
+        return json_encode(array('wpp_query' => $wpp_query, 'display' => implode('', $result)));
+      } else {
+        return implode('', $result);
       }
     }
 
-    $data = WPP_Core::shortcode_property_overview( $params );
+/**
+   *
+   * @since 0.723
+   *
+   * @uses WPP_Core::shortcode_property_overview()
+   *
+   */
+    function ajax_property_overview()  {
 
-    echo $data;
-    die();
+    $params = $_REQUEST['wpp_ajax_query'];
+
+    if(!empty($params['action'])) {
+      unset($params['action']);
+    }
+
+    $params['ajax_call'] = true;
+
+    $data = WPP_Core::shortcode_property_overview( $params );
+    
+    die($data);
   }
 
   /**
@@ -1636,7 +1665,66 @@ class WPP_Core {
 
         return $wpp_settings;
     }
-
+  
+  /*
+   * Hack to avoid issues with capabilities and views.
+   * 
+   */
+  function current_screen($screen){
+    
+    //print_r($screen);
+    switch($screen->id){
+      case "edit-property":
+        wp_redirect('edit.php?post_type=property&page=all_properties');
+        exit();
+        break;
+    }
+    
+    return $screen;
+  }
+  
+  /*
+   * Adds all WPP custom capabilities to administrator role.
+   * Premium feature capabilities are added by filter in this function, see below.
+   * 
+   * @author Maxim Peshkov
+   */
+  function set_capabilities() {
+    global $wpp_capabilities;
+    
+    //* Get Administrator role for adding custom capabilities */
+    $role =& get_role('administrator');
+    
+    //* General WPP capabilities */
+    $wpp_capabilities = array(
+      //* Manage WPP Properties Capabilities */
+      'edit_wpp_property' => __('Edit Propery','wpp'),
+      'read_wpp_property' => __('Read Propery','wpp'),
+      'delete_wpp_property' => __('Delete Propery','wpp'),
+      'edit_wpp_properties' => __('Edit Properties','wpp'),
+      'edit_others_wpp_properties' => __('Edit Other Properties','wpp'),
+      'publish_wpp_properties' => __('Publish Properties','wpp'),
+      'read_private_wpp_properties' => __('Read Private Properties','wpp'),
+      //* WPP Settings capability */
+      'manage_wpp_settings' => __('Manage Settings','wpp'),
+      //* WPP Taxonomies capability */
+      'manage_wpp_categories' => __('Manage Categories','wpp')
+    );
+    
+    //* Adds Premium Feature Capabilities */
+    $wpp_capabilities = apply_filters('wpp_capabilities', $wpp_capabilities); 
+    
+    /* FOR DEBUG: PRINT ALL WPP PROPERTY CAPABILITIES
+    echo "<pre>";print_r($capabilities);echo "</pre>";die();
+    //*/
+    
+    foreach($wpp_capabilities as $cap => $value){
+      if (empty($role->capabilities[$cap])) {
+        $role->add_cap($cap);
+      }
+    }
+  }
+  
 }
 
 

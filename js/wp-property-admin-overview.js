@@ -3,10 +3,26 @@
  *
 */
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function() {	
+  admin_overview_init();
+  
+  // Toggling filter options
+  jQuery('.wpp_filter_section_title').click(function(){
+    var parent = jQuery(this).parents('.wpp_overview_filters');
+    jQuery('.wpp_checkbox_filter', parent).slideToggle('fast', function(){
+      if(jQuery(this).css('display') == 'none') {
+        jQuery('.wpp_filter_show', parent).html('Show');
+      } else {
+        jQuery('.wpp_filter_show', parent).html('Hide');
+      } 
+    });
+  });
+  
+});
 
-	// Overview table thumbnail
-	jQuery(".fancybox").fancybox({
+function admin_overview_init() {
+  
+  jQuery(".fancybox").fancybox({
 		'transitionIn'	:	'elastic',
 		'transitionOut'	:	'elastic',
 		'speedIn'		:	600, 
@@ -48,5 +64,5 @@ jQuery(document).ready(function() {
 			
 		
 	});
-
-});
+  
+}

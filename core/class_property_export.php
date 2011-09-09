@@ -24,7 +24,7 @@ class wpi_property_export {
     $export_url = wpi_property_export::get_property_export_url();
   ?>
     <div class="wpp_settings_block">
-      <?php echo __('This URL lets you access your property export feed, it is custom to your site:'); ?><br />
+      <?php echo __('This URL lets you access your property export feed, it is custom to your site:', 'wpp'); ?><br />
       <a href='<?php echo $export_url; ?>'><?php echo $export_url; ?></a>
     </div> <?php
   }
@@ -74,6 +74,8 @@ class wpi_property_export {
    * This function takes all your properties and exports it as an XML feed
    */
   function wpp_export_properties(){
+    global $wp_properties;
+    
     // Set a new path
     set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
     // Include our necessary libaries
@@ -82,6 +84,8 @@ class wpi_property_export {
     
     $api_key = wpi_property_export::get_api_key();
     
+    $taxonomies = $wp_properties['taxonomies'];
+        
     // If the API key isn't valid, we quit
     if($_REQUEST['api'] != $api_key) die(__('Invalid API key.', 'wpp'));
     // Start building our wp query object
@@ -124,10 +128,20 @@ class wpi_property_export {
       
       // Set unique site ID
       $property->wpp_unique_id = md5($api_key.$property->ID);
+
+      //** Get taxonomies */
+      if($taxonomies) {
+        foreach($taxonomies as $taxonomy_slug => $taxonomy_data) {        
+          if($these_terms = wp_get_object_terms($property->ID, $taxonomy_slug, array('fields' => 'names'))) {            
+            $property->taxonomies->{$taxonomy_slug} = $these_terms;
+          }
+        }
+      }
       
       $xml = new XML_Serializer();
       $xml->serialize($property);
       $data = preg_replace('/stdClass/i', 'property', $xml->getSerializedData());
+      $data = preg_replace('/XML_Serializer_Tag/i', 'tag', $data);
       print $data;
     }
     die("</properties>");

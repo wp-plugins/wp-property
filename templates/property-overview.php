@@ -23,40 +23,17 @@
  * @version 1.4
  * @author Andy Potanin <andy.potnain@twincitiestech.com>
  * @package WP-Property
-*/
+*/?>
+ <?php if ( have_properties() ) { ?>
+ <div class="wpp_row_view wpp_property_view_result">
+  <div class="all-properties">
+  <?php foreach ( returned_properties() as $property) {  ?>
 
-if($properties): ?>
-	
-<div class="wpp_row_view wpp_property_view_result">
-<div class="all-properties">
-    <?php
-    unset($properties['total']); // VERY IMPORTANT!!!
-    foreach($properties as $property_id):
-        // Get property array/object and run it through prepare_property_for_display(), which runs all filters
-        $property = prepare_property_for_display(get_property($property_id, "get_property['children']={$show_property['children']}"));
-
-        // Configure variables
-        if($fancybox_preview == 'true') {
-            $thumbnail_link = $property['featured_image_url'];
-            $link_class = 'fancybox_image';
-        } else {
-            $thumbnail_link = $property['permalink'];
-        }
-        
-        $image = wpp_get_image_link($property['featured_image'], $thumbnail_size, array('return'=>'array'));
-      ?>
-    
     <div class="property_div <?php echo $property['post_type']; ?> clearfix">
 
         <div class="wpp_overview_left_column">
-            <?php if(!empty($image)): ?>
-            <div class="property_image">
-                <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? __(' of ', 'wpp') . $property['parent_title'] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
-                    <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link']; ?>" alt="<?php echo $property['post_title'];?>" />
-                </a>
-            </div>
-            <?php endif; ?>
-        </div><?php // .wpp_overview_left_column ?>
+          <?php property_overview_image(); ?>
+        </div>
 
         <div class="wpp_overview_right_column">
 
@@ -78,19 +55,18 @@ if($properties): ?>
                 </li>
             <?php endif; ?>
 
-            <?php if($property[phone_number]): ?>
+            <?php if($property['phone_number']): ?>
                 <li class="property_phone_number"><?php echo $property['phone_number']; ?></li>
             <?php endif; ?>
 
-            <?php if($property[display_address]): ?>
+            <?php if($property['display_address']): ?>
                 <li class="property_address"><a href="<?php echo $property['permalink']; ?>#property_map"><?php echo $property['display_address']; ?></a></li>
             <?php endif; ?>
 
-            <?php if($property[price]): ?>
+            <?php if($property['price']): ?>
                 <li class="property_price"><?php echo $property['price']; ?></li>
             <?php endif; ?>
-
-
+            
             <?php if($show_children && $property['children']): ?>
             <li class="child_properties">
                 <div class="wpd_floorplans_title"><?php echo $child_properties_title; ?></div>
@@ -104,17 +80,21 @@ if($properties): ?>
                 </table>
             </li>
             <?php endif; ?>
+            
+            <?php if(!empty($wpp_query['detail_button'])) : ?>
+            <li><a class="button" href="<?php echo $property['permalink']; ?>"><?php echo $wpp_query['detail_button'] ?></a></li>
+            <?php endif; ?>
        </ul>
 
         </div><?php // .wpp_right_column ?>
 
     </div><?php // .property_div ?>
 
-    <?php endforeach; ?>
-    </div><?php // .wpp_row_view ?>
-	</div>
-<?php else: ?>
+    <?php } /** end of the propertyloop. */ ?>
+    </div><?php // .all-properties ?>
+	</div><?php // .wpp_row_view ?>
+<?php } else {  ?>
 <div class="wpp_nothing_found">
-   <?php echo sprintf(__('Sorry, no properties found - try expanding your search, or <a href="%s">view all</a>.','wpp'), site_url().'/'.$wp_properties['configuration']['base_slug']); ?>
+   <p><?php echo sprintf(__('Sorry, no properties found - try expanding your search, or <a href="%s">view all</a>.','wpp'), site_url().'/'.$wp_properties['configuration']['base_slug']); ?></p>
 </div>
-<?php endif; ?>
+<?php } ?>

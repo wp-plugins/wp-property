@@ -58,7 +58,7 @@ foreach ($list_data['attributes'] as $attr_id => $attr_value) {
     $descr = apply_filters('the_content', $descr);
     $descr = str_replace(']]>', ']]&gt;', $descr);
     $descr = strip_tags($descr);
-    $excerpt_length = 70;
+    $excerpt_length = 65;
     $words = preg_split("/[\n\r\t ]+/", $descr, $excerpt_length + 1, PREG_SPLIT_NO_EMPTY);
     if ( count($words) > $excerpt_length ) {
       array_pop($words);

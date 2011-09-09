@@ -2,15 +2,15 @@
 /*
 Name: Admin Tools
 Class: class_admin_tools
-Version: 2.9.2
+Version: 2.9.3
 Feature ID: 1
-Minimum Version: 1.17
+Minimum Version: 1.20.0
 Description: Tools for developing themes and extensions for WP-Property.
 */
 
 
 add_action('wpp_init', array('class_admin_tools', 'init'));
-
+add_action('wpp_pre_init', array('class_admin_tools', 'pre_init'));
 
 /**
  * class_admin_tools Class
@@ -25,20 +25,46 @@ add_action('wpp_init', array('class_admin_tools', 'init'));
  * @subpackage Admin Functions
  */
 class class_admin_tools {
-
-  static function init() {
-
-    // Add Inquiry page to Property Settings page array
-    add_filter('wpp_settings_nav', array('class_admin_tools', 'settings_nav'));
-
-    // Add Settings Page
-    add_action('wpp_settings_content_admin_tools', array('class_admin_tools', 'settings_page'));
-    
-    add_action('wpp_contextual_help', array('class_admin_tools', 'wpp_contextual_help'));
-
+  
+  /*
+   * (custom) Capability to manage the current feature
+   */
+  static protected $capability = "manage_wpp_admintools";
+  
+  /**
+   * Special functions that must be called prior to init
+   *
+   */
+  function pre_init() {
+    /* Add capability */
+    add_filter('wpp_capabilities', array('class_admin_tools', "add_capability"));
   }
- 
-
+  
+  /*
+   * Apply feature's Hooks and other functionality
+   */
+  static function init() {
+    
+    if(current_user_can(self::$capability)) {
+      // Add Inquiry page to Property Settings page array
+      add_filter('wpp_settings_nav', array('class_admin_tools', 'settings_nav'));
+      // Add Settings Page
+      add_action('wpp_settings_content_admin_tools', array('class_admin_tools', 'settings_page'));
+      add_action('wpp_contextual_help', array('class_admin_tools', 'wpp_contextual_help'));
+    }
+    
+  }
+  
+  /*
+   * Adds Custom capability to the current premium feature
+   */
+  function add_capability($capabilities) {
+    
+    $capabilities[self::$capability] = __('Manage Admin Tools','wpp');
+    
+    return $capabilities;
+  }
+  
   /**
    * Adds admin tools manu to settings page navigation
    *
@@ -256,28 +282,33 @@ class class_admin_tools {
           <ul>
             <li>
               <input <?php if(in_array($slug, ((!empty($wp_properties['sortable_attributes'])?$wp_properties['sortable_attributes']:array())))) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[sortable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Sortable'); ?></label>
+              <label><?php _e('Sortable', 'wpp'); ?></label>
             </li>
             
             <li>
               <input <?php if(is_array($wp_properties['searchable_attributes']) && in_array($slug, $wp_properties['searchable_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[searchable_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Searchable'); ?></label>
+              <label><?php _e('Searchable', 'wpp'); ?></label>
             </li>
 
             <li class="wpp_development_advanced_option">
               <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Admin Only'); ?></label>
+              <label><?php _e('Admin Only', 'wpp'); ?></label>
             </li>
 
             <li class="wpp_development_advanced_option">
               <input <?php if(is_array($wp_properties['numeric_attributes']) && in_array($slug, $wp_properties['numeric_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[numeric_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Format as number'); ?></label>
+              <label><?php _e('Format as number', 'wpp'); ?></label>
             </li>            
 
             <li class="wpp_development_advanced_option">
               <input <?php if(is_array($wp_properties['currency_attributes']) && in_array($slug, $wp_properties['currency_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[currency_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Format as currency'); ?></label>
-            </li>            
+              <label><?php _e('Format as currency', 'wpp'); ?></label>
+            </li>
+            
+            <li class="wpp_development_advanced_option">
+              <input <?php if(is_array($wp_properties['column_attributes']) && in_array($slug, $wp_properties['column_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[column_attributes][]" value="<?php echo $slug; ?>" />
+              <label><?php _e('Add column on "All Properties" page', 'wpp'); ?></label>
+            </li>
             
             
             <li class="wpp_development_advanced_option">
@@ -371,7 +402,7 @@ class class_admin_tools {
             <ul>
               </li>
               <input <?php if(is_array($wp_properties['hidden_frontend_attributes']) && in_array($slug, $wp_properties['hidden_frontend_attributes'])) echo " CHECKED "; ?> type="checkbox" class="slug" name="wpp_settings[hidden_frontend_attributes][]" value="<?php echo $slug; ?>" />
-              <label><?php _e('Show in Admin Only'); ?></label>
+              <label><?php _e('Show in Admin Only', 'wpp'); ?></label>
             </li>
             </ul>
           </td>
@@ -412,6 +443,9 @@ class class_admin_tools {
           <li>
             <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][disable_wordpress_postmeta_cache]&label=" . __('Disable WordPress update_post_caches() function.','wpp'), $wp_properties['configuration']['disable_wordpress_postmeta_cache']); ?> <br />
             <span class="description"><?php _e('This may solve Out of Memory issues if you have a lot of properties.','wpp'); ?></span>
+          </li>
+          <li>
+            <?php  echo UD_UI::checkbox("name=wpp_settings[configuration][developer_mode]&label=" . __('Enable developer mode - some extra information displayed via Firebug console.','wpp'), $wp_properties['configuration']['developer_mode']); ?> <br />
           </li>
           
         </ul>

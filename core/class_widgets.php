@@ -534,11 +534,7 @@ jQuery(document).ready(function($){
       }
 
       $all_featured = WPP_F::get_properties("featured=true&property_type=all&pagi=0--$amount_items");
-
-      if (isset($all_featured['total'])) {
-      unset($all_featured['total']);
-      }      
-
+      
       // Bail out if no children
       if(!$all_featured) {
       return;
@@ -964,10 +960,7 @@ jQuery(document).ready(function($){
         $sort_by = $instance['sort_by'];
         $sort_order = $instance['sort_order'];
         $searchable_property_types = $instance['searchable_property_types'];
-         
-        if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
-          $per_page = $instance['per_page'];
-        }
+
       
         if(!is_array($search_attributes)) {
           return;
@@ -992,14 +985,27 @@ jQuery(document).ready(function($){
 
         $search_args['search_attributes'] = $search_attributes;
         $search_args['searchable_property_types'] = $searchable_property_types;
-        $search_args['per_page'] = $per_page;
+
+        if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
+          
+          if(empty($instance['per_page'])) {
+            $instance['per_page'] = 10;
+          }
+          
+          $search_args['per_page'] = $instance['per_page'];
+          $search_args['use_pagination'] = 'on';
+        } else {
+          $search_args['use_pagination'] = 'off';        
+          $search_args['per_page'] = $instance['per_page'];
+        }
+        
         $search_args['instance_id'] = $widget_id;
         $search_args['sort_by'] = $sort_by;
         $search_args['sort_order'] = $sort_order;
         
         draw_property_search_form($search_args);
 
-        echo "</div>";
+        echo "<div class='cboth'></div></div>";
         
         echo $after_widget;
     }

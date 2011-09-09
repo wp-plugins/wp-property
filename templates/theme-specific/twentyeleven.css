@@ -46,7 +46,9 @@
  body.single-property #primary.widget-area  ul.xoxo li.wpp_widget  {
     clear: both;
     margin: 0 0 2.2em;
-    overflow: auto;
+    /*09/08/2011*/
+    /*overflow: auto;*/
+    overflow: hidden;
  }
 
  body.single-property .wpp_google_maps_attribute_row_property_title  {
@@ -242,13 +244,16 @@
   border-top-left-radius: 0;
 
  }
+ 
+#content .wpp_shortcode_search ul.wpp_multi_checkbox li,
+#content .wpp_shortcode_search ul.wpp_multi_checkbox label {
+  display:inline;
+  float:none;
+}
 
 .left-sidebar .wpp_search_properties_widget {
 
 }
-
-
-
 
 .wpp_search_properties_widget .wpp_search_form_element.submit {
   padding-top: 5px;
@@ -337,11 +342,71 @@
     padding-top: 15px;
 
  }
+ 
+ /*09/08/2011*/
 
+ .property_image {width: 113px;}
+ 
+ ul.wpp_agent_info_list li {list-style: none;}
 
  /* Default Property Page End */
 
+/* Supermap */
+#content li.supermap_list_thumb {float:none;}
+#content li.supermap_list_title {clear:both;}
+#content .wpp_supermap_wrapper .hide_filter,
+#content .wpp_supermap_wrapper .map_filters {
+  border:none;
+  width:96%;
+  border: 1px solid #DAE0FF;
+}
+#content .wpp_supermap_wrapper .map_filters label {
+  display:block;
+  margin-bottom:2px;
+}
+#content .wpp_supermap_wrapper .map_filters input,
+#content .wpp_supermap_wrapper .map_filters select {
+  margin:0 0 0 0;
+  padding:0;
+  width:85%;
+}
+#content .wpp_supermap_wrapper .map_filters input.search_b{
+  margin: 10px;
+}
+#content .wpp_supermap_wrapper .map_filters ul {
+  list-style: none;
+  margin: 0 0 10px 10px;
+}
+#content .wpp_supermap_wrapper .map_filters ul li {
+  margin: 0 0 10px 0;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox label,
+#content .wpp_supermap_wrapper .map_filters .field_checkbox label {
+  float:left;
+  margin-right:6px;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul label {
+  float:none;
+  display: inline;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul {
+  float:left;
+  margin-bottom:0;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul li {
+  display:block;
+  float:none;
+  margin:0;
+}
+#content .wpp_supermap_wrapper .map_filters .field_checkbox input,
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox input {
+  width:auto;
+}
 
+#content .wpp_supermap_wrapper .map_filters .class_wpp_supermap_input_field_min,
+#content .wpp_supermap_wrapper .map_filters .class_wpp_supermap_input_field_max {
+  width: 60px;
+}
 
 
 

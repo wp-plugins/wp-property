@@ -182,7 +182,7 @@ if(isset($_REQUEST['message'])) {
 <form method="post" action="<?php echo admin_url('edit.php?post_type=property&page=property_settings'); ?>"  enctype="multipart/form-data" />
 <?php wp_nonce_field('wpp_setting_save'); ?>
 
-<div id="wpp_settings_tabs" class="clearfix">
+<div id="wpp_settings_tabs" class="wpp_tabs clearfix">
   <ul class="tabs">
     <li><a href="#tab_main"><?php _e('Main','wpp'); ?></a></li>
     <li><a href="#tab_display"><?php _e('Display','wpp'); ?></a></li>
@@ -224,6 +224,7 @@ if(isset($_REQUEST['message'])) {
         <select name="wpp_settings[configuration][base_slug]" id="wpp_settings_base_slug">
           <option <?php selected($wp_properties['configuration']['base_slug'], 'property'); ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
           <?php foreach(get_pages() as $page): ?>
+            <?php if(!WPP_F::is_permalink_has_post_name($page)) continue; ?>
             <option <?php selected($wp_properties['configuration']['base_slug'],$page->post_name); ?> value="<?php echo $page->post_name; ?>"><?php echo $page->post_title; ?></option>
           <?php endforeach; ?>
         </select>
@@ -284,7 +285,7 @@ if(isset($_REQUEST['message'])) {
       </td>
     </tr>
 
-    
+    <?php do_action('wpp_settings_main_tab_bottom'); ?>
     </table>
   </div>
 
@@ -295,10 +296,14 @@ if(isset($_REQUEST['message'])) {
       <th><?php _e('General Settings','wpp'); ?></th>
       <td>
 
-          <ul>
-            <li><?php
-                  $default_css_text = __('Automatically include default CSS.','wpp');
-                  echo UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=$default_css_text", $wp_properties['configuration']['autoload_css']); ?></li>
+        <ul>
+          <li>
+          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Automatically include default CSS.','wpp'), $wp_properties['configuration']['autoload_css']); ?>
+          </li>
+           
+           <li>
+          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][load_scripts_everywhere]&label=" . __('Load WP-Property scripts on all front-end pages.','wpp'), $wp_properties['configuration']['load_scripts_everywhere']); ?>
+          </li>
             
             <?php if(WPP_F::has_theme_specific_stylesheet()) { ?>
             <li>
@@ -391,12 +396,12 @@ if(isset($_REQUEST['message'])) {
 
           <?php endforeach; ?>
 
+            </tbody>
             <tfoot>
               <tr>
                 <td colspan='4'><input type="button" class="wpp_add_row button-secondary" value="<?php _e('Add Row','wpp') ?>" /></td>
               </tr>
             </tfoot>
-            </tbody>
           </table>
 
 
@@ -410,8 +415,7 @@ if(isset($_REQUEST['message'])) {
       <th><?php _e('Overview Shortcode','wpp') ?></th>
       <td>
         <p>
-        <?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br />
-        The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property-overview.php</b> file.  To avoid losing your changes during updates, create a <b>property-overview.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
+        <?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br />The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property-overview.php</b> file.  To avoid losing your changes during updates, create a <b>property-overview.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
         <ul>
 
           <li><?php _e('Thumbnail size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][property_overview][thumbnail_size]&selected=" . $wp_properties['configuration']['property_overview']['thumbnail_size']); ?></li>
@@ -453,13 +457,14 @@ if(isset($_REQUEST['message'])) {
         <ul>
           <li><?php _e('Map Thumbnail Size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][single_property_view][map_image_type]&selected=" . $wp_properties['configuration']['single_property_view']['map_image_type']); ?></li>
           <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkbox Image extend of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
         </ul>
 
         <p><?php _e('Attributes to display in popup after a property on a map is clicked.', 'wpp'); ?></p>
         <div class="wp-tab-panel">
         <ul>
 
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_property_title]&label=Show Property Title", $wp_properties['configuration']['google_maps']['infobox_settings']['show_property_title']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_property_title]&label=" . __('Show Property Title', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_property_title']); ?></li>
 
           <?php foreach($wp_properties['property_stats'] as $attrib_slug => $attrib_title): ?>
           <li><?php
@@ -468,7 +473,7 @@ if(isset($_REQUEST['message'])) {
           ?></li>
           <?php endforeach; ?>
 
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=Show Directions Link", $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=". __('Show Directions Link', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
 
         </ul>
         </div>
@@ -527,13 +532,13 @@ if(isset($_REQUEST['message'])) {
         <ul>
           <li><?php _e('Thumbnail size for property images displayed on Properties page: ','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][admin_ui][overview_table_thumbnail_size]&selected=" . $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']); ?></li>
           <li>
-          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][completely_hide_hidden_attributes_in_admin_ui]&label=" . __("Completely hide hidden attributes when editing properties."), $wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui']); ?>
+          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][completely_hide_hidden_attributes_in_admin_ui]&label=" . __('Completely hide hidden attributes when editing properties.', 'wpp'), $wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui']); ?>
           </li>
         </ul>
       </td>
     </tr>
 
-
+      <?php do_action('wpp_settings_display_tab_bottom'); ?>
 
     </table>
   </div>
@@ -561,9 +566,7 @@ if(isset($_REQUEST['message'])) {
         <tr>
           <td colspan="2" class="wpp_premium_feature_intro">
               <span class="header"><?php _e('WP-Property Premium Features','wpp') ?></span>
-              <p><?php _e('Premium features will become available shortly, we are still waiting on more feedback on the core of the plugin.','wpp'); ?></p>
               <p><?php _e('When purchasing the premium features you will need to specify your domain to add the license correctly.  This is your domain:','wpp'); echo ' <b>'. $this_domain; ?></b></p>
-              <?php /*<p><?php _e('If you're recently purchased a premium feature, <span id="wpp_check_premium_updates" class="wpp_link">download updates</a>.','wpp') ?></p> */ ?>
               <p id="wpp_plugins_ajax_response" class="hidden"></p>
           </td>
         </tr>
@@ -667,23 +670,23 @@ if(isset($_REQUEST['message'])) {
 
       <div class="wpp_settings_block">      
         <?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />
-        <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e("Download Backup of Current WP-Property Configuration.");?></a>
+        <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e('Download Backup of Current WP-Property Configuration.', 'wpp');?></a>
       </div>
 
       
       <div class="wpp_settings_block">
         <?php $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true'); ?>
-        Revalidate all addresses using <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> localization.
+        <?php _e('Revalidate all addresses using', 'wpp'); ?> <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> <?php _e('ocalization', 'wpp'); ?>.
          <input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
       </div>
 
             
       <div class="wpp_settings_block">
         <?php if(function_exists('memory_get_usage')): ?>
-        <?php _e('Memory Usage:'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes. 
+        <?php _e('Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes. 
         <?php endif; ?>
         <?php if(function_exists('memory_get_peak_usage')): ?>
-        <?php _e('Peak Memory Usage:'); ?> <?php echo round((memory_get_peak_usage() / 1048576), 2); ?> megabytes. 
+        <?php _e('Peak Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_peak_usage() / 1048576), 2); ?> megabytes. 
         <?php endif; ?>     
       </div>
       

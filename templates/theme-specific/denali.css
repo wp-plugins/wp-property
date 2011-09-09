@@ -12,3 +12,12 @@
  */
  
  
+
+ #body_container ul.feps_user_input_fields,
+ #body_container ul.feps_user_input_fields  li {
+  list-style: none;
+}
+ #body_container ul.feps_property_input_fields,
+ #body_container ul.feps_property_input_fields  li {
+  list-style: none;
+}

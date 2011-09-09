@@ -4,7 +4,7 @@ Plugin Name: WP-Property
 Plugin URI: http://twincitiestech.com/plugins/wp-property/
 Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
 Author: Usability Dynamics, Inc.
-Version: 1.17.2.1
+Version: 1.20.0
 Author URI: http://usabilitydynamics.com
 
 Copyright 2011  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.com)
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** This Version  */
-define('WPP_Version', '1.17.2.1');
+define('WPP_Version', '1.20.0');
 
 /** Path for Includes */
 define('WPP_Path', WP_PLUGIN_DIR . '/wp-property');
@@ -71,6 +71,9 @@ include_once WPP_Path . '/core/class_core.php';
 
 /** Bring in the RETS library */
 include_once WPP_Path . '/core/class_rets.php';
+
+/** Load in hooks that deal with legacy and backwards-compat issues */
+include_once WPP_Path . '/legacy_support.php';
 
 // Register activation hook -> has to be in the main plugin file
 register_activation_hook(__FILE__,array('WPP_F', 'activation'));

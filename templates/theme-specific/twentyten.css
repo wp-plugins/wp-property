@@ -5,6 +5,37 @@
 	Version: 0.6
  */
  
+ 
+ .wpp_feps_form input {
+  margin: 0;
+ }
+ 
+ .wpp_feps_form input.wpp_feps_user_password,
+ .wpp_feps_form input.wpp_feps_user_email {
+  width: 20em;
+ }
+ 
+ 
+ .wpp_pagination_slider_wrapper .wpp_pagination_back, .wpp_pagination_slider_wrapper .wpp_pagination_forward {
+    background: none repeat scroll 0 0 #E4E4E4;
+    border: 1px solid #919191;
+    font-size: 0.8em;
+ }
+ 
+ .wpp_sorter_options .wpp_sortable_link.wpp_sorted_element {
+  background: none repeat scroll 0 0 #F7F7F7;
+  border: 1px solid #6D6D6D;
+  color: #1C1711;
+ }
+ 
+ .wpp_sorter_options .wpp_sortable_link  {
+  font-size: .8em;
+ }
+ 
+ .wpp_ui .wpp_pagination_slider .ui-slider-handle {
+  background-image:none;
+}
+ 
 div.sidebar_gallery_item .wpp_image_widget_caption  {
     background: none repeat scroll 0 0 #F4F4F4;
     margin: 0 9px 10px 0;
@@ -80,3 +111,90 @@ div.wpp_google_maps_attribute_row_property_title {
 #primary div.property_widget_block ul.wpp_widget_attribute_list {
 	margin-left: 0;
 }
+
+.wpp_search_attribute_type_multi_checkbox .wpp_search_attribute_wrap {
+  float:left;
+}
+
+.wpp_search_attribute_type_multi_checkbox .wpp_search_attribute_wrap ul li {
+  display: block;
+  float: none;
+  margin: 0px;
+}
+
+#content .wpp_multi_checkbox li {
+  background: none repeat scroll 0 0 transparent;
+  display: inline;
+  float: left;
+  padding: 0;
+}
+#content .wpp_multi_checkbox li label {
+  float: right;
+  margin-left: 4px;
+  width: 25px !important;
+}
+#content li.wpp_search_form_element {
+  clear:both;
+}
+#content li.wpp_search_form_element.wpp_search_attribute_type_multi_checkbox .wpp_search_attribute_wrap {
+  clear: both;
+  display: block;
+  height: 25px;
+}
+#content .wpp_shortcode_search ul label {
+  width: 80px;
+}
+
+/* Real State Agents */
+ul.wpp_agent_info_list li {list-style: none;}
+
+/* Supermap */
+
+#content .wpp_supermap_wrapper .hide_filter,
+#content .wpp_supermap_wrapper .map_filters {
+  border:none;
+  width:96%;
+  border: 1px solid #DAE0FF;
+}
+#content .wpp_supermap_wrapper .map_filters label {
+  display:block;
+}
+#content .wpp_supermap_wrapper .map_filters input,
+#content .wpp_supermap_wrapper .map_filters select {
+  margin:0 0 0 0;
+  padding:0;
+}
+#content .wpp_supermap_wrapper .map_filters input.search_b{
+  margin: 10px;
+}
+#content .wpp_supermap_wrapper .map_filters ul {
+  list-style: none;
+  margin: 0 0 10px 10px;
+}
+#content .wpp_supermap_wrapper .map_filters ul li {
+  margin: 0 0 10px 0;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox label,
+#content .wpp_supermap_wrapper .map_filters .field_checkbox label {
+  float:left;
+  margin-right:6px;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul label {
+  float:none;
+  display: inline;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul {
+  float:left;
+  margin-bottom:0;
+}
+#content .wpp_supermap_wrapper .map_filters .field_multi_checkbox ul li {
+  display:block;
+  float:none;
+  margin:0;
+}
+
+#content .wpp_supermap_wrapper .map_filters .class_wpp_supermap_input_field_min,
+#content .wpp_supermap_wrapper .map_filters .class_wpp_supermap_input_field_max {
+  width: 60px;
+}
+
