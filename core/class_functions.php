@@ -1772,11 +1772,16 @@ class WPP_F {
           $searchable_property_types = $wp_properties['searchable_attributes'];
          }
          
-         $searchable_property_types = "AND pm2.meta_value ='" . implode("' OR pm2.meta_value='", $searchable_property_types) . "'";
+         $searchable_property_types = "AND (pm2.meta_value ='" . implode("' OR pm2.meta_value='", $searchable_property_types) . "')";
 
+ 
         //** Cycle through requeted attributes */
         foreach($search_attributes as $searchable_attribute) {
 
+          if($searchable_attribute == 'property_type') {
+            continue;
+          }
+          
           //** Load attribute data */
           $attribute_data = WPP_F::get_attribute_data($searchable_attribute);
 
@@ -3306,9 +3311,11 @@ class WPP_F {
 
           if ( !empty( $wp_properties['property_types'] ) ) {
             $attrs = array();
-            foreach( $attr_values as $attr ) {
-              if ( !empty( $wp_properties['property_types'][ $attr ] ) ) {
-                $attrs[ $attr ] = $wp_properties['property_types'][ $attr ];
+            if(is_array($attr_values)) {
+              foreach( $attr_values as $attr ) {
+                if ( !empty( $wp_properties['property_types'][ $attr ] ) ) {
+                  $attrs[ $attr ] = $wp_properties['property_types'][ $attr ];
+                }
               }
             }
           }
@@ -3331,11 +3338,14 @@ class WPP_F {
         case 'post_status':
           $all = 0;
           $attrs = array();
-          foreach ($attr_values as $attr) {
-            $count = self::get_properties_quantity( array( $attr ) );
-            $attrs[$attr] = strtoupper( substr($attr, 0, 1) ).substr($attr, 1, strlen($attr)).' ('.$count.')';
-            $all += $count;
+          if(is_array($attr_values)) {
+            foreach ($attr_values as $attr) {
+              $count = self::get_properties_quantity( array( $attr ) );
+              $attrs[$attr] = strtoupper( substr($attr, 0, 1) ).substr($attr, 1, strlen($attr)).' ('.$count.')';
+              $all += $count;
+            }
           }
+          
           $attrs['all'] = __('All', 'wpp').' ('.$all.')';
           $attr_values = $attrs;
           

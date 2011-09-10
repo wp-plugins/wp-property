@@ -1,4 +1,8 @@
-
+.wpp_feps_input_wrapper  .wpp_image_upload .qq-uploader li {
+  margin: 0 10px 10px 0;
+  padding: 0;
+  display: inline;
+}
 
 #wp-admin-bar-wpp_approve_property {
   background: #CF982D;
@@ -57,6 +61,11 @@ ul.feps_property_input_fields label span.description{
 
 ul.feps_property_input_fields label {  
   margin-bottom: 1px;
+}
+
+
+ul.feps_user_input_fields input[type="text"] {
+  width: 20em;
 }
 
 ul.feps_property_input_fields textarea,  

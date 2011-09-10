@@ -141,10 +141,6 @@ This is a theme issue. Once again you can customize your own theme, email us and
 
 The plugin uses your theme's stylesheet, but also has its own. Inside the plugin folder (wp-content/plugins/wp-property/templates) there is a file called "wp_properties.css". Copy that file to your template directory, and the plugin will automatically switch to using the settings in that file, and will not load the default one anymore. That way when you upgrade the plugin, your custom CSS will not be overwritten. Same goes for all the other template files. 
 
-= How do I configure the plugin? =
-
-There are two ways.  The easy way is to go to the Settings -> Properties page, many settings can be configured there.  A more advanced way, which does require some basic understanding of PHP and the WordPress API, is to use hooks and filters.  We've setup a page to assist others with customizing, and expanding on, WP-Property.  View the [WP-Property API documentation](http://twincitiestech.com/plugins/wp-property/api-documentation/) here. 
-
 = How do I upload property images? =
 
 You would do it the same way as if you were editing a post or a page.  On the property editing page, click the Image icon above the content area, and upload images into the media library.  If you want the images to show up on the front-end, you may want to visit Appearance -> Widgets and setup the Property Gallery widget to show up on the property page.
@@ -205,6 +201,9 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.20.1 =
+* Release fixes issue with search dropdown values being incorrect when a search widget queries multiple property types. 
 
 = 1.20.0 =
 * Redesigned pagination and sorting for front-end.
