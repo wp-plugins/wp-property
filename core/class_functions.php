@@ -77,22 +77,54 @@ class WPP_F {
         return;
       }
       
+      $post_table_keys = array(
+        'post_author', 
+        'post_date',
+        'post_date_gmt',
+        'post_content',
+        'post_title',
+        'post_excerpt',
+        'post_status',
+        'comment_status',
+        'ping_status',
+        'post_password',
+        'post_name',
+        'to_ping',
+        'pinged',
+        'post_modified',
+        'post_modified_gmt',
+        'post_content_filtered',
+        'post_parent',
+        'guid',
+        'menu_order',
+        'post_type',
+        'post_mime_type',
+        'comment_count');
+      
       $ui_class = array($attribute);
+      
+      if(in_array($attribute, $post_table_keys)) {
+        $return['storage_type'] = 'post_table';
+      }
       
       $return['slug'] = $attribute;
       
       if($wp_properties['property_stats'][$attribute]) {
         $return['is_stat'] = 'true';
+        $return['storage_type'] = 'meta_key';
         $return['label'] = $wp_properties['property_stats'][$attribute];
       }      
       
       if($wp_properties['property_meta'][$attribute]) {
         $return['is_meta'] = 'true';
+        $return['storage_type'] = 'meta_key';
         $return['label'] = $wp_properties['property_meta'][$attribute];        
+        $return['input_type'] = 'textarea';
       }
             
       if($wp_properties['searchable_attr_fields'][$attribute]) {
         $return['input_type'] = $wp_properties['searchable_attr_fields'][$attribute];        
+        $ui_class[] = $return['input_type'];
       }
       
       if($wp_properties['configuration']['address_attribute'] == $attribute) {
@@ -261,6 +293,8 @@ class WPP_F {
    */
    function format_numeric($content = '') {
     global $wp_properties;
+    
+      $content = trim($content);
 
       $dec_point  = (!empty($wp_properties['configuration']['dec_point']) ? $wp_properties['configuration']['dec_point'] : ".");
       $thousands_sep  = (!empty($wp_properties['configuration']['thousands_sep']) ? $wp_properties['configuration']['thousands_sep'] : ",");
@@ -1598,6 +1632,12 @@ class WPP_F {
             }
 
             $wp_properties['installed_features'][$plugin_slug]['disabled'] = 'false';
+          } else {
+            //* This happens when feature cannot be loaded and is disabled */
+            
+            //** We unset requires core upgrade in case feature was update while being disabled */
+            $wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] = 'false';
+            
           }
 
         }
@@ -1985,6 +2025,17 @@ class WPP_F {
     // Search by non meta values
     $additional_sql = '';
     $additional_sql_join = '';
+    
+    // Show 'publish' posts if status is not specified
+    if ( !key_exists( 'post_status', $query ) ) {
+      $additional_sql .= " AND post_status = 'publish' ";
+      $additional_sql_join .= " AND p.post_status = 'publish' ";
+    } else {
+      $additional_sql .= " AND post_status = '{$query['post_status']}' ";
+      $additional_sql_join .= " AND p.post_status = '{$query['post_status']}' ";
+      unset($query['post_status']);
+    }
+    
     foreach( $non_post_meta as $field => $condition ) {
       if ( key_exists( $field, $query ) ) {
         if ( $condition == 'like' ) {
@@ -1993,7 +2044,7 @@ class WPP_F {
         } 
         if ( $condition == 'equal' ) {
           // Process 'all' for post_status
-          if ( $field != 'post_status' || $query[ $field ] != 'all' ) {
+          if ( $query[ $field ] != 'all' ) {
             $additional_sql      .= " AND $field = '{$query[ $field ]}' ";
             $additional_sql_join .= " AND p.$field = '{$query[ $field ]}' ";
           }
@@ -2006,14 +2057,6 @@ class WPP_F {
       }
     }
     
-    // Show 'publish' posts if status is not specified
-    if ( is_array( $args ) ) {
-      if ( !key_exists( 'post_status', $args ) ) {
-        $additional_sql .= " AND post_status = 'publish' ";
-        $additional_sql_join .= " AND p.post_status = 'publish' ";
-      }
-    }
-
     if (substr_count($query['pagi'], '--')) {
       $pagi = explode('--', $query['pagi']);
       if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1])) {
@@ -2730,16 +2773,29 @@ class WPP_F {
       if(!is_admin() && in_array($slug, (array)$wp_properties['hidden_frontend_attributes'])) {
         continue;
       }
-
-      $value = get_post_meta($property_object->ID, $slug, true);
+      
+      // Exclude passed variables
+      if(is_array($exclude) && in_array($slug, $exclude)) {
+        continue;
+      }
+      
+      /* 
+       * Determine if stat's value already exists
+       * If yes, - we don't need to get it from postmeta.
+       * Because, actually, the existing stat's value 
+       * can be already filtered (modified) before
+       * @author Maxim Peshkov
+       */
+      if(!empty($property_object->{$slug})) {
+        $value = $property_object->{$slug};
+      } else {
+        $value = get_post_meta($property_object->ID, $slug, true);
+      }
+      
       if ($value === true) {
         $value = 'true';
       }
-
-      // Exclude passed variables
-      if(is_array($exclude) && in_array($slug, $exclude))
-        continue;
-
+      
       // Include only passed variables
       if(is_array($include) && in_array($slug, $include)) {
         if(!empty($value))

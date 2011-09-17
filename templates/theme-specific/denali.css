@@ -16,8 +16,11 @@
  #body_container ul.feps_user_input_fields,
  #body_container ul.feps_user_input_fields  li {
   list-style: none;
+  margin:0;
 }
  #body_container ul.feps_property_input_fields,
  #body_container ul.feps_property_input_fields  li {
+  margin:0;
+  padding:0;
   list-style: none;
 }

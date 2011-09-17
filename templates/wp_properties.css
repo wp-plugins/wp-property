@@ -1,3 +1,12 @@
+
+
+
+
+.wpp_feps_input_wrapper  .qq-upload-list{
+  margin: 0;
+}
+
+
 .wpp_feps_input_wrapper  .wpp_image_upload .qq-uploader li {
   margin: 0 10px 10px 0;
   padding: 0;
@@ -19,10 +28,10 @@ ul.feps_property_input_fields .qq-upload-button {
 .qq-upload-failed-text {display:none;}
 
 
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.price,
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.bathrooms,
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.bedrooms  {
-width: 45%;
+ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_currency,
+ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_numeric {
+    margin-right: 15px;
+    width: 43%;
 }
 
 ul.feps_user_input_fields {
@@ -45,6 +54,20 @@ ul.feps_property_input_fields li.wpp_feps_input_wrapper   {
     padding: 5px 13px;
     width: 94%;
 }
+
+ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox input.wpp_checkbox   {  
+  float: left;
+  position: relative;
+  top: 7px;
+}
+ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox  label {  
+  margin-left: 10px;
+} 
+
+ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox  label span.description {  
+  float: none;
+}
+
 ul.feps_user_input_fields li.wpp_feps_input_wrapper {
   background: #EBEBEB;
 }
@@ -130,7 +153,7 @@ ul.feps_property_input_fields .description {
 }
 
 .wpp_pagination_slider_status {
-  min-height: 2em;
+  min-height: 35px;
 }
 
 .wpp_pagination_slider .slider_page_info {
@@ -866,18 +889,19 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1); }
 
 .properties_sorter label, .sort_by, .sort_order {
-  display: block;
-  float: left;
+
   height: 23px;
   margin-right: 6px !important; }
 
 .properties_sorter label { line-height: 23px; }
 
 .sort_order {
-  display: block;
+  display: inline-block;
   width: 22px;
   height: 23px;
-  cursor: pointer; }
+  cursor: pointer; 
+  vertical-align: bottom;
+  }
 
   .sort_order.ASC { background: url(images/sort.png) -0 0 no-repeat; }
 

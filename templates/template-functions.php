@@ -112,9 +112,14 @@ if(!function_exists('wpi_draw_pagination')):
     if($wpp_query['ajax_call']) {
       return;
     }
-
-    if($properties['total'] >= $per_page && $pagination != 'off') {
+    
+ 
+    if($properties['total'] > $per_page && $pagination != 'off') {
       $use_pagination = true;
+    }
+    
+    if ( $properties['total'] == 0 ) {
+      $sortable_attrs = false;
     }
 
     ob_start();
@@ -471,6 +476,52 @@ if(!function_exists('wpi_draw_pagination')):
             /* Get ajax results and reset to first page */
             wpp_query_<?php echo $unique_hash; ?> = changeAddressValue(1, wpp_query_<?php echo $unique_hash; ?>);
           });
+        }        
+        if(!jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_sortable_dropdown').data('events') ) {
+          jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_sortable_dropdown').change(function() {
+          
+            var parent = jQuery(this).parents('.wpp_sorter_options');
+            var attribute = jQuery(":selected", this).attr('sort_slug');
+            var sort_element = jQuery(".sort_order", parent);
+            var sort_order = jQuery(sort_element).attr('sort_order');
+            
+            wpp_query_<?php echo $unique_hash; ?>.sort_by = attribute;
+            wpp_query_<?php echo $unique_hash; ?>.sort_order = sort_order;            
+            
+            /* Get ajax results and reset to first page */
+            wpp_query_<?php echo $unique_hash; ?> = changeAddressValue(1, wpp_query_<?php echo $unique_hash; ?>);
+          });
+        }        
+        
+        if(!jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_overview_sorter').data('events') ) {
+          jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_overview_sorter').click(function() {
+          
+            var parent = jQuery(this).parents('.wpp_sorter_options');
+            
+            var sort_element = this;
+            var dropdown_element = jQuery(".wpp_sortable_dropdown", parent);
+            
+            var attribute = jQuery(":selected", dropdown_element).attr('sort_slug');
+            var sort_order = jQuery(sort_element).attr('sort_order');
+            
+            jQuery(sort_element).removeClass(sort_order);
+             
+            /* If this attribute is already sorted, we switch sort order */
+            if(sort_order == "ASC") {
+              sort_order = "DESC";
+            } else if(sort_order == "DESC") {
+              sort_order = "ASC";
+            }          
+            
+            wpp_query_<?php echo $unique_hash; ?>.sort_by = attribute;
+            wpp_query_<?php echo $unique_hash; ?>.sort_order = sort_order;            
+
+            jQuery(sort_element).attr("sort_order", sort_order);
+            jQuery(sort_element).addClass(sort_order);            
+            
+            /* Get ajax results and reset to first page */
+            wpp_query_<?php echo $unique_hash; ?> = changeAddressValue(1, wpp_query_<?php echo $unique_hash; ?>);
+          });
         }
         
         <?php if($use_pagination) { ?>
@@ -512,10 +563,24 @@ if(!function_exists('wpi_draw_pagination')):
         <?php } ?>
         
         <?php if($sortable_attrs) { ?>
-        <span class="wpp_sorter_options"><?php _e("Sort By:"); ?>
+        <span class="wpp_sorter_options"><label  class="wpp_sort_by_text"><?php echo $settings['sort_by_text']; ?></label>
+        <?php 
+
+        if($settings['sorter_type'] == 'buttons') { ?>
         <?php foreach($sortable_attrs as $slug => $label) { ?>
           <span class="wpp_sortable_link <?php echo ($sort_by == $slug ? 'wpp_sorted_element':''); ?>" sort_order="<?php echo $sort_order ?>" sort_slug="<?php echo $slug; ?>"><?php echo $label; ?></span>
         <?php } ?>
+        <?php } elseif($settings['sorter_type'] == 'dropdown') { ?>
+        <select class="wpp_sortable_dropdown sort_by" name="sort_by">
+        <?php foreach($sortable_attrs as $slug => $label) { ?>
+          <option <?php echo ($sort_by == $slug ? 'class="wpp_sorted_element" selected="true"':''); ?> sort_slug="<?php echo $slug; ?>" value="<?php echo $slug; ?>"><?php echo $label; ?></option>
+        <?php } ?>
+        </select>        
+        <span class="wpp_overview_sorter sort_order <?php echo $sort_order ?>" sort_order="<?php echo $sort_order ?>"></span>
+        <?php } else {
+          do_action('wpp_custom_sorter', array('settings' => $settings, 'wpp_query' => $wpp_query, 'sorter_type' => $settings['sorter_type']));
+        }
+        ?>
         </span>
         <?php } ?>
         <div class="clear"></div>

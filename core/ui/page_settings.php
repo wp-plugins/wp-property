@@ -36,6 +36,10 @@ if(isset($_REQUEST['message'])) {
 
  <script type="text/javascript">
   jQuery(document).ready(function() {
+  
+    //* Tabs for various UI elements */
+    jQuery('.wpp_subtle_tabs').tabs();
+
     jQuery("#wpp_settings_tabs").tabs({ cookie: {  name: 'wpp_settings_tabs', expires: 30 } });    
   
   // Show settings array
@@ -159,7 +163,7 @@ if(isset($_REQUEST['message'])) {
 
 <div class="wrap">
 <?php screen_icon(); ?>
-<h2 class='wpp_settings_page_header'><?php _e('Property Settings','wpp'); ?></h2>
+<h2 class='wpp_settings_page_header'><?php  echo $wp_properties['labels']['name'] . ' ' . __('Settings','wpp') ?></h2>
 
 <?php if(isset($wp_messages['error']) && $wp_messages['error']): ?>
 <div class="error">
@@ -219,7 +223,7 @@ if(isset($_REQUEST['message'])) {
 
     <table class="form-table">
     <tr>
-      <th><?php _e('Property Page','wpp'); ?></th>
+      <th><?php echo __('Default', 'wpp') . ' ' . $wp_properties['labels']['name'] . ' ' . __('Page','wpp'); ?></th>
       <td>
         <select name="wpp_settings[configuration][base_slug]" id="wpp_settings_base_slug">
           <option <?php selected($wp_properties['configuration']['base_slug'], 'property'); ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
@@ -599,7 +603,7 @@ if(isset($_REQUEST['message'])) {
             <div class="wpp_box">
             <div class="wpp_box_header">
               <strong><?php echo $plugin_data['title']; ?></strong>
-              <p><?php echo $plugin_data['tagline']; ?> <a href="http://twincitiestech.com/plugins/wp-property/premium/?wp_checkout_payment_domain=<?php echo $this_domain; ?>"><?php _e('[purchase feature]','wpp') ?></a>
+              <p><?php echo $plugin_data['tagline']; ?> <a href="https://usabilitydynamics.com/products/wp-property/premium/?wp_checkout_payment_domain=<?php echo $this_domain; ?>"><?php _e('[purchase feature]','wpp') ?></a>
               </p>
             </div>
             <div class="wpp_box_content">
@@ -608,7 +612,7 @@ if(isset($_REQUEST['message'])) {
             </div>
 
             <div class="wpp_box_footer clearfix">
-              <?php if($installed): ?>
+              <?php if($installed) { ?>
 
                 <div class="alignleft">
                 <?php
@@ -621,11 +625,10 @@ if(isset($_REQUEST['message'])) {
                  ?>
                 </div>
                 <div class="alignright"><?php _e('Feature installed, using version','wpp') ?> <?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>.</div>
-              <?php }
-              
-              else: ?>
-                <?php $pr_link = 'https://usabilitydynamics.com/products/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">UsabilityDynamics.com</a> to purchase this feature.','wpp'),$pr_link); ?>
-              <?php endif; ?>
+              <?php } 
+              } else {
+                  $pr_link = 'https://usabilitydynamics.com/products/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">UsabilityDynamics.com</a> to purchase this feature.','wpp'),$pr_link); 
+              } ?>
             </div>
             </div>
           </td>

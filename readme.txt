@@ -47,13 +47,16 @@ Usage of custom attributes added in the Developer tab for queries, example:
 * [property_overview template=detailed-overview] will load property-overview-detailed-overview.php from your theme folder.
 
 = New features =
-* Add predefined values for any attribute in Admin Tab that will create a dropdown input field on the property editing page.
-* Pagination back-button support.
-* Slovakian translation.
+
+* Two different sorter styles available, buttons and dropdown.
+* "Sort by:" text can be customized in [property_overview] shortcode using the sort_by_text argument.
 
 
 = More features =
 
+* Add predefined values for any attribute in Admin Tab that will create a dropdown input field on the property editing page.
+* Pagination back-button support.
+* Slovakian translation.
 * Search form shortcode.
 * Pagination and sorting works on search results
 * Major improvements to search widget and search function
@@ -81,6 +84,7 @@ Usage of custom attributes added in the Developer tab for queries, example:
 * Agent Module - Create agents and assign them to properties. Create agent-specific listing pages by using [property_overview wpp_agents=1] where 1 is the agent ID.
 * PDF Flyer - Instantly generate PDF flyers of your properties for printing.
 * XML Import - Map XML files to your WPP attributes, setup schedules, and import third-party listings.
+* Power Tools with Capability Management Price - Extra functionality which includes capability management, white labeling the control panel, and changes menu titles. 
 
 
 = Translations =
@@ -201,6 +205,18 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.21.0 =
+* Fixed issue with front-end pagination calculating pages incorrectly. 
+* Resolved bug that prevents premium features from being enabled when they were manually disabled, and then upgraded.
+* Added "sort_by_text" and "sorter_type" arguments to the [property_overview] shortcode.
+* Fixed issue with Fancybox not working with older versions of property-overview.php
+* Added ability to use the old dropdown sorter in property_overview by passing sorter_type=dropdown into the [property_overview] shortcode.
+* Fixed issue with currency ranges not being properly formatted.
+* Updated WPP_F::get_properties() function to return only published properties when a status is not specified, fixing issue with Supermap showing trashed properties.
+* Fixed issue with agents overview page not displaying pagination. (Agents Feature)
+* Improved XML Export feed generation function, which now allows a limit argument to be passed via URL, and returns additional information such as number of properties in feed, and load time.
+* Added hook for 'wpp_custom_sorter' for developers to use their custom front-end sorting mechanism.
 
 = 1.20.1 =
 * Release fixes issue with search dropdown values being incorrect when a search widget queries multiple property types. 

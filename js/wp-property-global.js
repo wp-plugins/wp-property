@@ -107,7 +107,14 @@ var updateRowNames = function(instance, allowRandomSlug) {
 }
 
 jQuery(document).ready(function() {
-  jQuery(".wpp_show_advanced").live("click", function() {    var wrapper = jQuery(this).parents('tr.wpp_dynamic_table_row');    jQuery('li.wpp_development_advanced_option', wrapper).toggle();  });
+  jQuery(".wpp_show_advanced").live("click", function() {
+    var wrapper = jQuery(this).parents('tr.wpp_dynamic_table_row');
+    if(wrapper.length == 0) {
+      var wrapper = jQuery(this).parents('.wpp_something_advanced_wrapper');
+    }
+    
+ 
+    jQuery('li.wpp_development_advanced_option', wrapper).toggle();  });
 
   // Toggle wpp_wpp_settings_configuration_do_not_override_search_result_page_
   jQuery("#wpp_wpp_settings_configuration_automatically_insert_overview_").change(function() {

@@ -12,7 +12,7 @@
 
 <div class="wp_wpp_overview_wrapper wrap">
     <?php screen_icon(); ?>
-    <h2><?php _e('All Properties'); ?> <a href="<?php echo admin_url('post-new.php?post_type=property'); ?>" class="button add-new-h2"><?php _e('Add New'); ?></a></h2>
+    <h2><?php echo $wp_properties['labels']['all_items']; ?> <a href="<?php echo admin_url('post-new.php?post_type=property'); ?>" class="button add-new-h2"><?php echo $wp_properties['labels']['add_new_item']; ?></a></h2>
     <?php //WPI_Functions::print_messages(); ?>
     
     <div id="poststuff" class="<?php echo $current_screen->id; ?>_table metabox-holder has-right-sidebar">

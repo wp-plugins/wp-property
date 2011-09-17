@@ -72,27 +72,40 @@ class wpi_property_export {
   
   /**
    * This function takes all your properties and exports it as an XML feed
+   *
+   * @todo Improve efficiency of function, times out quickly for feeds of 500 properties. memory_limit and set_time_limit should be removed once efficiency is improved
+   *
    */
   function wpp_export_properties(){
     global $wp_properties;
-    
-    // Set a new path
-    set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
-    // Include our necessary libaries
+	
+  ini_set('memory_limit', -1);
+  set_time_limit(120);
+
+  $mtime = microtime();
+  $mtime = explode(" ",$mtime);
+  $mtime = $mtime[1] + $mtime[0];
+  $starttime = $mtime; 
+
+  // Set a new path
+  set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
+  // Include our necessary libaries
     require_once 'Serializer.php';
     require_once 'Unserializer.php';
     
     $api_key = wpi_property_export::get_api_key();
-    
-    $taxonomies = $wp_properties['taxonomies'];
-        
+
+  $taxonomies = $wp_properties['taxonomies'];
+
+  $limit = ($_REQUEST['limit'] ? $_REQUEST['limit'] : -1);
+	
     // If the API key isn't valid, we quit
     if($_REQUEST['api'] != $api_key) die(__('Invalid API key.', 'wpp'));
     // Start building our wp query object
     $args = array(
       'post_type' => 'property',
       'post_status' => 'publish',
-      'posts_per_page' => -1
+      'posts_per_page' => $limit
     );
     $wpq = new wp_query($args);
     if($wpq->post_count == 0) die(__('No published properties.', 'wpp'));
@@ -144,6 +157,17 @@ class wpi_property_export {
       $data = preg_replace('/XML_Serializer_Tag/i', 'tag', $data);
       print $data;
     }
+
+    $mtime = microtime();
+    $mtime = explode(" ",$mtime);
+    $mtime = $mtime[1] + $mtime[0];
+    $endtime = $mtime;
+    $totaltime = ($endtime - $starttime);
+
+    print '<stats>';
+    print '<count>' . $wpq->post_count . '</count>';
+    print '<load_time>' . $totaltime . '</load_time>';
+    print '</stats>';	
     die("</properties>");
   }
 }

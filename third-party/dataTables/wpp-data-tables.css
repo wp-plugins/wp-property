@@ -1,15 +1,15 @@
-.row-actions {
+.property_page_all_properties .row-actions {
   overflow: auto;
   margin-bottom: 7px;
   padding: 2px 0;
   clear: both;
 }
 
-.wp-list-table  {
+.property_page_all_properties .wp-list-table  {
   margin-bottom: 15px;
 }
 
-.toplevel_page_wpi_main .wp-list-table {
+.property_page_all_properties .wp-list-table {
   margin-top:0px;
 }
 
@@ -248,7 +248,7 @@ tr.even {
 	*margin-top: -1px;
 }
 
-.tablenav.top {
+.property_page_all_properties .tablenav.top {
   position: relative;
   z-index: 50;
   width: 220px;
@@ -258,22 +258,7 @@ tr.even {
 
 }
 
-.toplevel_page_wpi_main .top.tablenav {
-  background: none repeat scroll 0 0 transparent;
-  border: 0 none;
-  margin: 0;
-  padding: 0;
-  position: absolute;
-  z-index: 100;
-}
-
-background: none repeat scroll 0 0 transparent;
-    border: 0 none;
-    margin: 0;
-    padding: 0;
-    position: absolute;
-    z-index: 100;
-
+ 
 .top .dataTables_info {
 	float: none;
 }
@@ -318,11 +303,6 @@ td.details {
   margin-bottom: 10px;
 }
 
-.toplevel_page_wpi_main #wp-list-table_paginate {
-  position: relative;
-  right:0;
-  top:5px;
-}
 
 .paging_full_numbers span.paginate_button,
  	.paging_full_numbers span.paginate_active {

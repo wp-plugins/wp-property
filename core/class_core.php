@@ -80,12 +80,13 @@ class WPP_Core {
     wp_register_script('wp-property-admin-overview', WPP_URL. '/js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
     wp_register_script('wp-property-global', WPP_URL. '/js/wp-property-global.js', array('jquery'),WPP_Version);
     wp_register_script('google-maps', 'http://maps.google.com/maps/api/js?sensor=true');
+    wp_register_script('jquery-gmaps', WPP_URL. '/js/jquery.ui.map.min.js', array('google-maps','jquery-ui-core','jquery-ui-widget'));
     wp_register_script('jquery-quicksand', WPP_URL. '/third-party/jquery.quicksand.js', array('jquery'));
     wp_register_script('jquery-nivo-slider', WPP_URL. '/third-party/jquery.nivo.slider.pack.js', array('jquery'));
     wp_register_script('jquery-address', WPP_URL. '/js/jquery.address-1.3.2.js', array('jquery'));
     wp_register_script('jquery-scrollTo', WPP_URL. '/js/jquery.scrollTo-min.js', array('jquery'));
-    wp_register_script('jquery-validate', WPP_URL. '/js/jquery.validate.min.js', array('jquery'));
-    
+    //wp_register_script('jquery-validate', WPP_URL. '/js/jquery.validate.min.js', array('jquery'));
+    wp_register_script('jquery-validate', WPP_URL. '/js/jquery.validate.js', array('jquery'));
     wp_register_script('jquery-ui-widget', WPP_URL. '/js/jquery.ui.widget.min.js', array('jquery-ui-core'));
     wp_register_script('jquery-ui-mouse', WPP_URL. '/js/jquery.ui.mouse.min.js', array('jquery-ui-core'));
     wp_register_script('jquery-ui-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
@@ -152,8 +153,8 @@ class WPP_Core {
       'parent_item_colon' => ''
     );
     
-    $labels = apply_filters('wpp_object_labels', $labels);
-
+    $wp_properties['labels'] = apply_filters('wpp_object_labels', $labels);
+ 
     // Modify admin body class
     add_filter('admin_body_class', array('WPP_Core', 'admin_body_class'));
 
@@ -162,8 +163,7 @@ class WPP_Core {
 
     // Register custom post types
     register_post_type('property', array(
-      'labels' => $labels,
-      'singular_label' => __('Property','wpp'),
+      'labels' => $wp_properties['labels'],
       'public' => true,
       'show_ui' => true,
       '_builtin' => false,
@@ -408,7 +408,7 @@ class WPP_Core {
 
     // Create property settings page
     $settings_page  = add_submenu_page( 'edit.php?post_type=property', __('Settings','wpp'), __('Settings','wpp'), 'manage_wpp_settings', 'property_settings', create_function('','global $wp_properties; include "ui/page_settings.php";'));
-    $all_properties = add_submenu_page( 'edit.php?post_type=property', __('All Properties','wpp'), __('All Properties','wpp'), 'edit_wpp_properties', 'all_properties', create_function('','global $wp_properties; include "ui/page_all_properties.php";'));
+    $all_properties = add_submenu_page( 'edit.php?post_type=property', $wp_properties['labels']['all_items'], $wp_properties['labels']['all_items'], 'edit_wpp_properties', 'all_properties', create_function('','global $wp_properties; include "ui/page_all_properties.php";'));
     /**
      * Next used to add custom submenu page 'All Properties' with Javascript dataTable
      * @author Anton K
@@ -1197,12 +1197,12 @@ class WPP_Core {
    *
    */
   function admin_init() {
-    global $wp_rewrite;
+    global $wp_rewrite, $wp_properties;
 
     WPP_F::fix_screen_options();
 
     add_meta_box( 'property_meta', __('General Information','wpp'), array('WPP_UI','metabox_meta'), 'property', 'normal' );
-    add_meta_box( 'propetry_filter', __('Property Search','wpp'), array('WPP_UI','metabox_property_filter'), 'property_page_all_properties', 'normal' );
+    add_meta_box( 'propetry_filter',  $wp_properties['labels']['name'] . ' ' . __('Search','wpp'), array('WPP_UI','metabox_property_filter'), 'property_page_all_properties', 'normal' );
     
     // Add metaboxes
     do_action('wpp_metaboxes');
@@ -1396,10 +1396,12 @@ class WPP_Core {
       $defaults['fancybox_preview'] = $wp_properties['configuration']['property_overview']['fancybox_preview'];
       $defaults['bottom_pagination_flag'] = ($wp_properties['configuration']['bottom_insert_pagenation'] == 'true' ? true : false);
       $defaults['thumbnail_size'] = $wp_properties['configuration']['property_overview']['thumbnail_size'];
+      $defaults['sort_by_text'] = __('Sort By:', 'wpp');
       $defaults['sort_by'] = 'menu_order';
       $defaults['sort_order'] = 'ASC';
       $defaults['template'] = false;
       $defaults['ajax_call'] = false;
+      $defaults['sorter_type'] = 'buttons';
       $defaults['pagination'] = 'on';
       $defaults['per_page'] = 10;
       $defaults['starting_row'] = 0;
@@ -1535,7 +1537,7 @@ class WPP_Core {
       
       //** Calculate number of pages */
       if($wpp_query['pagination'] == 'on') {
-        $wpp_query['pages'] = round($wpp_query['properties']['total'] / $wpp_query['per_page']);
+        $wpp_query['pages'] = ceil($wpp_query['properties']['total'] / $wpp_query['per_page']);
       }
       
       //** Set for quick access (for templates */
@@ -1555,6 +1557,8 @@ class WPP_Core {
       ob_start();
       
       $template = $wpp_query['template'];
+      $fancybox_preview = $wpp_query['fancybox_preview'];
+      $show_children = $wpp_query['show_children'];
       
       // 1. Try custom template in theme folder ("template=" in shortcode)
       if(file_exists(STYLESHEETPATH . "/property-overview-$template.php")) {
@@ -1588,11 +1592,11 @@ class WPP_Core {
       
       // Initialize result (content which will be shown) and open wrap (div) with unique id
       $result['top'] = '<div id="wpp_shortcode_'. $defaults['unique_hash'] .'" class="wpp_ui wpp_property_overview_shortcode">';
-      $result['top_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_top_pagination'));
+      $result['top_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_top_pagination', 'sorter_type' => $wpp_query['sorter_type'], 'sort_by_text' => $wpp_query['sort_by_text']));
       $result['result'] = $ob_get_contents;
       
       if($wpp_query['bottom_pagination_flag'] == 'true') {
-        $result['bottom_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_bottom_pagination'));
+        $result['bottom_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_bottom_pagination', 'sorter_type' => $wpp_query['sorter_type'], 'sort_by_text' => $wpp_query['sort_by_text']));
       }
       
       $result['bottom'] = '</div>';

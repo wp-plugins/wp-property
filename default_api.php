@@ -492,12 +492,10 @@
     $currency_symbol = (!empty($wp_properties['configuration']['currency_symbol']) ? $wp_properties['configuration']['currency_symbol'] : "$");
     $currency_symbol_placement  = (!empty($wp_properties['configuration']['currency_symbol_placement']) ? $wp_properties['configuration']['currency_symbol_placement'] : "before");
 
-    $content = trim(str_replace(",", "", $content));
+    $content = trim(str_replace(array("$", ","), "", $content));
 
-    
-    
     if (!is_numeric($content) && substr_count($content, '-')){
-      $hyphen_between = explode('-', $content);
+      $hyphen_between = explode('-', $content);      
       return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). WPP_F::format_numeric($hyphen_between[0]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($hyphen_between[1]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     } elseif (!is_numeric($content)) {
     

@@ -5,6 +5,11 @@
 	Version: 0.6
  */
  
+
+ 
+ .entry-content .wpp_sortable_dropdown {
+  margin :0;
+ }
  
  .wpp_feps_form input {
   margin: 0;
