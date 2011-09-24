@@ -3,6 +3,10 @@
   Version: 0.1
  */
 
+
+.widget ul.wpp_search_group {
+  margin:0;
+}
  
   
  ul.wpp_featured_properties_shortcode .wp-caption-text:before {

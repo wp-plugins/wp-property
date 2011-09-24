@@ -1151,7 +1151,7 @@ jQuery(document).ready(function($){
         }
         
         /* Select grouped tab if grouping is enabled here */
-        <?php if($group_attributes == 'true') { ?>
+        <?php if($stats_by_groups && $group_attributes == 'true') { ?>
         jQuery(".wpp_subtle_tabs").tabs('select',1);
         <?php } ?>
         
@@ -1172,9 +1172,7 @@ jQuery(document).ready(function($){
         function wpp_adjust_property_type_option() {
         
           var count = jQuery(".wpp_prperty_types_<?php echo $this->number;?>:checked").length;
-          
-          console.log(count);
-          
+ 
           if(count < 2) {
             jQuery(".wpp_attribute_wrapper.property_type", this_search_box).hide();
             jQuery(".wpp_attribute_wrapper.property_type input", this_search_box).attr("checked", false);
@@ -1217,7 +1215,10 @@ jQuery(document).ready(function($){
 
         <ul class="wpp_section_tabs  tabs">
           <li><a href="#all_atributes_<?php echo $this->id; ?>"><?php _e('All Atributes','wpp'); ?></a></li>
+          
+          <?php if($stats_by_groups) { ?>
           <li><a href="#grouped_attributes_<?php echo $this->id; ?>"><?php _e('Grouped Attributes','wpp'); ?></a></li>
+          <?php } ?>
         </ul>
 
         <div id="all_atributes_<?php echo $this->id; ?>" class="wp-tab-panel wpp_all_attributes">
@@ -1232,6 +1233,7 @@ jQuery(document).ready(function($){
           </ul>
         </div><?php /* end all (ungrouped) attribute selection */ ?>
 
+        <?php if($stats_by_groups) { ?>
         <div id="grouped_attributes_<?php echo $this->id; ?>" class="wpp_grouped_attributes_container wp-tab-panel">
 
           <?php foreach($stats_by_groups as $gslug => $gstats) { ?>
@@ -1249,6 +1251,7 @@ jQuery(document).ready(function($){
             </ul>
           <?php } /* End cycle through $stats_by_groups */ ?>
         </div>
+        <?php } ?>
 
         </div>
 
@@ -1256,11 +1259,13 @@ jQuery(document).ready(function($){
 
         <li>
 
+        <?php if($stats_by_groups) { ?>
         <div>
           <input  id="<?php echo $this->get_field_id('group_attributes'); ?>"  class="wpp_toggle_attribute_grouping" type="checkbox" value="true" name="<?php echo $this->get_field_name('group_attributes'); ?>" <?php checked($group_attributes, 'true'); ?> />
           <label for="<?php echo $this->get_field_id('group_attributes'); ?>"><?php _e('Group attributes together.'); ?></label>
         </div>
         </li>
+        <?php } ?>
 
         <li>
 

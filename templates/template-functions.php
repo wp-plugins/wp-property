@@ -837,7 +837,8 @@ if(!function_exists('draw_stats')):
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
     $property_stats = WPP_F::get_stat_values_and_labels($property, $args);
-
+    $groups = $wp_properties['property_groups'];
+      
     if(!$property_stats) {
       return;
     }
@@ -899,7 +900,8 @@ if(!function_exists('draw_stats')):
       return $stats;
     }
 
-    if($sort_by_groups == 'false') {
+    //** Disable regular list if groups are NOT enabled, or if groups is not an array */
+    if($sort_by_groups != 'true' || !is_array($groups)) {
       $alt = 'alt';
       foreach ($stats as $label => $value) {
         $tag = $labels_to_keys[$label];
@@ -934,14 +936,15 @@ if(!function_exists('draw_stats')):
     } else {
       $stats_by_groups = sort_stats_by_groups($stats, array('includes_values' => true));
 
-      $groups = $wp_properties['property_groups'];
       $main_stats_group = $wp_properties['configuration']['main_stats_group'];
+      
       $labels_to_keys = array_flip($wp_properties['property_stats']);
+      
 
       foreach($stats_by_groups as $gslug => $gstats) {
 
-        if($main_stats_group != $gslug || !key_exists($gslug, $groups)) {
-          $group_name = ( key_exists($gslug, $groups) ? $groups[$gslug]['name'] : __('Other','wpp') );
+        if($main_stats_group != $gslug || !@key_exists($gslug, $groups)) {
+          $group_name = ( @key_exists($gslug, $groups) ? $groups[$gslug]['name'] : __('Other','wpp') );
           ?>
           <span class="wpp_stats_group"><?php echo $group_name; ?></span>
           <?php
@@ -1015,6 +1018,16 @@ if(!function_exists('sort_stats_by_groups')):
     
     $original_stats = $stats;
 
+    //** Get group deta */
+    $groups = $wp_properties['property_groups'];
+
+    /** Get attribute-group association */
+    $stats_groups = $wp_properties['property_stats_groups'];
+    
+    if(!is_array($groups) || !is_array($stats_groups)) {
+      return;
+    }
+    
     $defaults = array(
       'includes_values' => false,
       'fix_stats_array' => false
@@ -1045,8 +1058,7 @@ if(!function_exists('sort_stats_by_groups')):
         //echo "$meta_key - $attribute_label <br />";
         $fixed_stats[$attribute_label] = $meta_key;
 
-      }
-      
+      }      
 
       $stats = $fixed_stats;
     }
@@ -1054,20 +1066,15 @@ if(!function_exists('sort_stats_by_groups')):
 
     $labels_to_keys = array_flip($wp_properties['property_stats']);
 
-
-    //** Get group deta */
-    $groups = $wp_properties['property_groups'];
-
-    /** Get attribute-group association */
-    $stats_groups = $wp_properties['property_stats_groups'];
+    
     $group_keys = array_keys($wp_properties['property_groups']);
 
     //** Get group from settings, or set to first group as default */
     $main_stats_group = (!empty($wp_properties['configuration']['main_stats_group']) ? $wp_properties['configuration']['main_stats_group'] : $group_keys[0]);
 
     $filtered_stats = array($main_stats_group => array());
-    $ungrouped_stats = array();
- 
+    
+    $ungrouped_stats = array(); 
     
     foreach($stats as $label => $value) {
       
@@ -1085,13 +1092,16 @@ if(!function_exists('sort_stats_by_groups')):
         break;
       }
 
-
       if($g_slug && !key_exists($g_slug, $groups)) {
         $g_slug = false;
       }
       
        if($args['includes_values'] == true) {
         $value = $original_stats[$label];
+       }
+       
+       if(empty($value)) {
+        continue;
        }
 
       if($g_slug) {
@@ -1157,8 +1167,6 @@ if(!function_exists('draw_property_search_form')):
     }
 
     extract( $args, EXTR_SKIP );
-
-
 
     $search_values = array();
     $property_type_flag = false;
@@ -1234,6 +1242,7 @@ if(!function_exists('draw_property_search_form')):
     }
     
     
+    $main_stats_group = $wp_properties['configuration']['main_stats_group'];
 
 
 
@@ -1241,7 +1250,7 @@ if(!function_exists('draw_property_search_form')):
 
       $this_group = $group_key;
 
-      if($this_group == 'ungrouped' || $this_group === 0) {
+      if($this_group == 'ungrouped' || $this_group === 0 || $this_group == $main_stats_group) {
          $is_a_group = false;
         $this_group = 'not_a_group';
       } else {
@@ -1329,6 +1338,18 @@ if(!function_exists('draw_property_search_form')):
 
 endif;
 
+
+
+  /**
+   * Draws a search form element
+   *
+   *
+   * @return array|$wp_properties
+   * @since 1.22.1
+   * @version 1.14
+   *
+    */
+if(!function_exists('wpp_render_search_input')):
 function wpp_render_search_input($args = false) {
   global $wp_properties;
 
@@ -1468,6 +1489,7 @@ function wpp_render_search_input($args = false) {
 
 
 }
+endif;
 
 if(!function_exists('wpp_get_image_link')):
   /*

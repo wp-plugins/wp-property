@@ -1152,17 +1152,6 @@ class WPP_F {
     //** Get API key - force API key update just in case */
     $api_key = wpi_property_export::get_api_key(array('force_check' => true, 'return' => true));
 
-    if(strlen($api_key) != 40) {
-      if($return) {
-        if(empty($api_key)) {
-          $api_key = __("The API key could not be generated.", 'wpp');
-        }
-        return sprintf(__('An error occured during premium feature check: <b>%s</b>.','wpp'), $api_key);
-      } else {
-        return;
-      }
-    }
-
     $check_url = "http://updates.usabilitydynamics.com/?system={$system}&site={$blogname}&system_version={$wpp_version}&api_key={$api_key}";
 
     $response = @wp_remote_get($check_url);
@@ -1206,6 +1195,19 @@ class WPP_F {
     } // available_features
 
 
+
+    if(strlen($api_key) != 40) {
+      if($return) {
+        if(empty($api_key)) {
+          $api_key = __("The API key could not be generated.", 'wpp');
+        }
+        return sprintf(__('An error occured during premium feature check: <b>%s</b>.','wpp'), $api_key);
+      } else {
+        return;
+      }
+    }
+
+    
     if($response->features == 'eligible' && $wp_properties['configuration']['disable_automatic_feature_update'] != 'true') {
 
       // Try to create directory if it doesn't exist

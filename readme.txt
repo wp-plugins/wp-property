@@ -206,6 +206,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.22.1 =
+* Patch release, fixing single-property display issues when grouping not being enabled after upgrade.
+
 = 1.22.0 =
 * Grouping capability - attributes can now be placed into different groups, and ordered by groups.
 * Search widget sortable attributes - attributed in the property search widget can now be sorted independent of the sort order in the Developer tab.
