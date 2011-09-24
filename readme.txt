@@ -206,6 +206,18 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.22.0 =
+* Grouping capability - attributes can now be placed into different groups, and ordered by groups.
+* Search widget sortable attributes - attributed in the property search widget can now be sorted independent of the sort order in the Developer tab.
+* Search widget and [property_search] shortcode can render attributes using groups.
+* Added function to execute shortcodes in Text Widget, eliminating the need for reliance on a third-party plugin.
+* Attribute groups create and place property attributes into different metaboxes on the property editing screen.
+* Number and currency formatting on the property search widget.
+* Property Overview can now use "post_parent" to get child properties of a parent property.
+* Featured properties can now be queried using the [property_overview] shortcode.
+* Control panel property overview filtering system improved to work with toggable columns.
+* Fix to Property Gallery widget to now show caption container when there is no caption.
+
 = 1.21.0 =
 * Fixed issue with front-end pagination calculating pages incorrectly. 
 * Resolved bug that prevents premium features from being enabled when they were manually disabled, and then upgraded.

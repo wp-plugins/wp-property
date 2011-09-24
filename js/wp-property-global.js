@@ -5,6 +5,157 @@
  *
 */
 
+/*
+ * Assign Property Stat to Group Functionality
+ * 
+ * @param object opt Params
+ * @author Maxim Peshkov
+ */
+jQuery.fn.wppGroups = function(opt) {
+  var 
+  instance = jQuery(this),
+  //* Default params */
+  defaults = {
+    groupsBox: '#wpp_attribute_groups',
+    groupWrapper: '#wpp_dialog_wrapper',
+    closeButton: '.wpp_close_dialog',
+    assignButton: '.wpp_assign_to_group',
+    unassignButton: '.wpp_unassign_from_group',
+    removeButton: '.wpp_delete_row',
+    sortButton: "#sort_stats_by_groups" 
+  };
+  
+  opt = jQuery.extend({}, defaults, opt);
+  
+  //* Determine if dialog Wrapper exist */
+  if(!jQuery(opt.groupWrapper).length > 0) {
+    jQuery('body').append('<div id="wpp_dialog_wrapper"></div>');
+  }
+  
+  var 
+  groupsBlock = jQuery(opt.groupsBox),
+  sortButton = jQuery(opt.sortButton),
+  statsRow = instance.parent().parent(),
+  statsTable = instance.parents('#wpp_inquiry_attribute_fields'),
+  close = jQuery(opt.closeButton, groupsBlock),
+  assign = jQuery(opt.assignButton),
+  unassign = jQuery(opt.unassignButton),
+  wrapper = jQuery(opt.groupWrapper),
+  colorpicker = jQuery('input.wpp_input_colorpicker', groupsBlock),
+  remove = jQuery(opt.removeButton, groupsBlock),
+  sortButton = jQuery(opt.sortButton),
+  
+  //* Open Groups Block */
+  showGroupBox = function() {
+    groupsBlock.show(300);
+    wrapper.css('display','block');
+  },
+  
+  //* Close Groups Block */
+  closeGroupBox = function () {
+    groupsBlock.hide(300);
+    wrapper.css('display','none');
+    
+    statsRow.each(function(i, e){
+      jQuery(e).removeClass('groups_active');
+    })
+  };
+  
+  //* EVENTS */
+  instance.live('click', function(){
+    showGroupBox();
+    jQuery(this).parent().parent().addClass('groups_active');
+  });
+  
+  instance.live('focus', function(){
+    jQuery(this).trigger('blur');
+  });
+  
+  //* Close Group Box */
+  close.live('click', function(){
+    closeGroupBox();
+  });
+  
+  //* Assign attribute to Group */
+  assign.live('click', function(){
+    var row = jQuery(this).parent().parent();
+    statsRow.each(function(i,e){
+      if(jQuery(e).hasClass('groups_active')) {
+        jQuery(e).css('background-color', jQuery('input.wpp_input_colorpicker' , row).val());
+        jQuery(e).attr('wpp_attribute_group' , row.attr('slug'));
+        jQuery('input.wpp_group_slug' , e).val(row.attr('slug'));
+        jQuery('input.wpp_attribute_group' , e).val(jQuery('input.slug_setter' , row).val());
+      }
+    });
+    closeGroupBox();
+  });
+  
+  //* Unassign attribute from Group */
+  unassign.live('click', function(){
+    statsRow.each(function(i,e){
+      if(jQuery(e).hasClass('groups_active')) {
+        jQuery(e).css('background-color', '');
+        jQuery(e).removeAttr('wpp_attribute_group');
+        jQuery('input.wpp_group_slug' , e).val('');
+        jQuery('input.wpp_attribute_group' , e).val('');
+      }
+    });
+    closeGroupBox();
+  });
+  
+  //* Refresh background of all attributes on color change */
+  colorpicker.live('change', function(){
+    var cp = jQuery(this);
+    var s = cp.parent().parent().attr('slug');
+    instance.each(function(i,e){
+      if(s == jQuery(e).next().val()) {
+        jQuery(e).parent().parent().css('background-color', cp.val());
+      }
+    });
+  });
+  
+  //* Remove group from the list */
+  remove.live('click', function(){
+    var s = jQuery(this).parent().parent().attr('slug');
+    instance.each(function(i,e){
+      if(s == jQuery(e).next().val()) {
+        jQuery(e).parent().parent().css('background-color', '');
+        jQuery(e).val('');
+        jQuery(e).next().val('');
+      }
+    });
+  });
+  
+  //* Close Groups Box on wrapper click */
+  wrapper.live('click', function(){
+    closeGroupBox();
+  });
+  
+  //* Sorts all attributes by Groups */
+  sortButton.live('click', function(){
+    jQuery('tbody tr' , groupsBlock).each(function(gi,ge){
+      statsRow.each(function(si,se){
+        if(typeof jQuery(se).attr('wpp_attribute_group') != 'undefined') {
+          if(jQuery(se).attr('wpp_attribute_group') == jQuery(ge).attr('slug')) {
+            jQuery(se).attr('sortpos', (gi + 1));
+          }
+        } else {
+          jQuery(se).attr('sortpos', '9999');
+        }
+      });
+    });
+    var sortlist = jQuery('tbody' , statsTable);
+    var listitems = sortlist.children('tr').get();
+    listitems.sort(function(a, b) {
+        var compA = parseFloat(jQuery(a).attr('sortpos'));
+        var compB = parseFloat(jQuery(b).attr('sortpos'));
+        return (compA < compB) ? -1 : (compA > compB) ? 1 : 0;
+    });
+    jQuery.each(listitems, function(idx, itm) {
+      sortlist.append(itm);
+    });
+  });
+}
 
 /*
  * Basic e-mail validation
@@ -32,6 +183,7 @@ var bindColorPicker = function(instance){
       onSubmit: function(hsb, hex, rgb, el) {
         jQuery(el).val('#' + hex);
         jQuery(el).ColorPickerHide();
+        jQuery(el).trigger('change');
       },
       onBeforeShow: function () {
         jQuery(this).ColorPickerSetColor(this.value);
@@ -106,19 +258,25 @@ var updateRowNames = function(instance, allowRandomSlug) {
   });
 }
 
-jQuery(document).ready(function() {
+function toggle_advanced_options() {
   jQuery(".wpp_show_advanced").live("click", function() {
+
     var wrapper = jQuery(this).parents('tr.wpp_dynamic_table_row');
+
     if(wrapper.length == 0) {
       var wrapper = jQuery(this).parents('.wpp_something_advanced_wrapper');
     }
-    
- 
-    jQuery('li.wpp_development_advanced_option', wrapper).toggle();  });
 
+    jQuery('li.wpp_development_advanced_option', wrapper).toggle();  
+  });
+}
+
+jQuery(document).ready(function() {
+  
+  toggle_advanced_options();
+  
   // Toggle wpp_wpp_settings_configuration_do_not_override_search_result_page_
   jQuery("#wpp_wpp_settings_configuration_automatically_insert_overview_").change(function() {
-
     if(jQuery(this).is(":checked")) {
       jQuery("li.wpp_wpp_settings_configuration_do_not_override_search_result_page_row").hide();
 
@@ -170,12 +328,24 @@ jQuery(document).ready(function() {
       jQuery(parent).remove();
     }
   });
-
+  
   jQuery('.wpp_attach_to_agent').live('click', function(){
     var agent_image_id = jQuery(this).attr('id');
     if (agent_image_id != '')
       jQuery('#library-form').append('<input name="wpp_agent_post_id" type="text" value="' + agent_image_id + '" />').submit();
-  })
+  });
+  
+  //* Add Sort functionality to Table */
+  if(typeof jQuery.fn.sortable == 'function') {
+    jQuery('table.wpp_sortable tbody').sortable();
+    jQuery('table.wpp_sortable tbody tr').live("mouseover mouseout", function(event) {
+      if ( event.type == "mouseover" ) {
+        jQuery(this).addClass("wpp_draggable_handle_show");
+      } else {
+        jQuery(this).removeClass("wpp_draggable_handle_show");
+      }
+    });
+  }
 });
 
 

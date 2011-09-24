@@ -223,14 +223,16 @@ class WPP_F {
       global $wp_properties;
       
       $keys = array_keys($wp_properties['property_stats']);
-      
+
       $keys[] = 'post_title';
       $keys[] = 'post_date';
+      $keys[] = 'post_parent';
       $keys[] = 'property_type';
-      
+      $keys[] = 'featured';
+
       //* Adds filter for ability to apply custom queryable keys */
       $keys = apply_filters('get_queryable_keys', $keys);
-      
+
       return $keys;
     }
     
@@ -1147,7 +1149,22 @@ class WPP_F {
     $system = 'wpp';
     $wpp_version = get_option( "wpp_version" );
 
-    $check_url = "http://updates.usabilitydynamics.com/?system=$system&site=$blogname&system_version=$wpp_version";
+    //** Get API key - force API key update just in case */
+    $api_key = wpi_property_export::get_api_key(array('force_check' => true, 'return' => true));
+
+    if(strlen($api_key) != 40) {
+      if($return) {
+        if(empty($api_key)) {
+          $api_key = __("The API key could not be generated.", 'wpp');
+        }
+        return sprintf(__('An error occured during premium feature check: <b>%s</b>.','wpp'), $api_key);
+      } else {
+        return;
+      }
+    }
+
+    $check_url = "http://updates.usabilitydynamics.com/?system={$system}&site={$blogname}&system_version={$wpp_version}&api_key={$api_key}";
+
     $response = @wp_remote_get($check_url);
 
      if(!$response) {
@@ -1975,9 +1992,10 @@ class WPP_F {
       'post_title'  => 'like',
       'post_status' => 'equal',
       'post_author' => 'equal',
+      'post_parent' => 'equal',
       'post_date'   => 'date'
     );
-    
+
     //** added to avoid range and "LIKE" searches on single numeric values *
     if(is_array($args)){
       foreach($args as $thing => $value) {
@@ -2031,23 +2049,22 @@ class WPP_F {
       $additional_sql .= " AND post_status = 'publish' ";
       $additional_sql_join .= " AND p.post_status = 'publish' ";
     } else {
-      $additional_sql .= " AND post_status = '{$query['post_status']}' ";
-      $additional_sql_join .= " AND p.post_status = '{$query['post_status']}' ";
+      if ( $query['post_status'] != 'all' ) {
+        $additional_sql .= " AND post_status = '{$query['post_status']}' ";
+        $additional_sql_join .= " AND p.post_status = '{$query['post_status']}' ";
+      }
       unset($query['post_status']);
     }
-    
+
     foreach( $non_post_meta as $field => $condition ) {
       if ( key_exists( $field, $query ) ) {
         if ( $condition == 'like' ) {
           $additional_sql      .= " AND $field LIKE '%{$query[ $field ]}%' ";
           $additional_sql_join .= " AND p.$field LIKE '%{$query[ $field ]}%' ";
-        } 
+        }
         if ( $condition == 'equal' ) {
-          // Process 'all' for post_status
-          if ( $query[ $field ] != 'all' ) {
-            $additional_sql      .= " AND $field = '{$query[ $field ]}' ";
-            $additional_sql_join .= " AND p.$field = '{$query[ $field ]}' ";
-          }
+          $additional_sql      .= " AND $field = '{$query[ $field ]}' ";
+          $additional_sql_join .= " AND p.$field = '{$query[ $field ]}' ";
         }
         if ( $condition == 'date' ) {
           $additional_sql      .= " AND YEAR($field) = ".substr($query[ $field ], 0, 4)." AND MONTH($field) = ".substr($query[ $field ], 4, 2)." ";

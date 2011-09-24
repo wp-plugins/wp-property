@@ -50,9 +50,11 @@ class WPP_Object_List_Table extends WPP_List_Table {
   public function get_bulk_actions() {
     $actions = array();
     
-    $actions['untrash'] = __( 'Restore' );
-    $actions['delete'] = __( 'Delete Permanently' );
-    $actions['trash'] = __( 'Move to Trash' );
+    if(current_user_can('delete_wpp_property')) {
+      $actions['untrash'] = __( 'Restore' );
+      $actions['delete'] = __( 'Delete Permanently' );
+      $actions['trash'] = __( 'Move to Trash' );
+    }
     
     return $actions;
   }
@@ -76,7 +78,7 @@ class WPP_Object_List_Table extends WPP_List_Table {
     //$edit_link = admin_url("admin.php?page=wpi_page_manage_invoice&wpi[existing_invoice][invoice_id]={$post->ID}");
     $title = _draft_or_post_title($post->ID);
     $post_type_object = get_post_type_object( $post->post_type );
-    $can_edit_post = current_user_can( $post_type_object->cap->edit_posts, $post->ID );
+    $can_edit_post = current_user_can( $post_type_object->cap->edit_post);
     
     $result = "<tr id='object-{$ID}' class='wpp_parent_element'>";
     

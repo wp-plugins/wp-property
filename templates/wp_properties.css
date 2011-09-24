@@ -22,7 +22,15 @@
 }
 
 ul.feps_property_input_fields .qq-upload-button {
-  cursor: pointer;
+    background: none repeat scroll 0 0 #DDDDDD;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -khtml-border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 5px;
+    text-align: center;
+    width: 90px;
 }
 
 .qq-upload-failed-text {display:none;}
@@ -89,6 +97,10 @@ ul.feps_property_input_fields label {
 
 ul.feps_user_input_fields input[type="text"] {
   width: 20em;
+}
+
+ul.feps_property_input_fields textarea {
+  min-height: 100px;
 }
 
 ul.feps_property_input_fields textarea,  
@@ -457,30 +469,38 @@ html[xmlns] .clearfix { display: block; }
 
 * html .clearfix { height: 1%; }
 
-#property_stats.overview_stats {
+#property_stats.overview_stats,
+.wpp_property_stats.overview_stats {
   border-top: 1px dashed #CFCBCB;
   clear: both;
   margin-bottom: 15px; }
 
-  #property_stats.overview_stats dt, #property_stats.overview_stats dd {
+  #property_stats.overview_stats dt, 
+  #property_stats.overview_stats dd,
+  .wpp_property_stats.overview_stats dt, 
+  .wpp_property_stats.overview_stats dd {
     display: block;
     margin-bottom: 0;
     padding-bottom: 10px;
     padding-top: 10px; }
 
-  #property_stats.overview_stats dt {
+  #property_stats.overview_stats dt,
+  .wpp_property_stats.overview_stats dt {
     clear: left;
     float: left;
     font-weight: bold;
     width: 150px; }
 
-  #property_stats.overview_stats dd {
+  #property_stats.overview_stats dd,
+  .wpp_property_stats.overview_stats dd {
     border-bottom: 1px dashed #CFCBCB;
     padding-left: 26px; }
 
-    #property_stats.overview_stats dd.alt { background: #eee }
+    #property_stats.overview_stats dd.alt,
+    .wpp_property_stats.overview_stats dd.alt { background: #eee }
 
-    #property_stats.overview_stats dd span {  }
+    #property_stats.overview_stats dd span,
+    .wpp_property_stats.overview_stats dd span {  }
 
 
 #primary .sidebar_property_thumbnail  img {
@@ -555,7 +575,7 @@ html[xmlns] .clearfix { display: block; }
 
     .wpp_search_properties_widget .wpp_search_elements li label {
       float: left;
-      width: 90px; }
+      width: 85px; }
       
 .wpp_gallery_widget br { display: none !important; }
 

@@ -1,5 +1,23 @@
 jQuery(document).ready(function() {
 
+      
+    jQuery(".wpp_search_attribute_wrap input.wpp_currency").change(function() {
+      this_value = jQuery(this).val();
+      var val = jQuery().number_format( this_value.replace(/[^\d|\.]/g,'') );
+      jQuery(this).val( val ); 
+    });
+    
+    jQuery(".wpp_search_attribute_wrap input.wpp_numeric").change(function() {
+      this_value = jQuery(this).val();
+      var val = jQuery().number_format( this_value.replace(/[^\d|\.]/g,''), {
+        numberOfDecimals:0,
+        decimalSeparator: '.',
+        thousandSeparator: ','
+      } );
+      jQuery(this).val( val ); 
+    });
+    
+    
 	jQuery("a.fancybox_image").fancybox({
 		'transitionIn'	:	'elastic',
 		'transitionOut'	:	'elastic',

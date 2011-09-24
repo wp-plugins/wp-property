@@ -960,6 +960,7 @@ jQuery(document).ready(function($){
         $sort_by = $instance['sort_by'];
         $sort_order = $instance['sort_order'];
         $searchable_property_types = $instance['searchable_property_types'];
+        $grouped_searchable_attributes = $instance['grouped_searchable_attributes'];
 
       
         if(!is_array($search_attributes)) {
@@ -982,31 +983,39 @@ jQuery(document).ready(function($){
         } else  {
           echo '<span class="wpp_widget_no_title"></span>';
         }
+        
 
-        $search_args['search_attributes'] = $search_attributes;
+        //** Load different attribute list depending on group selection */
+        if($instance['group_attributes'] == 'true') {
+          $search_args['group_attributes'] = true;
+          $search_args['search_attributes'] = $instance['grouped_searchable_attributes'];
+        } else {
+          $search_args['search_attributes'] = $search_attributes;
+        }
+        
         $search_args['searchable_property_types'] = $searchable_property_types;
 
         if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
-          
+
           if(empty($instance['per_page'])) {
             $instance['per_page'] = 10;
           }
-          
+
           $search_args['per_page'] = $instance['per_page'];
           $search_args['use_pagination'] = 'on';
         } else {
-          $search_args['use_pagination'] = 'off';        
+          $search_args['use_pagination'] = 'off';
           $search_args['per_page'] = $instance['per_page'];
         }
-        
+
         $search_args['instance_id'] = $widget_id;
         $search_args['sort_by'] = $sort_by;
         $search_args['sort_order'] = $sort_order;
-        
+
         draw_property_search_form($search_args);
 
         echo "<div class='cboth'></div></div>";
-        
+
         echo $after_widget;
     }
 
@@ -1014,42 +1023,252 @@ jQuery(document).ready(function($){
     function update($new_instance, $old_instance) {
         //Recache searchable values for search widget form
         $searchable_attributes = $new_instance['searchable_attributes'];
+        $grouped_searchable_attributes = $new_instance['grouped_searchable_attributes'];
         $searchable_property_types = $new_instance['searchable_property_types'];
         WPP_F::get_search_values($searchable_attributes, $searchable_property_types, false, $this->id);
-        
+
         return $new_instance;
     }
+    /**
+     * 
+     * Renders back-end property search widget tools.
+     * 
+     * @complexity 8     
+     * @author potanin@UD
+     * 
+     */    
+     function form($instance) {
+      global $wp_properties;
 
-    /** @see WP_Widget::form */
-    function form($instance) {
-        global $wp_properties;
+      //** Get widget-specific data */
+      $title = ($instance['title']);
+      $searchable_attributes = $instance['searchable_attributes'];
+      $grouped_searchable_attributes = $instance['grouped_searchable_attributes'];
+      $use_pagi = $instance['use_pagi'];
+      $per_page = $instance['per_page'];
+      $sort_by = $instance['sort_by'];
+      $sort_order = $instance['sort_order'];
+      $group_attributes = $instance['group_attributes'];
+      $searchable_property_types = $instance['searchable_property_types'];
+
+      //** Get WPP data */
+      $all_searchable_property_types = array_unique($wp_properties['searchable_property_types']);
+      $all_searchable_attributes = array_unique($wp_properties['searchable_attributes']);
+      $groups = $wp_properties['property_groups'];
+      $main_stats_group = $wp_properties['configuration']['main_stats_group'];
+
+
+      if(!is_array($all_searchable_property_types)) {
+        $error['no_searchable_types'] = true;
+      }
+
+      if(!is_array($all_searchable_property_types)) {
+        $error['no_searchable_attributes'] = true;
+      }
+
+      //** Set label for list below only */
+      if(!isset($wp_properties['property_stats']['property_type'])) {
+        $wp_properties['property_stats']['property_type'] = __('Property Type', 'wpp');
+      }
         
-        $title = esc_attr($instance['title']);
-        $all_searchable_attributes = array_unique($wp_properties['searchable_attributes']);
-        $searchable_attributes = $instance['searchable_attributes'];
-        $use_pagi = $instance['use_pagi'];
-        $per_page = $instance['per_page'];
-        $sort_by = $instance['sort_by'];
-        $sort_order = $instance['sort_order'];
+       if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) {        
 
-        $all_searchable_property_types = array_unique($wp_properties['searchable_property_types']);
-        $searchable_property_types = $instance['searchable_property_types'];
+        //** Add property type to the beginning of the attribute list, even though it's not a typical attribute */
+        array_unshift($all_searchable_attributes, 'property_type');
+       }
 
-        if(!is_array($all_searchable_property_types)) { ?>
-            <p><?php _e('No searchable property types were found.','wpp'); ?></p>
-    <?php }
+      
+      //** Find the difference between selected attributes and all attributes, i.e. unselected attributes */
+      if(is_array($searchable_attributes) && is_array($all_searchable_attributes)) {
+        $unselected_attributes = array_diff($all_searchable_attributes, $searchable_attributes);      
+      
+        //** Build new array beginning with selected attributes, in order, follow by all other attributes */
+        $ungrouped_searchable_attributes = array_merge($searchable_attributes, $unselected_attributes);
+      
+      } else {
+        $ungrouped_searchable_attributes = $all_searchable_attributes;
+      }
+     
 
-          ?>
-        <p>
-            <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
-                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
-            </label>
-        </p>
+      //* Perpare $all_searchable_attributes for using by sort function */
+      $temp_attrs = array();
+
+      foreach($all_searchable_attributes as $slug) {
+        $attribute_label = $wp_properties['property_stats'][$slug];
+        
+        if(empty($attribute_label)) {
+          $attribute_label = UD_F::de_slug($slug);
+        }
+        
+        $temp_attrs[$attribute_label] = $slug;
+      }
+
+      //* Sort stats by groups */
+      $stats_by_groups = sort_stats_by_groups($temp_attrs);
+
+      //** If the search widget cannot be created without some data, we bail */
+      if($error) {
+        echo '<p>' . _e('No searchable property types were found.','wpp') . '</p>';
+        return;
+      }
+      
+      /*
+        echo "<pre>";
+        //print_r($searchable_attributes);
+        //print_r($stats_by_groups);        
+        echo "</pre>";
+      */
+        
+      ?>
+     <script type="text/javascript">
+
+      jQuery(document).ready(function(){      
+      
+        var this_search_box = jQuery("#wpp_property_search_wrapper_<?php echo $this->number; ?>");
+        
+        /* Run on load to hide property type attribut if there is less than 2 property types */
+        wpp_adjust_property_type_option();
+      
+        jQuery("#all_atributes_<?php echo $this->id; ?> .wpp_sortable_attributes").sortable(); 
+
+        /* Setup tab the grouping/ungrouping tabs, and trigger checking the select box when tabs are switched */
+        jQuery(".wpp_subtle_tabs").tabs({
+          select: function(event, ui) {            
+            if(ui.index == 0) {
+              jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").attr("checked", false);
+            } else {
+              jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").attr("checked", true);
+            }            
+          }
+        });
+
+        /* Not sure if this is important */
+        if(typeof wpp_search_widget_dragstop == "undefined") {
+          jQuery('#widget-list').bind('dragstop', function(e){
+            jQuery('.wpp_search_widget_tab').tabs();
+          });
+          wpp_search_widget_dragstop = true;
+        }
+        
+        /* Select grouped tab if grouping is enabled here */
+        <?php if($group_attributes == 'true') { ?>
+        jQuery(".wpp_subtle_tabs").tabs('select',1);
+        <?php } ?>
+        
+        jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").change(function() {
+        
+          if(jQuery(this).is(":checked")) {
+            jQuery(".wpp_subtle_tabs").tabs('select',1);          
+          } else {
+            jQuery(".wpp_subtle_tabs").tabs('select',0);                    
+          }
+        
+        });
+        
+        jQuery(".wpp_prperty_types_<?php echo $this->number;?>").change(function() {
+          wpp_adjust_property_type_option();
+        });
+        
+        function wpp_adjust_property_type_option() {
+        
+          var count = jQuery(".wpp_prperty_types_<?php echo $this->number;?>:checked").length;
+          
+          console.log(count);
+          
+          if(count < 2) {
+            jQuery(".wpp_attribute_wrapper.property_type", this_search_box).hide();
+            jQuery(".wpp_attribute_wrapper.property_type input", this_search_box).attr("checked", false);
+          } else {
+            jQuery(".wpp_attribute_wrapper.property_type", this_search_box).show();          
+          }
+          
+        }
 
         
+      });
+
+    </script>
+
+    <ul id="wpp_property_search_wrapper_<?php echo $this->number; ?>" class="wpp_property_search_wrapper">
+
+      <li class="<?php echo $this->get_field_id('title'); ?>">
+        <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
+          <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+        </label>
+      </li>
+
+      <li class="wpp_property_types">
+        <p><?php _e('Property types to search:','wpp'); ?></p>
         <ul>
-          <?php if(is_array($wp_properties['sortable_attributes'])) { ?>
+        <?php foreach($all_searchable_property_types as $property_type) { ?>
+          <li>
+            <label for="<?php echo $this->get_field_id('searchable_property_types'); ?>_<?php echo $property_type; ?>">
+            <input class="wpp_prperty_types_<?php echo $this->number;?>" id="<?php echo $this->get_field_id('searchable_property_types'); ?>_<?php echo $property_type; ?>" name="<?php echo $this->get_field_name('searchable_property_types'); ?>[]" type="checkbox" <?php if (empty($searchable_property_types)) { echo  'checked="checked"'; } ?> value="<?php echo $property_type; ?>" <?php if(is_array($searchable_property_types) && in_array($property_type, $searchable_property_types)) { echo " checked "; } ?> />
+            <?php echo (!empty($wp_properties['property_types'][$property_type]) ? $wp_properties['property_types'][$property_type] : ucwords($property_type))  ;?>
+          </label>
+          </li>
+        <?php }  ?>
+        </ul>
+      </li>
+
+      <li class="wpp_attribute_selection">
+        <p><?php _e('Select the attributes you want to search.','wpp'); ?></p>
+        <div class="wpp_search_widget_tab wpp_subtle_tabs ">
+
+        <ul class="wpp_section_tabs  tabs">
+          <li><a href="#all_atributes_<?php echo $this->id; ?>"><?php _e('All Atributes','wpp'); ?></a></li>
+          <li><a href="#grouped_attributes_<?php echo $this->id; ?>"><?php _e('Grouped Attributes','wpp'); ?></a></li>
+        </ul>
+
+        <div id="all_atributes_<?php echo $this->id; ?>" class="wp-tab-panel wpp_all_attributes">
+          <ul class="wpp_sortable_attributes">
+          <?php foreach($ungrouped_searchable_attributes as $attribute) { ?>
+          
+            <li class="wpp_attribute_wrapper <?php echo $attribute; ?>">
+              <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($searchable_attributes)) { echo  'checked="checked"'; } ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($searchable_attributes) && in_array($attribute, $searchable_attributes)) ? " checked " : ""); ?> />
+              <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
+            </li>
+          <?php } ?>
+          </ul>
+        </div><?php /* end all (ungrouped) attribute selection */ ?>
+
+        <div id="grouped_attributes_<?php echo $this->id; ?>" class="wpp_grouped_attributes_container wp-tab-panel">
+
+          <?php foreach($stats_by_groups as $gslug => $gstats) { ?>
+            <?php if($main_stats_group != $gslug || !key_exists($gslug, $groups)) { ?>
+              <?php $group_name = ( key_exists($gslug, $groups) ? $groups[$gslug]['name'] : "<span style=\"color:#8C8989\">" . __('Ungrouped','wpp') . "</span>" ); ?>
+              <h2 class="wpp_stats_group"><?php echo $group_name; ?></h2>
+            <?php } ?>
+            <ul>
+            <?php foreach ($gstats as $attribute) { ?>
             <li>
+                <input id="<?php echo $this->get_field_id('grouped_searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('grouped_searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($grouped_searchable_attributes)) { echo  'checked="checked"'; } ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($grouped_searchable_attributes) && in_array($attribute, $grouped_searchable_attributes)) ? " checked " : ""); ?> />
+                <label for="<?php echo $this->get_field_id('grouped_searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
+            </li>
+            <?php } ?>
+            </ul>
+          <?php } /* End cycle through $stats_by_groups */ ?>
+        </div>
+
+        </div>
+
+        </li>
+
+        <li>
+
+        <div>
+          <input  id="<?php echo $this->get_field_id('group_attributes'); ?>"  class="wpp_toggle_attribute_grouping" type="checkbox" value="true" name="<?php echo $this->get_field_name('group_attributes'); ?>" <?php checked($group_attributes, 'true'); ?> />
+          <label for="<?php echo $this->get_field_id('group_attributes'); ?>"><?php _e('Group attributes together.'); ?></label>
+        </div>
+        </li>
+
+        <li>
+
+        <div class="wpp_something_advanced_wrapper" style="margin-top: 10px;">
+          <ul>
+
+          <?php if(is_array($wp_properties['sortable_attributes'])) { ?>
+            <li class="wpp_development_advanced_option">
               <div><label for="<?php echo $this->get_field_id('sort_by'); ?>"><?php _e('Default Sort Order','wpp'); ?></label></div>
               <select id="<?php echo $this->get_field_id('sort_by'); ?>" name="<?php echo $this->get_field_name('sort_by'); ?>">
                 <option></option>
@@ -1057,98 +1276,38 @@ jQuery(document).ready(function($){
                   <option value="<?php echo esc_attr($attribute); ?>"  <?php selected($sort_by, $attribute); ?> ><?php echo $wp_properties['property_stats'][$attribute]; ?></option>
                 <?php } ?>
               </select>
-              
+
               <select id="<?php echo $this->get_field_id('sort_order'); ?>" name="<?php echo $this->get_field_name('sort_order'); ?>">
-                <option></option>                
+                <option></option>
                 <option value="DESC"  <?php selected($sort_order, 'DESC'); ?> ><?php _e('Descending'); ?></option>
-                <option value="ASC"  <?php selected($sort_order, 'ASC'); ?> ><?php _e('Acending'); ?></option>                
+                <option value="ASC"  <?php selected($sort_order, 'ASC'); ?> ><?php _e('Acending'); ?></option>
               </select>
-              
+
             </li>
           <?php } ?>
-              <li>
+              <li class="wpp_development_advanced_option">
                 <label for="<?php echo $this->get_field_id('use_pagi'); ?>">
                     <input id="<?php echo $this->get_field_id('use_pagi'); ?>" name="<?php echo $this->get_field_name('use_pagi'); ?>" type="checkbox" value="on" <?php if($use_pagi=='on') echo " checked='checked';"; ?> />
                     <?php _e('Use pagination','wpp'); ?>
                 </label>
             </li>
-            
-            <li>
+
+            <li class="wpp_development_advanced_option">
                 <label for="<?php echo $this->get_field_id('per_page'); ?>"><?php _e('Items per page', 'wpp'); ?>
                     <input style="width:30px" id="<?php echo $this->get_field_id('per_page'); ?>" name="<?php echo $this->get_field_name('per_page'); ?>" type="text" value="<?php echo $per_page; ?>" />
                 </label>
             </li>
-        </ul>
-    
 
-            <p><?php _e('Property types to search:','wpp'); ?></p>
-            <p>
+            <li>
+              <span class="wpp_show_advanced"><?php _e('Toggle Advanced Search Options', 'wpp'); ?></span>
+            </li>
+          </ul>
+        </div>
+        </li>
+      </ul>
 
-                <ul>
-                <?php if(is_array($all_searchable_property_types))
-                 foreach($all_searchable_property_types as $property_type): ?>
-                <li>
-                <label for="<?php echo $this->get_field_id('searchable_property_types'); ?>_<?php echo $property_type; ?>">
-                    <input class="types_to_search_<?php echo $this->number;?>" id="<?php echo $this->get_field_id('searchable_property_types'); ?>_<?php echo $property_type; ?>" name="<?php echo $this->get_field_name('searchable_property_types'); ?>[]" type="checkbox" <?php if (empty($searchable_property_types)): echo  'checked="checked"'; endif; ?> value="<?php echo $property_type; ?>" <?php if(is_array($searchable_property_types) && in_array($property_type, $searchable_property_types)) { echo " checked "; } ?> />
-                    <?php echo (!empty($wp_properties['property_types'][$property_type]) ? $wp_properties['property_types'][$property_type] : ucwords($property_type))  ;?>
-                </label>
-                </li>
-                <?php endforeach; ?>
-                </ul>
-            </p>
-            <br />
-            <p><?php _e('Select the attributes you want to search.','wpp'); ?></p>
-            <p>
-              <div class="wp-tab-panel">
-                <?php if(is_array($all_searchable_attributes)) : ?>
-                <ul>
-                <?php if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) : ?>
-                    <li class="property_type_checkbox_<?php echo $this->number;?>" style="display:none;">
-                        <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_property_type" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" value="property_type" <?php echo ((is_array($searchable_attributes) && in_array('property_type', $searchable_attributes)) ? 'checked="checked"' : ''); ?> />
-                        <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_property_type"><?php _e('Property Types', 'wpp'); ?></label>
-                        <script type="text/javascript">
-                        // Show or hide 'property type' checkbox.
-                        // If we have less then two selected property types to search
-                        // we hide 'property type' checkbox.
-                        var types_to_search_<?php echo $this->number;?> = 0;
-                        jQuery('.types_to_search_<?php echo $this->number;?>').each(function(i, el){
-                            if(jQuery(el).attr('checked')) {
-                                types_to_search_<?php echo $this->number;?>++;
-                            }
-                        });
-                        
-                        if (types_to_search_<?php echo $this->number;?> > 1) {
-                            jQuery('.property_type_checkbox_<?php echo $this->number;?>').show();
-                        }
-                        
-                        jQuery('.types_to_search_<?php echo $this->number;?>').click(function(){
-                            types_to_search_<?php echo $this->number;?> = 0;
-                            jQuery('.types_to_search_<?php echo $this->number;?>').each(function(i, el){
-                                if(jQuery(el).attr('checked')) {
-                                    types_to_search_<?php echo $this->number;?>++;
-                                }
-                            });
-                            if(types_to_search_<?php echo $this->number;?> > 1) {
-                                jQuery('.property_type_checkbox_<?php echo $this->number;?>').show();
-                            } else {
-                                jQuery('.property_type_checkbox_<?php echo $this->number;?>').hide();
-                            }
-                        });
-                        </script>
-                    </li>
-                <?php endif; ?>
-                <?php foreach($all_searchable_attributes as $attribute): ?>
-                    <li>
-                        <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($searchable_attributes)): echo  'checked="checked"'; endif; ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($searchable_attributes) && in_array($attribute, $searchable_attributes)) ? " checked " : ""); ?> />
-                        <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
-                    </li>
-                <?php endforeach; ?>
-                </ul>
-                <?php endif; ?>
-                </div>
-            </p>
-            
-         <?php
+
+    <?php
 
     }
 
@@ -1157,7 +1316,7 @@ jQuery(document).ready(function($){
 // Default function to use in template directly
 function wpp_search_widget($args = false, $custom = false){
   global $wp_properties;
-  
+
 
 
     if (!$args)
@@ -1167,11 +1326,11 @@ function wpp_search_widget($args = false, $custom = false){
             'before_widget' => '',
             'after_widget'  => ''
         );
-    
+
    // $searchable_attributes = array('bedrooms','bathrooms','area','city', 'price');
    $searchable_attributes = $custom;
    $searchable_property_types = $wp_properties['searchable_property_types'];
-  
+
 
     $default = array(
         'title'                     => __('Search Properies','wpp'),
@@ -1182,7 +1341,7 @@ function wpp_search_widget($args = false, $custom = false){
     );
     if($custom)
         $default = array_merge($default, $custom);
-    
+
 
     $count = strlen(implode('-', $default['searchable_attributes'])) . strlen(implode('-', $default['searchable_property_types']));
 
@@ -1232,27 +1391,27 @@ function wpp_search_widget($args = false, $custom = false){
         }
 
         if($post->gallery) {
-        
+
         $real_count = 0;
         foreach($post->gallery as $image) {
-          
+
           $big_image = wpp_get_image_link($image['attachment_id'], $big_image_type);
           $thumb_image = wpp_get_image_link($image['attachment_id'], $image_type);
-  
+
 
           ?>
           <div class="sidebar_gallery_item">
             <a href="<?php echo $big_image; ?>" class="fancybox_image" rel="property_gallery">
                 <img src="<?php echo $thumb_image; ?>" title="<?php echo esc_attr($image['post_excerpt'] ? $image['post_excerpt'] : $image['post_title'] . ' - ' . $post->post_title); ?>" alt="<?php echo esc_attr($image['post_excerpt'] ? $image['post_excerpt'] : $image['post_title']); ?>" class="size-thumbnail "  width="<?php echo $thumbnail_dimensions['width']; ?>" height="<?php echo $thumbnail_dimensions['height']; ?>" />
             </a>
-            <?php if($show_caption == 'on') { ?>            
+            <?php if($show_caption == 'on' && !empty($image['post_excerpt'])) { ?>
               <div class="wpp_image_widget_caption"><?php echo $image['post_excerpt']; ?></div>
-            <?php } ?>            
-            
-            <?php if($show_description == 'on') { ?>            
+            <?php } ?>
+
+            <?php if($show_description == 'on') { ?>
               <div class="wpp_image_widget_description"><?php echo $image['post_content']; ?></div>
             <?php } ?>
-             
+
           </div>
           <?php
           $real_count++;

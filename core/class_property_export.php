@@ -22,6 +22,11 @@ class wpi_property_export {
    */ 
   function help_tab(){
     $export_url = wpi_property_export::get_property_export_url();
+    
+    if(!$export_url) {
+      return;
+    }
+    
   ?>
     <div class="wpp_settings_block">
       <?php echo __('This URL lets you access your property export feed, it is custom to your site:', 'wpp'); ?><br />
@@ -39,22 +44,44 @@ class wpi_property_export {
       // We have the API key, we need to build the url
       return admin_url('admin-ajax.php')."?action=wpp_export_properties&api=".$apikey;
     }
-    return __("There has been an error retreiving your API key.", "wpp");
+    //return __("There has been an error retreiving your API key.", "wpp");
+    return false;
   }
   
   /**
    * This function grabs the API key from TCT's servers
    */
-  function get_api_key(){
+  function get_api_key($args = false){
+  
+    $defaults = array(
+      'return_all' => false,
+      'force_check' => false
+    );
+    
+    
+    $args = wp_parse_args( $args, $defaults );
+    
+    //** check if API key already exists */
+    $ud_api_key = get_option('ud_api_key');
+    
+    //** if key exists, and we are not focing a check, return what we have */
+    if($ud_api_key && !$args['force_check']) {
+      return $ud_api_key;
+    }
+    
     $blogname = get_bloginfo('url');
     $blogname = urlencode(str_replace(array('http://', 'https://'), '', $blogname));
     $system = 'wpp';
     $wpp_version = get_option( "wpp_version" );
 
-    $check_url = "http://updates.twincitiestech.com/key_generator.php?system=$system&site=$blogname&system_version=$wpp_version";
+    $check_url = "http://updates.usabilitydynamics.com/key_generator.php?system=$system&site=$blogname&system_version=$wpp_version";
     
     $response = @wp_remote_get($check_url);
-    if(!$response) return false;
+    
+    if(!$response) {
+      return false;
+    }    
+    
     // Check for errors
     if(is_object($response) && !empty($response->errors)) {
       foreach($response->errors as $errors) {
@@ -63,8 +90,27 @@ class wpi_property_export {
       }
       return false;
     }
+    
     // Quit if failture
-    if($response[response][code] != '200') return false;
+    if($response['response']['code'] != '200') {
+      return false;
+    }
+    
+    $response['body'] = trim($response['body']);
+ 
+    //** If return is not in MD5 format, it is an error */
+    if(strlen($response['body']) != 40) {
+    
+      if($args['return']) {
+        return $response['body'];
+      } else {      
+        UD_F::log("API Check Error: " . sprintf(__('An error occured during premium feature check: <b>%s</b>.','wpp'), $response['body']));
+        return false;
+      }
+    }
+    
+    //** update wpi_key is DB */
+    update_option('ud_api_key', $response['body']);
     
     // Go ahead and return, it should just be the API key
     return $response['body'];

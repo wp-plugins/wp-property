@@ -18,6 +18,15 @@ jQuery(document).ready(function() {
     });
   });
   
+  // DataTable check all checkbox
+  jQuery("input.check-all", "#wp-list-table").click(function(e){
+    if ( e.target.checked ) {
+      jQuery("#the-list td.cb input:checkbox").attr('checked', 'checked');
+    } else {
+      jQuery("#the-list td.cb input:checkbox").removeAttr('checked');
+    }
+  });
+  
 });
 
 function admin_overview_init() {

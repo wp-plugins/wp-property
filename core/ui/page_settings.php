@@ -282,9 +282,8 @@ if(isset($_REQUEST['message'])) {
       <td>
         <ul>
           <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][auto_delete_attachments]&label=" . __('Automatically delete all property images and attachments when a property is deleted.', 'wpp'), $wp_properties['configuration']['auto_delete_attachments']); ?></li>
-          <li>
-          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?> 
-          </li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_enable_text_widget_shortcodes]&label=" . __('Do not execute shortcodes in Text Widgets.', 'wpp'), $wp_properties['configuration']['do_not_enable_text_widget_shortcodes']); ?></li>
         </ul>
       </td>
     </tr>
@@ -447,6 +446,7 @@ if(isset($_REQUEST['message'])) {
         <p><?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br /> The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
         <ul>
           <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=" .__('Display larger image, or slideshow, at the top of the property listing.','wpp'), $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][sort_stats_by_groups]&label=" .__('Sort property stats by groups.','wpp'), $wp_properties['configuration']['property_overview']['sort_stats_by_groups']); ?></li>
           <?php do_action('wpp_settings_page_property_page');?>
         </ul>
 
@@ -461,7 +461,7 @@ if(isset($_REQUEST['message'])) {
         <ul>
           <li><?php _e('Map Thumbnail Size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][single_property_view][map_image_type]&selected=" . $wp_properties['configuration']['single_property_view']['map_image_type']); ?></li>
           <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkbox Image extend of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
+          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkboxes Image instead of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
         </ul>
 
         <p><?php _e('Attributes to display in popup after a property on a map is clicked.', 'wpp'); ?></p>
@@ -596,7 +596,7 @@ if(isset($_REQUEST['message'])) {
         <tr class="wpp_premium_feature_block">
 
           <td valign="top" class="wpp_premium_feature_image">
-            <a href="http://twincitiestech.com/plugins/wp-property/"><img src="<?php echo $plugin_data['image']; ?>" /></a>
+            <a href="http://usabilitydynamics.com/products/wp-property/"><img src="<?php echo $plugin_data['image']; ?>" /></a>
           </td>
 
           <td valign="top">
@@ -679,7 +679,7 @@ if(isset($_REQUEST['message'])) {
       
       <div class="wpp_settings_block">
         <?php $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true'); ?>
-        <?php _e('Revalidate all addresses using', 'wpp'); ?> <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> <?php _e('ocalization', 'wpp'); ?>.
+        <?php _e('Revalidate all addresses using', 'wpp'); ?> <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> <?php _e('localization', 'wpp'); ?>.
          <input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
       </div>
 

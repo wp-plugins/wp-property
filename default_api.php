@@ -12,38 +12,60 @@
   // Add some default actions
   add_filter("wpp_stat_filter_price", 'add_dollar_sign');
   add_filter("wpp_stat_filter_deposit", 'add_dollar_sign');
-  
+
   //** Add dollar sign to all attributes marked as currency */
   if(is_array($wp_properties['currency_attributes'])) {
     foreach($wp_properties['currency_attributes'] as $attribute) {
-      add_filter("wpp_stat_filter_{$attribute}", 'add_dollar_sign');      
+      add_filter("wpp_stat_filter_{$attribute}", 'add_dollar_sign');
     }
   }
-  
+
   //** Format values as numeric if marked as numeric_attributes */
   if(is_array($wp_properties['numeric_attributes'])) {
     foreach($wp_properties['numeric_attributes'] as $attribute) {
-      add_filter("wpp_stat_filter_{$attribute}", array('WPP_F', 'format_numeric'));      
+      add_filter("wpp_stat_filter_{$attribute}", array('WPP_F', 'format_numeric'));
     }
   }
-  
+
   add_filter("wpp_stat_filter_area", 'add_square_foot');
   add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
-  
+
   add_filter('wpp_get_property', 'add_display_address');
   // Exclude hidden attributes from frontend
   add_filter('wpp_get_property', 'wpp_exclude_hidden_attributes');
-  
+
   add_filter('wpp_property_inheritance', 'add_city_to_inheritance');
   add_filter('wpp_searchable_attributes', 'add_city_to_searchable');
+  
+  
+  add_filter('wpp_property_stat_labels', 'wpp_unique_key_labels', 20);
+
+  /**
+   * Add labels to system-generated attributes that do not have custom-set values
+   *
+   * @since 1.22.0
+   */  
+  function wpp_unique_key_labels($stats) {  
+  
+    if(empty($stats['property_type'])) {
+      $stats['property_type'] = __('Property Type', 'wpp');
+    }
+  
+    if(empty($stats['city'])) {
+      $stats['city'] = __('City', 'wpp');
+    }
+    
+    return $stats;
+  
+  }
 
   // Add sold/rented options
   //add_filter('wpp_property_stats', 'wpp_property_stats_add_sold_or_rented');
-  
+
   /*
     The following filters have been disabled on default (they were causing issues with users' customizations).  To enable, either place the following code
     into your functions.php file, or create the attributes using the Developer tab.
-    
+
     add_filter('wpp_property_stats_input_for_rent', 'wpp_property_stats_input_for_rent_make_checkbox', 0, 3);
     add_filter('wpp_property_stats_input_for_sale', 'wpp_property_stats_input_for_sale_make_checkbox', 0, 3);
     add_filter('wpp_stat_filter_for_rent', 'wpp_stat_filter_for_rent_fix');
@@ -54,8 +76,8 @@
 
   // Coordinate manual override
   add_filter('wpp_property_stats_input_'. $wp_properties['configuration']['address_attribute'], 'wpp_property_stats_input_address', 0, 3);
-  
-  
+
+
   add_action('save_property', 'save_property_coordinate_override', 0, 3);
 
   //add_action("wpp_ui_after_attribute_{$wp_properties['configuration']['address_attribute']}", 'wpp_show_coords');
@@ -163,9 +185,9 @@
    * @since 1.04
    */
   function wpp_property_stats_input_address($content, $slug, $object) {
- 
+
     ob_start();
- 
+
         ?>
         <div class="wpp_attribute_row_address">
           <?php echo $content; ?>
@@ -190,29 +212,29 @@
       </div>
     </div>
     <script type="text/javascript">
-    
+
       jQuery(document).ready(function() {
-      
+
         jQuery('input#wpp_manual_coordinates').change(function() {
-      
+
         var use_manual_coordinates;
-        
+
         if(jQuery(this).is(":checked")) {
           use_manual_coordinates = true;
           jQuery('#wpp_coordinates').show();
-          
+
         } else {
-          use_manual_coordinates = false;          
+          use_manual_coordinates = false;
           jQuery('#wpp_coordinates').hide();
         }
-        
- 
-      
+
+
+
       });
-      
- 
+
+
       });
-      
+
     </script>
     <?php
 
@@ -232,21 +254,21 @@
    */
   function save_property_coordinate_override($post_id, $post_data, $geo_data) {
     global $wp_properties;
- 
-        
+
+
     if (get_post_meta($post_id, 'manual_coordinates', true) != 'true') {
 
       if($geo_data->latitude)
         update_post_meta($post_id, 'latitude', $geo_data->latitude);
-      
+
       if($geo_data->longitude)
         update_post_meta($post_id, 'longitude', $geo_data->longitude);
-    
+
     } else {
 
       update_post_meta($post_id, 'location', $post_data['wpp_data']['meta'][$wp_properties['configuration']['address_attribute']]);
       update_post_meta($post_id, 'display_address', $post_data['wpp_data']['meta'][$wp_properties['configuration']['address_attribute']]);
-      
+
       update_post_meta($post_id, 'latitude', $post_data['wpp_data']['meta']['latitude']);
       update_post_meta($post_id, 'longitude',$post_data['wpp_data']['meta']['longitude']);
     }
@@ -278,7 +300,7 @@
 
     if($wp_properties['configuration']['property_overview']['format_phone_number'] == 'true') {
             $phone_number = preg_replace("[^0-9]",'',$phone_number);
-            if(strlen($phone_number) != 10) { 
+            if(strlen($phone_number) != 10) {
               return $phone_number;
             }
             $sArea = substr($phone_number,0,3);
@@ -498,7 +520,7 @@
       $hyphen_between = explode('-', $content);      
       return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). WPP_F::format_numeric($hyphen_between[0]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($hyphen_between[1]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     } elseif (!is_numeric($content)) {
-    
+
       //** Not numeric, cannot format */
       return $content;
 
@@ -507,8 +529,8 @@
       return ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($content) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     }
   }
-  
-  
+
+
   /**
    * Display latitude and longitude on listing edit page below address field
    *
@@ -611,7 +633,7 @@
 
       return $result;
   }
-  
+
   /**
    * Exclude Hidden Property Atributes from data to don't show them on frontend
    * @param array $property
@@ -619,7 +641,7 @@
    */
   function wpp_exclude_hidden_attributes($property) {
     global $wp_properties;
-    
+
     if(!is_admin()) {
       foreach($property as $slug => $value) {
         // Determine if the attribute is hidden for frontend
@@ -628,7 +650,7 @@
         }
       }
     }
-    
+
     return $property;
   }
 
