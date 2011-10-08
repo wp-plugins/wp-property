@@ -3,6 +3,17 @@
   Version: 0.1
  */
 
+ dl.overview_stats  {
+  margin: 0;
+ }
+ 
+ .wpp_stats_group {
+  color: #999999;
+  font-size: 20px;
+  margin-bottom: 15px;
+  padding-left: 15px;
+  display: block;
+ }
 
 .widget ul.wpp_search_group {
   margin:0;
@@ -366,10 +377,14 @@
 #content li.supermap_list_thumb {float:none;}
 #content li.supermap_list_title {clear:both;}
 #content .wpp_supermap_wrapper .hide_filter,
-#content .wpp_supermap_wrapper .map_filters {
+#content .wpp_supermap_wrapper .map_filters,
+#content .wpp_supermap_wrapper .show_more {
   border:none;
   width:96%;
   border: 1px solid #DAE0FF;
+}
+#content .wpp_supermap_wrapper .show_more {
+color: #1982D1;
 }
 #content .wpp_supermap_wrapper .map_filters label {
   display:block;

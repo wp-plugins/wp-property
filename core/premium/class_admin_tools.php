@@ -77,7 +77,7 @@ class class_admin_tools {
       return $contextual_help;
     }
       
-    $contextual_help['content'][] = '<h3>' . __('Developer Tab Help') .'</h3>';    
+    $contextual_help['content'][] = '<h3>' . __('Developer Tab Help', 'wpp') .'</h3>';    
     $contextual_help['content'][] = '<p>' . __('The <b>slug</b> is automatically created from the title and is used in the back-end.  It is also used for template selection, example: floorplan will look for a template called property-floorplan.php in your theme folder, or default to property.php if nothing is found.') .'</p>';
     $contextual_help['content'][] = '<p>' . __('If <b>Searchable</b> is checked then the property will be loaded for search, and available on the property search widget.') .'</p>';
     $contextual_help['content'][] = '<p>' . __('If <b>Location Matters</b> is checked, then an address field will be displayed for the property, and validated against Google Maps API.  Additionally, the property will be displayed on the SuperMap, if the feature is installed.') .'</p>';
@@ -182,29 +182,44 @@ class class_admin_tools {
                 <input class="slug" id="<?php echo $property_slug; ?>_location_matters"  <?php if(in_array($property_slug, $wp_properties['location_matters'])) echo " CHECKED "; ?> type="checkbox"  name="wpp_settings[location_matters][]" value="<?php echo $property_slug; ?>" />
                 <label for="<?php echo $property_slug; ?>_location_matters"><?php _e('Location Matters','wpp') ?></label>
               </li>
+              <?php $property_type_settings = apply_filters('wpp_property_type_settings', array(), $property_slug); ?>
+              <?php foreach((array)$property_type_settings as $property_type_setting) : ?>
+                <li>
+                <?php echo $property_type_setting; ?>
+                </li>
+              <?php endforeach; ?>
             </ul>
           </td>
 
 
           <td >
             <ul class="wp-tab-panel wpp_hidden_property_attributes">
-            <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label): ?>
+            
+            
+            <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label) { ?>
             <li>
               <input id="<?php echo $property_slug . "_" .$property_stat_slug;?>_hidden_attributes" <?php if(isset($wp_properties['hidden_attributes'][$property_slug]) && in_array($property_stat_slug, $wp_properties['hidden_attributes'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[hidden_attributes][<?php echo $property_slug;?>][]" value="<?php echo $property_stat_slug; ?>" />
               <label for="<?php echo $property_slug . "_" .$property_stat_slug;?>_hidden_attributes">
                 <?php echo $property_stat_label;?>
               </label>
             </li>
-            <?php endforeach; ?>
+            <?php }  ?>
 
-            <?php foreach($wp_properties['property_meta'] as $property_meta_slug => $property_meta_label): ?>
+            <?php foreach($wp_properties['property_meta'] as $property_meta_slug => $property_meta_label) { ?>
             <li>
               <input id="<?php echo $property_slug . "_" . $property_meta_slug;?>_hidden_attributes" <?php if(isset($wp_properties['hidden_attributes'][$property_slug]) && in_array($property_meta_slug, $wp_properties['hidden_attributes'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[hidden_attributes][<?php echo $property_slug;?>][]" value="<?php echo $property_meta_slug; ?>" />
               <label for="<?php echo $property_slug . "_" . $property_meta_slug;?>_hidden_attributes">
                 <?php echo $property_meta_label;?>
               </label>
             </li>
-            <?php endforeach; ?>
+            <?php } ?>
+            
+            <?php if(!$wp_properties['property_stats']['parent']){ ?>
+            <li>
+              <input id="<?php echo $property_slug; ?>parent_hidden_attributes" <?php if(isset($wp_properties['hidden_attributes'][$property_slug]) && in_array('parent', $wp_properties['hidden_attributes'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[hidden_attributes][<?php echo $property_slug;?>][]" value="parent" />
+              <label for="<?php echo $property_slug; ?>parent_hidden_attributes"><?php _e('Parent Selection', 'wpp'); ?></label>
+            </li>
+            <?php } ?>
 
             </ul>
           </td>
@@ -249,7 +264,7 @@ class class_admin_tools {
         </div>
         
         <div id="wpp_attribute_groups">
-            <table cellpadding="0" cellspacing="0" class="ud_ui_dynamic_table widefat wpp_sortable">
+            <table cellpadding="0" cellspacing="0" allow_random_slug="true" class="ud_ui_dynamic_table widefat wpp_sortable">
               <thead>
                 <tr>
                   <th class="wpp_group_assign_col">&nbsp;</th>
@@ -286,7 +301,7 @@ class class_admin_tools {
                     <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
                   </td>
                   <td class="wpp_group_main_col">
-                    <input type="radio" name="wpp_settings[configuration][main_stats_group]" <?php echo ($wp_properties['configuration']['main_stats_group'] == $slug ? "checked=\"checked\"" : "" ); ?> value="<?php echo $slug; ?>" />
+                    <input type="radio" class="wpp_no_change_name" name="wpp_settings[configuration][main_stats_group]" <?php echo ($wp_properties['configuration']['main_stats_group'] == $slug ? "checked=\"checked\"" : "" ); ?> value="<?php echo $slug; ?>" />
                   </td>
                   <td class="wpp_group_color_col">
                     <input type="text" class="wpp_input_colorpicker" name="wpp_settings[property_groups][<?php echo $slug; ?>][color]" value="<?php echo $group['color']; ?>" />
@@ -346,7 +361,7 @@ class class_admin_tools {
                 <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
               </li>
               <li>
-                <span class="wpp_show_advanced"><?php _e('Toggle Advanced Settings'); ?></span>
+                <span class="wpp_show_advanced"><?php _e('Toggle Advanced Settings', 'wpp'); ?></span>
               </li>
             </ul>
           </td>

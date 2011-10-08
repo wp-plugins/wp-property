@@ -17,10 +17,17 @@
  #body_container ul.feps_user_input_fields  li {
   list-style: none;
   margin:0;
+  padding:2px;
+  overflow: auto;
 }
  #body_container ul.feps_property_input_fields,
  #body_container ul.feps_property_input_fields  li {
-  margin:0;
-  padding:0;
+
+  padding:2px;
   list-style: none;
+  overflow: auto;
+}
+
+.wpp_feps_form {
+  padding: 1px;
 }

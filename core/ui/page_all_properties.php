@@ -4,7 +4,7 @@
 
   $wp_list_table = new WPP_Object_List_Table("per_page=25");
  
-  $wp_list_table->prepare_items();
+  $wp_list_table->prepare_items(false, false);
 
   $wp_list_table->data_tables_script();
   

@@ -181,7 +181,7 @@ if(isset($_REQUEST['message'])) {
 </div>
 <?php endif; ?>
 
-
+ 
 
 <form method="post" action="<?php echo admin_url('edit.php?post_type=property&page=property_settings'); ?>"  enctype="multipart/form-data" />
 <?php wp_nonce_field('wpp_setting_save'); ?>
@@ -244,13 +244,10 @@ if(isset($_REQUEST['message'])) {
 
 
           <li>
-            <?php
-              $insert_property_text = __('Always overwrite this page\'s content with [property_overview].','wpp');
-              echo UD_UI::checkbox("name=wpp_settings[configuration][automatically_insert_overview]&label=$insert_property_text", $wp_properties['configuration']['automatically_insert_overview']);
-            ?>
+            <?php echo WPP_UD_UI::checkbox('name=wpp_settings[configuration][automatically_insert_overview]&label='. __('Always overwrite this page\'s content with [property_overview].','wpp'), $wp_properties['configuration']['automatically_insert_overview']); ?>
           </li>
         <li class="wpp_wpp_settings_configuration_do_not_override_search_result_page_row <?php if($wp_properties['configuration']['automatically_insert_overview'] == 'true') echo " hidden ";?>">
-            <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_override_search_result_page]&label=When showing search results, don't override the page content with [property_overview].", $wp_properties['configuration']['do_not_override_search_result_page']); ?>
+            <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_override_search_result_page]&label=When showing search results, don't override the page content with [property_overview].", $wp_properties['configuration']['do_not_override_search_result_page']); ?>
             <br />
             <span class="description"><?php _e('If checked, be sure to include [property_overview] somewhere in the content, or no properties will be displayed.','wpp'); ?></span>
           </li>
@@ -265,7 +262,7 @@ if(isset($_REQUEST['message'])) {
       <td>
         <?php
             $phone_number_text = __('Phone number to use when a property-specific phone number is not specified.','wpp');
-            echo UD_UI::input("name=phone_number&label=$phone_number_text&group=wpp_settings[configuration]&style=width: 200px;", $wp_properties['configuration']['phone_number']); ?>
+            echo WPP_UD_UI::input("name=phone_number&label=$phone_number_text&group=wpp_settings[configuration]&style=width: 200px;", $wp_properties['configuration']['phone_number']); ?>
       </td>
     </tr>
     <tr>
@@ -281,14 +278,16 @@ if(isset($_REQUEST['message'])) {
       <th><?php _e('Options','wpp'); ?></th>
       <td>
         <ul>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][auto_delete_attachments]&label=" . __('Automatically delete all property images and attachments when a property is deleted.', 'wpp'), $wp_properties['configuration']['auto_delete_attachments']); ?></li>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?></li>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_enable_text_widget_shortcodes]&label=" . __('Do not execute shortcodes in Text Widgets.', 'wpp'), $wp_properties['configuration']['do_not_enable_text_widget_shortcodes']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][auto_delete_attachments]&label=" . __('Automatically delete all property images and attachments when a property is deleted.', 'wpp'), $wp_properties['configuration']['auto_delete_attachments']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __('Disable "on-the-fly" image regeneration.', 'wpp'), $wp_properties['configuration']['do_not_automatically_regenerate_thumbnails']); ?></li>
+          <?php /* <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_automatically_geo_validate_on_property_view]&label=" . __('Disable front-end "on-the-fly" address validation.', 'wpp'), $wp_properties['configuration']['do_not_automatically_geo_validate_on_property_view']); ?></li> */ ?>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_enable_text_widget_shortcodes]&label=" . __('Do not execute shortcodes in Text Widgets.', 'wpp'), $wp_properties['configuration']['do_not_enable_text_widget_shortcodes']); ?></li>
         </ul>
       </td>
-    </tr>
+    </tr>    
 
-    <?php do_action('wpp_settings_main_tab_bottom'); ?>
+
+    <?php do_action('wpp_settings_main_tab_bottom', $wp_properties); ?>
     </table>
   </div>
 
@@ -301,16 +300,16 @@ if(isset($_REQUEST['message'])) {
 
         <ul>
           <li>
-          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Automatically include default CSS.','wpp'), $wp_properties['configuration']['autoload_css']); ?>
+          <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Automatically include default CSS.','wpp'), $wp_properties['configuration']['autoload_css']); ?>
           </li>
            
            <li>
-          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][load_scripts_everywhere]&label=" . __('Load WP-Property scripts on all front-end pages.','wpp'), $wp_properties['configuration']['load_scripts_everywhere']); ?>
+          <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][load_scripts_everywhere]&label=" . __('Load WP-Property scripts on all front-end pages.','wpp'), $wp_properties['configuration']['load_scripts_everywhere']); ?>
           </li>
             
             <?php if(WPP_F::has_theme_specific_stylesheet()) { ?>
             <li>
-                 <?php echo UD_UI::checkbox("name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" .  __('Do not load theme-specific stylesheet.','wpp'), $wp_properties['configuration']['do_not_load_theme_specific_css']); ?>
+                 <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" .  __('Do not load theme-specific stylesheet.','wpp'), $wp_properties['configuration']['do_not_load_theme_specific_css']); ?>
                  <div class="description"><?php _e('This version of WP-Property has a stylesheet made specifically for the theme you are using.', 'wpp'); ?></div>
                  </li>
             </li>
@@ -424,15 +423,15 @@ if(isset($_REQUEST['message'])) {
           <li><?php _e('Thumbnail size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][property_overview][thumbnail_size]&selected=" . $wp_properties['configuration']['property_overview']['thumbnail_size']); ?></li>
           <li><?php
                   $show_children_text = __('Show children properties.','wpp');
-                  echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][show_children]&label=$show_children_text", $wp_properties['configuration']['property_overview']['show_children']); ?></li>
+                  echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][show_children]&label=$show_children_text", $wp_properties['configuration']['property_overview']['show_children']); ?></li>
           <li><?php
                   $show_larger_img_text = __('Show larger image of property when image is clicked using fancybox.','wpp');
-                  echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][fancybox_preview]&label=$show_larger_img_text", $wp_properties['configuration']['property_overview']['fancybox_preview']); ?>
+                  echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][fancybox_preview]&label=$show_larger_img_text", $wp_properties['configuration']['property_overview']['fancybox_preview']); ?>
            </li>
            <li>
             <?php
               
-              echo UD_UI::checkbox("name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __('Show pagination on bottom of results.','wpp'), $wp_properties['configuration']['bottom_insert_pagenation']);
+              echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __('Show pagination on bottom of results.','wpp'), $wp_properties['configuration']['bottom_insert_pagenation']);
             ?>          
           </li>
          </ul>
@@ -445,8 +444,8 @@ if(isset($_REQUEST['message'])) {
       <td>
         <p><?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br /> The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
         <ul>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=" .__('Display larger image, or slideshow, at the top of the property listing.','wpp'), $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][property_overview][sort_stats_by_groups]&label=" .__('Sort property stats by groups.','wpp'), $wp_properties['configuration']['property_overview']['sort_stats_by_groups']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=" .__('Display larger image, or slideshow, at the top of the property listing.','wpp'), $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][sort_stats_by_groups]&label=" .__('Sort property stats by groups.','wpp'), $wp_properties['configuration']['property_overview']['sort_stats_by_groups']); ?></li>
           <?php do_action('wpp_settings_page_property_page');?>
         </ul>
 
@@ -460,24 +459,24 @@ if(isset($_REQUEST['message'])) {
 
         <ul>
           <li><?php _e('Map Thumbnail Size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][single_property_view][map_image_type]&selected=" . $wp_properties['configuration']['single_property_view']['map_image_type']); ?></li>
-          <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkboxes Image instead of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
+          <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo WPP_UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkboxes Image instead of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
         </ul>
 
         <p><?php _e('Attributes to display in popup after a property on a map is clicked.', 'wpp'); ?></p>
         <div class="wp-tab-panel">
         <ul>
 
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_property_title]&label=" . __('Show Property Title', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_property_title']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_property_title]&label=" . __('Show Property Title', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_property_title']); ?></li>
 
           <?php foreach($wp_properties['property_stats'] as $attrib_slug => $attrib_title): ?>
           <li><?php
           $checked = (in_array($attrib_slug, $wp_properties['configuration']['google_maps']['infobox_attributes']) ? true : false);
-          echo UD_UI::checkbox("id=google_maps_attributes_{$attrib_title}&name=wpp_settings[configuration][google_maps][infobox_attributes][]&label=$attrib_title&value={$attrib_slug}", $checked);
+          echo WPP_UD_UI::checkbox("id=google_maps_attributes_{$attrib_title}&name=wpp_settings[configuration][google_maps][infobox_attributes][]&label=$attrib_title&value={$attrib_slug}", $checked);
           ?></li>
           <?php endforeach; ?>
 
-          <li><?php echo UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=". __('Show Directions Link', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=". __('Show Directions Link', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
 
         </ul>
         </div>
@@ -501,7 +500,7 @@ if(isset($_REQUEST['message'])) {
       <th><?php _e('Currency & Numbers','wpp'); ?></th>
       <td>
         <ul>
-          <li><?php echo UD_UI::input("name=currency_symbol&label=".__('Currency symbol.','wpp')."&group=wpp_settings[configuration]&style=width: 50px;",$wp_properties['configuration']['currency_symbol']); ?></li>
+          <li><?php echo WPP_UD_UI::input("name=currency_symbol&label=".__('Currency symbol.','wpp')."&group=wpp_settings[configuration]&style=width: 50px;",$wp_properties['configuration']['currency_symbol']); ?></li>
           <li>
             <?php _e('Thousands separator symbol:', 'wpp'); ?>
             <select name="wpp_settings[configuration][thousands_sep]">
@@ -536,7 +535,7 @@ if(isset($_REQUEST['message'])) {
         <ul>
           <li><?php _e('Thumbnail size for property images displayed on Properties page: ','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][admin_ui][overview_table_thumbnail_size]&selected=" . $wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']); ?></li>
           <li>
-          <?php echo UD_UI::checkbox("name=wpp_settings[configuration][completely_hide_hidden_attributes_in_admin_ui]&label=" . __('Completely hide hidden attributes when editing properties.', 'wpp'), $wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui']); ?>
+          <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][completely_hide_hidden_attributes_in_admin_ui]&label=" . __('Completely hide hidden attributes when editing properties.', 'wpp'), $wp_properties['configuration']['completely_hide_hidden_attributes_in_admin_ui']); ?>
           </li>
         </ul>
       </td>
@@ -620,7 +619,7 @@ if(isset($_REQUEST['message'])) {
                 if($wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] == 'true')  { 
                   printf(__('This feature is disabled because it requires WP-Property %1$s or higher.'), $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']);
                 } else {                    
-                  echo UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=" . __('Disable plugin.','wpp'), $wp_properties['installed_features'][$plugin_slug]['disabled']); 
+                  echo WPP_UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=" . __('Disable plugin.','wpp'), $wp_properties['installed_features'][$plugin_slug]['disabled']); 
                 
                  ?>
                 </div>

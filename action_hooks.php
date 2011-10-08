@@ -232,7 +232,6 @@
       )
   );
   
-
   // Default attribute label descriptions for the back-end
   $wp_properties['descriptions'] = array(
     'descriptions' => array(
@@ -240,7 +239,14 @@
       'custom_attribute_overview' => __('Customize what appears in search results in the attribute section.  For example: 1bed, 2baths, area varies slightly.','wpp'),
       'tagline' => __('Will appear on overview pages and on top of every listing page.','wpp'))
   );
-
-
+  
+  //* Javascript files Localization */
+  $wp_properties['l10n'] = array(
+    'uploading' => __( 'Uploading', 'wpp' ),
+    'drop_file' => __( 'Drop files here to upload', 'wpp' ),
+    'cancel'    => __( 'Cancel', 'wpp' ),
+    'fail'      => __( 'Failed', 'wpp' )
+  );
+  
   // Overwrite $wp_properties with database setting
   $wp_properties = UD_F::array_merge_recursive_distinct($wp_properties, $wp_properties_db);

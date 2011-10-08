@@ -1,17 +1,68 @@
+form.wpp_feps_form label.error {
+  display: block;
+}
+
 ul.wpp_search_group {
   list-style:none;
 }
 
+
+/* Image Uploader Styles */
 .wpp_feps_input_wrapper  .qq-upload-list{
   margin: 0;
 }
 
+.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-cancel {
+  text-decoration: none;
+  color: #A0A0A0;
+  float: right;
+  
+}
 
-.wpp_feps_input_wrapper  .wpp_image_upload .qq-uploader li {
+.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-size,
+.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress {
+  height: 20px;
+}
+
+.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-size {
+  display: block;
+  clear: both;
+  border: 1px solid #BFBDBD;
+}
+
+.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress {
+  background: #666666;
+  display: block;
+  float: left;
+  text-align: right;
+}
+
+
+    
+.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress_text {
+  font-size: 11px; /* fixed height to fit into progress bar wrapper */
+  display: block;
+  float: left;
+  line-height: 20px;
+  margin: 0 4px;
+}
+
+.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress .wpp_upload_progress_text {
+  float: right;
+  color: #FFF;
+  display: block;
+}
+ 
+
+.wpp_feps_input_wrapper .qq-uploader li {
   margin: 0 10px 10px 0;
   padding: 0;
+}
+.wpp_feps_input_wrapper .qq-uploader li.qq-upload-success{
   display: inline;
 }
+
+/* Image Uploader Styles */
 
 #wp-admin-bar-wpp_approve_property {
   background: #CF982D;
@@ -23,14 +74,13 @@ ul.wpp_search_group {
 
 ul.feps_property_input_fields .qq-upload-button {
     background: none repeat scroll 0 0 #DDDDDD;
-    border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px;
-    -khtml-border-radius: 4px;
+    border: 1px solid #BBBBBB;
+    border-radius: 3px 3px 3px 3px;
     cursor: pointer;
+    font-size: 1.1em;
     margin-bottom: 5px;
     text-align: center;
-    width: 90px;
+    width: 101px;
 }
 
 .qq-upload-failed-text {display:none;}
@@ -39,7 +89,7 @@ ul.feps_property_input_fields .qq-upload-button {
 ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_currency,
 ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_numeric {
     margin-right: 15px;
-    width: 43%;
+    width: 44%;
 }
 
 ul.feps_user_input_fields {
@@ -104,12 +154,24 @@ ul.feps_property_input_fields textarea {
 }
 
 ul.feps_property_input_fields textarea,  
-ul.feps_property_input_fields input[type="text"]{  
+ul.feps_property_input_fields input[type="text"] {  
   display: block;
   margin-bottom: 5px;
   margin-top: 2px;
-  width: 99%;
-}  
+  width: 97%;
+}
+
+ul.feps_property_input_fields select {
+    background: none repeat scroll 0 0 #FAFAFA;
+    border: 1px solid #DDDDDD;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset;
+    -mox-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset;
+    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset;
+    -khtml-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1) inset;
+    color: #888888;
+    padding: 3px;
+    width: 100%;
+}
 
 ul.feps_property_input_fields .description {  
     color: #777777;
@@ -489,7 +551,9 @@ html[xmlns] .clearfix { display: block; }
     clear: left;
     float: left;
     font-weight: bold;
-    width: 150px; }
+    width: 150px; 
+    padding-left: 15px; 
+  }
 
   #property_stats.overview_stats dd,
   .wpp_property_stats.overview_stats dd {
@@ -773,7 +837,10 @@ html[xmlns] .clearfix { display: block; }
 
 input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 40px; }
 
-.super_map_list select { margin-bottom: 0; }
+.super_map_list select { 
+  margin-bottom: 0;
+  max-width: 96%;
+}
 
 .super_map_list {
   float: left;
@@ -782,7 +849,8 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   width: 35%;
   position: relative; }
 
-.map_filters #search_loader {
+.map_filters #search_loader,
+.super_map_list .search_loader {
   display: none;
   float: right;
   margin-top: 8px;
@@ -793,7 +861,20 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   height: 13px;
   font-size: 10px;
   color: #888888;
-  background: url(images/ajax-loader.gif) center left no-repeat; }
+  background: url(images/ajax-loader.gif) center left no-repeat; 
+}
+.super_map_list .show_more {
+  position:relative;
+  text-align: center;
+  background: none repeat scroll 0 0 #DAE0FF;
+  cursor:pointer;
+}
+.super_map_list .show_more .search_loader {
+  height:auto;
+  margin:0;
+  position:absolute;
+  margin:5px;
+}
 
 .super_map_list ul.property_in_list_items {
   list-style-type: none;

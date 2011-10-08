@@ -136,10 +136,10 @@ class wpi_property_export {
   // Set a new path
   set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
   // Include our necessary libaries
-    require_once 'Serializer.php';
-    require_once 'Unserializer.php';
-    
-    $api_key = wpi_property_export::get_api_key();
+  require_once 'Serializer.php';
+  require_once 'Unserializer.php';
+
+  $api_key = wpi_property_export::get_api_key();
 
   $taxonomies = $wp_properties['taxonomies'];
 
@@ -158,7 +158,9 @@ class wpi_property_export {
     //Start the XML
     header('Content-type: text/xml');
     print '<?xml version="1.0"?><properties>';
+
     $count = 0;
+	
     foreach($wpq->posts as $post){
       if(isset($_REQUEST['limit']) && $count == $_REQUEST['limit']) break;
       $count++;

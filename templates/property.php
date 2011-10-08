@@ -68,12 +68,13 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
      marker = new google.maps.Marker({
       position: myLatlng,
       map: map,
-      title: '<?php echo addslashes($post->post_title); ?>'
-    });         
+      title: '<?php echo addslashes($post->post_title); ?>',
+      icon: '<?php echo apply_filters('wpp_supermap_marker', '', $post->ID); ?>'
+    });
 
     google.maps.event.addListener(infowindow, 'domready', function() {
-    document.getElementById('infowindow').parentNode.style.overflow='';
-    document.getElementById('infowindow').parentNode.parentNode.style.overflow='';
+    document.getElementById('infowindow').parentNode.style.overflow='hidden';
+    document.getElementById('infowindow').parentNode.parentNode.style.overflow='hidden';
    });
    
    setTimeout("infowindow.open(map,marker);",1000);
@@ -98,14 +99,23 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
       <div class="entry-content">
         <?php @the_content(); ?>
         
-        
-        <dl id="property_stats" class="overview_stats">
+        <?php if ( empty($wp_properties['property_groups']) || $wp_properties['configuration']['property_overview']['sort_stats_by_groups'] != 'true' ) : ?>
+          <dl id="property_stats" class="overview_stats">
+            <?php if(!empty($post->display_address)): ?>
+            <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
+            <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
+            <?php endif; ?>
+            <?php @draw_stats("make_link=true&exclude={$wp_properties['configuration']['address_attribute']}"); ?>
+          </dl>
+        <?php else: ?>
           <?php if(!empty($post->display_address)): ?>
-          <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
-          <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
+          <dl id="property_stats" class="overview_stats">
+            <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
+            <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
+          </dl>
           <?php endif; ?>
           <?php @draw_stats("make_link=true&exclude={$wp_properties['configuration']['address_attribute']}"); ?>
-        </dl>
+        <?php endif; ?>
         
       <?php if(!empty($wp_properties['taxonomies'])) foreach($wp_properties['taxonomies'] as $tax_slug => $tax_data): ?>
         <?php if(get_features("type=$tax_slug&format=count")):  ?>

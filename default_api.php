@@ -106,25 +106,50 @@
     return $attributes;
   }
 
+  
+  /**
+   * Formats address on print.  If address it not formatted, makes an on-the-fly call to GMaps for validation.
+   *
+   *
+   * @since 1.04
+   */
   function wpp_format_address_attribute($data, $property = false, $format = "[street_number] [street_name], [city], [state]") {
     global $wp_properties;
 
-    if(!is_object($property))
+    if(!is_object($property)) {
       return $data;
+    }
 
+    //** If the currently requested properties address has not been formatted, and on-the-fly geo-lookup has not been disabled, try to look up now */
+    if(!$property->address_is_formatted && $wp_properties['configuration']['do_not_automatically_geo_validate_on_property_view'] != 'true') {
+      //** Silently attempt to validate address, right now */
+      $geo_data  = WPP_F::revalidate_all_addresses(array('property_ids' => array($property->ID), 'echo_result' => false, 'return_geo_data' => true));
 
-
-    $street_number  = $property->street_number;
-    $route  = $property->route;
-    $city  = $property->city;
-    $state  = $property->state;
-    $state_code  = $property->state_code;
-    $county  = $property->county;
-    $country  = $property->country;
-    $postal_code  = $property->postal_code;
+      if($this_geo_data = $geo_data['geo_data'][$property->ID]) {
+      
+        $street_number  = $this_geo_data->street_number;
+        $route  = $this_geo_data->route;
+        $city  = $this_geo_data->city;
+        $state  = $this_geo_data->state;
+        $state_code  = $this_geo_data->state_code;
+        $county  = $this_geo_data->county;
+        $country  = $this_geo_data->country;
+        $postal_code  = $this_geo_data->postal_code;        
+      }      
+      
+    } else {
+    
+      $street_number  = $property->street_number;
+      $route  = $property->route;
+      $city  = $property->city;
+      $state  = $property->state;
+      $state_code  = $property->state_code;
+      $county  = $property->county;
+      $country  = $property->country;
+      $postal_code  = $property->postal_code;
+    }
 
     $display_address = $format;
-
 
     $display_address =   str_replace("[street_number]", $street_number,$display_address);
     $display_address =   str_replace("[street_name]", $route, $display_address);
@@ -317,7 +342,7 @@
    */
   function add_format_phone_number_checkbox() {
       global $wp_properties;
-      echo '<li>' . UD_UI::checkbox("name=wpp_settings[configuration][property_overview][format_phone_number]&label=" . __('Format phone number.','wpp'), $wp_properties['configuration']['property_overview']['format_phone_number']) . '</li>';
+      echo '<li>' . WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][format_phone_number]&label=" . __('Format phone number.','wpp'), $wp_properties['configuration']['property_overview']['format_phone_number']) . '</li>';
   }
 
   /**
@@ -328,7 +353,7 @@
    */
   function add_format_true_checkbox() {
       global $wp_properties;
-      echo '<li>' . UD_UI::checkbox("name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __('Convert "Yes" and "True" values to checked icons on the front-end.','wpp'), $wp_properties['configuration']['property_overview']['format_true_checkbox']) . '</li>';
+      echo '<li>' . WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __('Convert "Yes" and "True" values to checked icons on the front-end.','wpp'), $wp_properties['configuration']['property_overview']['format_true_checkbox']) . '</li>';
   }
 
   /**
@@ -398,8 +423,9 @@
 
     $display_address = $wp_properties['configuration']['display_address_format'];
 
-    if(empty($display_address))
+    if(empty($display_address)) {
       $display_address =  "[street_number] [street_name], [city], [state]";
+    }
 
     $display_address_code = $display_address;
 
@@ -485,16 +511,23 @@
             unset($empty_line_killer[$key]);
 
 
-    if(is_array($empty_line_killer))
+    if(is_array($empty_line_killer)) {
       $display_address  = implode("<br />", $empty_line_killer);
+    }
 
 
     $property['display_address'] = apply_filters('wpp_display_address', $display_address, $property);
-
+    
 
     // Don't return if result matches the
-    if(str_replace(array(" ", "," , "\n"), "", $display_address_code) == str_replace(array(" ", "," , "\n"), "", $display_address))
+    if(str_replace(array(" ", "," , "\n"), "", $display_address_code) == str_replace(array(" ", "," , "\n"), "", $display_address)) {
       $property['display_address'] = "";
+    }
+    
+    //** Make sure that address isn't retunred with no data */
+    if(str_replace(',', '', $property['display_address']) == '') {
+      /* No Address */
+    }
 
 
     return $property;

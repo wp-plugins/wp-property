@@ -73,9 +73,10 @@ class WPP_List_Table extends WP_List_Table  {
    * @param string $input_id The search input id
    */
   function search_box( $text, $input_id ) {
-    if ( empty( $_REQUEST['s'] ) && !$this->has_items() ) {
+    /** Commented to prevent search field disappearing on first loading of all_properties page. korotkov@UD */
+    /*if ( empty( $_REQUEST['s'] ) && !$this->has_items() ) {
       return;
-    }
+    }*/
     
     $input_id = $input_id . '-search-input'; 
     ?>
@@ -208,7 +209,6 @@ class WPP_List_Table extends WP_List_Table  {
     }
     
     $this->_column_headers = array( $columns, $hidden, $sortable );
-    
     return $this->_column_headers;
   }
   
@@ -218,13 +218,14 @@ class WPP_List_Table extends WP_List_Table  {
    * @todo Needs to be updated to handle the AJAX requests.
    *
    */
-  function prepare_items($wpp_search = false) {
+  function prepare_items($wpp_search = false, $ajax = true) {
     
     $wpp_search = apply_filters('prepare_wpp_properties_search', $wpp_search);
     
+    if ( !$ajax ) $this->all_items = array();
+    
     if(!isset($this->all_items)) {
       $this->all_items = WPP_F::get_properties( $wpp_search );
-      //$this->all_items = WPP_F::get_properties( array() );
     }
     
     //** Do pagination  */

@@ -206,6 +206,17 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.23.0 =
+* Fixed issue with grouped searchable attributes not generating and caching value ranges when Property Search widget was being saved.
+* Added on-the-fly address revalidation.  If a property is being viewed, and the address has not been validated, WPP will do it on the spot. 
+* Property editing UI does not display a property type dropdown if only one property type is set up on the site.
+* Added "Parent Selection" to "Hidden Attributes" selection, so property parent selection can be hidden if needed.
+* XML Importer RETS support integration and major performance and efficiency improvements. (XML Property Importer)
+* Added option to disable property taxonomies. (Power Tools with Capability Management)
+* Custom map icon uploading and selection. (Super Map)
+* Pagination support and search improvements for the Supermap. (Super Map)
+* Fix to Property Search widget not properly caching values when toggling between grouped and non-grouped versions.
+
 = 1.22.1 =
 * Patch release, fixing single-property display issues when grouping not being enabled after upgrade.
 

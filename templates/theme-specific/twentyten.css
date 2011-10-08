@@ -51,10 +51,15 @@ div.sidebar_gallery_item .wpp_image_widget_caption  {
 }
    
 .wpp_stats_group {
-  margin-top: 10px;
-  margin-bottom: 5px;
   display: block;
   font-size: 1.3em;
+  padding-bottom: 15px;
+  padding-left: 15px;
+  color: #999999;
+}
+
+.wpp_property_stats dd {
+  margin: 0 !important;
 }
 
 
@@ -185,10 +190,15 @@ ul.wpp_agent_info_list li {list-style: none;}
 /* Supermap */
 
 #content .wpp_supermap_wrapper .hide_filter,
-#content .wpp_supermap_wrapper .map_filters {
+#content .wpp_supermap_wrapper .map_filters,
+#content .wpp_supermap_wrapper .show_more {
   border:none;
   width:96%;
   border: 1px solid #DAE0FF;
+}
+#content .wpp_supermap_wrapper .show_more {
+  color: #0066CC;
+  font-size: 14px;
 }
 #content .wpp_supermap_wrapper .map_filters label {
   display:block;

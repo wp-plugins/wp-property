@@ -89,7 +89,7 @@ class WPP_Core {
     wp_register_script('jquery-ui-mouse', WPP_URL. '/js/jquery.ui.mouse.min.js', array('jquery-ui-core'));
     wp_register_script('jquery-ui-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
     wp_register_script('jquery-data-tables', WPP_URL . "/third-party/dataTables/jquery.dataTables.min.js", array('jquery'));
-    
+   
     wp_register_style('jquery-fancybox-css', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.css');
     wp_register_style('jquery-colorpicker-css', WPP_URL. '/third-party/colorpicker/colorpicker.css');
     wp_register_style('jquery-ui', WPP_URL. '/css/jquery-ui.css');
@@ -128,11 +128,11 @@ class WPP_Core {
 
 
     // Load UD scripts
-    //UD_UI::use_ud_scripts();
+    //WPP_UD_UI::use_ud_scripts();
 
     // Add troubleshoot log page
     if(isset($wp_properties['configuration']['show_ud_log']) && $wp_properties['configuration']['show_ud_log'] == 'true') {
-      UD_F::add_log_page();
+      WPP_UD_F::add_log_page();
     }
 
     // Setup taxonomies
@@ -157,7 +157,7 @@ class WPP_Core {
     $wp_properties['labels'] = apply_filters('wpp_object_labels', $labels);
  
     // Modify admin body class
-    add_filter('admin_body_class', array('WPP_Core', 'admin_body_class'));
+    add_filter('admin_body_class', array('WPP_Core', 'admin_body_class'), 5);
 
     //Modify Front-end property body class
     add_filter('body_class', array('WPP_Core', 'properties_body_class'));
@@ -179,6 +179,11 @@ class WPP_Core {
     
     if($wp_properties['taxonomies']) {
       foreach($wp_properties['taxonomies'] as $taxonomy => $taxonomy_data) {
+      
+        //** Check if taxonomy is disabled */
+        if(is_array($wp_properties['configuration']['disabled_taxonomies']) && in_array($taxonomy, $wp_properties['configuration']['disabled_taxonomies'])) {        
+          continue;
+        }
         
         /* 
         // Commented out for now. Because Taxonomy was modified (Custom Capability was added). 
@@ -338,31 +343,29 @@ class WPP_Core {
 
   function admin_enqueue_scripts($hook) {
     global $current_screen, $wp_properties;
-
+    
     // Include on all pages
     wp_enqueue_script('wp-property-global');
-
+    
     // Property Overview Page
     if($current_screen->id == 'property_page_all_properties' || $current_screen->id == 'edit-property') {
-
+      
       // Get width of overview table thumbnail, and set css
       $thumbnail_attribs = WPP_F::image_sizes($wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']);
       $thumbnail_width = (!empty($thumbnail_attribs['width']) ? $thumbnail_attribs['width'] : false);
-
-
+      
       // Enabldes fancybox js, css and loads overview scripts
       wp_enqueue_script('jquery-fancybox');
       wp_enqueue_script('wp-property-admin-overview');
+      wp_enqueue_script('jquery-data-tables');      
       wp_enqueue_style('jquery-fancybox-css');
-      wp_enqueue_script('jquery-data-tables');
       wp_enqueue_style('jquery-data-tables');
-
-
-
+      
       if($thumbnail_width):
       ?>
       <style typ="text/css">
-      #wp-list-table.wp-list-table .column-thumbnail {width: <?php echo $thumbnail_width + 10; ?>px;}
+      #wp-list-table.wp-list-table .column-thumbnail {width: <?php echo $thumbnail_width + 20; ?>px;}
+      #wp-list-table.wp-list-table td.column-thumbnail {text-align: right;}
       #wp-list-table.wp-list-table .column-type {width: 90px;}
        #wp-list-table.wp-list-table .column-menu_order {width: 50px; }
       #wp-list-table.wp-list-table td.column-menu_order {text-align: center; }
@@ -371,22 +374,20 @@ class WPP_Core {
        </style>
       <?php
       endif;
-
     }
-
+    
     // Property Editing Page
     if($current_screen->id == 'property') {
-
-
+      
     }
-
+    
     if($current_screen->id == 'property_page_property_settings') {
       wp_enqueue_script('jquery');
       wp_enqueue_script('jquery-ui-core');
       wp_enqueue_script('jquery-ui-sortable');
       wp_enqueue_script('jquery-colorpicker');
       wp_enqueue_style('jquery-colorpicker-css');
-
+      
       $contextual_help['content'][] = '<h3>' . __('WP-Property Help') .'</h3>';
       $contextual_help['content'][] = '<p>' . __('The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is ' . get_bloginfo('url') . '<b>/real_estate/</b>, then you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp') .'</p>';
       $contextual_help['content'][] = '<p>' . __('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.','wpp') .'</p>';
@@ -475,7 +476,7 @@ class WPP_Core {
         // If settings not configured
         if(get_option('wpp_settings') == ""):
 
-        $default_url =  UD_F::base_url($wp_properties['configuration']['base_slug']);
+        $default_url =  WPP_UD_F::base_url($wp_properties['configuration']['base_slug']);
         $settings_page =  admin_url('edit.php?post_type=property&page=property_settings');
         $permalink_problem = (get_option('permalink_structure') == '' )
           ? sprintf(__('Be advised, since you don\'t have permalinks enabled, you must visit the <a href="%s">Settings Page</a> and set a custom property overview page.', 'wpp'), $settings_page)
@@ -522,17 +523,13 @@ class WPP_Core {
    function admin_body_class($content) {
     global $current_screen;
 
-
     if($current_screen->id == 'edit-property') {
-
       return 'wp-list-table ';
     }
 
     if($current_screen->id == 'property') {
-
       return 'wpp_property_edit';
     }
-
 
    }
 
@@ -633,8 +630,8 @@ class WPP_Core {
     // Update Coordinates (skip if old address matches new address), but always do if no coordinates set
     if(empty($coordinates) || ($old_location != $new_location && !empty($new_location)) || $manual_coordinates_updated) {
 
-      $geo_data = UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
-
+      $geo_data = WPP_UD_F::geo_locate_address($update_data[$wp_properties['configuration']['address_attribute']], $wp_properties['configuration']['google_maps_localization'], true);
+      
       if(!empty($geo_data->formatted_address)) {
         update_post_meta($post_id, 'address_is_formatted', true);
 
@@ -736,10 +733,10 @@ class WPP_Core {
       <div class="misc-pub-section ">
 
       <ul>
-        <li><?php _e('Menu Sort Order:','wpp')?> <?php echo UD_UI::input("name=menu_order&special=size=4",$post->menu_order); ?></li>
+        <li><?php _e('Menu Sort Order:','wpp')?> <?php echo WPP_UD_UI::input("name=menu_order&special=size=4",$post->menu_order); ?></li>
 
         <?php if(current_user_can('manage_options')): ?>
-        <li><?php $display_property_text = __('Display property in featured listing.','wpp'); echo UD_UI::checkbox("name=wpp_data[meta][featured]&label=$display_property_text", $featured); ?></li>
+        <li><?php $display_property_text = __('Display property in featured listing.','wpp'); echo WPP_UD_UI::checkbox("name=wpp_data[meta][featured]&label=$display_property_text", $featured); ?></li>
         <?php endif; ?>
 
          <?php do_action('wpp_publish_box_options'); ?>
@@ -1089,7 +1086,7 @@ class WPP_Core {
       foreach($conditional_styles as $type) {
 
         // Fix slug for URL
-        $url_slug = str_replace(" ", "_", $type);
+        $url_slug = strtolower( str_replace(" ", "_", $type) );
 
         if ( file_exists( STYLESHEETPATH . "/wp_properties-{$url_slug}.css") ) {
           wp_register_style('wp-property-frontend-'. $url_slug, get_bloginfo('stylesheet_directory') . "/wp_properties-{$url_slug}.css",   array('wp-property-frontend'),'1.13' );
@@ -1119,27 +1116,27 @@ class WPP_Core {
 
       $type = $post->property_type;
 
-       if(file_exists(STYLESHEETPATH . "/property-$type.php")) {
+      if(file_exists(STYLESHEETPATH . "/property-$type.php")) {
         load_template(STYLESHEETPATH . "/property-$type.php");
         die();
       }
 
-       if(file_exists(STYLESHEETPATH . "/property.php")) {
+      if(file_exists(STYLESHEETPATH . "/property.php")) {
         load_template(STYLESHEETPATH . "/property.php");
         die();
       }
 
-       if(file_exists(TEMPLATEPATH . "/property-$type.php")) {
+      if(file_exists(TEMPLATEPATH . "/property-$type.php")) {
         load_template(TEMPLATEPATH . "/property-$type.php");
         die();
       }
 
-       if(file_exists(TEMPLATEPATH . "/property.php")) {
+      if(file_exists(TEMPLATEPATH . "/property.php")) {
         load_template(TEMPLATEPATH . "/property.php");
         die();
       }
 
-       if(file_exists(WPP_Templates . "/property-$type.php")) {
+      if(file_exists(WPP_Templates . "/property-$type.php")) {
         load_template(WPP_Templates . "/property-$type.php");
         die();
       }
@@ -1224,8 +1221,13 @@ class WPP_Core {
     //* Adds 'Group' metaboxes to Property Edit Page */
     if(!empty($wp_properties['property_groups'])) {
       foreach($wp_properties['property_groups'] as $slug => $group) {
+        //* There is no sense to add metabox if no one attribute assigned to group */
         if(!in_array($slug, $wp_properties['property_stats_groups'])) {
           continue;
+        }
+        //* Determine if Group name is empty we add 'NO NAME', other way metabox will not be added */
+        if(empty($group['name'])) {
+          $group['name'] = __('NO NAME','wpp');
         }
         add_meta_box( $slug , __($group['name'],'wpp'), array('WPP_UI','metabox_meta'), 'property', 'normal', 'high', array('group' => $slug));
       }
@@ -1432,7 +1434,7 @@ class WPP_Core {
         $atts['property_type'] = $atts['type'];
         unset( $atts['type'] );
       }
-
+      
       //** Get ALL allowed attributes that may be passed via shortcode (to include property attributes) */
       $defaults['show_children'] = (isset($wp_properties['configuration']['property_overview']['show_children']) ? $wp_properties['configuration']['property_overview']['show_children'] : 'true');
       $defaults['child_properties_title'] = __('Floor plans at location:','wpp');
@@ -1477,62 +1479,8 @@ class WPP_Core {
         
         //** Handle search */
         if($wpp_search = $_REQUEST['wpp_search']) {
-        
-          $non_numeric_chars = apply_filters('wpp_non_numeric_chars', array('-', '$', ','));
-          
-          if($wp_properties['configuration']['developer_mode'] == 'true' && !$wpp_query['ajax_call']) {
-            //  echo '<script type="text/javascript">console.log('.json_encode($wpp_search) . ' ); </script>'; 
-          }
-          
-          foreach($wpp_search as $search_key => $search_query) {
-            //** Fix search form passed paramters to be usable by get_properties();
-            
-            if(is_array($search_query)) {
-              //** Array variables are either option lists or minimum and maxim variables
-              if(is_numeric(array_shift(array_keys($search_query)))) {
-                //** get regular arrays (non associative) */
-                $search_query = implode(',', $search_query);
-              } elseif(is_array($search_query['options'])) {
-                //** Get queries with options */
-                $search_query = implode(',', $search_query['options']);
-              } elseif(in_array('min', array_keys($search_query))) {
-                //** Get arrays with minimum and maxim ranges */
-                
-                //** Ranges are always numeric, so we clear it up */
-                foreach($search_query as $range_indicator => $value) {
-                  $search_query[$range_indicator] = str_replace($non_numeric_chars, '', $value);
-                }
-                
-                if(empty($search_query['min']) && empty($search_query['max'])) {
-                  unset($wpp_query['query'][$search_key]);
-                  continue;
-                }
-                
-                if(empty($search_query['min'])) {
-                  $search_query['min'] = '0';
-                }
-                
-                if(empty($search_query['max'])) {
-                  $search_query = $search_query['min'] . '+';
-                } else {
-                  $search_query = str_replace($non_numeric_chars, '', $search_query['min']) . '-' .  str_replace($non_numeric_chars, '', $search_query['max']);
-                }
-              }
-            }
-            
-            if(is_string($search_query)) {
-              $wpp_query['query'][$search_key] = trim($search_query);
-            }
-            
-            if($search_query == '-') {
-              unset($wpp_query['query'][$search_key]);
-            }
-            
-            if($search_query == '-1') {
-              unset($wpp_query['query'][$search_key]);
-            }
-          
-          }
+          $wpp_query['query'] = shortcode_atts($wpp_query['query'], $wpp_search);
+          $wpp_query['query'] = WPP_F::prepare_search_attributes($wpp_query['query']);
           
           if(isset($_REQUEST['wpp_search']['sort_by'])) {
             $wpp_query['sort_by'] = $_REQUEST['wpp_search']['sort_by'];
@@ -1540,7 +1488,7 @@ class WPP_Core {
           
           if(isset($_REQUEST['wpp_search']['sort_order'])) {
             $wpp_query['sort_order'] = $_REQUEST['wpp_search']['sort_order'];
-          }       
+          }
           
           if(isset($_REQUEST['wpp_search']['pagination'])) {
             $wpp_query['pagination'] = $_REQUEST['wpp_search']['pagination'];
@@ -1549,9 +1497,8 @@ class WPP_Core {
           if(isset($_REQUEST['wpp_search']['per_page'])) {
             $wpp_query['per_page'] = $_REQUEST['wpp_search']['per_page'];
           }
-        
         }
-      
+        
       }
       
       //** Load certain settings into query for get_properties() to use */
@@ -1574,7 +1521,7 @@ class WPP_Core {
       unset($wpp_query['query']['per_page']);
       unset($wpp_query['query']['pagination']);
       unset($wpp_query['query']['requested_page']);
-      
+           
       //** Load the results */
       $wpp_query['properties'] = WPP_F::get_properties($wpp_query['query'], true);
       

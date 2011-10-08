@@ -131,25 +131,26 @@ class WPP_UI {
         });
         
         function wpp_toggle_attributes() {
-          var property_type = jQuery("#wpp_meta_property_type option:selected").val();
+          var property_type = jQuery("#wpp_meta_property_type").val();
+          
           if(property_type == "") {
             return;
           }
           
-          <?php if (count($wp_properties['hidden_attributes']) < 1) : ?>
+          <?php if (count($wp_properties['hidden_attributes']) < 1) { ?>
           return;
-          <?php else: ?>
+          <?php } else { ?>
           // Show all fields
           jQuery(".wpp_attribute_row").removeClass('disabled_row');
           switch(property_type) {
             <?php if (is_array($wp_properties['hidden_attributes'])) : ?>
             <?php foreach ($wp_properties['hidden_attributes'] as $property_type => $hidden_values): ?>
             case '<?php echo $property_type; ?>':
-              <?php if (is_array($hidden_values)) : ?>
-                <?php foreach ($hidden_values as $value): ?>
+              <?php if (is_array($hidden_values))  { ?>
+                <?php foreach ($hidden_values as $value) { ?>
                 jQuery(".wpp_attribute_row_<?php echo $value; ?>").addClass('disabled_row');
-                <?php endforeach; ?>
-              <?php endif; ?>
+                <?php } ?>
+              <?php } ?>
               break;
             <?php endforeach; ?>
             <?php endif; ?>
@@ -175,7 +176,7 @@ class WPP_UI {
               b.hide();
             }
           });
-          <?php endif; ?>
+          <?php } ?>
         }
         
       });
@@ -217,21 +218,26 @@ class WPP_UI {
           </tr>
         <?php endif; ?>
         
+        <?php if(count($wp_properties['property_types']) > 1) { ?>
         <tr class="wpp_attribute_row_type wpp_attribute_row <?php if (is_array($wp_properties['hidden_attributes'][$property['property_type']]) && in_array('type', $wp_properties['hidden_attributes'][$property['property_type']])) echo 'disabled_row;'; ?>">
           <th><?php _e('Property Type', 'wpp'); ?></th>
           <td>
             <?php //* Get property types */ ?>
             <select id="wpp_meta_property_type" name="wpp_data[meta][property_type]" id="property_type">
               <option value=""></option>
-              <?php foreach ($wp_properties['property_types'] as $slug => $label): ?>
+              <?php foreach ($wp_properties['property_types'] as $slug => $label) { ?>
               <option <?php selected(strtolower($this_property_type), strtolower($slug)); ?> value="<?php echo $slug; ?>"><?php echo $label; ?></option>
-              <?php endforeach; ?>
+              <?php } ?>
             </select>
-            <?php if (!empty($wp_properties['descriptions']['property_type'])): ?>
+            <?php if (!empty($wp_properties['descriptions']['property_type'])) { ?>
             <span class="description"><?php echo $wp_properties['descriptions']['property_type']; ?></span>
-            <?php endif; ?>
+            <?php } ?>
           </td>
         </tr>
+        <?php } else { ?> 
+        <input type="hidden" id="wpp_meta_property_type" name="wpp_data[meta][property_type]" id="property_type" value="<?php echo strtolower($this_property_type); ?>" />
+        <?php } ?>
+        
       <?php endif; ?>
       
       <?php foreach ($property_stats as $slug => $label): ?>

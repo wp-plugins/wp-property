@@ -140,8 +140,8 @@ qq.removeClass = function(element, name){
     element.className = element.className.replace(re, ' ').replace(/^\s+|\s+$/g, "");
 };
 qq.setText = function(element, text){
-    element.innerText = text;
-    element.textContent = text;
+    jQuery(element).html(text);
+    
 };
 
 //
@@ -485,18 +485,17 @@ qq.FileUploader = function(o){
         listElement: null,
                 
         template: '<div class="qq-uploader">' + 
-                '<div class="qq-upload-drop-area"><span>Drop files here to upload</span></div>' +
+                '<div class="qq-upload-drop-area"><span>'+l10n.drop_file+'</span></div>' +
                 '<div class="qq-upload-button">Upload a file</div>' +
                 '<ul class="qq-upload-list"></ul>' + 
              '</div>',
 
         // template for one item in file list
         fileTemplate: '<li>' +
-                '<span class="qq-upload-file"></span>' +
+                '<span class="qq-upload-file"></span><a class="qq-upload-cancel" href="#">'+l10n.cancel+'</a>' +
                 '<span class="qq-upload-spinner"></span>' +
                 '<span class="qq-upload-size"></span>' +
-                '<a class="qq-upload-cancel" href="#">Cancel</a>' +
-                '<span class="qq-upload-failed-text">Failed</span>' +
+                '<span class="qq-upload-failed-text">'+l10n.fail+'</span>' +
             '</li>',        
         
         classes: {
@@ -596,11 +595,19 @@ qq.extend(qq.FileUploader.prototype, {
 
         var item = this._getItemByFileId(id);
         var size = this._find(item, 'size');
-        size.style.display = 'inline';
+        var percent_load = Math.round(loaded / total * 100);
+  
+        size.style.display = 'block';
         
         var text; 
         if (loaded != total){
-            text = Math.round(loaded / total * 100) + '% from ' + this._formatSize(total);
+            if(percent_load < 50) {
+              /* Move the label to the right side of the bar */
+              text =  '<span style="width: '+ percent_load +'%" class="wpp_upload_progress"></span><span class="wpp_upload_progress_text">'+percent_load+'% of ' + this._formatSize(total) + '</span>';
+            } else {
+              /* Move the label to the left side of the bar */
+              text =  '<span style="width: '+ percent_load +'%" class="wpp_upload_progress"><span class="wpp_upload_progress_text">'+percent_load+'% of ' + this._formatSize(total) + '</span></span>';            
+            }
         } else {                                   
             text = this._formatSize(total);
         }          
@@ -626,7 +633,7 @@ qq.extend(qq.FileUploader.prototype, {
         item.qqFileId = id;
 
         var fileElement = this._find(item, 'file');        
-        qq.setText(fileElement, this._formatFileName(fileName));
+        qq.setText(fileElement, l10n.uploading+': ' +  this._formatFileName(fileName));
         this._find(item, 'size').style.display = 'none';        
 
         this._listElement.appendChild(item);
@@ -992,16 +999,17 @@ qq.extend(qq.UploadHandlerForm.prototype, {
             qq.remove(iframe);
         }
     },     
-    _upload: function(id, params){                        
+    _upload: function(id, params){  
         var input = this._inputs[id];
         
         if (!input){
             throw new Error('file with passed id was not added, or already uploaded or cancelled');
-        }                
+        }    
 
         var fileName = this.getName(id);
+        
         params['qqfile'] = fileName;
-                
+          
         var iframe = this._createIframe(id);
         var form = this._createForm(iframe, params);
         form.appendChild(input);
@@ -1021,6 +1029,7 @@ qq.extend(qq.UploadHandlerForm.prototype, {
                 qq.remove(iframe);
             }, 1);
         });
+
 
         form.submit();        
         qq.remove(form);        

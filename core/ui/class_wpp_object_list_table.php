@@ -173,9 +173,11 @@ class WPP_Object_List_Table extends WPP_List_Table {
           $features = get_the_terms($post->ID, "property_feature");
           $features_html = array();
 
-          if($features) {
-            foreach ($features as $feature)
+          
+          if($features && !is_wp_error($features)) {
+            foreach ($features as $feature) {
               array_push($features_html, '<a href="' . get_term_link($feature->slug, "property_feature") . '">' . $feature->name . '</a>');
+            }
 
             $r .= implode($features_html, ", ");
           }

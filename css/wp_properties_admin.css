@@ -20,6 +20,26 @@
     width: 100px;
 }
 
+.wpp_property_import_edit_report {
+  font-size: 1.2em;
+}
+
+/* Hide "Published On:" on properties that were imported */
+.wpp_imported_property .misc-pub-section.curtime.misc-pub-section-last {
+  display: none;
+  border-bottom-width: 1px;
+}
+
+.wpp_imported_property .wpp_i_time_stamp {
+  background-repeat: no-repeat;
+  padding-left: 18px;
+  background: url("images/date-button.gif") no-repeat  top left;
+}
+
+
+.wpp_i_overview_special_data {
+  color: #888888;
+}
 
 .wpp_subtle_tabs div.wpp_subtle_tab_description {
     background: none repeat scroll 0 0 #E8E8E8;
@@ -35,7 +55,7 @@
 .wpp_subtle_tabs ul.wpp_section_tabs li {
   display: inline;
   border-radius: 3px 3px 0 0;
-  padding: 5px 4px;
+  padding: 5px 3px;
   line-height: 140%;
   margin-bottom: 6px;
   border-style: solid;
@@ -167,10 +187,27 @@ body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
     top: -2px;
 }
 .wpp_i_import_actions_bar {
-    background: none repeat scroll 0 0 #FFF7DD;
+    background: none repeat scroll 0 0 #EAE9E7;
     border: 1px solid #BABABA;
     padding: 7px;
 }
+
+
+#wpp_property_import_setup #wpp_property_import_unique_id option {
+  margin-right: 3px;
+}
+
+#wpp_property_import_setup .wpp_i_import_actions_bar .wpp_i_ajax_message {
+    color: #6A513A;
+    display: none;
+    float: right;
+    margin-top: 4px;
+    max-width: 312px;
+    padding-right: 10px;
+    text-align: right;
+}
+
+
 .wpp_show_advanced {
   cursor: pointer;
   color: #8C8989;
@@ -324,14 +361,28 @@ body.property_page_show_agents .wp-list-table .column-id {
     padding: 6px 8px;
 }
 
+#wpp_property_import_setup #wpp_property_import_remote_url {
+  width: 35em;
+}
+
+#wpp_property_import_setup #wpp_property_import_name {
+  font-size: 1.5em;
+}
+
 #wpp_property_import_setup .wppi_source_advanced {
   display: none;
 }
+   
+   
     
     
-    
-div.wpp_property_import_setup .wpp_property_import_gs_options, div.wpp_property_import_setup .wpp_property_import_rets_options {
-  display:none;
+div.wpp_property_import_setup .wpp_i_advanced_source_settings {
+  display: none;  
+}
+
+div.wpp_property_import_setup .wpp_show_advanced_wrapper  {
+  padding-top: 4px;
+
 }
 
 div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
@@ -343,23 +394,32 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
 }
 
 #wpp_property_import_source_status {
-  padding: 3px 10px;
-  -webkit-border-radius: 4px;
-  -moz-border-radius: 4px;
-  border-radius: 4px;   
+  display: none;
+  cursor: pointer;
+  border-color: #BBBBBB;
+   background-color: #FFFFFF;
+  color: #464646;
+    -moz-box-sizing: content-box;
+    border-radius: 8px;
+    border-style: solid;
+    border-width: 1px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 13px;
+    padding: 3px 8px;
+    text-decoration: none;  
 }
 
 #wpp_property_import_source_status.wpp_import_source_good{
-  background: #C4FFC3;
-  border: 1px solid #93ED87;
+  color:  #22521C;
 }
 #wpp_property_import_source_status.wpp_import_source_processing {
-  background: #F8F8F8;
-  border: 1px solid #C5D574;
+  color: #858585;
 }
 #wpp_property_import_source_status.wpp_import_source_bad{
-  background: #FFC6C6;
-  border: 1px solid #E39C9C;
+    border: 1px solid #B0ADAD;
+    box-shadow: 0 0 1px #F99898;
+    color: #761111;
 }
 
 .wpp_tabs div.wpp_settings_block {
@@ -635,19 +695,22 @@ input.wpp_featured_toggle {
  
 .cb { clear: both; }
  
+ 
+
 .wpp_class_pre {
-   background: none repeat scroll 0 0 #323232;
-    border: 2px solid #D6D9C1;
-    color: #FEFFD5;
-    font-size: 12px;
-    height: 600px;
-    line-height: 1.1em;
-    margin-top: 17px;
-    overflow: scroll;
-    padding: 0;
-    white-space: pre-wrap;
-    width: 99%;
-    }
+  background: none repeat scroll 0 0 #323232;
+  border-left: 10px solid #BE821B;
+  color: #FEFFD5;
+  font-size: 12px;
+  height: 600px;
+  line-height: 1.1em;
+  margin-top: 17px;
+  overflow: scroll;
+  padding: 6px;
+  white-space: pre-wrap;
+  width: auto;
+  overflow-x: hidden;
+}
  
 .wpp_class_pre ul {
   padding: 10px;
@@ -769,6 +832,10 @@ html .wpp_tabs  ul.tabs li.active, html .wpp_tabs  ul.tabs li.active a:hover {
   
 }
 
+.wpp_contextual_highlight {
+  border-left: 7px solid #FFB626;
+  padding-left: 6px;
+}
 
   .wpp_link:hover { color: #D54E21; }
  
@@ -1053,7 +1120,7 @@ td.wpp_premium_feature_image { width: 250px; }
 
 /* SEARCH WIDGET */
 .wpp_search_widget_tab ul.tabs li {
-  margin-right:5px;
+  margin-right:2px;
   -moz-border-radius-topleft: 3px;
   -moz-border-radius-topright: 3px;
   -webkit-border-top-left-radius: 3px;
