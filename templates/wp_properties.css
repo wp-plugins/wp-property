@@ -1,45 +1,62 @@
+/* FEPS Styles Begin */
+
 form.wpp_feps_form label.error {
   display: block;
 }
 
-ul.wpp_search_group {
+form.wpp_feps_form ul.wpp_search_group {
   list-style:none;
 }
 
-
-/* Image Uploader Styles */
-.wpp_feps_input_wrapper  .qq-upload-list{
-  margin: 0;
+form.wpp_feps_form li.wpp_feps_row_wrapper {
+  list-style:none;
 }
 
-.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-cancel {
+form.wpp_feps_form .wpp_feps_row_wrapper  .qq-upload-list{
+  margin: 0;
+  list-tyle-type:none; 
+  padding-top: 15px;
+}
+
+form.wpp_feps_form  .wpp_feps_row_wrapper  .qq-upload-list .qq-upload-cancel {
   text-decoration: none;
   color: #A0A0A0;
   float: right;
   
 }
 
-.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-size,
-.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress {
+form.wpp_feps_form div.qq-upload-drop-area {
+  display: none !important;
+}
+
+form.wpp_feps_form span.images_limit {
+  clear: both;
+  float: right;
+  position: absolute;
+  right: 12px;
+  top: 4px;
+}
+
+
+form.wpp_feps_form  .qq-upload-list .qq-upload-size,
+form.wpp_feps_form  .qq-upload-list .wpp_upload_progress {
   height: 20px;
 }
 
-.wpp_feps_input_wrapper  .qq-upload-list .qq-upload-size {
+form.wpp_feps_form .qq-upload-list .qq-upload-size {
   display: block;
   clear: both;
   border: 1px solid #BFBDBD;
 }
 
-.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress {
+form.wpp_feps_form .qq-upload-list .wpp_upload_progress {
   background: #666666;
   display: block;
   float: left;
   text-align: right;
 }
 
-
-    
-.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress_text {
+form.wpp_feps_form   .qq-upload-list .wpp_upload_progress_text {
   font-size: 11px; /* fixed height to fit into progress bar wrapper */
   display: block;
   float: left;
@@ -47,32 +64,23 @@ ul.wpp_search_group {
   margin: 0 4px;
 }
 
-.wpp_feps_input_wrapper  .qq-upload-list .wpp_upload_progress .wpp_upload_progress_text {
+form.wpp_feps_form .qq-upload-list .wpp_upload_progress .wpp_upload_progress_text {
   float: right;
   color: #FFF;
   display: block;
 }
  
 
-.wpp_feps_input_wrapper .qq-uploader li {
+form.wpp_feps_form .qq-uploader li {
   margin: 0 10px 10px 0;
   padding: 0;
 }
-.wpp_feps_input_wrapper .qq-uploader li.qq-upload-success{
+form.wpp_feps_form  .qq-uploader li.qq-upload-success{
   display: inline;
 }
 
-/* Image Uploader Styles */
 
-#wp-admin-bar-wpp_approve_property {
-  background: #CF982D;
-}
-
-#wp-admin-bar-wpp_approve_property a {
-  color: #FFFFFF;
-}
-
-ul.feps_property_input_fields .qq-upload-button {
+form.wpp_feps_form ul.feps_property_input_fields .qq-upload-button {
     background: none repeat scroll 0 0 #DDDDDD;
     border: 1px solid #BBBBBB;
     border-radius: 3px 3px 3px 3px;
@@ -83,58 +91,42 @@ ul.feps_property_input_fields .qq-upload-button {
     width: 101px;
 }
 
-.qq-upload-failed-text {display:none;}
-
-
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_currency,
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_numeric {
-    margin-right: 15px;
-    width: 44%;
-}
-
-ul.feps_user_input_fields {
-  
-}
-
-ul.feps_user_input_fields,
-ul.feps_property_input_fields {
+form.wpp_feps_form .qq-upload-failed-text {display:none;}
+ 
+form.wpp_feps_form  ul.feps_user_input_fields,
+form.wpp_feps_form ul.feps_property_input_fields {
   margin: 0;
   clear: both;
 }
  
-ul.feps_user_input_fields li.wpp_feps_input_wrapper,
-ul.feps_property_input_fields li.wpp_feps_input_wrapper   {  
-    background-color: #F5F5F5;
-    display: block;
-    float: left;
+ul.feps_user_input_fields li.wpp_feps_row_wrapper,
+ul.feps_property_input_fields li.wpp_feps_row_wrapper   {  
+    list-style: none;
     list-style-type: none;
-    margin: 0 4px 6px 0;
-    padding: 5px 13px;
-    width: 94%;
 }
 
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox input.wpp_checkbox   {  
+ul.feps_property_input_fields li.wpp_feps_row_wrapper.wpp_checkbox input.wpp_checkbox   {  
   float: left;
   position: relative;
   top: 7px;
 }
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox  label {  
-  margin-left: 10px;
+ul.feps_property_input_fields li.wpp_feps_row_wrapper.wpp_checkbox  label {  
+
 } 
 
-ul.feps_property_input_fields li.wpp_feps_input_wrapper.wpp_checkbox  label span.description {  
+ul.feps_property_input_fields li.wpp_feps_row_wrapper.wpp_checkbox  label span.description {  
   float: none;
 }
 
-ul.feps_user_input_fields li.wpp_feps_input_wrapper {
+ul.feps_user_input_fields li.wpp_feps_row_wrapper {
   background: #EBEBEB;
 }
 
-ul.feps_property_input_fields label span.the_title {  
+ul.feps_property_input_fields label span.the_title,
+ul.feps_user_input_fields label span.the_title{  
   font-weight: bold;
-  font-size: 1.1em;
-  margin-right: 10px;
 }
+
 ul.feps_property_input_fields label span.description{  
   float: right;
 
@@ -154,7 +146,9 @@ ul.feps_property_input_fields textarea {
 }
 
 ul.feps_property_input_fields textarea,  
-ul.feps_property_input_fields input[type="text"] {  
+ul.feps_property_input_fields input[type="text"],
+ul.feps_user_input_fields input[type="text"],
+ul.feps_user_input_fields input[type="password"]{  
   display: block;
   margin-bottom: 5px;
   margin-top: 2px;
@@ -174,10 +168,21 @@ ul.feps_property_input_fields select {
 }
 
 ul.feps_property_input_fields .description {  
-    color: #777777;
     font-weight: normal;
 }   
  
+/* FEPS Styles End */
+ 
+
+#wp-admin-bar-wpp_approve_property {
+  background: #CF982D;
+}
+
+#wp-admin-bar-wpp_approve_property a {
+  color: #FFFFFF;
+}
+
+
 
 .wpp_pagination_slider_wrapper .wpp_pagination_back,
 .wpp_pagination_slider_wrapper .wpp_pagination_forward {
@@ -411,6 +416,9 @@ ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.value{
   list-style-type:none;
   padding:0;
   margin:0;
+}
+#content .wpp_shortcode_search  ul li {
+  margin-bottom:4px;
 }
 #content .wpp_shortcode_search  ul label{
   width: 150px;
@@ -649,6 +657,7 @@ html[xmlns] .clearfix { display: block; }
   padding: 0; }
 
   .wpp_gallery_widget  img {
+    max-width: 100%;
     border: 5px solid #DFDFDF;
     margin: 0 9px 9px 0; }
 
@@ -790,8 +799,7 @@ html[xmlns] .clearfix { display: block; }
 
 /* --- Supermap ---*/
 .super_map_list_property {
-  padding-top: 10px;
-  width: 35; }
+}
 
 .property_in_list {
   -webkit-border-radius: 6px;
@@ -800,7 +808,8 @@ html[xmlns] .clearfix { display: block; }
   background: none repeat scroll 0 0 #F7F7F7;
   border: 1px solid #E8E8E8;
   margin-bottom: 6px;
-  width: 96%; }
+  width: 96%; 
+}
 
 .map_filters {
   display: none;
@@ -817,7 +826,9 @@ html[xmlns] .clearfix { display: block; }
 .hide_filter {
   background: #DAE0FF;
   border: 2px ridge grey;
-  text-align: center; }
+  text-align: center;
+  margin-bottom:10px;
+}
 
 .super_map_list input { margin: 5px 5px 5px 0; }
 
@@ -870,6 +881,7 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   cursor:pointer;
 }
 .super_map_list .show_more .search_loader {
+  display:none;
   height:auto;
   margin:0;
   position:absolute;
@@ -882,8 +894,7 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   padding: 0;
   font-size: 0.9em;
   position: relative;
-  width: 100%;
-   }
+}
 
   .super_map_list ul.property_in_list_items li {
     background: transparent;

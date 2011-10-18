@@ -13,6 +13,69 @@
 class WPP_F {
 
   /**
+   * Set all existing property objects' property type
+   *
+   * @todo Add regex to check for opening and closing bracket.
+   * @version 1.23.1
+   */
+    function mass_set_property_type($property_type = false) {
+      global $wpdb;      
+      
+      if(!$property_type) {
+        return false;
+      }
+      
+      //** Get all properties */
+      $ap = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'property'");
+ 
+      if(!$ap) {
+        return false;
+      }
+      
+      foreach($ap as $id) {
+      
+        if(update_post_meta($id, 'property_type', $property_type)) {
+          $success[] = true;
+        }
+      
+      }
+      
+      if(!$success) {
+        return false;
+      }
+      
+      return sprintf(__('Set %1s properties to "%2s" property type', 'wpp'), count($success), $property_type);
+      
+      
+    
+    }
+    
+    
+  /**
+   * Attempts to detect if current page has a given shortcode
+   *
+   * @todo Add regex to check for opening and closing bracket.
+   * @version 1.23.1
+   */
+    function detect_shortcode($shortcode = false){
+      global $post;
+      
+      if(!$post) {
+        return false;
+      }      
+      
+      $shortcode = '[' . $shortcode;
+      
+      if(strpos($post->post_content, $shortcode) !== false) {      
+        return true;      
+      }
+      
+      return false;
+    
+    }
+    
+    
+  /**
    * Reassemble address from parts
    *
    * @version 1.23.0
@@ -198,15 +261,16 @@ class WPP_F {
         $ui_class[] = 'numeric';
       }
 
-
       if(is_array($wp_properties['searchable_attributes']) && in_array($attribute, $wp_properties['searchable_attributes'])) {
         $return['searchable'] = true;
         $ui_class[] = 'searchable';
       }
-
+      
+      if(empty($return['title'])) {
+        $return['title'] = WPP_UD_F::de_slug($return['slug']);
+      }
 
       $return['ui_class'] = implode(' wpp_', $ui_class);
-
 
       return apply_filters('wpp_attribute_data', $return);
 
@@ -443,25 +507,42 @@ class WPP_F {
       }
 
       //* Make sure this is a property */
-      $is_property = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID = $post_id AND post_type = 'property'");
+      $is_property = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID = {$post_id} AND post_type = 'property'");
 
       if(!$is_property) {
         return;
       }
 
+      $uploads = wp_upload_dir();
+
       //* Get Attachments */
-      $attachments = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent = $post_id AND post_type = 'attachment' ");
+      $attachments = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent = {$post_id} AND post_type = 'attachment' ");
 
       if($attachments) {
         foreach($attachments as $attachment_id) {
 
+          $file_path = $wpdb->get_var("SELECT meta_value FROM {$wpdb->postmeta} WHERE post_id = {$attachment_id} AND meta_key = '_wp_attached_file' ");
+
           wp_delete_attachment($attachment_id, true);
 
+          if($file_path) {
+            $attachment_directories[] = $uploads['basedir'] . '/' . dirname($file_path);
+          }
+
+        }
+      }
+
+      if(is_array($attachment_directories)) {
+        $attachment_directories = array_unique($attachment_directories);
+        foreach($attachment_directories as $dir) {
+          @rmdir($dir);
         }
 
       }
 
-   }
+
+  }
+
 
 
 
@@ -860,15 +941,16 @@ class WPP_F {
    static function get_image_dimensions($type = false) {
     global $wp_properties;
 
-    if(!$type)
+    if(!$type) {
       return;
+    }
 
-    $dimensions = $wp_properties[image_sizes][$type];
+    $dimensions = $wp_properties['image_sizes'][$type];
 
-    $return[0] = $dimensions[width];
-    $return[1] = $dimensions[height];
-    $return['width'] = $dimensions[width];
-    $return['height'] = $dimensions[height];
+    $return[0] = $dimensions['width'];
+    $return[1] = $dimensions['height'];
+    $return['width'] = $dimensions['width'];
+    $return['height'] = $dimensions['height'];
 
     return $return;
 
@@ -2679,15 +2761,8 @@ class WPP_F {
             $child_object = WPP_F::get_property($child_id, "load_parent=false");
             $return['children'][$child_id] = $child_object;
             // Exclude variables from searchable attributes (to prevent ranges)
-            $excluded_attributes = array(
-              $wp_properties['configuration']['address_attribute'],
-              'city',
-              'country_code',
-              'country',
-              'state',
-              'state_code',
-              'state'
-            );
+            $excluded_attributes = $wp_properties['geo_type_attributes'];
+            $excluded_attributes[] = $wp_properties['configuration']['address_attribute'];
 
             foreach($wp_properties['searchable_attributes'] as $searchable_attribute) {
               if(!empty($child_object[$searchable_attribute]) && !in_array($searchable_attribute, $excluded_attributes)) {
@@ -2750,11 +2825,13 @@ class WPP_F {
     $return['permalink'] = get_permalink($id);
 
 
-    if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number']))
+    if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number'])) {
       $return['phone_number'] = $wp_properties['configuration']['phone_number'];
+    }
 
-    if(is_array($return))
+    if(is_array($return)) {
       ksort($return);
+    }
 
     $return = apply_filters('wpp_get_property', $return);
 
@@ -3006,7 +3083,7 @@ class WPP_F {
           </div>
           <?php endif; ?>
         </td>
-        <td  class="wpp_google_maps_right_col"   valign="top">
+        <td  class="wpp_google_maps_right_col" vertical-align="top" style="vertical-align: top;">
         
           <?php
           $amount = 0;

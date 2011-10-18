@@ -984,8 +984,6 @@ jQuery(document).ready(function($){
           echo '<span class="wpp_widget_no_title"></span>';
         }
         
-
-        
         //** Load different attribute list depending on group selection */
         if($instance['group_attributes'] == 'true') {
           $search_args['group_attributes'] = true;
@@ -994,8 +992,19 @@ jQuery(document).ready(function($){
           $search_args['search_attributes'] = $search_attributes;
         }
         
+        //* Clean searchable attributes: remove unavailable ones */
+        $all_searchable_attributes = array_unique($wp_properties['searchable_attributes']);
+        foreach($search_args['search_attributes'] as $k => $v) {
+          if(!in_array($v, $all_searchable_attributes)) {
+            //* Don't remove hardcoded attributes (property_type,city) */
+            if ($v != 'property_type' && $v != 'city') {
+              unset($search_args['search_attributes'][$k]);
+            }
+          }
+        }
+        
         $search_args['searchable_property_types'] = $searchable_property_types;
-
+        
         if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
 
           if(empty($instance['per_page'])) {
@@ -1080,28 +1089,37 @@ jQuery(document).ready(function($){
         $wp_properties['property_stats']['property_type'] = __('Property Type', 'wpp');
       }
         
-       if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) {        
+       if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) {
 
         //** Add property type to the beginning of the attribute list, even though it's not a typical attribute */
         array_unshift($all_searchable_attributes, 'property_type');
        }
-
       
       //** Find the difference between selected attributes and all attributes, i.e. unselected attributes */
       if(is_array($searchable_attributes) && is_array($all_searchable_attributes)) {
-        $unselected_attributes = array_diff($all_searchable_attributes, $searchable_attributes);      
-      
-        //** Build new array beginning with selected attributes, in order, follow by all other attributes */
+        $unselected_attributes = array_diff($all_searchable_attributes, $searchable_attributes);
+        
+        //* Clean searchable attributes: remove unavailable ones */
+        foreach($searchable_attributes as $k => $v) {
+          if(!in_array($v, $all_searchable_attributes)) {
+            //* Don't remove hardcoded attributes (property_type,city) */
+            if ($v != 'property_type' && $v != 'city') {
+              unset($searchable_attributes[$k]);
+            }
+          }
+        }
+        
+        // Build new array beginning with selected attributes, in order, follow by all other attributes
         $ungrouped_searchable_attributes = array_merge($searchable_attributes, $unselected_attributes);
       
       } else {
         $ungrouped_searchable_attributes = $all_searchable_attributes;
       }
-     
-
+      //$ungrouped_searchable_attributes = $all_searchable_attributes;
+      
       //* Perpare $all_searchable_attributes for using by sort function */
       $temp_attrs = array();
-
+      
       foreach($all_searchable_attributes as $slug) {
         $attribute_label = $wp_properties['property_stats'][$slug];
         

@@ -1,3 +1,14 @@
+.wpp_notice {
+  display:block;
+  font-size:11px;
+  border:1px dashed #DFDFDF;
+}
+
+input.wpp_field_disabled,
+select.wpp_field_disabled {
+  background-color: #f3f3f3;
+}
+
 .wpp_post_status_trash {
   text-decoration: line-through;
 }
@@ -302,8 +313,16 @@ body.property_page_show_agents .wp-list-table .column-id {
   width: 160px;
 }
 
-
- 
+#wpp_inquiry_attribute_fields .wpp_notice {
+  width:96%;
+  margin-top:5px;
+  color: #b68282;
+  border-color: #b68282;
+}
+#wpp_inquiry_attribute_fields .wpp_notice span {
+  display:block;
+  padding:5px;
+}
 
 #metabox_profile_images .inside {
   margin:0;
@@ -397,17 +416,17 @@ div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
   display: none;
   cursor: pointer;
   border-color: #BBBBBB;
-   background-color: #FFFFFF;
+  background-color: #FFFFFF;
   color: #464646;
-    -moz-box-sizing: content-box;
-    border-radius: 8px;
-    border-style: solid;
-    border-width: 1px;
-    cursor: pointer;
-    font-size: 12px;
-    line-height: 13px;
-    padding: 3px 8px;
-    text-decoration: none;  
+  -moz-box-sizing: content-box;
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 13px;
+  padding: 3px 8px;
+  text-decoration: none;  
 }
 
 #wpp_property_import_source_status.wpp_import_source_good{
@@ -488,7 +507,6 @@ td.wpp_draggable_handle {
 th.wpp_attribute_group_col,
 td.wpp_attribute_group_col {
   width:20px !important;
-  position:relative;
 }
 
 div.wpp_attribute_group {
@@ -509,7 +527,8 @@ div.wpp_attribute_group {
   z-index:9999;
 }
 
-#wpp_dialog_wrapper {
+#wpp_dialog_wrapper,
+#wpp_dialog_wrapper_for_groups {
   display: none;
   position:fixed;
   top:0;

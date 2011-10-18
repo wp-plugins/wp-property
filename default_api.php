@@ -1,5 +1,53 @@
 <?php
 
+  /* add_filter('wpp_get_property', array('wpp_default_api', 'maybe_load_map_press_data')); */
+  
+  class wpp_default_api {
+  
+    function maybe_load_map_press_data ($property) {
+      global $wpdb, $wp_properties;
+      
+      $property = (array) $property;
+      $property_id = $property['ID'];
+      $address_attribute = $wp_properties['configuration']['address_attribute'];
+      
+      if(!empty($address_attribute) || !empty($property[$address_attribute])) {
+        return $property;
+      }
+      
+      if($obj = $wpdb->get_var("SELECT obj FROM {$wpdb->prefix}mappress_posts mpp LEFT JOIN {$wpdb->prefix}mappress_maps mpm ON mpp.mapid = mpm.mapid WHERE postid = '{$property_id}'")) {
+        $obj = maybe_unserialize($obj);
+        if($obj->pois) {
+        
+          foreach($obj->pois as $map_entry) {
+          
+            if(!empty($map_entry->point['lat']) && empty($property['latitude'])) {
+              $map_data['latitude'] = $map_entry->point['lat'];
+            }
+            if(!empty($map_entry->point['lng']) && empty($property['longitude'])) {
+              $map_data['longitude'] = $map_entry->point['lng'];
+            }
+ 
+            if(!empty($map_entry->correctedAddress) && empty($property[$address_attribute])) {
+              $map_data[$address_attribute] = $map_entry->correctedAddress;            
+            }
+            
+            if(!empty($map_data)) {            
+              return array_merge($property, $map_data);
+            }
+           
+          
+          }
+        
+        }        
+      }
+      
+      return $property;
+      
+    }
+  
+  }
+
   // Widget address format
   add_filter("wpp_stat_filter_{$wp_properties['configuration']['address_attribute']}", "wpp_format_address_attribute", 0,3);
 
@@ -170,8 +218,9 @@
       $line = trim($line);
 
       // Remove line if comma is first character
-      if(strlen($line) < 3 && (strpos($line, ',') === 1 || strpos($line, ',') === 0))
+      if(strlen($line) < 3 && (strpos($line, ',') === 1 || strpos($line, ',') === 0)) {
         continue;
+      }
 
       $return[] = $line;
 
@@ -687,5 +736,4 @@
     return $property;
   }
 
-
-  ?>
+  

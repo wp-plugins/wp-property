@@ -17,43 +17,45 @@ if(!function_exists('property_overview_image')) {
    *
    * @since 1.17.3
    */
-   function property_overview_image($args = '') {
+  function property_overview_image($args = '') {
     global $wpp_query, $property;
-
+    
     $defaults = array(
       'return' => 'false'
     );
-
+    
     $args = wp_parse_args( $args, $defaults );
-
+    
     if($wpp_query['fancybox_preview'] == 'true') {
       $thumbnail_link = $property['featured_image_url'];
       $link_class = "fancybox_image";
     }
-
+    
     $thumbnail_size = $wpp_query['thumbnail_size'];
-
+    
     $image = wpp_get_image_link($property['featured_image'], $thumbnail_size, array('return'=>'array'));
-
-    ob_start();
-    ?>
-    <div class="property_image">
-      <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? __(' of ', 'wpp') . $property['parent_title'] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
-        <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link']; ?>" alt="<?php echo $property['post_title'];?>" />
-      </a>
-    </div>
-    <?php
-    $html = ob_get_contents();
-    ob_end_clean();
-
+    
+    if(!empty($image)) {
+      ob_start();
+      ?>
+      <div class="property_image">
+        <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property['post_title'] . ($property['parent_title'] ? __(' of ', 'wpp') . $property['parent_title'] : "");?>"  class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?>" rel="properties" >
+          <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link']; ?>" alt="<?php echo $property['post_title'];?>" />
+        </a>
+      </div>
+      <?php
+      $html = ob_get_contents();
+      ob_end_clean();
+    } else {
+      $html = '';
+    }
+    
     if($args['return'] == 'true') {
       return $html;
     } else {
       echo $html;
     }
-
-
-    }
+  }
 }
 
 
@@ -216,10 +218,12 @@ if(!function_exists('wpi_draw_pagination')):
           if(hashes) {
             hashes = hashes.split('&');
             for (var i in hashes) {
-              hash = hashes[i].split('=');
-              history[hash[0]] = hash[1];
+              if(typeof hashes[i] != 'function') {
+                hash = hashes[i].split('=');
+                history[hash[0]] = hash[1];
+              }
             }
-
+            
             if(history.i) {
               /* get current shortcode's object */
               var index = parseInt(history.i) - 1;
@@ -765,15 +769,17 @@ if(!function_exists('the_tagline')):
   }
 endif;
 
-if(!function_exists('get_features')):
+if(!function_exists('get_features')) {
   function get_features($args = '', $property = false) {
     global $post;
 
-    if(is_array($property))
+    if(is_array($property)) {
       $property = (object) $property;
+    }
 
-    if(!$property)
+    if(!$property) {
       $property = $post;
+    }
 
     $defaults = array('type' => 'property_feature', 'format' => 'comma', 'links' => true);
     $args = wp_parse_args( $args, $defaults );
@@ -783,30 +789,36 @@ if(!function_exists('get_features')):
     $features_html = array();
 
     if($features) {
-    foreach ($features as $feature)
+    foreach ($features as $feature) {
 
-      if($links)
+      if($links) {
         array_push($features_html, '<a href="' . get_term_link($feature->slug, $args['type']) . '">' . $feature->name . '</a>');
-      else
+      } else {
         array_push($features_html, $feature->name);
+      }
 
-      if($args[format] == 'comma')
+      if($args['format'] == 'comma') {
         echo implode($features_html, ", ");
+      }
 
-      if($args[format] == 'array')
+      if($args['format'] == 'array') {
         return $features_html;
+      }
 
-      if($args[format] == 'count')
+      if($args['format'] == 'count') {
         return (count($features) > 0 ? count($features) : false);
+      }
 
-      if($args[format] == 'list')
+      if($args['format'] == 'list') {
         echo "<li>" . implode($features_html, "</li><li>") . "</li>";
+      }
+      
+      }
 
     }
 
-
   }
-endif;
+}
 
 if(!function_exists('draw_stats')):
   /**
@@ -1331,6 +1343,7 @@ if(!function_exists('draw_property_search_form')):
       //** End Group Attributes */
       ?>
       </ul>
+      <div class="clear"></div>
       </li>
       <?php } ?>
 

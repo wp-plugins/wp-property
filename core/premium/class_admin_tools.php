@@ -1,11 +1,11 @@
 <?php
 /*
 Name: Admin Tools
-Class: class_admin_tools
-Version: 2.9.3
 Feature ID: 1
-Minimum Version: 1.22.0
+Minimum Version: 1.24.0
+Version: 3.0.0
 Description: Tools for developing themes and extensions for WP-Property.
+Class: class_admin_tools
 */
 
 
@@ -123,8 +123,9 @@ class class_admin_tools {
   function settings_page() {
   global $wpdb, $wp_properties; ?>
   <script type="text/javascript">
+    var geo_type_attrs = <?php echo json_encode((array)$wp_properties['geo_type_attributes']); ?>
+    
     jQuery(document).ready(function() {
-      
       jQuery("#wpp_inquiry_attribute_fields tbody").sortable();
       jQuery("#wpp_inquiry_meta_fields tbody").sortable();
       
@@ -136,8 +137,74 @@ class class_admin_tools {
         jQuery(this).removeClass("wpp_draggable_handle_show");
       });;
       
-      /* Stats to group functionality */
+      //* Stats to group functionality */
       jQuery('.wpp_attribute_group').wppGroups();
+      
+      //* Fire Event after Row is added */
+      jQuery('#wpp_inquiry_attribute_fields tr').live('added', function(){
+        //* Remove notice block if it exists */
+        var notice = jQuery(this).find('.wpp_notice');
+        if(notice.length > 0) {
+          notice.remove();
+        }
+        //* Unassign Group from just added Attribute */
+        jQuery('input.wpp_group_slug' , this).val('');
+        this.removeAttribute('wpp_attribute_group');
+        
+        //* Remove background-color from the added row if it's set */
+        if(typeof jQuery.browser.msie != 'undefined' && (parseInt(jQuery.browser.version) == 9)) {
+          //* HACK FOR IE9 (it's just unset background color) peshkov@UD: */
+          setTimeout(function(){
+            var lr = jQuery('#wpp_inquiry_attribute_fields tr.wpp_dynamic_table_row').last();
+            var bc = lr.css('background-color');
+            lr.css('background-color', '');
+            jQuery(document).bind('mousemove', function(){
+              setTimeout(function(){
+                lr.prev().css('background-color', bc);
+              }, 50);
+              jQuery(document).unbind('mousemove');
+            });
+          }, 50);
+        } else {
+          jQuery(this).css('background-color', '');
+        }
+        
+        //* Stat to group functionality */
+        jQuery(this).find('.wpp_attribute_group').wppGroups();
+      });
+      
+      //* Determine if slug of property stat is the same as Geo Type has and show notice */
+      jQuery('#wpp_inquiry_attribute_fields tr .wpp_stats_slug_field').live('change', function(){
+        var slug = jQuery(this).val();
+        var geo_type = false;
+        if(typeof geo_type_attrs == 'object') {
+          for(var i in geo_type_attrs) {
+            if(slug == geo_type_attrs[i]) {
+              geo_type = true;
+              break;
+            }
+          }
+        }
+        var notice = jQuery(this).parent().find('.wpp_notice');
+        if(geo_type) {
+          if(!notice.length > 0) {
+            //* Toggle Advanced option to show notice */
+            var advanced_options = (jQuery(this).parents('tr.wpp_dynamic_table_row').find('.wpp_development_advanced_option'));
+            if(advanced_options.length > 0) {
+              if(jQuery(advanced_options.get(0)).is(':hidden')) {
+                jQuery(this).parents('tr.wpp_dynamic_table_row').find('.wpp_show_advanced').trigger('click');
+              }
+            }
+            jQuery(this).parent().append('<div class="wpp_notice"></div>');
+            notice = jQuery(this).parent().find('.wpp_notice');
+          }
+          notice.html('<span><?php _e('Attention! This attribute (slug) is used by Google Validator and Address Display functionality. It is set automaticaly and can not be edited on Property Adding/Updating page.','wpp'); ?></span>');
+        } else {
+          if(notice.length > 0) {
+            notice.remove();
+          }
+        }
+      });
     });
   </script>
   <style type="style/text">
@@ -149,7 +216,7 @@ class class_admin_tools {
     <tr>
       <td>
         <h3><?php _e('Property Types','wpp') ?></h3>
-        <table id="wpp_inquiry_property_types" class="ud_ui_dynamic_table widefat">
+        <table id="wpp_inquiry_property_types" class="ud_ui_dynamic_table widefat" allow_random_slug="true">
         <thead>
           <tr>
             <th><?php _e('Property Type','wpp') ?></th>
@@ -190,8 +257,7 @@ class class_admin_tools {
               <?php endforeach; ?>
             </ul>
           </td>
-
-
+          
           <td >
             <ul class="wp-tab-panel wpp_hidden_property_attributes">
             
@@ -263,6 +329,7 @@ class class_admin_tools {
           <div class="clear"></div>
         </div>
         
+        <div id="wpp_dialog_wrapper_for_groups"></div>
         <div id="wpp_attribute_groups">
             <table cellpadding="0" cellspacing="0" allow_random_slug="true" class="ud_ui_dynamic_table widefat wpp_sortable">
               <thead>
@@ -329,7 +396,7 @@ class class_admin_tools {
             </table>
         </div>
         
-        <table id="wpp_inquiry_attribute_fields" class="ud_ui_dynamic_table widefat">
+        <table id="wpp_inquiry_attribute_fields" class="ud_ui_dynamic_table widefat" allow_random_slug="true">
         <thead>
           <tr>
             <th class='wpp_draggable_handle'>&nbsp;</th>
@@ -358,7 +425,12 @@ class class_admin_tools {
                 <input class="slug_setter" type="text" name="wpp_settings[property_stats][<?php echo $slug; ?>]" value="<?php echo $label; ?>" />
               </li>
               <li class="wpp_development_advanced_option">
-                <input type="text" class="slug" readonly='readonly' value="<?php echo $slug; ?>" />
+                <input type="text" class="slug wpp_stats_slug_field" readonly='readonly' value="<?php echo $slug; ?>" />
+                <?php if(in_array($slug, $wp_properties['geo_type_attributes'])): ?>
+                <div class="wpp_notice">
+                  <span><?php _e('Attention! This attribute (slug) is used by Google Validator and Address Display functionality. It is set automaticaly and can not be edited on Property Adding/Updating page.','wpp'); ?></span>
+                </div>
+                <?php endif; ?>
               </li>
               <li>
                 <span class="wpp_show_advanced"><?php _e('Toggle Advanced Settings', 'wpp'); ?></span>

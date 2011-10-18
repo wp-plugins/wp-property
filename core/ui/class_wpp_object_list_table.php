@@ -153,20 +153,40 @@ class WPP_Object_List_Table extends WPP_List_Table {
         break;
         
         case 'overview':
+              
           $overview_stats = $wp_properties['property_stats'];
 
           unset($overview_stats['phone_number']);
 
-          // Not the best way of doing it, but better than nothing.
-          // We basically take all property stats, then dump everything too long and empty
+          $stat_count = 0;
+          $hidden_count = 0;
+          
           foreach($overview_stats as $stat => $label) {
 
-            if(empty($post->$stat) || strlen($post->$stat) > 15)
+            if(empty($post->$stat) || strlen($post->$stat) > 15) {
               continue;
-
-            $r .= "$label: " . apply_filters("wpp_stat_filter_$stat", $post->$stat) . " <br />";
+            }
+            
+            $stat_count++;
+            
+            if($stat_count > 5) {
+              $stat_row_class = 'hidden wpp_overview_hidden_stats';
+              $hidden_count++;
+            }
+            
+            $display_stats[$stat] = '<li class="'.$stat_row_class.'"><span class="wpp_label">' . $label . ':</span> <span class="wpp_value">' . apply_filters("wpp_stat_filter_$stat", $post->$stat) . '</span></li>';;
 
           }
+          
+          if(is_array($display_stats) && count($display_stats) > 0) {
+          
+            if($stat_count > 5) {
+              $display_stats['toggle_advanced'] = '<li class="wpp_show_advanced" advanced_option_class="wpp_overview_hidden_stats">' . sprintf(__('Toggle %1s more.', 'wpp'), $hidden_count) . '</li>';
+            }
+            
+            $r .= '<ul class="wpp_overview_column_stats wpp_something_advanced_wrapper">' . implode('', $display_stats) . '</ul>';
+          }
+          
         break;
         
         case 'features':
@@ -199,9 +219,7 @@ class WPP_Object_List_Table extends WPP_List_Table {
           }
 
           if(!empty($image_thumb_obj)) {
-            $r .= '<a href="'.$post->images['large'].'" class="fancybox" rel="overview_group" title="'.$post->post_title.'">
-<img src="'.$image_thumb_obj['url'].'" width="'.$image_thumb_obj['width'].'" height="'.$image_thumb_obj['height'].'" />
-</a>';
+            $r .= '<a href="'.$post->images['large'].'" class="fancybox" rel="overview_group" title="'.$post->post_title.'"><img src="'.$image_thumb_obj['url'].'" width="'.$image_thumb_obj['width'].'" height="'.$image_thumb_obj['height'].'" /></a>';
           } else {
             $r .= " - ";
           }

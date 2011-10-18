@@ -143,28 +143,59 @@ class wpi_property_export {
 
   $taxonomies = $wp_properties['taxonomies'];
 
-  $limit = ($_REQUEST['limit'] ? $_REQUEST['limit'] : -1);
-	
     // If the API key isn't valid, we quit
-    if($_REQUEST['api'] != $api_key) die(__('Invalid API key.', 'wpp'));
-    // Start building our wp query object
-    $args = array(
-      'post_type' => 'property',
-      'post_status' => 'publish',
-      'posts_per_page' => $limit
-    );
-    $wpq = new wp_query($args);
-    if($wpq->post_count == 0) die(__('No published properties.', 'wpp'));
+    if($_REQUEST['api'] != $api_key) {
+      die(__('Invalid API key.', 'wpp'));
+    }
+    
+    if(isset($_REQUEST['limit'])) {
+      $per_page = $_REQUEST['limit'];
+      $starting_row = 0;
+    }    
+    
+    if(isset($_REQUEST['per_page'])) {
+      $per_page = $_REQUEST['per_page'];
+    }
+    
+    if(isset($_REQUEST['starting_row'])) {
+      $starting_row = $_REQUEST['starting_row'];
+    }
+    
+    if(isset($_REQUEST['property_type'])) {
+      $property_type = $_REQUEST['property_type'];
+    } else {
+      $property_type = 'all';
+    }
+    
+    $wpp_query['query']['property_type'] = 'listing';
+  
+    $wpp_query['query']['pagi'] = $starting_row . '--' . $per_page;
+    $wpp_query['query']['sort_by'] = ($_REQUEST['sort_by'] ? $_REQUEST['sort_by'] : 'post_date' );
+    $wpp_query['query']['sort_order'] = ($_REQUEST['sort_order'] ? $_REQUEST['sort_order'] : 'ASC' );
+    $wpp_query['query']['property_type'] = $property_type;
+ 
+    $wpp_query = WPP_F::get_properties($wpp_query['query'], true);
+    
+    $results = $wpp_query['results'];
+ 
+    if(count($results) == 0) {
+      die(__('No published properties.', 'wpp'));
+    }
+    
     //Start the XML
+    /*
     header('Content-type: text/xml');
     print '<?xml version="1.0"?><properties>';
+*/
 
-    $count = 0;
-	
-    foreach($wpq->posts as $post){
-      if(isset($_REQUEST['limit']) && $count == $_REQUEST['limit']) break;
-      $count++;
-      $property = WPP_F::get_property($post->ID, "return_object=true&load_parent=false");      
+    header('Content-type: application/json');
+    header('Content-Disposition: inline; filename="wpp_xml_data.json"');
+    header("Cache-Control: no-cache");
+    header("Pragma: no-cache");
+    	
+    foreach($results as $count => $id){
+
+      $property = WPP_F::get_property($id, "return_object=true&load_parent=false");      
       
       if($property->post_parent && !$property->parent_gpid) {
         $property->parent_gpid = WPP_F::maybe_set_gpid($property->post_parent);
@@ -199,23 +230,32 @@ class wpi_property_export {
         }
       }
       
-      $xml = new XML_Serializer();
-      $xml->serialize($property);
-      $data = preg_replace('/stdClass/i', 'property', $xml->getSerializedData());
-      $data = preg_replace('/XML_Serializer_Tag/i', 'tag', $data);
-      print $data;
+      foreach($property as $meta_key => $meta_value) {
+      
+        if(is_array($meta_value) || is_object($meta_value)) {
+          $fixed_property->$meta_key = $meta_value;
+          continue;
+        }
+        
+        //$meta_value = strip_tags($meta_value);
+        $fixed_property->$meta_key = $meta_value;
+        //$fixed_property->$meta_key = '<![CDATA[' .  ($meta_value) . ']]>';
+        $properties[$id] = $fixed_property;
+
+      
+      }
+      
+ 
     }
+    
+    echo json_encode($properties);
 
-    $mtime = microtime();
-    $mtime = explode(" ",$mtime);
-    $mtime = $mtime[1] + $mtime[0];
-    $endtime = $mtime;
-    $totaltime = ($endtime - $starttime);
-
+    /*
     print '<stats>';
     print '<count>' . $wpq->post_count . '</count>';
     print '<load_time>' . $totaltime . '</load_time>';
     print '</stats>';	
-    die("</properties>");
+    */
+    die();
   }
 }

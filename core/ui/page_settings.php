@@ -17,21 +17,26 @@
 */
  
 
-// Check if premium folder is writable
-$wp_messages = WPP_F::check_premium_folder_permissions();
+  //** Check if premium folder is writable */
+  $wp_messages = WPP_F::check_premium_folder_permissions();
 
-if(isset($_REQUEST['message'])) {
+  if(isset($_REQUEST['message'])) {
 
-  switch($_REQUEST['message']) {
-  
-    case 'updated':    
-    $wp_messages['notice'][] = __("Settings updated.", 'wpp');
-    break;
+    switch($_REQUEST['message']) {
+    
+      case 'updated':    
+      $wp_messages['notice'][] = __("Settings updated.", 'wpp');
+      break;
+    }
   }
-}
-    $parseUrl = parse_url(trim(get_bloginfo('url')));
-    $this_domain = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
-   
+  $parseUrl = parse_url(trim(get_bloginfo('url')));
+  $this_domain = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
+  
+  /** Check if custom css exists */
+  if ( file_exists( STYLESHEETPATH . '/wp_properties.css') || file_exists( TEMPLATEPATH . '/wp_properties.css')) {
+    $using_custom_css = true;
+  }
+ 
 ?>
 
  <script type="text/javascript">
@@ -118,6 +123,25 @@ if(isset($_REQUEST['message'])) {
         jQuery("#wpp_ajax_property_result").html(data);
         jQuery("#wpp_ajax_property_query_cancel").show();
 
+      });
+
+  });   
+  
+  //** Mass set property type */
+  jQuery("#wpp_ajax_max_set_property_type").click(function() {
+  
+    if(!confirm("<?php _e('You are about to set ALL your properties to the selected property type. Are you sure?', 'wpp'); ?>")) {
+      return;
+    }
+    
+    var property_type = jQuery("#wpp_ajax_max_set_property_type_type").val();
+
+    jQuery.post(ajaxurl, {
+      action: 'wpp_ajax_max_set_property_type',
+      property_type: property_type
+      }, function(data) {
+        jQuery("#wpp_ajax_max_set_property_type_result").show();
+        jQuery("#wpp_ajax_max_set_property_type_result").html(data); 
       });
 
   }); 
@@ -300,7 +324,13 @@ if(isset($_REQUEST['message'])) {
 
         <ul>
           <li>
-          <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Automatically include default CSS.','wpp'), $wp_properties['configuration']['autoload_css']); ?>
+          <?php 
+            if($using_custom_css) { 
+              echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Load default CSS. If unchecked, the wp-properties.css in your theme folder will not be loaded.','wpp'), $wp_properties['configuration']['autoload_css']); 
+            } else {
+              echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Load default CSS.','wpp'), $wp_properties['configuration']['autoload_css']);
+            }
+            ?>
           </li>
            
            <li>
@@ -681,8 +711,16 @@ if(isset($_REQUEST['message'])) {
         <?php _e('Revalidate all addresses using', 'wpp'); ?> <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> <?php _e('localization', 'wpp'); ?>.
          <input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
       </div>
-
-            
+      
+      <div class="wpp_settings_block"><?php _e('Set all properties to same property type:','wpp') ?>
+        <select id="wpp_ajax_max_set_property_type_type">
+        <?php foreach($wp_properties['property_types'] as $p_slug => $p_label) { ?>
+        <option value="<?php echo $p_slug; ?>"><?php echo $p_label; ?></option>
+        <?php } ?>
+        <input type="button" value="<?php _e('Set','wpp') ?>" id="wpp_ajax_max_set_property_type">
+        <pre id="wpp_ajax_max_set_property_type_result" class="wpp_class_pre hidden"></pre>
+      </div>
+      
       <div class="wpp_settings_block">
         <?php if(function_exists('memory_get_usage')): ?>
         <?php _e('Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes. 

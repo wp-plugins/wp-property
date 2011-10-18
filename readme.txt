@@ -159,6 +159,8 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.24.0 =
+* Changed property export function to export in JSON format.
 = 1.20.0 =
 * Major changes to the way pagination is handled.  Pagination is no longer loaded from a file but from wpi_draw_pagination().
 
@@ -205,6 +207,22 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.24.0 =
+* Added check to verify that the property type of the property being edited exists, if not a warning is displayed (in case property type was deleted by accident)
+* Added a notice to developer tab when new attributes are being added that are used for address storage, and the attributes are displayed a read-only on property editing pages.
+* Added a function to hide attributes from the back-end overview column when there are over 5, and added a button to toggle all the attributes over 5.
+* Fixed issue with Denali theme not showing property-specific sideshow.
+* Fixed bug that occurred with pagination when hashes() function was not found.
+* Fixed to Attribute Grouping functions. 
+* Added "Help" tab tool to mass-set property type. 
+* Added some support for legacy property templates.
+* Changed property export function to export in JSON format.
+* Added conditional function checking to prevent all JS to break when Fancybox, and other functions, were not found.
+* Improved attachment deleting function - now if the folder has no files upon deletion, it is deleted as well.
+* Added wpp_property_page_vars filter for API ability to load extra variables into WPP templates.
+* Added styling for FEPS (Front End Property Submissions)
+* Tweaks to Supermap searching and custom Map Icon uploading. (Super Map)
 
 = 1.23.0 =
 * Fixed issue with grouped searchable attributes not generating and caching value ranges when Property Search widget was being saved.

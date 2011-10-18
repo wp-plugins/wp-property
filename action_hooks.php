@@ -144,8 +144,8 @@
    * Display and UI related filters
    *
    */
-
-  // Don't load defaults if settings exist in db
+  
+  //* Don't load defaults if settings exist in db */
   if(!is_array($wp_properties_db['image_sizes']))
     $wp_properties['image_sizes'] = array(
       'map_thumb' => array('width'=> '75', 'height' => '75'),
@@ -153,8 +153,25 @@
       'sidebar_wide' => array('width'=> '195', 'height' => '130'),
       'slideshow' => array('width'=> '640', 'height' => '235')
     );
-
-
+  
+  $wp_properties['default_coords']['latitude'] = '57.7973333';
+  $wp_properties['default_coords']['longitude'] = '12.0502107';
+  
+  //* Geo type attributes are predefined and should not be editable on property adding/updating */
+  $wp_properties['geo_type_attributes'] = array(
+    'formatted_address',
+    'street_number',
+    'route',
+    'district',
+    'city',
+    'county',
+    'state',
+    'state_code',
+    'country',
+    'country_code',
+    'postal_code'
+  );
+  
   // Image URLs.
   $wp_properties['images']['map_icon_shadow'] = WPP_URL . "images/map_icon_shadow.png";
 
@@ -244,6 +261,7 @@
   $wp_properties['l10n'] = array(
     'uploading' => __( 'Uploading', 'wpp' ),
     'drop_file' => __( 'Drop files here to upload', 'wpp' ),
+    'upload_images' => __( 'Upload Image', 'wpp' ),
     'cancel'    => __( 'Cancel', 'wpp' ),
     'fail'      => __( 'Failed', 'wpp' )
   );

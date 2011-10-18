@@ -255,10 +255,10 @@ qq.FileUploaderBasic = function(o){
         action: '/server/upload',
         params: {},
         button: null,
-        multiple: true,
+        multiple: false,
         maxConnections: 3,
         // validation        
-        allowedExtensions: [],               
+        allowedExtensions: ['jpg','gif','png'],               
         sizeLimit: 0,   
         minSizeLimit: 0,                             
         // events
@@ -486,7 +486,7 @@ qq.FileUploader = function(o){
                 
         template: '<div class="qq-uploader">' + 
                 '<div class="qq-upload-drop-area"><span>'+l10n.drop_file+'</span></div>' +
-                '<div class="qq-upload-button">Upload a file</div>' +
+                '<div class="qq-upload-button">'+l10n.upload_images+'</div>' +
                 '<ul class="qq-upload-list"></ul>' + 
              '</div>',
 

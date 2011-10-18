@@ -17,10 +17,7 @@ class WPP_UI {
     $post_type_object = get_post_type_object($post->post_type);
     if ($post_type_object->hierarchical) {
       $pages = wp_dropdown_pages(array('post_type' => $post->post_type, 'exclude_tree' => $post->ID, 'selected' => $post->post_parent, 'name' => 'parent_id', 'show_option_none' => __('(no parent)', 'wpp'), 'sort_column' => 'menu_order, post_title', 'echo' => 0));
-      if (!empty($pages)) {
-        ?>
-
-
+      if (!empty($pages)) { ?>
 
         <p><strong><?php _e('Parent', 'wpp') ?></strong></p>
         <label class="screen-reader-text" for="parent_id"><?php _e('Parent', 'wpp') ?></label>
@@ -66,6 +63,13 @@ class WPP_UI {
     if (empty($this_property_type) && empty($property['post_name'])) {
       $this_property_type = WPP_F::get_most_common_property_type();
     }
+    
+    //** Check for current property type if it is deleted */    
+    if(is_array($wp_properties['property_types']) && isset($property['property_type']) && !in_array($property['property_type'], array_keys($wp_properties['property_types']))) {      
+      $wp_properties['property_types'][$property['property_type']] =  WPP_UD_F::de_slug($property['property_type']);
+      $wp_properties['descriptions']['property_type'] = '<span class="attention">' . sprintf(__('<strong>Warning!</strong> The %1s property type has been deleted.', 'wpp'), $wp_properties['property_types'][$property['property_type']]) . '</span>';
+    }
+    
     ?>
     
     <?php if (!$loaded) : ?>
@@ -217,7 +221,7 @@ class WPP_UI {
             </td>
           </tr>
         <?php endif; ?>
-        
+  
         <?php if(count($wp_properties['property_types']) > 1) { ?>
         <tr class="wpp_attribute_row_type wpp_attribute_row <?php if (is_array($wp_properties['hidden_attributes'][$property['property_type']]) && in_array('type', $wp_properties['hidden_attributes'][$property['property_type']])) echo 'disabled_row;'; ?>">
           <th><?php _e('Property Type', 'wpp'); ?></th>
@@ -284,19 +288,24 @@ class WPP_UI {
             }
             ?>
             
-            <?php //* Check if attribute has predefine values */ ?>
-            <?php if (!empty($wp_properties['predefined_values'][$slug])) : ?>
-              <?php $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$slug])); ?>
-              <?php if ($predefined_values == 'true,false' || $predefined_values == 'false,true') : ?>
-                <?php echo apply_filters("wpp_property_stats_input_$slug", "<input type='hidden' name='wpp_data[meta][{$slug}]' value='false' /><input " . checked($value, 'true', false) . "type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' value='true' /> <label for='wpp_meta_{$slug}'>" . __('Enable.', 'wpp') . "</label>", $slug, $property); ?>
-              <?php else : ?>
-                <?php foreach (explode(',', $predefined_values) as $option) : ?>
-                  <?php $predefined_options[$slug][] = "<option " . selected(esc_attr(trim($value)), esc_attr(trim(str_replace('-', '&ndash;', $option))), false) . " value='" . esc_attr($option) . "'>" . trim(esc_attr($option)) . "</option>"; ?>
-                <?php endforeach; ?>
-                <?php echo apply_filters("wpp_property_stats_input_$slug", "<select id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'><option value=''> - </option>" . implode($predefined_options[$slug]) . "</select>", $slug, $property); ?>
-              <?php endif; ?>
+            <?php //* Determine if the current attribute is geo type, it will be disabled */ ?>
+            <?php if(in_array($slug, (array)$wp_properties['geo_type_attributes'])) : ?>
+              <?php echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' class='text-input wpp_field_disabled {$attribute_data['ui_class']}' value='{$value}' disabled='disabled' />", $slug, $property); ?>
             <?php else : ?>
-              <?php echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  class='text-input {$attribute_data[ui_class]}' value=\"{$value}\" />", $slug, $property); ?>
+              <?php //* Check if attribute has predefine values */ ?>
+              <?php if (!empty($wp_properties['predefined_values'][$slug])) : ?>
+                <?php $predefined_values = str_replace(array(', ', ' ,'), array(',', ','), trim($wp_properties['predefined_values'][$slug])); ?>
+                <?php if ($predefined_values == 'true,false' || $predefined_values == 'false,true') : ?>
+                  <?php echo apply_filters("wpp_property_stats_input_$slug", "<input type='hidden' name='wpp_data[meta][{$slug}]' value='false' /><input " . checked($value, 'true', false) . "type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' value='true' {$disabled} /> <label for='wpp_meta_{$slug}'>" . __('Enable.', 'wpp') . "</label>", $slug, $property); ?>
+                <?php else : ?>
+                  <?php foreach (explode(',', $predefined_values) as $option) : ?>
+                    <?php $predefined_options[$slug][] = "<option " . selected(esc_attr(trim($value)), esc_attr(trim(str_replace('-', '&ndash;', $option))), false) . " value='" . esc_attr($option) . "'>" . trim(esc_attr($option)) . "</option>"; ?>
+                  <?php endforeach; ?>
+                  <?php echo apply_filters("wpp_property_stats_input_$slug", "<select id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'><option value=''> - </option>" . implode($predefined_options[$slug]) . "</select>", $slug, $property); ?>
+                <?php endif; ?>
+              <?php else : ?>
+                <?php echo apply_filters("wpp_property_stats_input_$slug", "<input type='text' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]' class='text-input {$attribute_data[ui_class]}' value=\"{$value}\" />", $slug, $property); ?>
+              <?php endif; ?>
             <?php endif; ?>
             
             <?php if($attribute_data['currency'] && $wp_properties['configuration']['currency_symbol_placement'] == 'after') : ?>
@@ -344,15 +353,6 @@ class WPP_UI {
       <?php $wp_list_table->search_box('Search', 'property'); ?>
 
       <?php $filters = WPP_F::get_search_filters(); ?>
-
-      <?php
-      /*
-        echo "<pre>";
-        print_r($filters);
-        echo "</pre>";
-       */
-      ?>
-
 
       <?php
       if (!empty($filters)) {
