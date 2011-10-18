@@ -12,6 +12,10 @@ Class: class_admin_tools
 add_action('wpp_init', array('class_admin_tools', 'init'));
 add_action('wpp_pre_init', array('class_admin_tools', 'pre_init'));
 
+if(class_exists('class_admin_tools')) {
+  return;
+}
+
 /**
  * class_admin_tools Class
  *

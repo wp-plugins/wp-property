@@ -208,6 +208,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.24.1 =
+* Bug fix with class admin tools.
+
 = 1.24.0 =
 * Added check to verify that the property type of the property being edited exists, if not a warning is displayed (in case property type was deleted by accident)
 * Added a notice to developer tab when new attributes are being added that are used for address storage, and the attributes are displayed a read-only on property editing pages.
