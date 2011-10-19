@@ -208,6 +208,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.24.2 =
+* Added out-of-the-box support for WPTouch plugin for displaying property pages on mobile devices. 
+* Bug fix with taxonomies displaying incorrect results on property pages.
+
 = 1.24.1 =
 * Bug fix with class admin tools.
 

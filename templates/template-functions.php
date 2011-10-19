@@ -789,12 +789,14 @@ if(!function_exists('get_features')) {
     $features_html = array();
 
     if($features) {
-    foreach ($features as $feature) {
+      
+      foreach ($features as $feature) {
 
-      if($links) {
-        array_push($features_html, '<a href="' . get_term_link($feature->slug, $args['type']) . '">' . $feature->name . '</a>');
-      } else {
-        array_push($features_html, $feature->name);
+        if($links) {
+          array_push($features_html, '<a href="' . get_term_link($feature->slug, $args['type']) . '">' . $feature->name . '</a>');
+        } else {
+          array_push($features_html, $feature->name);
+        }
       }
 
       if($args['format'] == 'comma') {
@@ -812,10 +814,9 @@ if(!function_exists('get_features')) {
       if($args['format'] == 'list') {
         echo "<li>" . implode($features_html, "</li><li>") . "</li>";
       }
-      
-      }
 
     }
+
 
   }
 }

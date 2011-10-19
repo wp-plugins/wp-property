@@ -1,5 +1,111 @@
-/* FEPS Styles Begin */
+/* WP Touch Styles Begin */
+body.idevice {
 
+}
+body.idevice ul.wpp_overview_data li {
+  list-style:none;
+}
+
+body.idevice .wpp_property_overview_shortcode {
+  margin-top: 10px;
+}
+
+body.idevice ul.wpp_overview_data {
+  padding-left: 10px;
+}
+
+body.idevice div.listing_container .building_title_wrapper {
+  margin-top: 15px;
+}
+
+body.idevice .wpp_sidebar_listing,
+body.idevice div.listing_container .building_title_wrapper,
+body.idevice div.listing_container .entry-content {
+
+    background-color: #FFFFFF;
+    border: 1px solid #B1B1B1;
+    margin-bottom: 12px;
+    margin-left: 10px;
+    margin-right: 10px;
+    padding: 10px;
+    position: relative;
+    z-index: 0;    
+}
+
+body.idevice div.listing_container .wpp_stats_group {
+    border-bottom: 1px solid #D7D7D7;
+    color: #484848;
+    display: block;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+
+body.idevice div.listing_container h1.property-title  {
+    color: #222222;
+    display: block;
+    font-size: 19px;
+    font-weight: bold;
+    letter-spacing: -1px;
+    line-height: 20px;
+    margin: 0;
+    padding: 0 0 2px;
+    text-align: left;
+}
+body.idevice div.listing_container .entry-subtitle {
+    color: #999999;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 15px;
+    text-align: left;
+}
+
+body.idevice #property_stats.overview_stats,
+body.idevice #property_stats.overview_stats dt,
+body.idevice #property_stats.overview_stats dd {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border: 0;
+}
+ 
+
+body.idevice #property_stats.overview_stats dt {
+  padding-left: 0;
+  font-weight: normal;
+}
+
+body.idevice #property_stats.overview_stats dd {
+    background: transparent;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+body.idevice div.listing_container #property_stats {
+  padding:0;
+  margin: 0 0 15px 0;
+}
+
+body.idevice .wpp_sidebar_listing ul,
+body.idevice .wpp_sidebar_listing ul li {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+body.idevice .wpp_sidebar_listing .wpp_gallery_widget {
+  float: none;
+  overflow: auto;
+}
+
+body.idevice .wpp_sidebar_listing .sidebar_gallery_item {
+  float: left;
+}
+
+/* WP Touch Styles End*/
+
+
+/* FEPS Styles Begin */
 form.wpp_feps_form label.error {
   display: block;
 }

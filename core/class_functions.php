@@ -2262,10 +2262,10 @@ class WPP_F {
           // Get all property types
           if ($specific == 'all') {
             if (isset($matching_ids)) {
-              $matching_id_filter = implode("' OR post_id ='", $matching_ids);
-              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = 'property_type')");
+              $matching_id_filter = implode("' OR ID ='", $matching_ids);
+              $matching_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE (ID ='$matching_id_filter') AND post_type = 'property'");
             } else {
-              $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = 'property_type')");
+              $matching_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'property'");
             }
             break;
           }

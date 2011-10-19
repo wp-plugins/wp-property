@@ -97,10 +97,10 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
  
     
       <div class="entry-content">
-        <?php @the_content(); ?>
+        <div class="wpp_the_content"><?php @the_content(); ?></div>
         
         <?php if ( empty($wp_properties['property_groups']) || $wp_properties['configuration']['property_overview']['sort_stats_by_groups'] != 'true' ) : ?>
-          <dl id="property_stats" class="overview_stats">
+          <dl id="property_stats" class="property_stats overview_stats">
             <?php if(!empty($post->display_address)): ?>
             <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
             <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
@@ -109,7 +109,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
           </dl>
         <?php else: ?>
           <?php if(!empty($post->display_address)): ?>
-          <dl id="property_stats" class="overview_stats">
+          <dl id="property_stats" class="property_stats overview_stats">
             <dt class="wpp_stat_dt_location"><?php echo $wp_properties['property_stats'][$wp_properties['configuration']['address_attribute']]; ?></dt>
             <dd class="wpp_stat_dd_location alt"><?php echo $post->display_address; ?>&nbsp;</dd>
           </dl>
