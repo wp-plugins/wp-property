@@ -13,6 +13,21 @@
 class WPP_F {
 
   /**
+   * Get filesize of a file.
+   *
+   * Function ported over from List Attachments Shortcode plugin.
+   *
+   * @version 1.25.0
+   */
+    function get_filesize( $file ) {
+      $bytes = filesize( $file );
+      $s = array( 'b', 'Kb', 'Mb', 'Gb' );
+      $e = floor( log( $bytes ) / log( 1024 ) );
+      return sprintf( '%.2f ' . $s[$e], ( $bytes / pow( 1024, floor( $e ) ) ) );
+    }
+
+    
+  /**
    * Set all existing property objects' property type
    *
    * @todo Add regex to check for opening and closing bracket.
@@ -1054,8 +1069,8 @@ class WPP_F {
   static function encode_mysql_input( $input, $meta_key = false) {
     
     if($meta_key == 'latitude' || $meta_key == 'longitude')
-      return $input;
-    
+      return (float)$input;
+
     /* If PHP version is newer than 4.3.0, else apply fix. */
     if ( strnatcmp(phpversion(),'4.3.0' ) >= 0 ) {
       $result = str_replace( html_entity_decode('-', ENT_COMPAT, 'UTF-8'), '&ndash;', $input );
@@ -2607,11 +2622,11 @@ class WPP_F {
 
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-    //UD_F::log("Loading property id: $id");
     $post = get_post($id, ARRAY_A);
 
-    if($post['post_type'] != 'property')
+    if($post['post_type'] != 'property') {
       return false;
+    }
 
     $return = array();
 
@@ -2839,19 +2854,18 @@ class WPP_F {
     foreach($return as $key => $item) {
 
       // Don't keys starting w/ post_
-      if(strpos($key, 'post_') === 0)
+      if(strpos($key, 'post_') === 0) {
         continue;
+      }
 
-      if(empty($item))
+      if(empty($item)) {
         unset($return[$key]);
+      }
     }
-
-
 
     // Convert to object
     if($return_object == 'true') {
       $return = WPP_F::array_to_object($return);
-
     }
 
     wp_cache_add($id.$args, $return);

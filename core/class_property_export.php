@@ -181,18 +181,12 @@ class wpi_property_export {
     if(count($results) == 0) {
       die(__('No published properties.', 'wpp'));
     }
-    
-    //Start the XML
-    /*
-    header('Content-type: text/xml');
-    print '<?xml version="1.0"?><properties>';
-*/
 
     header('Content-type: application/json');
     header('Content-Disposition: inline; filename="wpp_xml_data.json"');
     header("Cache-Control: no-cache");
     header("Pragma: no-cache");
-    	
+    
     foreach($results as $count => $id){
 
       $property = WPP_F::get_property($id, "return_object=true&load_parent=false");      
@@ -230,22 +224,23 @@ class wpi_property_export {
         }
       }
       
-      foreach($property as $meta_key => $meta_value) {
+      $fixed_property = new stdClass();
       
+      foreach($property as $meta_key => $meta_value) {
+        
         if(is_array($meta_value) || is_object($meta_value)) {
           $fixed_property->$meta_key = $meta_value;
           continue;
         }
-        
-        //$meta_value = strip_tags($meta_value);
+       
+        //$meta_value = htmlentities($meta_value);
         $fixed_property->$meta_key = $meta_value;
         //$fixed_property->$meta_key = '<![CDATA[' .  ($meta_value) . ']]>';
-        $properties[$id] = $fixed_property;
-
-      
+        
       }
       
- 
+      $properties[$id] = $fixed_property;
+      
     }
     
     echo json_encode($properties);

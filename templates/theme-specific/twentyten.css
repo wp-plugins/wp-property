@@ -6,6 +6,10 @@
  */
  
 
+ .wpp_row_view div.property_div {
+  padding: 1% 1% 10px;
+ }
+ 
  
  .entry-content .wpp_sortable_dropdown {
   margin :0;

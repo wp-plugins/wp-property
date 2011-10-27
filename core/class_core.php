@@ -68,6 +68,9 @@ class WPP_Core {
     //** Load settings into $wp_properties and save settings if nonce exists */
     WPP_F::settings_action();
     
+    //** Determine if we are secure */
+    $scheme = (is_ssl() && !is_admin() ? 'https' : 'http');
+    
     //** Load early so plugins can use them as well */
     wp_register_script('jquery-fancybox', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array('jquery'), '1.7.3' );
     wp_register_script('jquery-colorpicker', WPP_URL. '/third-party/colorpicker/colorpicker.js', array('jquery'));
@@ -77,7 +80,7 @@ class WPP_Core {
     wp_register_script('wp-property-admin-overview', WPP_URL. '/js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
     wp_register_script('wp-property-backend-global', WPP_URL. '/js/wp-property-backend-global.js', array('jquery'),WPP_Version);
     wp_register_script('wp-property-global', WPP_URL. '/js/wp-property-global.js', array('jquery'),WPP_Version);
-    wp_register_script('google-maps', 'http://maps.google.com/maps/api/js?sensor=true');
+    wp_register_script('google-maps', $scheme . '://maps.google.com/maps/api/js?sensor=true');
     wp_register_script('jquery-gmaps', WPP_URL. '/js/jquery.ui.map.min.js', array('google-maps','jquery-ui-core','jquery-ui-widget'));
     wp_register_script('jquery-quicksand', WPP_URL. '/third-party/jquery.quicksand.js', array('jquery'));
     wp_register_script('jquery-nivo-slider', WPP_URL. '/third-party/jquery.nivo.slider.pack.js', array('jquery'));
@@ -90,6 +93,8 @@ class WPP_Core {
     wp_register_script('jquery-ui-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
     wp_register_script('jquery-data-tables', WPP_URL . "/third-party/dataTables/jquery.dataTables.min.js", array('jquery'));
    
+    wp_register_script('wp-property-galleria', WPP_URL. '/third-party/galleria/galleria-1.2.5.min.js', array('jquery'));
+    
     wp_register_style('jquery-fancybox-css', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.css');
     wp_register_style('jquery-colorpicker-css', WPP_URL. '/third-party/colorpicker/colorpicker.css');
     wp_register_style('jquery-ui', WPP_URL. '/css/jquery-ui.css');
@@ -624,7 +629,7 @@ class WPP_Core {
         if(!empty($wp_properties['configuration']['address_attribute'])) {
           update_post_meta($post_id, $wp_properties['configuration']['address_attribute'], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties['configuration']['address_attribute']));
         }
-        
+
         foreach($geo_data as $geo_type => $this_data) {
           update_post_meta($post_id, $geo_type, WPP_F::encode_mysql_input( $this_data, $geo_type));
         }
@@ -642,8 +647,8 @@ class WPP_Core {
       $attribute_data = WPP_F::get_attribute_data($meta_key);
       
       //* Cleans the user input */
-      $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key);
-      
+      $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key );
+
       //* Only admins can mark properties as featured. */
       if( $meta_key == 'featured' && !current_user_can('manage_options') ) {
         continue;
@@ -1300,6 +1305,7 @@ class WPP_Core {
       $defaults['ajax_call'] = false;
       $defaults['sorter_type'] = 'buttons';
       $defaults['pagination'] = 'on';
+      $defaults['hide_count'] = false;
       $defaults['per_page'] = 10;
       $defaults['starting_row'] = 0;
       $defaults['unique_hash'] = rand(10000,99900);
@@ -1436,11 +1442,11 @@ class WPP_Core {
       
       // Initialize result (content which will be shown) and open wrap (div) with unique id
       $result['top'] = '<div id="wpp_shortcode_'. $defaults['unique_hash'] .'" class="wpp_ui wpp_property_overview_shortcode">';
-      $result['top_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_top_pagination', 'sorter_type' => $wpp_query['sorter_type'], 'sort_by_text' => $wpp_query['sort_by_text']));
+      $result['top_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_top_pagination', 'sorter_type' => $wpp_query['sorter_type'], 'hide_count' => $hide_count, 'sort_by_text' => $wpp_query['sort_by_text']));
       $result['result'] = $ob_get_contents;
       
       if($wpp_query['bottom_pagination_flag'] == 'true') {
-        $result['bottom_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_bottom_pagination', 'sorter_type' => $wpp_query['sorter_type'], 'sort_by_text' => $wpp_query['sort_by_text']));
+        $result['bottom_pagination'] = wpi_draw_pagination(array('return' => true, 'class' => 'wpp_bottom_pagination', 'sorter_type' => $wpp_query['sorter_type'],'hide_count' => $hide_count, 'sort_by_text' => $wpp_query['sort_by_text']));
       }
       
       $result['bottom'] = '</div>';
@@ -1560,11 +1566,11 @@ class WPP_Core {
     );
     
     //* Adds Premium Feature Capabilities */
-    $wpp_capabilities = apply_filters('wpp_capabilities', $wpp_capabilities); 
+    $wpp_capabilities = apply_filters('wpp_capabilities', $wpp_capabilities);    
     
-    /* FOR DEBUG: PRINT ALL WPP PROPERTY CAPABILITIES
-    echo "<pre>";print_r($capabilities);echo "</pre>";die();
-    //*/
+    if(!is_object($role)) {
+      return;
+    }
     
     foreach($wpp_capabilities as $cap => $value){
       if (empty($role->capabilities[$cap])) {

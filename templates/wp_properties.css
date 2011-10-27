@@ -1,3 +1,21 @@
+/* Default Icons Begin  */
+.wpp_attachment_list {
+  list-style-type:none;
+  margin: 0;
+  padding: 0;
+}
+
+.wpp_attachment_list  .attachment_container.has_description .attachment_description  {
+  display: block;
+  padding-left: 23px;
+}
+
+.wpp_attachment_list  .wpp_attachment_icon.file-zip {
+  background: url("images/file-zip.gif") left center no-repeat;
+}
+
+/* Default Icons End */
+
 /* WP Touch Styles Begin */
 body.idevice {
 
@@ -138,7 +156,6 @@ form.wpp_feps_form div.qq-upload-drop-area {
 form.wpp_feps_form span.images_limit {
   clear: both;
   float: right;
-  position: absolute;
   right: 12px;
   top: 4px;
 }
@@ -578,7 +595,8 @@ ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.value{
       color: #FFFFFF;
       margin: 4px;
       padding: 4px;
-      height: 1em; location=all }
+      height: 1em; 
+      location:all; }
 
     #content .big_featured_property ul li dt {
       color: #D6D6D6;
@@ -597,7 +615,7 @@ ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.value{
 .wpp_featured_properties_shortcode {
   list-style-type: none;
   margin: 0;
-  pading: 0; }
+  padding: 0; }
 
   .wpp_featured_properties_shortcode li.wp-caption {
     display: inline;
@@ -630,7 +648,6 @@ input.wpp_search_input_field_min, input.wpp_search_input_field_max { width: 40px
 
   #container.building_container #content { margin: 0 300px 0 20px }
 
-.
 .clearfix:after {
   clear: both;
   content: ".";
@@ -762,7 +779,7 @@ html[xmlns] .clearfix { display: block; }
   margin: 0;
   padding: 0; }
 
-  .wpp_gallery_widget  img {
+  .wpp_gallery_widget  img.wpp_gallery_widget_image {
     max-width: 100%;
     border: 5px solid #DFDFDF;
     margin: 0 9px 9px 0; }

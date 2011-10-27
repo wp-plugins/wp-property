@@ -9,6 +9,80 @@
  * @package WP-Property
 */
 
+if(!function_exists('wpp_alternating_row')) {
+
+  /**
+   * Display a class for the row
+   *
+   * @since 1.17.3
+   */
+  function wpp_alternating_row() {
+    global $wpp_current_row;
+    
+    if($wpp_current_row == 'wpp_odd_row') {
+      $wpp_current_row = 'wpp_even_row';
+    } elseif ($wpp_current_row == 'wpp_even_row') {
+      $wpp_current_row = 'wpp_odd_row';    
+    }
+    
+    
+    if(!isset($wpp_current_row)) {
+      $wpp_current_row = 'wpp_odd_row';
+    }    
+    
+    echo $wpp_current_row;
+    
+  }
+}
+
+
+if(!function_exists('get_attribute')) {
+
+  /**
+   * Get an attribute for the property
+   *
+   * @since 1.17.3
+   */
+  function get_attribute($attribute = false, $args = '') {
+    global $property, $wp_properties;
+    
+    $defaults = array(
+      'return' => 'false'
+    );
+    
+    $args = wp_parse_args( $args, $defaults );
+    
+    $this_property = (array) $property;
+    
+    $value = $property[$attribute];
+ 
+    switch ($attribute) {
+    
+      case 'property_type':      
+     
+        $maybe_value = $wp_properties['property_types'][$value];
+        
+        if(!empty($maybe_value)) {
+          $value = $maybe_value;
+        }
+        
+      break;    
+    
+    }
+    
+    $value = apply_filters('wpp_get_attribute', $value, array('property' => $property));
+    
+    if($return == 'true') {
+      return $value;
+    } else {    
+      echo $value;
+    }
+    
+  
+  }
+
+}
+
 
 
 if(!function_exists('property_overview_image')) {
@@ -120,14 +194,15 @@ if(!function_exists('wpi_draw_pagination')):
       $use_pagination = true;
     }
 
-    if ( $properties['total'] == 0 ) {
+    if ( $properties['total'] == 0 || $sorter_type == 'none') {
       $sortable_attrs = false;
     }
 
     ob_start();
     ?>
 
-    <script type="text/javascript">
+    <script type="text/javascript">    
+ 
       /*
        * The functionality below is used for pagination and sorting the list of properties
        * It can be called twice (for top and bottom pagination blocks)
@@ -189,6 +264,11 @@ if(!function_exists('wpi_draw_pagination')):
          * Attention! This event is unique (binds at once) and is used for any (multiple) shortcode
          */
          jQuery(document).ready(function() {
+          
+          if(!jQuery.isFunction(jQuery.fn.slider)) {
+            return;
+          }
+          
           jQuery.address.change(function(event){
             callPagination(event);
           });
@@ -359,7 +439,7 @@ if(!function_exists('wpi_draw_pagination')):
           jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_current_page_count").text(this_page);
           jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider .slider_page_info .val").text(this_page);
 
-          /* Update sliders  */
+          /* Update sliders  */                       
           jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider").slider("value", this_page );
 
           jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .ajax_loader').show();
@@ -371,10 +451,6 @@ if(!function_exists('wpi_draw_pagination')):
 
           data.ajax_call = 'true';
           data.requested_page = this_page;
-
-          //console.log(data);
-
-          //jQuery.ajaxSetup({async:false});
 
           jQuery.post(
             '<?php echo admin_url('admin-ajax.php'); ?>',
@@ -390,7 +466,7 @@ if(!function_exists('wpi_draw_pagination')):
               if( p_list.length == 0 ) {
                 p_list = jQuery('.wpp_row_view', result_data.display);
               }
-              var content = ( p_list.length > 0 ) ? p_list.html() : '';
+              var content = ( p_list.length > 0 ) ? p_list.html() : result_data.display;
 
               var p_wrapper = jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_property_view_result');
               //* Determine if p_wrapper is empty try previous version's selector */
@@ -401,12 +477,14 @@ if(!function_exists('wpi_draw_pagination')):
               p_wrapper.html(content);
 
               /* Total properties count may change depending on sorting (if sorted by an attribute that all properties do not have) */
-              jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_property_results").text(result_data.wpp_query.properties.total);
+              jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_property_results").text(result_data.wpp_query.properties?result_data.wpp_query.properties.total:0);
 
               <?php if($use_pagination) { ?>
               /* Update max page in slider and in display */
               jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider").slider("option", "max",  result_data.wpp_query.pages);
               jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_total_page_count").text(result_data.wpp_query.pages);
+              max_slider_pos = result_data.wpp_query.pages;
+              if ( max_slider_pos == 0 ) jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_current_page_count").text(0);
               <?php } ?>
 
               jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> a.fancybox_image").fancybox({
@@ -425,8 +503,23 @@ if(!function_exists('wpi_draw_pagination')):
       }
 
       jQuery(document).ready(function() {
+      
+        if(!jQuery.isFunction(jQuery.fn.slider)) {
+          console.log("jQuery.slider not loaded.");
+        }
+        
+        if(!jQuery.isFunction(jQuery.fn.address)) {
+          console.log("jQuery.address not loaded.");        
+        }
+        
+        if(!jQuery.isFunction(jQuery.fn.slider) || !jQuery.isFunction(jQuery.fn.slider)) {
+          jQuery(".wpp_pagination_slider_wrapper").hide();
+          return;
+        }
 
+        
         document_ready = true;
+        max_slider_pos = null;
 
         //** Do not assign click event again */
         if(!jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_back').data('events') ) {
@@ -444,8 +537,7 @@ if(!function_exists('wpi_draw_pagination')):
         if(!jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_forward').data('events') ) {
           jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_forward').click(function() {
             var current_value =  jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider").slider("value");
-
-            if(current_value == <?php echo ($pages ? $pages : 0); ?>) { return; }
+            if(current_value == max_slider_pos || max_slider_pos < 1 ) { return; }
 
             var new_value = current_value + 1;
             jQuery("#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider").slider("value",new_value);
@@ -455,7 +547,7 @@ if(!function_exists('wpi_draw_pagination')):
 
         if(!jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_sortable_link').data('events') ) {
           jQuery('#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_sortable_link').click(function() {
-
+            
             var attribute = jQuery(this).attr('sort_slug');
             var sort_order = jQuery(this).attr('sort_order');
 
@@ -561,8 +653,12 @@ if(!function_exists('wpi_draw_pagination')):
 
     <div class="properties_pagination <?php echo $settings['class']; ?> wpp_slider_pagination" id="properties_pagination_<?php echo $unique_hash; ?>">
       <div class="wpp_pagination_slider_status">
-        <span class="wpp_property_results"><?php echo ($properties['total'] > 0 ? WPP_F::format_numeric($properties['total']) : __('None', 'wpp')); ?></span>
-        <?php _e(' found.', 'wpp'); ?>
+      
+        <?php if($hide_count != 'true') { ?>
+          <span class="wpp_property_results"><?php echo ($properties['total'] > 0 ? WPP_F::format_numeric($properties['total']) : __('None', 'wpp')); ?></span>
+          <?php _e(' found.', 'wpp'); ?>
+        <?php } ?>
+        
         <?php if($use_pagination) { ?>
         <?php _e('Viewing page', 'wpp'); ?> <span class="wpp_current_page_count">1</span> <?php _e('of', 'wpp'); ?> <span class="wpp_total_page_count"><?php echo $pages; ?></span>.
         <?php } ?>

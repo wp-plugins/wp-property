@@ -161,6 +161,7 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 = 1.24.0 =
 * Changed property export function to export in JSON format.
+
 = 1.20.0 =
 * Major changes to the way pagination is handled.  Pagination is no longer loaded from a file but from wpi_draw_pagination().
 
@@ -207,6 +208,13 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.25.0 =
+* Added [list_attachments] shortcode for displaying property, and regular post, attachments along file-type icons.  Included file-type icons are: Microsoft Word, Microsoft Excel, ZIP, Adobe PDF, and default.
+* Added support for secure domains, external assets are loaded using https mode when necessary.
+* Added sorter_type=none and hide_count=true to [property_overview] shortcode which let you hide the sorter or the result counts, respectively.
+* Added wpp_alternating_row() and get_attribute() functions to simplify template creation. 
+* Added [property_gallery] shortcode. (Slideshow Premium Feature)
 
 = 1.24.2 =
 * Added out-of-the-box support for WPTouch plugin for displaying property pages on mobile devices. 

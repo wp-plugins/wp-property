@@ -2,8 +2,8 @@
 /*
 Name: Admin Tools
 Feature ID: 1
-Minimum Version: 1.24.0
-Version: 3.0.0
+Minimum Version: 1.25.0
+Version: 3.1.0
 Description: Tools for developing themes and extensions for WP-Property.
 Class: class_admin_tools
 */

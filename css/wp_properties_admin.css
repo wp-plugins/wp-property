@@ -1,3 +1,12 @@
+#wpcontent .widget-content select {
+  max-width: 100%;
+}
+
+#wpcontent .widget-content select option {
+  margin-right: 5px;
+}
+
+
 .wpp_notice {
   display:block;
   font-size:11px;
