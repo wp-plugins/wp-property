@@ -27,7 +27,7 @@
  <?php if ( have_properties() ) { ?>
  <div class="wpp_row_view wpp_property_view_result">
   <div class="all-properties">
-  <?php foreach ( returned_properties() as $property) {  ?>
+  <?php foreach ( returned_properties('load_gallery=false') as $property) {  ?>
 
     <div class="property_div <?php echo $property['post_type']; ?> clearfix">
 
@@ -66,7 +66,7 @@
             <?php if($property['price']): ?>
                 <li class="property_price"><?php echo $property['price']; ?></li>
             <?php endif; ?>
-            
+
             <?php if($show_children && $property['children']): ?>
             <li class="child_properties">
                 <div class="wpd_floorplans_title"><?php echo $child_properties_title; ?></div>
@@ -80,7 +80,7 @@
                 </table>
             </li>
             <?php endif; ?>
-            
+
             <?php if(!empty($wpp_query['detail_button'])) : ?>
             <li><a class="button" href="<?php echo $property['permalink']; ?>"><?php echo $wpp_query['detail_button'] ?></a></li>
             <?php endif; ?>

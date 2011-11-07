@@ -12,6 +12,222 @@
 
 class WPP_F {
 
+
+  /**
+   * Checks if script or style have been loaded.
+   *
+   * @todo Add handler for styles.
+   * @since Denali 3.0
+   *
+   */
+  function is_asset_loaded($handle = false) {
+    global $wp_properties, $wp_scripts;
+
+    if(empty($handle)) {
+      return;
+    }
+
+    $footer = (array) $wp_scripts->in_footer;
+    $done = (array) $wp_scripts->done;
+
+    $accepted = array_merge($footer, $done);
+
+    if(!in_array($handle, $accepted)) {
+      return false;
+    }
+
+    return true;
+
+
+
+  }
+
+
+  /**
+   * PHP function to echoing a message to JS console
+   *
+   * @since Denali 3.0
+   */
+  function console_log($text = false) {
+    global $wp_properties;
+
+    if($wp_properties['configuration']['developer_mode'] != 'true') {
+      return;
+    }
+
+    if(empty($text)) {
+      return;
+    }
+
+    add_filter('wp_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
+  }
+
+
+
+  /**
+  * Tests if remote script or CSS file can be opened prior to sending it to browser
+  *
+  *
+  * @version 1.26.0
+  */
+  function can_get_script($url = false, $args = array()) {
+    global $wp_properties;
+
+    if(empty($url)) {
+      return false;
+    }
+
+    $match = false;
+
+    if(empty($args)){
+      $args['timeout'] = 10;
+    }
+
+    $result = wp_remote_get($url, $args);
+
+
+    if(is_wp_error($result)) {
+      return false;
+    }
+
+    $type = $result['headers']['content-type'];
+
+    if(strpos($type, 'javascript') !== false) {
+      $match = true;
+    }
+
+    if(strpos($type, 'css') !== false) {
+      $match = true;
+    }
+
+    if(!$match || $result['response']['code'] != 200) {
+
+      if($wp_properties['configuration']['developer_mode'] == 'true') {
+        WPP_F::console_log("Remote asset ($url) could not be loaded, content type returned: ". $result['headers']['content-type']);
+      }
+
+      return false;
+    }
+
+    return true;
+
+  }
+
+  /**
+  * Tests if remote image can be loaded, before sending to browser or TCPDF
+  *
+  * @version 1.26.0
+  */
+  function can_get_image($url = false) {
+    global $wp_properties;
+
+    if(empty($url)) {
+      return false;
+    }
+
+    $result = wp_remote_get($url, array( 'timeout' => 10));
+
+    //** Image content types should always begin with 'image' (I hope) */
+    if(strpos($result['headers']['content-type'], 'image') !== 0) {
+      return false;
+    }
+
+    return true;
+
+  }
+
+
+  /**
+  * Convert JSON data to XML if it is in JSON
+  *
+  * @version 1.26.0
+  */
+  function json_to_xml($json) {
+
+    if(empty($json)) {
+      return false;
+    }
+
+    if(!class_exists('XML_Serializer')) {
+      set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
+      @require_once 'Serializer.php';
+    }
+
+    //** If class still doesn't exist, for whatever reason, we fail */
+    if(!class_exists('XML_Serializer')) {
+      return false;
+    }
+
+    $encoding = mb_detect_encoding($json);
+
+    if($encoding == 'UTF-8') {
+      $json = preg_replace('/[^(\x20-\x7F)]*/','', $json);
+    }
+
+    $data = json_decode($json, true);
+
+    //** If could not decode, return false so we presume with XML format */
+    if(!is_array($data)) {
+      return false;
+    }
+
+
+  /*
+    For troubleshooting, for now we just assume file isn't JSON
+    switch (json_last_error()) {
+        case JSON_ERROR_NONE:
+            echo ' - No errors';
+        break;
+        case JSON_ERROR_DEPTH:
+            echo ' - Maximum stack depth exceeded';
+        break;
+        case JSON_ERROR_STATE_MISMATCH:
+            echo ' - Underflow or the modes mismatch';
+        break;
+        case JSON_ERROR_CTRL_CHAR:
+            echo ' - Unexpected control character found';
+        break;
+        case JSON_ERROR_SYNTAX:
+            echo ' - Syntax error, malformed JSON';
+        break;
+        case JSON_ERROR_UTF8:
+            echo ' - Malformed UTF-8 characters, possibly incorrectly encoded';
+        break;
+        default:
+            echo ' - Unknown error';
+        break;
+    }
+  */
+
+  $data['objects'] = $data;
+
+  // An array of serializer options
+  $serializer_options = array (
+    'indent' => " ",
+    'linebreak' => "\n",
+    'addDecl' => true,
+    'encoding' => 'ISO-8859-1',
+    'rootName' => 'objects',
+    'defaultTagName' => 'object',
+    'mode' => 'simplexml'
+  );
+
+  $Serializer = &new XML_Serializer($serializer_options);
+
+  $status = $Serializer->serialize($data);
+
+  if (PEAR::isError($status)) {
+    return false;
+  }
+
+  if($Serializer->getSerializedData()) {
+    return $Serializer->getSerializedData();
+  }
+
+  return false;
+
+  }
+
   /**
    * Get filesize of a file.
    *
@@ -26,7 +242,7 @@ class WPP_F {
       return sprintf( '%.2f ' . $s[$e], ( $bytes / pow( 1024, floor( $e ) ) ) );
     }
 
-    
+
   /**
    * Set all existing property objects' property type
    *
@@ -34,38 +250,38 @@ class WPP_F {
    * @version 1.23.1
    */
     function mass_set_property_type($property_type = false) {
-      global $wpdb;      
-      
+      global $wpdb;
+
       if(!$property_type) {
         return false;
       }
-      
+
       //** Get all properties */
       $ap = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type = 'property'");
- 
+
       if(!$ap) {
         return false;
       }
-      
+
       foreach($ap as $id) {
-      
+
         if(update_post_meta($id, 'property_type', $property_type)) {
           $success[] = true;
         }
-      
+
       }
-      
+
       if(!$success) {
         return false;
       }
-      
+
       return sprintf(__('Set %1s properties to "%2s" property type', 'wpp'), count($success), $property_type);
-      
-      
-    
+
+
+
     }
-    
-    
+
+
   /**
    * Attempts to detect if current page has a given shortcode
    *
@@ -74,33 +290,33 @@ class WPP_F {
    */
     function detect_shortcode($shortcode = false){
       global $post;
-      
+
       if(!$post) {
         return false;
-      }      
-      
-      $shortcode = '[' . $shortcode;
-      
-      if(strpos($post->post_content, $shortcode) !== false) {      
-        return true;      
       }
-      
+
+      $shortcode = '[' . $shortcode;
+
+      if(strpos($post->post_content, $shortcode) !== false) {
+        return true;
+      }
+
       return false;
-    
+
     }
-    
-    
+
+
   /**
    * Reassemble address from parts
    *
    * @version 1.23.0
    */
     function reassemble_address($property_id = false){
-      
+
       if(!$property_id) {
         return false;
       }
-      
+
       $address_part[] = get_post_meta($property_id, 'street_number', true);
       $address_part[] = get_post_meta($property_id, 'route',true);
       $address_part[] = get_post_meta($property_id, 'city', true);
@@ -108,18 +324,18 @@ class WPP_F {
       $address_part[] = get_post_meta($property_id, 'state_code', true);
       $address_part[] = get_post_meta($property_id, 'country', true);
       $address_part[] = get_post_meta($property_id, 'postal_code',true);
-      
+
      $maybe_address = trim(implode(' ', $address_part));
-      
+
       if(!empty($maybe_address)) {
         return $maybe_address;
       }
-      
-      return false;     
-    
+
+      return false;
+
     }
-    
-    
+
+
   /**
    * Creates a nonce, similar to wp_create_nonce() but does not depend on user being logged in
    *
@@ -178,7 +394,7 @@ class WPP_F {
    * @todo Consider putting this into settings action, or somewhere, so it its only ran once, or adding caching
    * @version 1.17.3
    */
-    function get_attribute_data($attribute = false){
+    function get_attribute_data($attribute = false) {
       global $wp_properties;
 
       if(!$attribute) {
@@ -280,7 +496,7 @@ class WPP_F {
         $return['searchable'] = true;
         $ui_class[] = 'searchable';
       }
-      
+
       if(empty($return['title'])) {
         $return['title'] = WPP_UD_F::de_slug($return['slug']);
       }
@@ -322,7 +538,7 @@ class WPP_F {
 
     //  echo "<pre>" . print_r($wp_scripts, true) . "</pre>"; return;
   }
-  
+
   /**
    * Returns an array of all keys that can be queried using property_overview
    *
@@ -330,24 +546,25 @@ class WPP_F {
    */
   function get_queryable_keys(){
     global $wp_properties;
-    
+
     $keys = array_keys($wp_properties['property_stats']);
-    
+
     foreach($wp_properties['searchable_attributes'] as $attr){
       if(!in_array($attr, $keys)) {
         $keys[] = $attr;
       }
     }
-    
+
     $keys[] = 'post_title';
     $keys[] = 'post_date';
+    $keys[] = 'post_id';
     $keys[] = 'post_parent';
     $keys[] = 'property_type';
     $keys[] = 'featured';
-    
+
     //* Adds filter for ability to apply custom queryable keys */
     $keys = apply_filters('get_queryable_keys', $keys);
-    
+
     return $keys;
   }
 
@@ -386,6 +603,40 @@ class WPP_F {
   /**
    * Pre post query - for now mostly to disable caching
    *
+   * Called in &get_posts() in query.php
+   *
+   * @todo This function is a hack. Need to use post_type rewrites better. - potanin@UD
+   *
+   * @version 1.26.0
+   */
+    function posts_results($posts) {
+      global $wpdb, $wp_query;
+
+
+      //** Look for child properties */
+      if(!empty($wp_query->query_vars['attachment'])) {
+        $post_name = $wp_query->query_vars['attachment'];
+
+        if($child = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '$post_name' AND post_type = 'property' AND post_parent != '' LIMIT 0, 1")) {
+          $posts[0] = $child;
+          return $posts;
+        }
+      }
+
+
+      //** Look for regular pages that are placed under base slug */
+      if($wp_query->query_vars['post_type'] == 'property' && count($wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'property'  LIMIT 0, 1")) == 0) {
+        $posts[] = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'page'  LIMIT 0, 1");
+      }
+
+      return $posts;
+
+
+    }
+
+  /**
+   * Pre post query - for now mostly to disable caching
+   *
    * @version 1.17.2
    */
     function pre_get_posts($query){
@@ -398,6 +649,8 @@ class WPP_F {
       if($query->query_vars['post_type'] == 'property') {
         $query->query_vars['cache_results'] = false;
       }
+
+
 
     }
 
@@ -887,7 +1140,7 @@ class WPP_F {
           update_post_meta($post_id, 'latitude', $geo_data->latitude);
           update_post_meta($post_id, 'longitude', $geo_data->longitude);
         }
-        
+
         if($return_geo_data) {
           $return['geo_data'][$post_id] = $geo_data;
         }
@@ -933,17 +1186,20 @@ class WPP_F {
     */
   static function minify_js($data) {
 
-    if(!class_exists('W3_Plugin'))
+    if(!class_exists('W3_Plugin')) {
       include_once WPP_Path. '/third-party/jsmin.php';
-    elseif(file_exists(WP_PLUGIN_DIR . '/w3-total-cache/lib/Minify/JSMin.php'))
+    } elseif(file_exists(WP_PLUGIN_DIR . '/w3-total-cache/lib/Minify/JSMin.php')) {
       include_once WP_PLUGIN_DIR . '/w3-total-cache/lib/Minify/JSMin.php';
-    else
+    } else {
       include_once WPP_Path. '/third-party/jsmin.php';
+    }
 
-    if(class_exists('JSMin'))
+    if(class_exists('JSMin')) {
       $data = JSMin::minify($data);
+    }
 
     return $data;
+
   }
 
   /**
@@ -1057,7 +1313,7 @@ class WPP_F {
 
     return $data;
   }
-  
+
   /**
   * Handles user input, so a standard is created for supporting special characters.
   *
@@ -1067,26 +1323,30 @@ class WPP_F {
   * @return   string   $result
   */
   static function encode_mysql_input( $input, $meta_key = false) {
-    
-    if($meta_key == 'latitude' || $meta_key == 'longitude')
+
+    if($meta_key == 'latitude' || $meta_key == 'longitude') {
       return (float)$input;
+    }
 
     /* If PHP version is newer than 4.3.0, else apply fix. */
     if ( strnatcmp(phpversion(),'4.3.0' ) >= 0 ) {
       $result = str_replace( html_entity_decode('-', ENT_COMPAT, 'UTF-8'), '&ndash;', $input );
-    }
-    else {
+
+    } else {
       $result = str_replace( utf8_encode( html_entity_decode('-') ), '&ndash;', $input );
     }
-    
+
+    //** In case &ndash; is already converted and exists in its actual dash form */
+    $result = str_replace('–', '&ndash;', $result);
+
     /* Uses WPs built in esc_html, works like a charm. */
     $result = esc_html( $result );
-    
+
     return $result;
   }
 
 
-  /** NOT IN USE
+/**
   * Handles user input, so a standard is created for supporting special characters.
   *
   * @param  string   $string to be converted
@@ -1109,16 +1369,15 @@ class WPP_F {
    *
    */
   static function is_numeric_range($array = false) {
-    if(!is_array($array))
-      return;
-    
-    foreach($array as $value) {
-      if(!is_numeric($value))
-        return false;
+    if(!is_array($array) || empty($array)) {
+      return false;
     }
-    
+    foreach($array as $value) {
+      if(!is_numeric($value)) {
+        return false;
+      }
+    }
     return true;
-
   }
 
   static function draw_property_type_dropdown($args = '') {
@@ -1349,7 +1608,7 @@ class WPP_F {
       }
     }
 
-    
+
     if($response->features == 'eligible' && $wp_properties['configuration']['disable_automatic_feature_update'] != 'true') {
 
       // Try to create directory if it doesn't exist
@@ -1534,15 +1793,26 @@ class WPP_F {
     <?php
   }
 
+
+  /**
+   * Returns image sizes for a passed image size slug
+   *
+    *
+    * @since 0.54
+   *
+    */
   static function image_sizes($type = false, $args = "") {
     global $_wp_additional_image_sizes;
 
-    $defaults = array('return_all' => false);
+    $defaults = array(
+      'return_all' => false
+    );
+
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-
-    if(!$type)
+    if(!$type) {
       return false;
+    }
 
     if(isset($_wp_additional_image_sizes[$type]) && is_array($_wp_additional_image_sizes[$type])) {
       $return = $_wp_additional_image_sizes[$type];
@@ -1614,7 +1884,7 @@ class WPP_F {
         if(!empty($decoded_settings))
           $_REQUEST['wpp_settings'] = $decoded_settings;
       }
-      
+
       // Allow features to preserve their settings that are not configured on the settings page
       $wpp_settings = apply_filters('wpp_settings_save', $_REQUEST['wpp_settings'], $wp_properties);
 
@@ -1705,19 +1975,30 @@ class WPP_F {
    * Loads property values into global $post variables
    *
    * Attached to do_action_ref_array('the_post', array(&$post)); in setup_postdata()
+   * Ran after template_redirect
    *
    * @todo There may be a better place to load property variables
    * @since 0.54
    *
     */
   static function the_post($post) {
-    global $post;
+    global $post, $property;
 
-    if($post->post_type == 'property') {
-      $post = WPP_F::get_property($post->ID, "return_object=true");
+    if($post->post_type != 'property') {
+      return $post;
     }
 
-   }
+    if(!isset($property)) {
+      $property = WPP_F::get_property($post->ID, "return_object=true");
+    }
+
+    //** Update global $post object to include property specific attributes */
+    $post = $property;
+
+    //** Set global $property object to be display ready. Global $property object is always an array. */
+    $property = (array) prepare_property_for_display($property);
+
+  }
 
 
   /**
@@ -1953,49 +2234,55 @@ class WPP_F {
    */
   static function get_search_values($search_attributes, $searchable_property_types, $cache = true, $instance_id = false) {
     global $wpdb, $wp_properties;
-    
+
     if($instance_id) {
       //** Load value array from cache if it exists (search widget creates it on update */
       $cachefile = WPP_Path . '/cache/searchwidget/' . $instance_id . '.values.res';
-      
+
       if($cache && is_file($cachefile) && time() - filemtime($cachefile) < 3600) {
         $result = unserialize(file_get_contents($cachefile));
       }
     }
-    
+
     if(!$result) {
       $query_attributes = "";
       $query_types = "";
-      
+
       //** Use the requested attributes, or all searchable */
       if(!is_array($search_attributes)) {
         $search_attributes = $wp_properties['searchable_attributes'];
       }
-      
-      $searchable_property_types = "AND (pm2.meta_value ='" . implode("' OR pm2.meta_value='", $searchable_property_types) . "')";
-      
+
+      if(!is_array($searchable_property_types)) {
+        $searchable_property_types = explode(',', $searchable_property_types);
+        foreach($searchable_property_types as $k => $v) {
+          $searchable_property_types[$k] = trim($v);
+        }
+      }
+      $searchable_property_types = "AND pm2.meta_value IN ('" . implode("','", $searchable_property_types) . "')";
+
       //** Cycle through requested attributes */
       foreach($search_attributes as $searchable_attribute) {
-        
+
         if($searchable_attribute == 'property_type') {
           continue;
         }
-        
+
         //** Load attribute data */
         $attribute_data = WPP_F::get_attribute_data($searchable_attribute);
-        
+
         if($attribute_data['numeric'] || $attribute_data['currency']) {
           $is_numeric = true;
         } else {
           $is_numeric = false;
         }
-        
+
         //** Check to see if this attribute has predefined values or if we have to get them from DB */
         //** If the attributes has predefind values, we use them */
         if($predefined_search_values = $wp_properties['predefined_search_values'][$searchable_attribute]) {
           $predefined_search_values = str_replace(array(', ', ' ,'), array(',', ','), trim($predefined_search_values));
           $predefined_search_values = explode(',', $predefined_search_values);
-          
+
           if(is_array($predefined_search_values)) {
             foreach($predefined_search_values as $value) {
               $range[$searchable_attribute][] = $value;
@@ -2003,9 +2290,9 @@ class WPP_F {
           } else {
             $range[$searchable_attribute][] = $predefined_search_values;
           }
-          
+
         } else {
-          
+
           //** No predefined value exist */
           $db_values = $wpdb->get_col("
             SELECT DISTINCT(pm1.meta_value)
@@ -2016,57 +2303,59 @@ class WPP_F {
             AND pm1.meta_value != ''
             ORDER BY " . ($is_numeric ? 'ABS(' : ''). "pm1.meta_value" . ($is_numeric ? ')' : ''). " ASC
           ");
-          
+
           //* Get all available values for this attribute for this property_type */
           $range[$searchable_attribute] = $db_values;
-          
+
         }
-        
+
         //** Get unique values*/
         if(is_array($range[$searchable_attribute])) {
           $range[$searchable_attribute] = array_unique($range[$searchable_attribute]);
         } else {
           //* This should not happen */
         }
-        
+
         foreach($range[$searchable_attribute] as $key => $value) {
-          
+
+          $original_value = $value;
+
           // Clean up values if a conversion exists
           $value = WPP_F::do_search_conversion($searchable_attribute, trim($value));
-          
-          // Fix value with special chars
-          $value = htmlspecialchars($value, ENT_QUOTES);
-          
+
+          // Fix value with special chars. Disabled here, should only be done in final templating stage.
+          // $value = htmlspecialchars($value, ENT_QUOTES);
+
           //* Remove bad characters signs if attribute is numeric or currency */
           if($is_numeric) {
             $value = str_replace(array(",", "$"), '', $value);
           }
-          
+
           //** Put cleaned up value back into array */
           $range[$searchable_attribute][$key] = $value;
-          
+
         }
-        
+
         //** Sort values */
         sort($range[$searchable_attribute], SORT_REGULAR);
-        
+
       } //** End single attribute data gather */
-      
+
       $result = $range;
-      
+
       if($cachefile) {
         $cachedir = dirname($cachefile);
         if (! is_dir($cachedir)) {
           wp_mkdir_p($cachedir);
         }
-        
+
         @file_put_contents($cachefile, serialize($result));
       }
     }
-    
+
     return $result;
   }
-  
+
   /**
    * Check if a search converstion exists for a attributes value
    */
@@ -2125,32 +2414,33 @@ class WPP_F {
   */
   static function get_properties($args = "", $total = false) {
     global $wpdb, $wp_properties, $wpp_query;
-    
+
     // Non post_meta fields
     $non_post_meta = array(
       'post_title'  => 'like',
       'post_status' => 'equal',
       'post_author' => 'equal',
+      'ID' => 'equal',
       'post_parent' => 'equal',
       'post_date'   => 'date'
     );
-    
+
     //** added to avoid range and "LIKE" searches on single numeric values *
-    if(is_array($args)){
+    if(is_array($args)) {
       foreach($args as $thing => $value) {
         // unset empty filter options
         if ( empty( $value ) ) {
           unset($args[$thing]);
           continue;
         }
-        
+
         if ( is_array( $value ) ) {
           $value = implode(',', $value);
         }
         $value = trim($value);
-        
+
         $original_value = $value;
-        
+
         //** If not CSV and last character is a +, we look for open-ended ranges, i.e. bedrooms: 5+
         if(substr($original_value, -1, 1) == '+' && !strpos($original_value, ',')) {
           //** User requesting an open ended range, we leave it off with a dash, i.e. 500- */
@@ -2165,26 +2455,18 @@ class WPP_F {
         }
       }
     }
-    
-    /* 
-     * @TODO: it's no sense here because this function is used in ajax queries and it will break ajax result
-     * and $wpp_query['ajax_call'] is no sense here, because returned data can be JSON or Javascript code
-     * peshkov@UD
-     */
-    //if($wp_properties['configuration']['developer_mode'] == 'true' && !$wpp_query['ajax_call']) {
-    //  echo '<script type="text/javascript">console.log('.json_encode($args).');</script>';
-    //}
-    
+
     $defaults = array(
       'property_type' => 'all'
     );
-    
+
     $query = wp_parse_args( $args, $defaults );
     $query = apply_filters('wpp_get_properties_query', $query);
-    
+    $query_keys = array_keys($query);
+
     // Search by non meta values
     $additional_sql = '';
-    
+
     // Show 'publish' posts if status is not specified
     if ( !key_exists( 'post_status', $query ) ) {
       $additional_sql .= " AND p.post_status = 'publish' ";
@@ -2194,7 +2476,7 @@ class WPP_F {
       }
       unset($query['post_status']);
     }
-    
+
     foreach( $non_post_meta as $field => $condition ) {
       if ( key_exists( $field, $query ) ) {
         if ( $condition == 'like' ) {
@@ -2209,17 +2491,17 @@ class WPP_F {
         unset( $query[ $field ] );
       }
     }
-    
+
     if (substr_count($query['pagi'], '--')) {
       $pagi = explode('--', $query['pagi']);
       if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1])) {
         $limit_query = "LIMIT $pagi[0], $pagi[1];";
       }
     }
-    
+
     unset( $query['pagi'] );
     unset( $query['pagination'] );
-    
+
     /* Handles the sort_by parameter in the Short Code */
     if( $query['sort_by'] ) {
       $sql_sort_by = $query['sort_by'];
@@ -2228,28 +2510,28 @@ class WPP_F {
       $sql_sort_by = 'post_date';
       $sql_sort_order = 'ASC';
     }
-    
+
     unset( $query['sort_by'] );
     unset( $query['sort_order'] );
-    
+
     // Go down the array list narrowing down matching properties
     foreach ($query as $meta_key => $criteria) {
-      
+
       $specific = '';
       $criteria = WPP_F::encode_mysql_input( $criteria, $meta_key);
-      
+
       // Stop filtering (loop) because no IDs left
       if (isset($matching_ids) && empty($matching_ids)) {
         break;
       }
-      
+
       if (substr_count($criteria, ',') || substr_count($criteria, '&ndash;') || substr_count($criteria, '--')) {
         if (substr_count($criteria, ',') && !substr_count($criteria, '&ndash;')) {
           $comma_and = explode(',', $criteria);
         }
         if (substr_count($criteria, '&ndash;') && !substr_count($criteria, ',')) {
           $cr = explode('&ndash;', $criteria);
-          
+
           // Check pieces of criteria. Array should contains 2 integer's elements
           // In other way, it's just value of meta_key
           if(count($cr) > 2 || ((int)$cr[0] == 0 && (int)$cr[1] == 0)) {
@@ -2265,15 +2547,15 @@ class WPP_F {
       } else {
         $specific = $criteria;
       }
-      
+
       if (!$limit_query) {
         $limit_query = '';
       }
-      
+
       switch ($meta_key) {
-        
+
         case 'property_type':
-          
+
           // Get all property types
           if ($specific == 'all') {
             if (isset($matching_ids)) {
@@ -2284,17 +2566,28 @@ class WPP_F {
             }
             break;
           }
-          
-          if ( !is_array($criteria) ) {
-            $criteria = array($criteria);
+
+          //** If comma_and is set, $criteria is ignored, otherwise $criteria is used */
+          $property_type_array = is_array($comma_and) ? $comma_and : array($specific);
+
+          //** Make sure property type is in slug format */
+          foreach($property_type_array as $key => $this_property_type) {
+            foreach($wp_properties['property_types'] as $pt_key => $pt_value) {
+              if(strtolower($pt_value) == strtolower($this_property_type)) {
+                $property_type_array[$key] = $pt_key;
+              }
+            }
           }
-          
+
           if ( $comma_and ) {
-            $where_string = implode("' OR meta_value ='", $comma_and);
+            //** Multiple types passed */
+            $where_string = implode("' OR meta_value ='", $property_type_array);
           } else {
-            $where_string = $specific;
+            //** Only on type passed */
+            $where_string = $property_type_array[0];
           }
-          
+
+
           // See if mathinc_ids have already been filtered down
           if ( isset($matching_ids) ) {
             $matching_id_filter = implode("' OR post_id ='", $matching_ids);
@@ -2304,13 +2597,13 @@ class WPP_F {
             //$wpdb->print_error("Matching not set");
           }
           break;
-        
+
         default:
-          
+
           // UD_F::log("Filtering $meta_key which is not numeric");
           // Get all properties for that meta_key
           if ($specific == 'all' && !$comma_and && !$hyphen_between) {
-            
+
             if (isset($matching_ids)) {
               $matching_id_filter = implode("' OR post_id ='", $matching_ids);
               $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (post_id ='$matching_id_filter') AND (meta_key = '$meta_key')");
@@ -2319,21 +2612,21 @@ class WPP_F {
               $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE (meta_key = '$meta_key')");
             }
             break;
-            
+
           } else {
-            
+
             if ( $comma_and ) {
               $where_and = "(meta_value ='" . implode("' OR meta_value ='", $comma_and)."')";
               $specific = $where_and;
             }
-            
+
             if ( $hyphen_between ) {
               // We are going to see if we are looking at some sort of date, in which case we have a special MySQL modifier
               $adate = false;
               if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[0])) $adate = true;
-              
+
               if(!empty($hyphen_between[1])) {
-                  
+
                 if(preg_match('%\d{1,2}/\d{1,2}/\d{4}%i', $hyphen_between[1])){
                   foreach($hyphen_between as $key => $value) {
                     $hyphen_between[$key] = "STR_TO_DATE('{$value}', '%c/%e/%Y')";
@@ -2342,19 +2635,19 @@ class WPP_F {
                 } else {
                   $where_between = "`meta_value` BETWEEN " . implode(" AND ", $hyphen_between)."";
                 }
-                
+
               } else {
-                  
+
                 if($adate) {
                   $where_between = "STR_TO_DATE(`meta_value`, '%c/%e/%Y') >= STR_TO_DATE('{$hyphen_between[0]}', '%c/%e/%Y')";
                 } else {
                   $where_between = "`meta_value` >= $hyphen_between[0]";
                 }
-                
+
               }
               $specific = $where_between;
             }
-            
+
             if ($specific == 'true') {
               // If properties data were imported, meta value can be '1' instead of 'true'
               // So we're trying to find also '1'
@@ -2372,7 +2665,7 @@ class WPP_F {
                 $count++;
               }
             }
-            
+
             if (isset($matching_ids)) {
               $matching_id_filter = implode(",", $matching_ids);
               $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE post_id IN ($matching_id_filter) AND meta_key = '$meta_key' AND $specific");
@@ -2381,32 +2674,32 @@ class WPP_F {
               $matching_ids = $wpdb->get_col("SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND $specific $sql_order");
               //echo "SELECT post_id FROM {$wpdb->prefix}postmeta WHERE meta_key = '$meta_key' AND $specific $sql_order <br/>";
             }
-            
+
           }
           break;
-          
+
       } // END switch
-      
+
       unset( $comma_and );
       unset( $hyphen_between );
       //unset($specific);
-      
+
     } // END foreach
-    
+
     // Return false, if there are any result using filter conditions
     if (empty($matching_ids)) {
       return false;
     }
-    
+
     // Remove duplicates
     $matching_ids = array_unique( $matching_ids );
-    
+
     // Sorts the returned Properties by the selected sort order
     if ($sql_sort_by &&
         $sql_sort_by != 'menu_order' &&
         $sql_sort_by != 'post_date' &&
         $sql_sort_by != 'post_title' ) {
-      
+
       /*
        * Determine if all values of meta_key are numbers
        * we use CAST in SQL query to avoid sort issues
@@ -2416,7 +2709,7 @@ class WPP_F {
       } else {
         $meta_value = "pm.meta_value";
       }
-      
+
       $result = $wpdb->get_col("
         SELECT p.ID FROM {$wpdb->prefix}posts AS p
           LEFT JOIN {$wpdb->prefix}postmeta AS pm
@@ -2427,7 +2720,7 @@ class WPP_F {
             $additional_sql
           ORDER BY $meta_value $sql_sort_order
           $limit_query");
-      
+
       // Stores the total Properties returned
       if ($total) {
         $total = count($wpdb->get_col("
@@ -2440,7 +2733,7 @@ class WPP_F {
           $additional_sql
           ORDER BY $meta_value"));
       }
-      
+
     } else {
       // If the sorting order is not set, default to menu_order
       if( empty( $sql_sort_by ) ) {
@@ -2452,7 +2745,7 @@ class WPP_F {
         $additional_sql
         ORDER BY $sql_sort_by $sql_sort_order
         $limit_query");
-      
+
       // Stores the total Properties returned
       if($total) {
         $total = count($wpdb->get_col("
@@ -2462,7 +2755,7 @@ class WPP_F {
           ORDER BY $sql_sort_by"));
         }
     }
-    
+
     if( !empty( $result ) ) {
       $return = array();
       if(!empty($total)) {
@@ -2471,28 +2764,28 @@ class WPP_F {
       } else {
         $return = $result;
       }
-      
-      return $return ;
+
+      return $return;
     }
-    
+
     return false;
   }
-  
+
   /**
    * Prepares Request params for get_properties() function
-   * 
+   *
    * @param array $attrs
    * @return array $attrs
    */
   function prepare_search_attributes($attrs) {
     global $wp_properties;
-    
+
     $prepared = array();
-    
+
     $non_numeric_chars = apply_filters('wpp_non_numeric_chars', array('-', '$', ','));
-    
+
     foreach($attrs as $search_key => $search_query) {
-      
+
       //** Fix search form passed paramters to be usable by get_properties();
       if(is_array($search_query)) {
         //** Array variables are either option lists or minimum and maxim variables
@@ -2504,7 +2797,7 @@ class WPP_F {
           $search_query = implode(',', $search_query['options']);
         } elseif(in_array('min', array_keys($search_query))) {
           //** Get arrays with minimum and maxim ranges */
-          
+
           //* There is no range if max value is empty and min value is -1 */
           if($search_query['min'] == '-1' && empty($search_query['max'])) {
             $search_query = '-1';
@@ -2514,15 +2807,15 @@ class WPP_F {
             foreach($search_query as $range_indicator => $value) {
               $search_query[$range_indicator] = str_replace($non_numeric_chars, '', $value);
             }
-            
+
             if(empty($search_query['min']) && empty($search_query['max'])) {
               continue;
             }
-            
+
             if(empty($search_query['min'])) {
               $search_query['min'] = '0';
             }
-            
+
             if(empty($search_query['max'])) {
               $search_query = $search_query['min'] . '+';
             } else {
@@ -2531,18 +2824,18 @@ class WPP_F {
           }
         }
       }
-      
+
       if(is_string($search_query)) {
         if($search_query != '-1' && $search_query != '-') {
           $prepared[$search_key] = trim($search_query);
         }
       }
-      
+
     }
-    
+
     return $prepared;
   }
-  
+
   /**
    * Returns array of all values for a particular attribute/meta_key
    */
@@ -2602,6 +2895,7 @@ class WPP_F {
     *
     * @since 1.11
    * @version 1.14 - fixed problem with drafts
+   * @todo Code pertaining to displaying data should be migrated to prepare_property_for_display() like :$real_value = nl2br($real_value);
    * @todo Fix the long dashes - when in latitude or longitude it breaks it when using static map
    *
     */
@@ -2628,46 +2922,55 @@ class WPP_F {
       return false;
     }
 
+    //** Figure out what all the editable attributes are, and get their keys */
+    $wp_properties['property_meta'] = (is_array($wp_properties['property_meta']) ? $wp_properties['property_meta'] : array());
+    $wp_properties['property_stats'] = (is_array($wp_properties['property_stats']) ? $wp_properties['property_stats'] : array());
+    $editable_keys = array_keys(array_merge($wp_properties['property_meta'], $wp_properties['property_stats']));
+
     $return = array();
 
     if ( $keys = get_post_custom( $id ) ) {
         foreach ( $keys as $key => $value ) {
-        if($allow_multiple_values == 'false') {
-          $value = $value[0];
-        }
 
-        $keyt = trim($key);
+          if($allow_multiple_values == 'false') {
+            $value = $value[0];
+          }
 
-        if ( '_' == $keyt{0} )
-          continue;
+          $keyt = trim($key);
 
-        // Fix for boolean values
-        switch($value) {
+          //** If has _ prefix it's a built-in WP key */
+          if ( '_' == $keyt{0} ) {
+            continue;
+          }
 
-          case 'true':
-          $real_value = true;
-          break;
+          // Fix for boolean values
+          switch($value) {
 
-          case 'false':
-          $real_value = false;
-          break;
+            case 'true':
+              $real_value = true; //** Converts all "true" to 1 */
+            break;
 
-          default:
-          $real_value = $value;
-          break;
+            case 'false':
+              $real_value = false;
+            break;
 
-        }
-         // if a property_meta value, we do a nl2br since it will most likely have line breaks
-        if(array_key_exists($key, $wp_properties['property_meta']))
-          $real_value = nl2br($real_value);
+            default:
+              $real_value = $value;
+            break;
 
+          }
+           // if a property_meta value, we do a nl2br since it will most likely have line breaks
+          if(array_key_exists($key, $wp_properties['property_meta'])) {
+            $real_value = nl2br($real_value);
+          }
 
-        // Handle keys with multiple values
-        if(count($value) > 1) {
-          $return[$key] = $value;
-        } else {
-          $return[$key] = $real_value;
-        }
+          // Handle keys with multiple values
+          if(count($value) > 1) {
+            $return[$key] = $value;
+          } else {
+            $return[$key] = $real_value;
+          }
+
       }
      }
 
@@ -2804,12 +3107,10 @@ class WPP_F {
 
                 if(!empty($new_single_value)) {
                   array_push($range_values, trim($new_single_value));
-
                 }
 
               // Unset original value with dash
               unset($range_values[$key]);
-
 
             }
           }
@@ -2839,6 +3140,17 @@ class WPP_F {
 
     $return['permalink'] = get_permalink($id);
 
+    //** Make sure property_type stays as slug, or it will break many things:  (widgets, class names, etc)  */
+    $return['property_type_label'] = $wp_properties['property_types'][$return['property_type']];
+
+    if(empty($return['property_type_label'])) {
+      foreach($wp_properties['property_types'] as $pt_key => $pt_value) {
+        if(strtolower($pt_value) == strtolower($return['property_type'])) {
+          $return['property_type'] = $pt_key;
+          $return['property_type_label'] =  $pt_value;
+        }
+      }
+    }
 
     if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number'])) {
       $return['phone_number'] = $wp_properties['configuration']['phone_number'];
@@ -2950,18 +3262,21 @@ class WPP_F {
   static function get_stat_values_and_labels($property_object, $args = false) {
     global $wp_properties;
 
-    $defaults = array( );
+    $defaults = array();
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
-    if($exclude)
+    if($exclude) {
       $exclude = explode(',', $exclude);
+    }
 
-    if($include)
+    if($include) {
       $include = explode(',', $include);
+    }
 
     $property_stats = $wp_properties['property_stats'];
 
     foreach($property_stats as $slug => $label) {
+
       // Determine if it's frontend and the attribute is hidden for frontend
       if(!is_admin() && in_array($slug, (array)$wp_properties['hidden_frontend_attributes'])) {
         continue;
@@ -2989,25 +3304,32 @@ class WPP_F {
         $value = 'true';
       }
 
+      //** Override property_type slug with label */
+      if($slug == 'property_type') {
+        $value = $property_object->property_type_label;
+      }
+
       // Include only passed variables
       if(is_array($include) && in_array($slug, $include)) {
-        if(!empty($value))
-        $return[$label] = $value;
+        if(!empty($value)) {
+          $return[$label] = $value;
+        }
         continue;
       }
 
       if(!is_array($include)) {
-      if(!empty($value))
-        $return[$label] = $value;
+        if(!empty($value)) {
+          $return[$label] = $value;
+        }
       }
 
     }
 
-    if(count($return) > 0)
+    if(count($return) > 0) {
       return $return;
+    }
 
     return false;
-
 
   }
 
@@ -3038,67 +3360,73 @@ class WPP_F {
     * @since 1.081
    *
     */
-  static function google_maps_infobox($post) {
+  static function google_maps_infobox($post, $args = false) {
     global $wp_properties;
+
     $map_image_type = $wp_properties['configuration']['single_property_view']['map_image_type'];
     $infobox_attributes = $wp_properties['configuration']['google_maps']['infobox_attributes'];
     $infobox_settings = $wp_properties['configuration']['google_maps']['infobox_settings'];
-    
-    if (!is_object($post) && is_array($post)){    // convert array in object (for supermap)
-    $data = $post;
-      if (!empty($post)) {
-        $post = false;
-        foreach ($data as $akey => $aval) {
-          $post -> {$akey} = $aval;
-        }
-      }
+
+    if(is_array($post)) {
+      $post = (object) $post;
     }
-    
-    if(empty($wp_properties['configuration']['address_attribute']))
+
+    if(empty($wp_properties['configuration']['address_attribute'])) {
       return;
-    
-    if(empty($post))
+    }
+
+    if(empty($post)) {
       return;
-    
+    }
+
     if(empty($infobox_attributes)) {
       $infobox_attributes = array(
         'price',
         'bedrooms',
         'bathrooms');
     }
-    
+
     if(empty($infobox_settings)) {
       $infobox_settings = array(
         'show_direction_link' => true,
         'show_property_title' => true
         );
     }
-    
+
     //$infobox_attributes = array_reverse($infobox_attributes);
-    
-    $image_sizes = WPP_F::get_image_dimensions($map_image_type);
-    
-    ob_start();
-    ?>
+
+    $image = wpp_get_image_link($post->featured_image, $map_image_type, array('return'=>'array'));
+
+    ob_start(); ?>
+
     <div id="infowindow" style="min-width:350px;" >
     <?php if($infobox_settings['show_property_title']  == 'true'): ?>
       <div class="wpp_google_maps_attribute_row_property_title" >
       <a href="<?php echo get_permalink($post->ID); ?>"><?php echo $post->post_title; ?></a>
       </div>
     <?php endif; ?>
-    
+
     <table cellpadding="0" cellspacing="0" class="wpp_google_maps_infobox_table" style="">
       <tr>
-        <td class="wpp_google_maps_left_col" style=" width: <?php echo $image_sizes[width]; ?>px">
-          <img style="margin:0;padding:0;" width="<?php echo $image_sizes['width']; ?>" height="<?php echo $image_sizes['height']; ?>" src="<?php echo addslashes($post->images[$map_image_type]);?>" alt="<?php echo addslashes($post->post_title);?>" />
-          <?php if($infobox_settings[show_direction_link] == 'true'): ?>
+        <?php if($image['link']) { ?>
+        <td class="wpp_google_maps_left_col" style=" width: <?php echo $image['width']; ?>px">
+          <img style="margin:0;padding:0;" width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link']; ?>" alt="<?php echo addslashes($post->post_title);?>" />
+          <?php if($infobox_settings['show_direction_link'] == 'true'): ?>
           <div class="wpp_google_maps_attribute_row wpp_google_maps_attribute_row_directions_link">
           <a target="_blank" href="http://maps.google.com/maps?gl=us&daddr=<?php echo addslashes(str_replace(' ','+', $post->{$wp_properties['configuration']['address_attribute']})); ?>"><?php _e('Get Directions','wpp') ?></a>
           </div>
           <?php endif; ?>
         </td>
-        <td  class="wpp_google_maps_right_col" vertical-align="top" style="vertical-align: top;">
-        
+        <?php } ?>
+
+        <td class="wpp_google_maps_right_col" vertical-align="top" style="vertical-align: top;">
+
+        <?php if(!$image['link'] && $infobox_settings['show_direction_link'] == 'true') { ?>
+          <div class="wpp_google_maps_attribute_row wpp_google_maps_attribute_row_directions_link">
+          <a target="_blank" href="http://maps.google.com/maps?gl=us&daddr=<?php echo addslashes(str_replace(' ','+', $post->{$wp_properties['configuration']['address_attribute']})); ?>"><?php _e('Get Directions','wpp') ?></a>
+          </div>
+        <?Php } ?>
+
           <?php
           $amount = 0;
           $attrs = '';
@@ -3127,7 +3455,7 @@ class WPP_F {
             $attrs .= "<span class=\"value\">{$value}</span>";
             $attrs .= "<div class=\"clear\"></div>";
             $attrs .= "</li>";
-            
+
             $amount++;
           }
           $height = $amount * 20;
@@ -3314,13 +3642,14 @@ class WPP_F {
   /**
    * This static function is not actually used, it's only use to hold some common translations that may be used by our themes.
    *
-    * @since 1.14
+   * Translations for Denali theme.
    *
-    */
+   * @since 1.14
+   *
+   */
   static function strings_for_translations() {
 
-
-    // Denali Theme
+    __('General Settings', 'wpp');
     __('Find your property', 'wpp');
     __('Edit', 'wpp');
     __('City', 'wpp');
@@ -3786,12 +4115,12 @@ class WPP_F {
 
     return $value;
   }
-  
+
   /**
    * Deletes directory recursively
-   * 
+   *
    * @param string $dirname
-   * @return bool 
+   * @return bool
    * @author korotkov@ud
    */
   function delete_directory( $dirname ) {

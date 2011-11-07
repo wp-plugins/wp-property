@@ -365,17 +365,44 @@ function toggle_advanced_options() {
         }
       }
     }
+
     
     if(!show_type) {
-      jQuery(advanced_option_class, wrapper).toggle();
-      return;
+      element_path = jQuery(advanced_option_class, wrapper);
     }
     
     //** Look for advanced options with show type */
     if(show_type) {
-      jQuery(advanced_option_class + "[" + show_type_element_attribute + "='"+show_type+"']", wrapper).toggle();
-      return;
+      element_path = jQuery(advanced_option_class + "[" + show_type_element_attribute + "='"+show_type+"']", wrapper);
     }
+    
+    /* Check if this element is a checkbox, we assume that we always show things when it is checked, and hiding when unchecked */
+    if(jQuery(this).is("input[type=checkbox]")) {
+    
+      var toggle_logic = jQuery(this).attr("toggle_logic"); 
+      
+      
+      if(jQuery(this).is(":checked")) {
+        if(toggle_logic = 'reverse') {
+          jQuery(element_path).hide();              
+        } else {
+          jQuery(element_path).show();      
+        }
+      } else {
+        if(toggle_logic = 'reverse') {
+          jQuery(element_path).show();                
+        } else {
+          jQuery(element_path).hide();           
+        }
+      }     
+      
+      return;
+      
+    }  
+    
+    
+    jQuery(element_path).toggle();
+    
   });
 }
 

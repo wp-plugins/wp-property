@@ -37,25 +37,31 @@
   color: #A53535; 
 }
 
-.wpp_feps_form .wpp_feps_row_wrapper.wpp_checkbox  .wpp_feps_label_wrapper {
-    clear: none;
-    float: right;
-    left: 5px;
-    text-align: left;
-    width: 375px;
+.wpp_feps_form .wpp_feps_row_wrapper.wpp_checkbox  .wpp_feps_label_wrapper {  
+  position: absolute;
+  text-align: left;
+  width: 100%;
+  z-index: 1;
 }
+
+.wpp_feps_form ul.feps_property_input_fields li.wpp_feps_row_wrapper.wpp_checkbox label {
+  display: block;
+  margin-left: 262px;
+  overflow: auto;
+}
+
 .wpp_feps_form .wpp_feps_row_wrapper.wpp_checkbox  .wpp_feps_label_wrapper .the_title {
   float: left;
   text-transform: none;
 }
 
 .wpp_feps_form .wpp_feps_row_wrapper.wpp_checkbox .wpp_feps_input_wrapper {
-
-    clear: none;
-    float: left;
-    margin: 0;
-    min-height: 2em;
-    width: 246px;
+  clear: none;
+  display: block;
+  float: left;
+  margin: 0;
+  min-height: 2em;
+  z-index: 2;
 }
 
 .wpp_feps_form input.wpp_feps_submit_form {
@@ -82,6 +88,11 @@
   margin-bottom: 0px;
   position: relative;
 }
+
+.wpp_feps_form .wpp_feps_row_wrapper .wpp_feps_input_wrapper  span.images_limit {
+  position: absolute;
+}
+
 .wpp_feps_form .wpp_feps_row_wrapper .wpp_feps_input_wrapper .wpp_feps_input_content {
   margin-left: 230px; /* +20 to Base Width */ 
   padding-right: 3px;

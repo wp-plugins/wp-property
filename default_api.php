@@ -1,28 +1,28 @@
 <?php
 
-  
+
   class wpp_default_api {
-  
+
   /**
    * Loader for WPP API functions.
    *
    * @version 1.25.0
-   */  
+   */
     function init() {
       global $shortcode_tags;
-      
+
       $shortcodes = array_keys($shortcode_tags);
-      
+
       //** Load list-attachments shortcode if the List Attachments Shortcode plugin does not exist */
-      if(!in_array('list-attachments', $shortcodes)) {      
+      if(!in_array('list-attachments', $shortcodes)) {
         add_shortcode('list_attachments', array('wpp_default_api', 'list_attachments'));
-      }            
-      
+      }
+
       //** Load MapPress data for object, if it exists (disabled but here for quick access */
       //* add_filter('wpp_get_property', array('wpp_default_api', 'maybe_load_map_press_data')); */
 
-    
-    } 
+
+    }
 
 
   /**
@@ -32,15 +32,15 @@
    *
    * @version 1.25.0
    */
-    function list_attachments( $atts = array() ) {          
+    function list_attachments( $atts = array() ) {
       global $post, $wp_query;
-     
+
       $r = '';
-      
+
       if( !is_array( $atts ) ) {
         $atts = array();
       }
-      
+
       $defaults = array(
         'type' => NULL,
         'orderby' => NULL,
@@ -57,13 +57,13 @@
         'include_icon_classes' => true,
         'showsize' => false
       );
-      
+
       $atts = array_merge( $defaults, $atts );
-      
+
       if(isset($atts['post_id']) && is_numeric($atts['post_id'])) {
         $post = get_post($atts['post_id']);
       }
-      
+
       if(!$post) {
         return;
       }
@@ -73,24 +73,24 @@
       } else {
         $types = array();
       }
-      
+
       $showsize = ( $atts['showsize'] == true || $atts['showsize'] == 'true' || $atts['showsize'] == 1 ) ? true : false;
       $upload_dir = wp_upload_dir();
-      
+
       $op = clone $post;
       $oq = clone $wp_query;
-      
+
       foreach( array( 'before_list', 'after_list', 'opening', 'closing', 'before_item', 'after_item' ) as $htmlItem ) {
         $atts[$htmlItem] = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $atts[$htmlItem] );
       }
-      
+
       $args = array(
         'post_type' => 'attachment',
         'numberposts' => -1,
         'post_status' => null,
         'post_parent' => $post->ID,
       );
-      
+
       if( !empty( $atts['orderby'] ) ) {
         $args['orderby'] = $atts['orderby'];
       }
@@ -101,9 +101,9 @@
       if( !empty( $atts['groupby'] ) ) {
         $args['orderby'] = $atts['groupby'];
       }
-      
+
       $attachments = get_posts($args);
- 
+
       if( $attachments ) {
         $grouper = $atts['groupby'];
         $test = $attachments;
@@ -111,15 +111,15 @@
         if( !property_exists( $test, $grouper ) ) {
           $grouper = 'post_' . $grouper;
         }
-        
+
         $attlist = array();
-        
+
         foreach( $attachments as $att ) {
           $key = ( !empty( $atts['groupby'] ) ) ? $att->$grouper : $att->ID;
           $key .= ( !empty( $atts['orderby'] ) ) ? $att->$atts['orderby'] : '';
-          
+
           $attlink = wp_get_attachment_url( $att->ID );
-          
+
           if( count( $types ) ) {
             foreach( $types as $t ) {
               if( substr( $attlink, (0- strlen( '.' . $t ) ) ) == '.' . $t ) {
@@ -142,46 +142,46 @@
           }
         }
       }
-      
- 
+
+
       if( count( $attlist ) ) {
         $open = false;
         $r = $atts['before_list'] . $atts['opening'];
         foreach( $attlist as $att ) {
-        
+
           $container_classes = array('attachment_container');
-          
+
           //** Determine class to display for this file type */
           if($atts['include_icon_classes']) {
-          
+
             switch($att->post_mime_type) {
-            
+
               case 'application/zip':
                 $class = 'zip';
               break;
-              
+
               case 'vnd.ms-excel':
                 $class = 'excel';
               break;
-            
+
               case 'image/jpeg':
               case 'image/png':
               case 'image/gif':
               case 'image/bmp':
                 $class = 'image';
               break;
-              
+
               default:
                 $class = 'default';
               break;
             }
           }
-          
+
           $icon_class = ($class ? 'wpp_attachment_icon file-' . $class : false);
-          
+
           //** Determine if description shuold be displayed, and if it is not empty */
           $echo_description  = ($atts['show_descriptions'] && !empty($att->post_content ) ? ' <span class="attachment_description"> ' . $att->post_content . ' </span> ' : false);
-                      
+
           $echo_title = ($att->post_excerpt ?  $att->post_excerpt :  __('View ', 'wpp') . apply_filters('the_title_attribute',$att->post_title));
 
           if($icon_class) {
@@ -191,7 +191,7 @@
           if(!empty($echo_description)) {
             $container_classes[] = 'has_description';
           }
- 
+
           //** Add conditional classes if class is not already passed into container */
           if(!strpos($atts['before_item'], 'class')) {
             $this_before_item = str_replace('>', ' class="' . implode(' ', $container_classes) . '">', $atts['before_item']);
@@ -216,64 +216,64 @@
         }
         $r .= $atts['closing'] . $atts['after_list'];
       }
-      
+
       $wp_query = clone $oq;
       $post = clone $op;
-      
+
       return $r;
     }
 
-        
-    
+
+
   /*
    * Loads Map Press data into the property object when it exists.
-   * 
+   *
    * @param object $property. Property object
    */
     function maybe_load_map_press_data ($property) {
       global $wpdb, $wp_properties;
-      
+
       $property = (array) $property;
       $property_id = $property['ID'];
       $address_attribute = $wp_properties['configuration']['address_attribute'];
-      
+
       if(!empty($address_attribute) || !empty($property[$address_attribute])) {
         return $property;
       }
-      
+
       if($obj = $wpdb->get_var("SELECT obj FROM {$wpdb->prefix}mappress_posts mpp LEFT JOIN {$wpdb->prefix}mappress_maps mpm ON mpp.mapid = mpm.mapid WHERE postid = '{$property_id}'")) {
         $obj = maybe_unserialize($obj);
         if($obj->pois) {
-        
+
           foreach($obj->pois as $map_entry) {
-          
+
             if(!empty($map_entry->point['lat']) && empty($property['latitude'])) {
               $map_data['latitude'] = $map_entry->point['lat'];
             }
             if(!empty($map_entry->point['lng']) && empty($property['longitude'])) {
               $map_data['longitude'] = $map_entry->point['lng'];
             }
- 
+
             if(!empty($map_entry->correctedAddress) && empty($property[$address_attribute])) {
-              $map_data[$address_attribute] = $map_entry->correctedAddress;            
+              $map_data[$address_attribute] = $map_entry->correctedAddress;
             }
-            
-            if(!empty($map_data)) {            
+
+            if(!empty($map_data)) {
               return array_merge($property, $map_data);
             }
-           
-          
+
+
           }
-        
-        }        
+
+        }
       }
-      
+
       return $property;
-      
+
     }
-  
+
   }
-  
+
   //** Load API towards the end of init */
   add_filter('init', array('wpp_default_api', 'init'), 0, 30);
 
@@ -305,35 +305,36 @@
   }
 
   add_filter("wpp_stat_filter_area", 'add_square_foot');
-  add_filter("wpp_stat_filter_phone_number", 'format_phone_number');  
-  
+  add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
+
   // Exclude hidden attributes from frontend
   add_filter('wpp_get_property', 'wpp_exclude_hidden_attributes');
-  
+
   add_filter('wpp_get_property', 'add_display_address');
 
   add_filter('wpp_property_inheritance', 'add_city_to_inheritance');
-  add_filter('wpp_searchable_attributes', 'add_city_to_searchable');  
-  
+  add_filter('wpp_searchable_attributes', 'add_city_to_searchable');
+
   add_filter('wpp_property_stat_labels', 'wpp_unique_key_labels', 20);
+
 
   /**
    * Add labels to system-generated attributes that do not have custom-set values
    *
    * @since 1.22.0
-   */  
-  function wpp_unique_key_labels($stats) {  
-  
+   */
+  function wpp_unique_key_labels($stats) {
+
     if(empty($stats['property_type'])) {
       $stats['property_type'] = __('Property Type', 'wpp');
     }
-  
+
     if(empty($stats['city'])) {
       $stats['city'] = __('City', 'wpp');
     }
-    
+
     return $stats;
-  
+
   }
 
   // Add sold/rented options
@@ -353,7 +354,6 @@
 
   // Coordinate manual override
   add_filter('wpp_property_stats_input_'. $wp_properties['configuration']['address_attribute'], 'wpp_property_stats_input_address', 0, 3);
-
 
   add_action('save_property', 'save_property_coordinate_override', 0, 3);
 
@@ -383,7 +383,7 @@
     return $attributes;
   }
 
-  
+
   /**
    * Formats address on print.  If address it not formatted, makes an on-the-fly call to GMaps for validation.
    *
@@ -397,13 +397,15 @@
       return $data;
     }
 
+    $currenty_address = $property->$wp_properties['configuration']['address_attribute'];
+
     //** If the currently requested properties address has not been formatted, and on-the-fly geo-lookup has not been disabled, try to look up now */
     if(!$property->address_is_formatted && $wp_properties['configuration']['do_not_automatically_geo_validate_on_property_view'] != 'true') {
       //** Silently attempt to validate address, right now */
       $geo_data  = WPP_F::revalidate_all_addresses(array('property_ids' => array($property->ID), 'echo_result' => false, 'return_geo_data' => true));
 
       if($this_geo_data = $geo_data['geo_data'][$property->ID]) {
-      
+
         $street_number  = $this_geo_data->street_number;
         $route  = $this_geo_data->route;
         $city  = $this_geo_data->city;
@@ -411,11 +413,11 @@
         $state_code  = $this_geo_data->state_code;
         $county  = $this_geo_data->county;
         $country  = $this_geo_data->country;
-        $postal_code  = $this_geo_data->postal_code;        
-      }      
-      
+        $postal_code  = $this_geo_data->postal_code;
+      }
+
     } else {
-    
+
       $street_number  = $property->street_number;
       $route  = $property->route;
       $city  = $property->city;
@@ -437,9 +439,18 @@
     $display_address =   str_replace("[country]", "$country",$display_address);
     $display_address =   str_replace("[zip_code]", "$postal_code",$display_address);
     $display_address =   str_replace("[zip]", "$postal_code",$display_address);
-    $display_address =  str_replace("[postal_code]", "$postal_code",$display_address);
+    $display_address =   str_replace("[postal_code]", "$postal_code",$display_address);
     $display_address =   preg_replace('/^\n+|^[\t\s]*\n+/m', "", $display_address);
 
+    if(str_replace(' ', ',', '', $display_address) == '') {
+
+      if(!empty($currenty_address)) {
+        return $currenty_address;
+      } else {
+        return;
+      }
+
+    }
 
     // Remove empty lines
     foreach(explode("\n", $display_address) as $line) {
@@ -455,10 +466,13 @@
 
     }
 
+
+
     //$display_address =   nl2br($display_address);
 
-    if(is_array($return))
+    if(is_array($return)) {
       return implode("\n", $return);
+    }
 
   }
 
@@ -794,13 +808,13 @@
 
 
     $property['display_address'] = apply_filters('wpp_display_address', $display_address, $property);
-    
+
 
     // Don't return if result matches the
     if(str_replace(array(" ", "," , "\n"), "", $display_address_code) == str_replace(array(" ", "," , "\n"), "", $display_address)) {
       $property['display_address'] = "";
     }
-    
+
     //** Make sure that address isn't retunred with no data */
     if(str_replace(',', '', $property['display_address']) == '') {
       /* No Address */
@@ -827,7 +841,7 @@
     $content = trim(str_replace(array("$", ","), "", $content));
 
     if (!is_numeric($content) && substr_count($content, '-')){
-      $hyphen_between = explode('-', $content);      
+      $hyphen_between = explode('-', $content);
       return ($currency_symbol_placement == 'before' ? $currency_symbol : ''). WPP_F::format_numeric($hyphen_between[0]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '') . ' - ' . ($currency_symbol_placement == 'before' ? $currency_symbol : '') . WPP_F::format_numeric($hyphen_between[1]) . ($currency_symbol_placement == 'after' ? $currency_symbol : '');
     } elseif (!is_numeric($content)) {
 
@@ -964,4 +978,3 @@
     return $property;
   }
 
-  

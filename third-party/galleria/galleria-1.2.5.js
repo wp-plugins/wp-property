@@ -4723,12 +4723,17 @@ Galleria.Picture.prototype = {
                     // http://code.google.com/p/adblockforchrome/issues/detail?id=3701
                     if ( ( !this.width || !this.height ) ) {
                         window.setTimeout( (function( img ) {
+                                console.log(img);
                             return function() {
                                 if ( img.width && img.height ) {
                                     complete.call( img );
                                 } else {
-                                    Galleria.raise('Could not extract width/height from image: ' + img.src +
-                                        '. Traced measures: width:' + img.width + 'px, height: ' + img.height + 'px.');
+                                   try {
+jQuery('<img/>').attr('src',$(img).attr("src")).load(function() {complete.call( this )})
+} catch(error_message) {
+Galleria.raise('Could not extract width/height from image: ' + img.src +
+'. Traced measures: width:' + img.width + 'px, height: ' + img.height + 'px.');
+} 
                                 }
                             };
                         }( this )), 2);

@@ -128,8 +128,11 @@ class OtherPropertiesWidget extends WP_Widget {
     if(count($jams) < 2)
         return;
 
-    //The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique
-    $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+    //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+    /*
+      Removed since this will cause problems with jQuery Tabs in Denali.
+      $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+    */
 
     echo $before_widget;
     echo "<div class='wpp_other_properties_widget'>";
@@ -337,7 +340,11 @@ jQuery(document).ready(function($){
             return;
 
 
+      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+      /*
+        Removed since this will cause problems with jQuery Tabs in Denali.
         $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      */
 
         echo $before_widget;
         echo "<div class='wpp_child_properties_widget'>";
@@ -540,7 +547,12 @@ jQuery(document).ready(function($){
       return;
       }
 
-    $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+      /*
+        Removed since this will cause problems with jQuery Tabs in Denali.
+        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      */
+
     echo $before_widget;
     echo "<div class='wpp_featured_properties_widget'>";
 
@@ -774,7 +786,13 @@ function wpp_featured_properties($args = false, $custom = false){
       );
 
     $postslist = get_posts($arg);
-    $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+
+      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+      /*
+        Removed since this will cause problems with jQuery Tabs in Denali.
+        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      */
+
     echo $before_widget;
     echo "<div class='wpp_latest_properties_widget'>";
 
@@ -962,7 +980,6 @@ jQuery(document).ready(function($){
         $searchable_property_types = $instance['searchable_property_types'];
         $grouped_searchable_attributes = $instance['grouped_searchable_attributes'];
 
-
         if(!is_array($search_attributes)) {
           return;
         }
@@ -972,7 +989,10 @@ jQuery(document).ready(function($){
         }
 
         //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
-        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+        /*
+          Removed since this will cause problems with jQuery Tabs in Denali.
+          $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+        */
 
         echo $before_widget;
 
@@ -983,7 +1003,7 @@ jQuery(document).ready(function($){
         } else  {
           echo '<span class="wpp_widget_no_title"></span>';
         }
-        
+
         //** Load different attribute list depending on group selection */
         if($instance['group_attributes'] == 'true') {
           $search_args['group_attributes'] = true;
@@ -991,7 +1011,7 @@ jQuery(document).ready(function($){
         } else {
           $search_args['search_attributes'] = $search_attributes;
         }
-        
+
         //* Clean searchable attributes: remove unavailable ones */
         $all_searchable_attributes = array_unique($wp_properties['searchable_attributes']);
         foreach($search_args['search_attributes'] as $k => $v) {
@@ -1002,9 +1022,9 @@ jQuery(document).ready(function($){
             }
           }
         }
-        
+
         $search_args['searchable_property_types'] = $searchable_property_types;
-        
+
         if(isset($instance['use_pagi']) && $instance['use_pagi']=='on') {
 
           if(empty($instance['per_page'])) {
@@ -1031,30 +1051,31 @@ jQuery(document).ready(function($){
 
     /** @see WP_Widget::update */
     function update($new_instance, $old_instance) {
-        //Recache searchable values for search widget form
-        $searchable_attributes = $new_instance['searchable_attributes'];
-        $grouped_searchable_attributes = $new_instance['grouped_searchable_attributes'];
-        $searchable_property_types = $new_instance['searchable_property_types'];
-        $group_attributes = $new_instance['group_attributes'];
-        
-        
-        if($group_attributes == 'true') {        
-        
-          WPP_F::get_search_values($grouped_searchable_attributes, $searchable_property_types, false, $this->id);
-        } else {
-          WPP_F::get_search_values($searchable_attributes, $searchable_property_types, false, $this->id);        
-        }
+      //Recache searchable values for search widget form
+      $searchable_attributes = $new_instance['searchable_attributes'];
+      $grouped_searchable_attributes = $new_instance['grouped_searchable_attributes'];
+      $searchable_property_types = $new_instance['searchable_property_types'];
+      $group_attributes = $new_instance['group_attributes'];
 
-        return $new_instance;
+
+      if($group_attributes == 'true') {
+
+        WPP_F::get_search_values($grouped_searchable_attributes, $searchable_property_types, false, $this->id);
+      } else {
+        WPP_F::get_search_values($searchable_attributes, $searchable_property_types, false, $this->id);
+      }
+
+      return $new_instance;
     }
+
     /**
-     * 
+     *
      * Renders back-end property search widget tools.
-     * 
-     * @complexity 8     
+     *
+     * @complexity 8
      * @author potanin@UD
-     * 
-     */    
+     *
+     */
      function form($instance) {
       global $wp_properties;
 
@@ -1088,17 +1109,17 @@ jQuery(document).ready(function($){
       if(!isset($wp_properties['property_stats']['property_type'])) {
         $wp_properties['property_stats']['property_type'] = __('Property Type', 'wpp');
       }
-        
+
        if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) {
 
         //** Add property type to the beginning of the attribute list, even though it's not a typical attribute */
         array_unshift($all_searchable_attributes, 'property_type');
        }
-      
+
       //** Find the difference between selected attributes and all attributes, i.e. unselected attributes */
       if(is_array($searchable_attributes) && is_array($all_searchable_attributes)) {
         $unselected_attributes = array_diff($all_searchable_attributes, $searchable_attributes);
-        
+
         //* Clean searchable attributes: remove unavailable ones */
         foreach($searchable_attributes as $k => $v) {
           if(!in_array($v, $all_searchable_attributes)) {
@@ -1108,25 +1129,25 @@ jQuery(document).ready(function($){
             }
           }
         }
-        
+
         // Build new array beginning with selected attributes, in order, follow by all other attributes
         $ungrouped_searchable_attributes = array_merge($searchable_attributes, $unselected_attributes);
-      
+
       } else {
         $ungrouped_searchable_attributes = $all_searchable_attributes;
       }
       //$ungrouped_searchable_attributes = $all_searchable_attributes;
-      
+
       //* Perpare $all_searchable_attributes for using by sort function */
       $temp_attrs = array();
-      
+
       foreach($all_searchable_attributes as $slug) {
         $attribute_label = $wp_properties['property_stats'][$slug];
-        
+
         if(empty($attribute_label)) {
           $attribute_label = UD_F::de_slug($slug);
         }
-        
+
         $temp_attrs[$attribute_label] = $slug;
       }
 
@@ -1138,37 +1159,30 @@ jQuery(document).ready(function($){
         echo '<p>' . _e('No searchable property types were found.','wpp') . '</p>';
         return;
       }
-      
-      /*
-        echo "<pre>";
-        //print_r($searchable_attributes);
-        //print_r($stats_by_groups);        
-        echo "</pre>";
-      */
-        
+
       ?>
      <script type="text/javascript">
 
-      jQuery(document).ready(function(){      
-      
+      jQuery(document).ready(function(){
+
         var this_search_box = jQuery("#wpp_property_search_wrapper_<?php echo $this->number; ?>");
-        
+
         /* Run on load to hide property type attribut if there is less than 2 property types */
         wpp_adjust_property_type_option();
-        
+
         /* Select the correc tab */
         wpp_set_group_or_ungroup();
-      
-        jQuery("#all_atributes_<?php echo $this->id; ?> .wpp_sortable_attributes").sortable(); 
+
+        jQuery("#all_atributes_<?php echo $this->id; ?> .wpp_sortable_attributes").sortable();
 
         /* Setup tab the grouping/ungrouping tabs, and trigger checking the select box when tabs are switched */
         jQuery(".wpp_subtle_tabs").tabs({
-          select: function(event, ui) {            
+          select: function(event, ui) {
             if(ui.index == 0) {
               jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").attr("checked", false);
             } else {
               jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").attr("checked", true);
-            }            
+            }
           }
         });
 
@@ -1179,45 +1193,45 @@ jQuery(document).ready(function($){
           });
           wpp_search_widget_dragstop = true;
         }
-        
+
         /* Select grouped tab if grouping is enabled here */
         <?php if($stats_by_groups && $group_attributes == 'true') { ?>
         jQuery(".wpp_subtle_tabs").tabs('select',1);
         <?php } ?>
-        
+
         jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").change(function() {
 
-        
+
         });
-        
+
         jQuery(".wpp_prperty_types_<?php echo $this->number;?>").change(function() {
           wpp_adjust_property_type_option();
         });
-        
+
         function wpp_set_group_or_ungroup() {
-                
+
           if(jQuery("#<?php echo $this->get_field_id('group_attributes'); ?>").is(":checked")) {
-            jQuery(".wpp_subtle_tabs",this_search_box).tabs('select',1);          
+            jQuery(".wpp_subtle_tabs",this_search_box).tabs('select',1);
           } else {
-            jQuery(".wpp_subtle_tabs",this_search_box).tabs('select',0);                    
+            jQuery(".wpp_subtle_tabs",this_search_box).tabs('select',0);
           }
-        
+
         }
-        
+
         function wpp_adjust_property_type_option() {
-        
+
           var count = jQuery(".wpp_prperty_types_<?php echo $this->number;?>:checked").length;
- 
+
           if(count < 2) {
             jQuery(".wpp_attribute_wrapper.property_type", this_search_box).hide();
             jQuery(".wpp_attribute_wrapper.property_type input", this_search_box).attr("checked", false);
           } else {
-            jQuery(".wpp_attribute_wrapper.property_type", this_search_box).show();          
+            jQuery(".wpp_attribute_wrapper.property_type", this_search_box).show();
           }
-          
+
         }
 
-        
+
       });
 
     </script>
@@ -1250,7 +1264,7 @@ jQuery(document).ready(function($){
 
         <ul class="wpp_section_tabs  tabs">
           <li><a href="#all_atributes_<?php echo $this->id; ?>"><?php _e('All Attributes','wpp'); ?></a></li>
-          
+
           <?php if($stats_by_groups) { ?>
           <li><a href="#grouped_attributes_<?php echo $this->id; ?>"><?php _e('Grouped Attributes','wpp'); ?></a></li>
           <?php } ?>
@@ -1259,7 +1273,7 @@ jQuery(document).ready(function($){
         <div id="all_atributes_<?php echo $this->id; ?>" class="wp-tab-panel wpp_all_attributes">
           <ul class="wpp_sortable_attributes">
           <?php foreach($ungrouped_searchable_attributes as $attribute) { ?>
-          
+
             <li class="wpp_attribute_wrapper <?php echo $attribute; ?>">
               <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($searchable_attributes)) { echo  'checked="checked"'; } ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($searchable_attributes) && in_array($attribute, $searchable_attributes)) ? " checked " : ""); ?> />
               <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
@@ -1351,44 +1365,43 @@ jQuery(document).ready(function($){
 
     }
 
-}
+  }
 
-// Default function to use in template directly
-function wpp_search_widget($args = false, $custom = false){
-  global $wp_properties;
+  // Default function to use in template directly
+  function wpp_search_widget($args = false, $custom = false){
+    global $wp_properties;
 
-
-
-    if (!$args)
-        $args = array(
-            'before_title'  => '<h3>',
-            'after_title'   => '</h3>',
-            'before_widget' => '',
-            'after_widget'  => ''
-        );
+    if (!$args) {
+      $args = array(
+        'before_title'  => '<h3>',
+        'after_title'   => '</h3>',
+        'before_widget' => '',
+        'after_widget'  => ''
+      );
+    }
 
    // $searchable_attributes = array('bedrooms','bathrooms','area','city', 'price');
    $searchable_attributes = $custom;
    $searchable_property_types = $wp_properties['searchable_property_types'];
 
-
     $default = array(
-        'title'                     => __('Search Properies','wpp'),
-        'use_pagi'                  => 'on',
-        'per_page'                  => 10,
-        'searchable_attributes'     => $searchable_attributes,
-        'searchable_property_types' => $searchable_property_types
+      'title'                     => __('Search Properies','wpp'),
+      'use_pagi'                  => 'on',
+      'per_page'                  => 10,
+      'searchable_attributes'     => $searchable_attributes,
+      'searchable_property_types' => $searchable_property_types
     );
-    if($custom)
-        $default = array_merge($default, $custom);
 
+    if($custom) {
+      $default = array_merge($default, $custom);
+    }
 
     $count = strlen(implode('-', $default['searchable_attributes'])) . strlen(implode('-', $default['searchable_property_types']));
 
     WPP_F::get_search_values($searchable_attributes, $searchable_property_types, false, 'searchpropertieswidget-'.$count);
 
     SearchPropertiesWidget::widget($args, $default);
-}
+  }
 
 /**
  Property Gallery Widget
@@ -1401,8 +1414,7 @@ function wpp_search_widget($args = false, $custom = false){
 
     /** @see WP_Widget::widget */
     function widget($args, $instance) {
-
-        global  $wp_properties, $post;
+      global  $wp_properties, $post;
       extract( $args );
 
       $title = apply_filters('widget_title', $instance['title']);
@@ -1420,13 +1432,17 @@ function wpp_search_widget($args = false, $custom = false){
         $image_type = 'thumbnail';
       }
 
-      if(empty($post->gallery)) {
+      if(!is_array($post->gallery)) {
         return;
       }
 
       $thumbnail_dimensions = WPP_F::image_sizes($image_type);
 
-      $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+      /*
+        Removed since this will cause problems with jQuery Tabs in Denali.
+        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+      */
 
       $html[] = $before_widget;
       $html[] = "<div class='wpp_gallery_widget'>";
@@ -1435,9 +1451,10 @@ function wpp_search_widget($args = false, $custom = false){
         $html[] = $before_title . $title . $after_title;
       }
 
+
       ob_start();
 
-      if($post->gallery) {
+      if(is_array($post->gallery)) {
 
         $real_count = 0;
 
@@ -1478,7 +1495,7 @@ function wpp_search_widget($args = false, $custom = false){
 
       $html = apply_filters('wpp_widget_property_gallery', $html, array('args' => $args, 'instance' => $instance, 'post' => $post));
 
-      if(is_array($html)) {
+      if(!empty($html['images']) && is_array($html)) {
         echo implode('', $html);
       }
 
@@ -1512,7 +1529,7 @@ function wpp_search_widget($args = false, $custom = false){
         <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
       </p>
 
-      <p>
+      <p class="wpp_gallery_big_image_type">
         <label for="<?php echo $this->get_field_id('big_image_type'); ?>"><?php _e('Large Image Size:'); ?></label>
         <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('big_image_type') . "&selected=" . $big_image_type); ?>
       </p>
@@ -1528,7 +1545,7 @@ function wpp_search_widget($args = false, $custom = false){
         <label for="<?php echo $this->get_field_id('show_caption') ?>"><?php _e('Show Image Captions', 'wpp'); ?></label>
       </p>
 
-      <p>
+      <p class="wpp_gallery_show_description">
         <input name="<?php echo $this->get_field_name('show_description'); ?>"  id="<?php echo $this->get_field_id('show_description') ?>" type="checkbox" <?php checked('on', $show_description); ?> value="on" />
         <label for="<?php echo $this->get_field_id('show_description') ?>"><?php _e('Show Image Descriptions.', 'wpp'); ?></label>
       </p>

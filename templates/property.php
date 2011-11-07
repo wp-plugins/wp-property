@@ -7,7 +7,7 @@
  * or add the property type to the end to customize further, example:
  * property-building.php or property-floorplan.php, etc.
  *
- * By default the system will look for file with property type suffix first, 
+ * By default the system will look for file with property type suffix first,
  * if none found, will default to: property.php
  *
  * Copyright 2010 Andy Potanin <andy.potanin@twincitiestech.com>
@@ -32,24 +32,29 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
     var map;
     var marker;
     var infowindow;
-    
-    jQuery(document).ready(function() {
- 
-      jQuery("a.fancybox_image, .gallery-item a").fancybox({
-        'transitionIn'  :  'elastic',
-        'transitionOut'  :  'elastic',
-        'speedIn'    :  600, 
-        'speedOut'    :  200, 
-        'overlayShow'  :  false
-      });
 
-      initialize();
-      
+    jQuery(document).ready(function() {
+
+      if(typeof jQuery.fn.fancybox == 'function') {
+        jQuery("a.fancybox_image, .gallery-item a").fancybox({
+          'transitionIn'  :  'elastic',
+          'transitionOut'  :  'elastic',
+          'speedIn'    :  600,
+          'speedOut'    :  200,
+          'overlayShow'  :  false
+        });
+      }
+
+      if(typeof google == 'function') {
+        initialize_this_map();
+      } else {
+        jQuery("#property_map").hide();
+      }
+
     });
-  
-   
-    
-  function initialize() {
+
+
+  function initialize_this_map() {
     <?php if($coords = WPP_F::get_coordinates()): ?>
     var myLatlng = new google.maps.LatLng(<?php echo $coords['latitude']; ?>,<?php echo $coords['longitude']; ?>);
     var myOptions = {
@@ -59,12 +64,12 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
     }
 
     map = new google.maps.Map(document.getElementById("property_map"), myOptions);
-    
+
     infowindow = new google.maps.InfoWindow({
       content: '<?php echo WPP_F::google_maps_infobox($post); ?>',
       maxWidth: 500
     });
-  
+
      marker = new google.maps.Marker({
       position: myLatlng,
       map: map,
@@ -76,29 +81,29 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
     document.getElementById('infowindow').parentNode.style.overflow='hidden';
     document.getElementById('infowindow').parentNode.parentNode.style.overflow='hidden';
    });
-   
+
    setTimeout("infowindow.open(map,marker);",1000);
- 
+
     <?php endif; ?>
   }
 
   </script>
-    
-  
+
+
   <div id="container" class="<?php echo (!empty($post->property_type) ? $post->property_type . "_container" : "");?>">
     <div id="content" role="main" class="property_content">
       <div id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-    
-      
+
+
       <div class="building_title_wrapper">
         <h1 class="property-title entry-title"><?php the_title(); ?></h1>
         <h3 class="entry-subtitle"><?php the_tagline(); ?></h3>
       </div>
- 
-    
+
+
       <div class="entry-content">
         <div class="wpp_the_content"><?php @the_content(); ?></div>
-        
+
         <?php if ( empty($wp_properties['property_groups']) || $wp_properties['configuration']['property_overview']['sort_stats_by_groups'] != 'true' ) : ?>
           <dl id="property_stats" class="property_stats overview_stats">
             <?php if(!empty($post->display_address)): ?>
@@ -116,7 +121,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
           <?php endif; ?>
           <?php @draw_stats("make_link=true&exclude={$wp_properties['configuration']['address_attribute']}"); ?>
         <?php endif; ?>
-        
+
       <?php if(!empty($wp_properties['taxonomies'])) foreach($wp_properties['taxonomies'] as $tax_slug => $tax_data): ?>
         <?php if(get_features("type={$tax_slug}&format=count")):  ?>
         <div class="<?php echo $tax_slug; ?>_list">
@@ -128,10 +133,10 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
         <?php endif; ?>
       <?php endforeach; ?>
 
- 
+
 
         <?php if(is_array($wp_properties['property_meta'])): ?>
-        <?php foreach($wp_properties['property_meta'] as $meta_slug => $meta_title): 
+        <?php foreach($wp_properties['property_meta'] as $meta_slug => $meta_title):
           if(empty($post->$meta_slug) || $meta_slug == 'tagline')
             continue;
         ?>
@@ -139,27 +144,27 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
           <p><?php echo  do_shortcode(html_entity_decode($post->$meta_slug)); ?></p>
         <?php endforeach; ?>
         <?php endif; ?>
-        
+
 
         <?php if(WPP_F::get_coordinates()): ?>
           <div id="property_map" style="width:100%; height:450px"></div>
         <?php endif; ?>
-        
+
         <?php if(class_exists('WPP_Inquiry')): ?>
           <h2><?php _e('Interested?','wpp') ?></h2>
           <?php WPP_Inquiry::contact_form(); ?>
         <?php endif; ?>
-          
-         
+
+
         <?php if($post->post_parent): ?>
           <a href="<?php echo $post->parent_link; ?>"><?php _e('Return to building page.','wpp') ?></a>
         <?php endif; ?>
-           
+
       </div><!-- .entry-content -->
     </div><!-- #post-## -->
 
     </div><!-- #content -->
-  </div><!-- #container -->  
+  </div><!-- #container -->
 
 
 <?php
@@ -174,5 +179,5 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
 
 <?php endif; ?>
 
- 
+
  <?php get_footer(); ?>

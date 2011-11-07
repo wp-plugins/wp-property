@@ -48,6 +48,8 @@ Usage of custom attributes added in the Developer tab for queries, example:
 
 = New features =
 
+* New shortcode: [property_attribute] to pull a single attribute without using PHP. Example: [property_attribute attribute=bedrooms] will return the number of bedrooms for current property. [property_attribute property_id=4 attribute=bathrooms] will return the number of bathrooms for property with ID of 5.
+* New shortcode: [property_map] to pull a single attribute without using PHP. Example: [property_map width="100%" height="100px" zoom_level=11 property_id=5].  Leave property_id blank to get map for currently displayed property.
 * Two different sorter styles available, buttons and dropdown.
 * "Sort by:" text can be customized in [property_overview] shortcode using the sort_by_text argument.
 
@@ -208,6 +210,31 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.30.0 =
+* New shortcode: [property_attribute] to pull a single attribute without using PHP. Example: [property_attribute attribute=bedrooms] will return the number of bedrooms for current property. [property_attribute property_id=4 attribute=bathrooms] will return the number of bathrooms for property with ID of 5.
+* New shortcode: [property_map] to pull a single attribute without using PHP. Example: [property_map width="100%" height="100px" zoom_level=11 property_id=5].  Leave property_id blank to get map for currently displayed property.
+* New dynamic arguments available for [property_overview]: post_id, post_parent and property_type which are replaced with the current properties' data when passed into a shortcode on a property page.
+* All property attributes can now contain and execute WordPress shortcodes.
+* Property Type label can now be used to query properties, example [property_overview property_type='Single Family Home']
+* UI Improvement: On search results sorting options are not displayed if only one property is returned.
+* UI Improvement: Added "expand all" and "collapse all" to Property Stats editor table in Developer tab.
+* Improved pagination slider to adjust it's width based on the width of the Forward and Next buttons to avoid overlapping issue with translated buttons.
+* Improved property export to work with JSON and XML format.  Exports can also conduct basic queries using URL parameters. Instructions may be found in the "Help" tab. 
+* New Metabox: Child Properties: When editing a parent property, all children are displayed in a metabox.
+* [featured_properties] shortcode improvements, new shortcode arguments that can be passed: property_type, per_page, sorter_type, thumbnail_size, pagination, hide_count, and stats.
+* Property Overview shortcode can accept a ID in order to query a specific property.
+* Improvements to default property-overview.php for better custom templating.
+* Improved remote script and image loading.  Remote scripts (such as Google) are first verified by WPP_F::can_get_script() to make sure the are reachable, before being sent to browser. Images can be verified via WPP_F::can_get_image()
+* Fixed a problem with child properties' permalinks.
+* Fixed issue with "Next" pagination button not working with certain configurations.
+* Added a check to prevent display addresses from returning with commas only when not enough attributes exist to display full address, yet formatting is applied.
+* Added additional conditional JavaScript function checkers to avoid errors if Fancybox, Google Maps, etc. are not loaded for some reason.
+* Added additional backwards-compatibility for thumbnails sizes.
+* Added automatic image resizing to Google Map infobox thumbnail.
+* XML Importer: Added button to sort all import rules.
+* XML Importer: Added better limit control - pre and post-QC.
+* XML Importer: Added setting to set minimum image size for images.
 
 = 1.25.0 =
 * Added [list_attachments] shortcode for displaying property, and regular post, attachments along file-type icons.  Included file-type icons are: Microsoft Word, Microsoft Excel, ZIP, Adobe PDF, and default.

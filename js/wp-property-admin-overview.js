@@ -33,7 +33,7 @@ jQuery(document).ready(function() {
 function admin_overview_init() {
   
   /* Load fancybox if it exists */
-  if(typeof fancybox == 'function') { 
+  if(typeof jQuery.fn.fancybox == 'function') { 
     jQuery(".fancybox").fancybox({
       'transitionIn'  :  'elastic',
       'transitionOut'  :  'elastic',

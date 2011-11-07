@@ -1,7 +1,151 @@
+/* XML Importer Styles Begin { */
+
+body.property_page_wpp_property_import  tr.step_one{
+  background: #FBFBFB; 
+}
+
+body.property_page_wpp_property_import  .wppi_source_option_preview_wrapper {
+    background: none repeat scroll 0 0 #F1F1F1;
+    border-bottom: 1px solid #DDDBDB;
+    margin-bottom: 5px;
+    padding: 6px 8px;
+}
+
+body.property_page_wpp_property_import  .wpp_property_import_choose_root_element {
+  width: 450px;
+}
+
+body.property_page_wpp_property_import  .wpp_property_import_remote_url {
+  width: 35em;
+}
+
+body.property_page_wpp_property_import  .wpp_property_import_name {
+  font-size: 1.5em;
+  width: 90%;
+}
+
+body.property_page_wpp_property_import  .wppi_source_advanced {
+  display: none;
+}
+       
+    
+div.wpp_property_import_setup .wpp_i_advanced_source_settings {
+  display: none;  
+}
+
+div.wpp_property_import_setup .wpp_show_advanced_wrapper  {
+  padding-top: 4px;
+
+}
+
+div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
+  display:block;
+}
+
+body.property_page_wpp_property_import  .wpp_property_import_gs_options {
+
+}
+
+#wpp_property_import_source_status {
+  display: none;
+  cursor: pointer;
+  border-color: #BBBBBB;
+  background-color: #FFFFFF;
+  color: #464646;
+  -moz-box-sizing: content-box;
+  border-radius: 8px;
+  border-style: solid;
+  border-width: 1px;
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 13px;
+  padding: 3px 8px;
+  text-decoration: none;  
+}
+
+#wpp_property_import_source_status.wpp_import_source_good{
+  color:  #22521C;
+}
+#wpp_property_import_source_status.wpp_import_source_processing {
+  color: #858585;
+}
+#wpp_property_import_source_status.wpp_import_source_bad{
+    border: 1px solid #B0ADAD;
+    box-shadow: 0 0 1px #F99898;
+    color: #761111;
+}
+
+.wpp_xi_loader {
+  background: url("images/ajax-loader.gif") no-repeat scroll left center transparent;
+  display: inline-block;
+  height: 16px;
+  margin-left: 12px;
+  width: 43px;
+  display: none;
+}
+
+.wpp_xi_advanced_option_counter {
+  color: #CB5E30;
+  margin-left: 2px;
+}
+
+.wpp_property_import_settings input[type=text] {
+  background: none repeat scroll 0 0 #FFFDF5;
+  border: 1px solid #C6C3B8;
+  height: 20px;
+  padding: 0;
+  text-align: center;
+  width: 40px;}
+  
+.wpp_property_import_settings li.wpp_xi_advanced_setting {
+  background: none repeat scroll 0 0 #FBFBFB;
+  border: 1px solid #F4F4F4;
+  padding: 4px 0 4px 7px;
+}
+.wpp_property_import_settings li.wpp_xi_advanced_setting,
+.wpp_property_import_settings li.wpp_xi_advanced_setting label {
+  color: #545454;
+}
+.wpp_property_import_settings li.wpp_xi_advanced_setting:hover,
+.wpp_property_import_settings li.wpp_xi_advanced_setting:hover label {
+  color: #090807;
+}
+  
+.wpp_property_import_settings li.wpp_xi_advanced_setting.wpp_xi_enabld_row {
+  background: none repeat scroll 0 0 #FFEEDD;
+  border-left: 5px solid #F1A063;
+  margin-left: -4px;
+}
+
+.wpp_property_import_settings li.wpp_xi_advanced_setting input[type="checkbox"] {
+  margin-right: 5px;
+}
+
+#wpp_property_import_setup span.wpp_xi_sort_rules {
+  float: right;
+}
+
+/* XML Importer Styles End } */
+
+.wpp_property_stat_functions {
+  float: right;
+  color: #7E7E7E;
+}
+
+.wpp_property_stat_functions .wpp_all_advanced_settings {
+  color: #C27818;
+  cursor: pointer;
+}
+
+.wpp_property_stat_functions #sort_stats_by_groups {
+  margin-left: 10px;
+}
+
 #wpcontent .widget-content select {
   max-width: 100%;
 }
 
+#wpcontent .wpp_attribute_row select option,
 #wpcontent .widget-content select option {
   margin-right: 5px;
 }
@@ -213,11 +357,11 @@ body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
 }
 
 
-#wpp_property_import_setup #wpp_property_import_unique_id option {
+body.property_page_wpp_property_import  #wpp_property_import_unique_id option {
   margin-right: 3px;
 }
 
-#wpp_property_import_setup .wpp_i_import_actions_bar .wpp_i_ajax_message {
+body.property_page_wpp_property_import  .wpp_i_import_actions_bar .wpp_i_ajax_message {
     color: #6A513A;
     display: none;
     float: right;
@@ -378,77 +522,6 @@ body.property_page_show_agents .wp-list-table .column-id {
   color: #464A4B;
 }
 
-#wpp_property_import_setup tr.step_one{
-  background: #FBFBFB; 
-}
-
-#wpp_property_import_setup .wppi_source_option_preview_wrapper {
-    background: none repeat scroll 0 0 #F1F1F1;
-    border-bottom: 1px solid #DDDBDB;
-    margin-bottom: 5px;
-    padding: 6px 8px;
-}
-
-#wpp_property_import_setup #wpp_property_import_remote_url {
-  width: 35em;
-}
-
-#wpp_property_import_setup #wpp_property_import_name {
-  font-size: 1.5em;
-}
-
-#wpp_property_import_setup .wppi_source_advanced {
-  display: none;
-}
-   
-   
-    
-    
-div.wpp_property_import_setup .wpp_i_advanced_source_settings {
-  display: none;  
-}
-
-div.wpp_property_import_setup .wpp_show_advanced_wrapper  {
-  padding-top: 4px;
-
-}
-
-div.wpp_property_import_setup[import_type=gs] .wpp_property_import_gs_options {
-  display:block;
-}
-
-#wpp_property_import_setup .wpp_property_import_gs_options {
-
-}
-
-#wpp_property_import_source_status {
-  display: none;
-  cursor: pointer;
-  border-color: #BBBBBB;
-  background-color: #FFFFFF;
-  color: #464646;
-  -moz-box-sizing: content-box;
-  border-radius: 8px;
-  border-style: solid;
-  border-width: 1px;
-  cursor: pointer;
-  font-size: 12px;
-  line-height: 13px;
-  padding: 3px 8px;
-  text-decoration: none;  
-}
-
-#wpp_property_import_source_status.wpp_import_source_good{
-  color:  #22521C;
-}
-#wpp_property_import_source_status.wpp_import_source_processing {
-  color: #858585;
-}
-#wpp_property_import_source_status.wpp_import_source_bad{
-    border: 1px solid #B0ADAD;
-    box-shadow: 0 0 1px #F99898;
-    color: #761111;
-}
 
 .wpp_tabs div.wpp_settings_block {
     background: none repeat scroll 0 0 #F7F7F7;
@@ -970,7 +1043,13 @@ html .wpp_tabs  ul.tabs li.active, html .wpp_tabs  ul.tabs li.active a:hover {
   display:none;
 }
  
-.disabled_row .description, .disabled_row .wpp_prefill_values, .disabled_row .wpp_prefill_attribute, .disabled_row input, .disabled_row textarea, .disabled_row select { display: none !important; }
+.disabled_row .description, 
+.disabled_row .wpp_prefill_values, 
+.disabled_row .wpp_prefill_attribute, 
+.disabled_row .currency, 
+.disabled_row input, 
+.disabled_row textarea, 
+.disabled_row select { display: none !important; }
  
 .disabled_row .disabled_message {
   color: #BFBFBF;

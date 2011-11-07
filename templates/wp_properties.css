@@ -1123,10 +1123,14 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
   -moz-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
   -webkit-box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1); }
 
-.properties_sorter label, .sort_by, .sort_order {
+.wpp_sortable_dropdown option {
+  margin-right: 10px;
+}
 
-  height: 23px;
-  margin-right: 6px !important; }
+.properties_sorter label, .sort_by, .sort_order {
+  height: 24px;
+  margin-right: 6px !important; 
+}
 
 .properties_sorter label { line-height: 23px; }
 

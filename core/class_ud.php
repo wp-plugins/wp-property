@@ -33,20 +33,87 @@ if(!class_exists('WPP_UD_UI')):
 
 class WPP_UD_UI {
 
+/**
+ * Display visual editor forms: TinyMCE, or HTML, or both.
+ *
+ * The amount of rows the text area will have for the content has to be between
+ * 3 and 100 or will default at 12. There is only one option used for all users,
+ * named 'default_post_edit_rows'.
+ *
+ * If the user can not use the rich editor (TinyMCE), then the switch button
+ * will not be displayed.
+ *
+ * @since 2.1.0
+ *
+ * @param string $content Textarea content.
+ * @param string $id Optional, default is 'content'. HTML ID attribute value.
+ * @param string $prev_id Optional, default is 'title'. HTML ID name for switching back and forth between visual editors.
+ * @param bool $media_buttons Optional, default is true. Whether to display media buttons.
+ * @param int $tab_index Optional, default is 2. Tabindex for textarea element.
+ */
+function the_editor($content, $id = 'content', $prev_id = 'title', $media_buttons = true, $tab_index = 2) {
+	$rows = get_option('default_post_edit_rows');
+	if (($rows < 3) || ($rows > 100))
+		$rows = 12;
+
+	if ( @!current_user_can( 'upload_files' ) )
+		$media_buttons = false;
+
+ 
+	$class = '';
+ ?>
+	<div class="editor-toolbar" id="editor-toolbar-<?php echo $id; ?>">
+
+	<div class="zerosize"><input accesskey="e" type="button" onclick="switchEditors.go('<?php echo $id; ?>')" /></div>
+<?php	 
+			$class = " class='theEditor'";
+			add_filter('the_editor_content', 'wp_richedit_pre'); ?>
+			<a id="edButtonHTML" class="hide-if-no-js" onclick="switchEditors.go('<?php echo $id; ?>', 'html');"><?php _e('HTML'); ?></a>
+			<a id="edButtonPreview" class="active hide-if-no-js" onclick="switchEditors.go('<?php echo $id; ?>', 'tinymce');"><?php _e('Visual'); ?></a>
+<?php	 
+ 
+
+	if ( $media_buttons ) { ?>
+		<div id="media-buttons" class="hide-if-no-js">
+<?php	do_action( 'media_buttons' ); ?>
+		</div>
+<?php
+	} ?>
+	</div>
+ 
+	<div id="quicktags-<?php echo $id; ?>"><?php
+	wp_print_scripts( 'quicktags' ); ?>
+	<script type="text/javascript">edToolbar()</script>
+	</div>
+
+<?php
+	$the_editor = apply_filters('the_editor', "<div id='editorcontainer'><textarea rows='$rows'$class cols='40' name='$id' tabindex='$tab_index' id='$id'>%s</textarea></div>\n");
+	$the_editor_content = apply_filters('the_editor_content', $content);
+
+	printf($the_editor, $the_editor_content);
+
+?>
+	<script type="text/javascript">
+	edCanvas = document.getElementById('<?php echo $id; ?>');
+	</script>
+<?php
+}
 
 
  /** 
-  * Formats phone number for display
+  * Determine if an item is in array and return checked
   *
   *
   * @since 1.5.17
   */
  function checked_in_array($item, $array) {
    
-    if(is_array($array) && in_array($item, $array))
+    if(is_array($array) && in_array($item, $array)) {
       echo ' checked="checked" ';
+    }
         
  }
+ 
  
   /**
    * Formats phone number for display
@@ -68,6 +135,148 @@ class WPP_UD_UI {
   }
 
 
+  
+
+	/**
+	 * Display post categories form fields.
+	 *
+	 * @since 2.6.0
+	 *
+	 * @param object $post
+	 */
+	function object_taxonomy_meta_box( $post, $box ) {
+	
+		
+		$defaults = array('taxonomy' => 'category');
+		if ( !isset($box['args']) || !is_array($box['args']) )
+			$args = array();
+		else
+			$args = $box['args'];
+		extract( wp_parse_args($args, $defaults), EXTR_SKIP );
+		$tax = get_taxonomy($taxonomy);
+
+		
+		?>
+ 		
+		<div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv">
+			<ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
+				<li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php echo $tax->labels->all_items; ?></a></li>
+				<li class="hide-if-no-js"><a href="#<?php echo $taxonomy; ?>-pop" tabindex="3"><?php _e( 'Most Used' ); ?></a></li>
+			</ul>
+
+			<div id="<?php echo $taxonomy; ?>-pop" class="tabs-panel" style="display: none;">
+				<ul id="<?php echo $taxonomy; ?>checklist-pop" class="categorychecklist form-no-clear" >
+					<?php $popular_ids = wp_popular_terms_checklist($taxonomy); ?>
+				</ul>
+			</div>
+
+			<div id="<?php echo $taxonomy; ?>-all" class="tabs-panel">
+				<?php
+				$name = ( $taxonomy == 'category' ) ? 'post_category' : 'tax_input[' . $taxonomy . ']';
+				echo "<input type='hidden' name='{$name}[]' value='0' />"; // Allows for an empty term set to be sent. 0 is an invalid Term ID and will be ignored by empty() checks.
+				?>
+				<ul id="<?php echo $taxonomy; ?>checklist" class="list:<?php echo $taxonomy?> categorychecklist form-no-clear">
+					<?php wp_terms_checklist($post->ID, array( 'taxonomy' => $taxonomy, 'popular_cats' => $popular_ids ) ) ?>
+				</ul>
+			</div>
+		<?php if ( !current_user_can($tax->cap->assign_terms) ) : ?>
+		<p><em><?php _e('You cannot modify this taxonomy.'); ?></em></p>
+		<?php endif; ?>
+		<?php if ( current_user_can($tax->cap->edit_terms) ) : ?>
+				<div id="<?php echo $taxonomy; ?>-adder" class="wp-hidden-children">
+					<h4>
+						<a id="<?php echo $taxonomy; ?>-add-toggle" href="#<?php echo $taxonomy; ?>-add" class="hide-if-no-js" tabindex="3">
+							<?php
+								/* translators: %s: add new taxonomy label */
+								printf( __( '+ %s' ), $tax->labels->add_new_item );
+							?>
+						</a>
+					</h4>
+					<p id="<?php echo $taxonomy; ?>-add" class="category-add wp-hidden-child">
+						<label class="screen-reader-text" for="new<?php echo $taxonomy; ?>"><?php echo $tax->labels->add_new_item; ?></label>
+						<input type="text" name="new<?php echo $taxonomy; ?>" id="new<?php echo $taxonomy; ?>" class="form-required form-input-tip" value="<?php echo esc_attr( $tax->labels->new_item_name ); ?>" tabindex="3" aria-required="true"/>
+						<label class="screen-reader-text" for="new<?php echo $taxonomy; ?>_parent">
+							<?php echo $tax->labels->parent_item_colon; ?>
+						</label>
+						<?php wp_dropdown_categories( array( 'taxonomy' => $taxonomy, 'hide_empty' => 0, 'name' => 'new'.$taxonomy.'_parent', 'orderby' => 'name', 'hierarchical' => 1, 'show_option_none' => '&mdash; ' . $tax->labels->parent_item . ' &mdash;', 'tab_index' => 3 ) ); ?>
+						<input type="button" id="<?php echo $taxonomy; ?>-add-submit" class="add:<?php echo $taxonomy ?>checklist:<?php echo $taxonomy ?>-add button category-add-sumbit" value="<?php echo esc_attr( $tax->labels->add_new_item ); ?>" tabindex="3" />
+						<?php wp_nonce_field( 'add-'.$taxonomy, '_ajax_nonce-add-'.$taxonomy, false ); ?>
+						<span id="<?php echo $taxonomy; ?>-ajax-response"></span>
+					</p>
+				</div>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+
+	function user_display_name($user_id, $args = '') {
+		$defaults = array('show_organization' => 'true');
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
+		if(empty($user_id))
+			return;
+		
+		if($maybe_user_id = email_exists($user_id))
+			$user = get_userdata($maybe_user_id);
+		else
+			$user = get_userdata($user_id);
+ 
+			
+		if($show_organization == 'true' && $user->user_organization)
+			$rank_org  = (empty($user->user_rank) ? "" : ", $user->user_rank") . ", $user->user_organization";
+
+
+		if(!empty($user->first_name) && !empty($user->last_name))
+			$display_name = "$user->first_name $user->last_name" . $rank_org;
+		elseif(!empty($user->display_name))
+			$display_name = $user->display_name;
+		else
+			$display_name = $user->user_login;
+
+		return $display_name;
+
+	}
+
+
+
+	function sidebar_size_css($col_width) { ?>
+	<style type="text/css">
+	  .inner-sidebar{ width: <?php echo $col_width; ?>px; }
+	  .has-right-sidebar #post-body { margin-right:-<?php echo ($col_width + 50); ?>px; }
+	  .has-right-sidebar #post-body-content  { margin-right:<?php echo ($col_width + 20); ?>px; }
+	  .inner-sidebar #side-sortables { width:<?php echo ($col_width); ?>px; }
+	 </style>
+	<?php
+
+	}
+
+	function fix_metabox($metabox_name, $args = '') {
+
+		$defaults = array('allow_drag' => 'false');
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
+	?>
+	<style type="text/css">
+	#<?php echo $metabox_name; ?> .inside {margin:0;}
+	#<?php echo $metabox_name; ?> .handlediv {display:none;}
+
+	<?php if($allow_drag == 'true'): ?>
+	#<?php echo $metabox_name; ?> h3{background: transparent; width: 200px; color: #CDCDCD;}
+
+	<?php endif; ?>
+
+	<?php if($allow_drag == 'false'): ?>
+	#<?php echo $metabox_name; ?> .handlediv {display:none;}
+	#<?php echo $metabox_name; ?> h3{display:none;}
+	<?php endif; ?>
+	
+	#<?php echo $metabox_name; ?> {background: transparent;border: 0px !important;}
+	#<?php echo $metabox_name; ?> .form-field label{font-size: 15px;}
+	</style>
+	<?php
+	}
+  
   /**
    * Return a link to a post or page from passed variable.
    *
@@ -502,17 +711,21 @@ padding:2px 6px;}
       <thead>
       <tr>
         <th style="width: 150px"><?php _e('Timestamp','wpp') ?></th>
+        <th><?php _e('Type','wpp') ?></th>
         <th><?php _e('Event','wpp') ?></th>
         <th><?php _e('User','wpp') ?></th>
+        <th><?php _e('Related Object','wpp') ?></th>
       </tr>
       </thead>
 
       <tbody>
-      <?php foreach(WPP_UD_F::get_log() as $event): ?>
+      <?php foreach(UD_F::get_log() as $event): ?>
       <tr class="ud_event_row">
-        <td><?php echo WPP_UD_F::nice_time($event[0]); ?></td>
+        <td><?php echo UD_F::nice_time($event[0]); ?></td>
         <td><?php echo $event[1]; ?></td>
+        <td><?php echo $event[2]; ?></td>
         <td><?php $user_data = get_userdata($event[2]); echo $user_data->display_name; ?></td>
+        <td><?php echo $event[4]; ?></td>
       </tr>
       <?php endforeach; ?>
       </tbody>
@@ -543,6 +756,30 @@ if(!class_exists('WPP_UD_F')):
  */
 
 class WPP_UD_F {
+
+
+  function start_timer() {  
+    global $ud_start_timer;
+    
+    $mtime = microtime(); 
+    $mtime = explode(" ",$mtime); 
+    $mtime = $mtime[1] + $mtime[0]; 
+    $ud_start_timer = $mtime; 
+    
+  }
+  
+  function end_timer($note = false) {
+    global $ud_start_timer;
+    
+    $mtime = microtime(); 
+    $mtime = explode(" ",$mtime); 
+    $mtime = $mtime[1] + $mtime[0]; 
+    $endtime = $mtime; 
+    $totaltime = ($endtime - $ud_start_timer); 
+    
+    echo "\n <br />Time: {$note}: ".$totaltime;   
+
+  }
 
 
   function get_column_names($table) {
@@ -590,6 +827,7 @@ class WPP_UD_F {
   /**
    * Get a URL of a page.
    *
+   * @todo This function is dependant on $wp_properties but should be general - potanin@ud
    *
    * @version 1.6
   **/
@@ -841,14 +1079,15 @@ class WPP_UD_F {
    *
    * $param string Event description
 
+   * @version 1.0
     * @uses get_option()
    * @uses update_option()
    * @uses check_prefix()
     * @return bool True if event added succesfully.
    *
    */
-  function log($event) {
-    WPP_UD_F::check_prefix();
+  	function log($event, $type = 'default', $object_id = false) {
+    UD_F::check_prefix();
     $current_user = wp_get_current_user();
 
     $log_name = UD_PREFIX . 'log';
@@ -1053,7 +1292,7 @@ class WPP_UD_F {
    * @uses add_action() Calls 'admin_menu' hook with an anonymous (lambda-style) function which uses add_menu_page to create a UI Log page
    * @return string
    */
-  function create_slug($content, $args = false) {
+  static function create_slug($content, $args = false) {
 
     $defaults = array(
       'separator' => '-',
@@ -1277,16 +1516,20 @@ class WPP_UD_F {
    function remove_object_ui_elements($post_type, $remove_elements) {
     global $wp_meta_boxes, $_wp_post_type_features;
 
+		if(!is_array($remove_elements)) {
+			$remove_elements = array($remove_elements);
+    }
+      
+    if(is_array($wp_meta_boxes[$post_type])) {
+      foreach($wp_meta_boxes[$post_type] as $context_slug => $priority_array) {
 
-    // Remove Metaboxes
-    foreach($wp_meta_boxes[$post_type] as $context_slug => $priority_array) {
+        foreach($priority_array as $priority_slug => $meta_box_array) {
 
-      foreach($priority_array as $priority_slug => $meta_box_array) {
+          foreach($meta_box_array as $meta_box_slug => $meta_bog_data) {
 
-        foreach($meta_box_array as $meta_box_slug => $meta_bog_data) {
-
-          if(in_array($meta_box_slug, $remove_elements))
-            unset($wp_meta_boxes[$post_type][$context_slug][$priority_slug][$meta_box_slug]);
+            if(in_array($meta_box_slug, $remove_elements))
+              unset($wp_meta_boxes[$post_type][$context_slug][$priority_slug][$meta_box_slug]);
+          }
         }
       }
     }
@@ -1326,6 +1569,11 @@ class WPP_UD_F {
 
   }
 
+	/**
+	 * Validate email  an address
+	 *
+	 * @since 1.1
+	 */  
    function check_email_address($email) {
       // First, we check that there's one @ symbol,
       // and that the lengths are right.
@@ -1363,6 +1611,133 @@ class WPP_UD_F {
       }
       return true;
   }
+  
+
+	/**
+	 * Creates a 'dynamic' page and sets up metaboxes
+	 *
+	 * Page should be added via admin_menu, this function sets everything up for dynamic use before headers
+	 * Enqueues JS for metaboxes
+	 *
+	 * @since 1.1
+	 */
+	 function create_dynamic_page($args = false) {
+		$defaults = array('slug' => false);
+		extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+
+
+		wp_enqueue_script('post');
+		wp_enqueue_script('editor');
+		wp_enqueue_script('media-upload');
+		do_action('add_meta_boxes', $post_type, $post);
+
+
+	 }
+
+
+
+  /*
+  That it is an implementation of the function money_format for the
+  platforms that do not it bear. 
+
+  The function accepts to same string of format accepts for the
+  original function of the PHP. 
+
+  (Sorry. my writing in English is very bad) 
+
+  The function is tested using PHP 5.1.4 in Windows XP
+  and Apache WebServer.
+  */
+  function money_format($format, $number)
+  {
+    $regex  = '/%((?:[\^!\-]|\+|\(|\=.)*)([0-9]+)?'.
+              '(?:#([0-9]+))?(?:\.([0-9]+))?([in%])/';
+    if (setlocale(LC_MONETARY, 0) == 'C') {
+        setlocale(LC_MONETARY, '');
+    }
+    $locale = localeconv();
+    preg_match_all($regex, $format, $matches, PREG_SET_ORDER);
+    foreach ($matches as $fmatch) {
+        $value = floatval($number);
+        $flags = array(
+            'fillchar'  => preg_match('/\=(.)/', $fmatch[1], $match) ?
+                           $match[1] : ' ',
+            'nogroup'   => preg_match('/\^/', $fmatch[1]) > 0,
+            'usesignal' => preg_match('/\+|\(/', $fmatch[1], $match) ?
+                           $match[0] : '+',
+            'nosimbol'  => preg_match('/\!/', $fmatch[1]) > 0,
+            'isleft'    => preg_match('/\-/', $fmatch[1]) > 0
+        );
+        $width      = trim($fmatch[2]) ? (int)$fmatch[2] : 0;
+        $left       = trim($fmatch[3]) ? (int)$fmatch[3] : 0;
+        $right      = trim($fmatch[4]) ? (int)$fmatch[4] : $locale['int_frac_digits'];
+        $conversion = $fmatch[5];
+
+        $positive = true;
+        if ($value < 0) {
+            $positive = false;
+            $value  *= -1;
+        }
+        $letter = $positive ? 'p' : 'n';
+
+        $prefix = $suffix = $cprefix = $csuffix = $signal = '';
+
+        $signal = $positive ? $locale['positive_sign'] : $locale['negative_sign'];
+        switch (true) {
+            case $locale["{$letter}_sign_posn"] == 1 && $flags['usesignal'] == '+':
+                $prefix = $signal;
+                break;
+            case $locale["{$letter}_sign_posn"] == 2 && $flags['usesignal'] == '+':
+                $suffix = $signal;
+                break;
+            case $locale["{$letter}_sign_posn"] == 3 && $flags['usesignal'] == '+':
+                $cprefix = $signal;
+                break;
+            case $locale["{$letter}_sign_posn"] == 4 && $flags['usesignal'] == '+':
+                $csuffix = $signal;
+                break;
+            case $flags['usesignal'] == '(':
+            case $locale["{$letter}_sign_posn"] == 0:
+                $prefix = '(';
+                $suffix = ')';
+                break;
+        }
+        if (!$flags['nosimbol']) {
+            $currency = $cprefix .
+                        ($conversion == 'i' ? $locale['int_curr_symbol'] : $locale['currency_symbol']) .
+                        $csuffix;
+        } else {
+            $currency = '';
+        }
+        $space  = $locale["{$letter}_sep_by_space"] ? ' ' : '';
+
+        $value = number_format($value, $right, $locale['mon_decimal_point'],
+                 $flags['nogroup'] ? '' : $locale['mon_thousands_sep']);
+        $value = @explode($locale['mon_decimal_point'], $value);
+
+        $n = strlen($prefix) + strlen($currency) + strlen($value[0]);
+        if ($left > 0 && $left > $n) {
+            $value[0] = str_repeat($flags['fillchar'], $left - $n) . $value[0];
+        }
+		if(is_array($value)) {
+			$value = implode($locale['mon_decimal_point'], $value);
+			if ($locale["{$letter}_cs_precedes"]) {
+				$value = $prefix . $currency . $space . $value . $suffix;
+			} else {
+				$value = $prefix . $value . $space . $currency . $suffix;
+			}
+		}
+        if ($width > 0) {
+            $value = str_pad($value, $width, $flags['fillchar'], $flags['isleft'] ?
+                     STR_PAD_RIGHT : STR_PAD_LEFT);
+        }
+
+        $format = str_replace($fmatch[0], $value, $format);
+    }
+    return $format;
+  }
+
+  
 }
 
 endif; /* f(!class_exists('WPP_UD_F')): */
