@@ -17,9 +17,6 @@
  * @package WP-Property
 */
 
-global $wp_properties;
-$map_image_type = $wp_properties['configuration']['single_property_view']['map_image_type'];
-
 // Uncomment to disable fancybox script being loaded on this page
 //wp_deregister_script('jquery-fancybox');
 //wp_deregister_script('jquery-fancybox-css');
@@ -28,7 +25,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
 <?php get_header(); ?>
 <?php the_post(); ?>
 
-   <script type="text/javascript">
+    <script type="text/javascript">
     var map;
     var marker;
     var infowindow;
@@ -45,7 +42,7 @@ $map_image_type = $wp_properties['configuration']['single_property_view']['map_i
         });
       }
 
-      if(typeof google == 'function') {
+      if(typeof google == 'object') {
         initialize_this_map();
       } else {
         jQuery("#property_map").hide();

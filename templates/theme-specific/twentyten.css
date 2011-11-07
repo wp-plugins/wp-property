@@ -5,7 +5,17 @@
 	Version: 0.6
  */
  
+#content ul.wpp_agent_info_list,
+#main .widget-area ul.wpp_agent_info_list {
+  margin-left: 0;
+}
 
+ .wpp_the_content .slider,
+ .wpp_the_content {
+  margin-bottom: 15px;
+}
+ 
+ 
  .wpp_row_view div.property_div {
   padding: 1% 1% 10px;
  }

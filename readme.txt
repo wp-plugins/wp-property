@@ -211,6 +211,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.30.1 =
+* Patch release to fix Google Map problem.
+* Update the $property and $post variables so they are same on single property pages. For developers: $post is always an object, and $property is always an array.
+
 = 1.30.0 =
 * New shortcode: [property_attribute] to pull a single attribute without using PHP. Example: [property_attribute attribute=bedrooms] will return the number of bedrooms for current property. [property_attribute property_id=4 attribute=bathrooms] will return the number of bathrooms for property with ID of 5.
 * New shortcode: [property_map] to pull a single attribute without using PHP. Example: [property_map width="100%" height="100px" zoom_level=11 property_id=5].  Leave property_id blank to get map for currently displayed property.
@@ -235,6 +239,7 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 * XML Importer: Added button to sort all import rules.
 * XML Importer: Added better limit control - pre and post-QC.
 * XML Importer: Added setting to set minimum image size for images.
+
 
 = 1.25.0 =
 * Added [list_attachments] shortcode for displaying property, and regular post, attachments along file-type icons.  Included file-type icons are: Microsoft Word, Microsoft Excel, ZIP, Adobe PDF, and default.

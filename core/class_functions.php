@@ -1972,12 +1972,12 @@ class WPP_F {
 
 
   /**
-   * Loads property values into global $post variables
+   * Loads property values into global $post variables.
    *
    * Attached to do_action_ref_array('the_post', array(&$post)); in setup_postdata()
-   * Ran after template_redirect
+   * Ran after template_redirect.
+   * $property is loaded in WPP_Core::template_redirect();
    *
-   * @todo There may be a better place to load property variables
    * @since 0.54
    *
     */
@@ -1988,15 +1988,8 @@ class WPP_F {
       return $post;
     }
 
-    if(!isset($property)) {
-      $property = WPP_F::get_property($post->ID, "return_object=true");
-    }
-
     //** Update global $post object to include property specific attributes */
-    $post = $property;
-
-    //** Set global $property object to be display ready. Global $property object is always an array. */
-    $property = (array) prepare_property_for_display($property);
+    $post = (object) $property;
 
   }
 
@@ -2015,7 +2008,7 @@ class WPP_F {
       'Name' => __('Name','wpp'),
       'Version' => __('Version','wpp'),
       'Description' => __('Description','wpp'),
-      'Minimum WPP Version' => __('Minimum WPP Version','wpp')
+      'Minimum Core Version' => __('Minimum Core Version','wpp')
     );
 
 
@@ -2042,11 +2035,11 @@ class WPP_F {
           $wp_properties['installed_features'][$plugin_slug]['version'] = $plugin_data['Version'];
           $wp_properties['installed_features'][$plugin_slug]['description'] = $plugin_data['Description'];
 
-          if($plugin_data['Minimum WPP Version']) {
-            $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version'] = $plugin_data['Minimum WPP Version'];
+          if($plugin_data['Minimum Core Version']) {
+            $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version'] = $plugin_data['Minimum Core Version'];
           }
 
-          //** If feature has a Minimum WPP Version and it is more than current version - we do not load **/
+          //** If feature has a Minimum Core Version and it is more than current version - we do not load **/
           $feature_requires_upgrade = (!empty($wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) && (version_compare(WPP_Version, $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']) < 0) ? true : false);
 
           if($feature_requires_upgrade) {

@@ -10,6 +10,11 @@
   padding-left: 23px;
 }
 
+.property_stats .wpp_attachment_list  .attachment_container.has_description .attachment_description  {
+  display: inline;
+  padding: 0;
+}
+
 .wpp_attachment_list  .wpp_attachment_icon.file-zip {
   background: url("images/file-zip.gif") left center no-repeat;
 }
@@ -689,7 +694,7 @@ html[xmlns] .clearfix { display: block; }
   #property_stats.overview_stats dd,
   .wpp_property_stats.overview_stats dd {
     border-bottom: 1px dashed #CFCBCB;
-    padding-left: 26px; }
+    padding-left: 165px; }
 
     #property_stats.overview_stats dd.alt,
     .wpp_property_stats.overview_stats dd.alt { background: #eee }

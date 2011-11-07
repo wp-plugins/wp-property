@@ -255,9 +255,6 @@ class WPP_Core {
     // Called in setup_postdata().  We add property values here to make available in global $post variable on frontend
     add_action('the_post', array('WPP_F','the_post'));
 
-    // Register custom taxonomy
-    //register_taxonomy("speaker", array("podcast"), array("hierarchical" => true, "label" => __('Speakers','wpp'), "singular_label" => __('Speaker','wpp'), "rewrite" => true));
-
     add_action("the_content", array(&$this, "the_content"));
 
     // Admin interface init
@@ -974,14 +971,15 @@ class WPP_Core {
       do_action('template_redirect_single_property');
       add_action('wp_head', create_function('', "do_action('wp_head_single_property'); "));
 
-      $post = WPP_F::get_property($post->ID, "return_object=true&load_gallery=true");
+      $property = WPP_F::get_property($post->ID, "load_gallery=true");
+      
+      $property = prepare_property_for_display($property);
 
-      $type = $post->property_type;
+      $type = $property['property_type'];
 
       //** Make certain variables available to be used within the single listing page */
       $single_page_vars = apply_filters('wpp_property_page_vars', array(
-        'post' => $post,
-        'property' => (array) $post,
+        'property' => $property,
         'wp_properties' => $wp_properties
       ));
 
