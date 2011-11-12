@@ -39,19 +39,12 @@ if(is_array($wpp_taxonomies)) {
 
 // Prepare other property attributes (image, title, description, tagline, etc)
 foreach ($list_data['attributes'] as $attr_id => $attr_value) {
-  if ( $attr_id == 'post_thumbnail' && !empty( $property['images']['thumbnail'] ) ) {
-    // Thumbnail (Image)
-    // Check, if image's url exists we approve image
-    if( !empty( $property['images']['thumbnail'] ) ) {
-      $headers = @get_headers( $property['images']['thumbnail'], 1 );
-      if( strpos( $headers[0], '200' ) ) {
-        if(!isset($headers['Content-Type']) || (isset($headers['Content-Type']) && strpos( $headers['Content-Type'], 'image' ) !== false)) {
-          $image = '<table cellspacing="0" cellpadding="5" border="0" style="background-color:' . $list_data['background'] . '"><tr><td>';
-          $image .= '<img width="'. $image_width .'" height="'. $image_height .'" src="'. $property['images']['thumbnail'] .'" alt="" />';
-          $image .= '</td></tr></table>';
-        }
-      }
-    }
+  if ( $attr_id == 'post_thumbnail' && !empty( $property['images']['thumbnail'] ) && WPP_F::can_get_image($property['images']['thumbnail'])) {
+
+    $image = '<table cellspacing="0" cellpadding="5" border="0" style="background-color:' . $list_data['background'] . '"><tr><td>';
+    $image .= '<img width="'. $image_width .'" height="'. $image_height .'" src="'. $property['images']['thumbnail'] .'" alt="" />';
+    $image .= '</td></tr></table>';
+
   } elseif( $attr_id == 'post_content' && !empty( $property['post_content'] ) ) {
     // Post Content
     $descr = strip_shortcodes( $property['post_content'] );
@@ -111,5 +104,3 @@ if (!empty($image)) {
 }
 
 echo '</tr></table>';
-
-?>

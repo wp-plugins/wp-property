@@ -161,6 +161,8 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.31.1 = 
+* "Area" attribute will only be appended with " sq ft." if it is set as numeric in the Developer tab.
 = 1.24.0 =
 * Changed property export function to export in JSON format.
 
@@ -210,6 +212,13 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.31.1 = 
+* Patch release.
+* "Area" attribute will not only be appended with "sq ft." if it is set as numeric in the Developer tab.
+* All "wpp_stat_filter_" filters are set in prepare_property_for_display(). Exceptions: wpp_render_search_input(), Sidebar Property Listing widgets, and back-end Property Overview rows.
+* FEPS. Added JavaScript minification to avoid WordPress formatting of the scripts.
+* PDF Flyer.  Improvements to avoid server issues when open_basedir restriction is in effect.
 
 = 1.31.0 = 
 * New [property_attribute] shortcode arguments: before, after, if_empty, do_not_format, and strip_tags.

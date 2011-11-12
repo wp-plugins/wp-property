@@ -302,9 +302,13 @@
     foreach($wp_properties['numeric_attributes'] as $attribute) {
       add_filter("wpp_stat_filter_{$attribute}", array('WPP_F', 'format_numeric'));
     }
+
+    if(in_array('area', $wp_properties['numeric_attributes'])) {
+      add_filter("wpp_stat_filter_area", 'add_square_foot');
+    }
   }
 
-  add_filter("wpp_stat_filter_area", 'add_square_foot');
+
   add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
 
   // Exclude hidden attributes from frontend
@@ -691,8 +695,7 @@
     * @return string $area
    */
   function add_square_foot($area) {
-
-    return $area . __(" sq ft.",'wpp');
+    return $area . __(" sq. ft.",'wpp');
   }
 
 

@@ -2935,8 +2935,9 @@ class WPP_F {
 
     $id = trim($id);
 
-    if($return = wp_cache_get($id.$args))
+    if($return = wp_cache_get($id.$args)) {
       return $return;
+    }
 
      $defaults = array(
       'get_children' => 'true',
@@ -3254,12 +3255,17 @@ class WPP_F {
 
   }
 
-  /*
-  Gets annex to an attribute
-*/
+/*
+ * Gets annex to an attribute. (Unused Function)
+ *
+ * @todo This function does not seem to be used by anything. potanin@UD (11/12/11)
+ *
+ */
   static function get_attrib_annex($attrib) {
-    if($attrib == 'area')
+
+    if($attrib == 'area') {
       return __(' sq ft.','wpp');
+    }
 
   }
 
@@ -3435,7 +3441,8 @@ class WPP_F {
     }
 
     $property = (array) prepare_property_for_display($post, array(
-      'load_gallery' => 'false'
+      'load_gallery' => 'false',
+      'scope' => 'google_map_infobox'
     ));
 
     //** Check if we have children */
@@ -3526,8 +3533,6 @@ class WPP_F {
               } elseif ($value == 'false') {
                 continue;
               }
-
-              $value = apply_filters('wpp_stat_filter_'. $attribute_slug, $value, 'google_map_infobox');
 
               $attributes[] =  '<li class="wpp_google_maps_attribute_row wpp_google_maps_attribute_row_' . $attribute_slug . '">';
               $attributes[] =  '<span class="attribute">' . $attribute_label . '</span>';
@@ -4176,28 +4181,6 @@ class WPP_F {
 
     return $results;
 
-  }
-
-  function attribute_filter( $value, $slug ) {
-    global $wp_properties;
-
-    // Filter bool values
-    if ( $value == 'true' ) {
-      $value = __('Yes', 'wp');
-    } elseif ( $value == 'false' ) {
-      $value = __('No', 'wp');
-    }
-
-    // Filter currency
-    if ( !empty( $wp_properties['currency_attributes'] ) ) {
-      foreach( $wp_properties['currency_attributes'] as $id => $attr ) {
-        if ( $slug == $attr ) {
-          $value = apply_filters("wpp_stat_filter_price", $value);
-        }
-      }
-    }
-
-    return $value;
   }
 
   /**

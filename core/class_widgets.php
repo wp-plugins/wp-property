@@ -311,8 +311,7 @@ jQuery(document).ready(function($){
                <ul class="wpp_widget_attribute_list">
                 <?php if(is_array($stats)): ?>
                 <?php foreach($stats as $stat):
-                    $content = nl2br(apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format));
-
+                    $content = nl2br(apply_filters("wpp_stat_filter_{$stat}", $this_property->$stat));
                     if(empty($content)) continue; ?>
 
           <li class="<?php echo $stat ?>"><span class='attribute'><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>  <span class='value'><?php echo $content;  ?></span></li>
@@ -528,7 +527,7 @@ jQuery(document).ready(function($){
                 <ul class="wpp_widget_attribute_list">
                 <?php if(is_array($stats)): ?>
                 <?php foreach($stats as $stat):
-                    $content = nl2br(apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format));
+                    $content = nl2br(apply_filters("wpp_stat_filter_{$stat}", $this_property->$stat));
 
                     if(empty($content)) continue; ?>
 
@@ -721,12 +720,6 @@ function wpp_featured_properties($args = false, $custom = false){
 
     $postslist = get_posts($arg);
 
-      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
-      /*
-        Removed since this will cause problems with jQuery Tabs in Denali.
-        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-      */
-
     echo $before_widget;
     echo "<div class='wpp_latest_properties_widget'>";
 
@@ -759,7 +752,7 @@ function wpp_featured_properties($args = false, $custom = false){
       echo '<ul class="wpp_widget_attribute_list">';
       if(is_array($stats)){
        foreach($stats as $stat){
-        $content = apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format);
+        $content = nl2br(apply_filters("wpp_stat_filter_{$stat}", $this_property->$stat));
         if(empty($content)) continue;
         echo '<li class="'. $stat .'"><span class="attribute">'. $wp_properties['property_stats'][$stat] .':</span> <span class="value">'. $content .'</span></li>';
       }

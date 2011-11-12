@@ -691,6 +691,10 @@ if(!function_exists('prepare_property_for_display')):
       return;
     }
 
+    /* Used to apply different filters depending on where the attribute is displayed. i.e. google_map_infobox  */
+    if($args['scope']) {
+      $attribute_scope = $args['scope'];
+    }
     $return_type = (is_object($property) ? 'object' : 'array');
 
     if(is_numeric($property)) {
@@ -744,7 +748,7 @@ if(!function_exists('prepare_property_for_display')):
 
         $attribute_value = str_replace("\n", "", nl2br($attribute_value));
 
-        $property[$meta_key] = apply_filters("wpp_stat_filter_$meta_key",$attribute_value);
+        $property[$meta_key] = apply_filters("wpp_stat_filter_{$meta_key}",$attribute_value, $attribute_scope);
       }
 
     }
@@ -914,9 +918,6 @@ if(!function_exists('draw_stats')):
       if($hide_false == 'true' && $value == 'false') {
         continue;
       }
-
-      //* Filter Value */
-      $value =  trim(apply_filters("wpp_stat_filter_$tag", $value, $property));
 
       //* Determine if the current attribute is address and display_address is set */
       if($tag == $wp_properties['configuration']['address_attribute'] && !empty($property->display_address)) {
@@ -1364,7 +1365,7 @@ if(!function_exists('wpp_render_search_input')):
         <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
         <?php foreach($grouped_values as $v) : ?>
           <option value='<?php echo (int)$v; ?>' <?php if($value['min'] == $v) echo " selected='true' "; ?>>
-          <?php echo apply_filters("wpp_stat_filter_$attrib", $v); ?> +
+          <?php echo apply_filters("wpp_stat_filter_{$attrib}", $v); ?> +
           </option>
           <?php endforeach; ?>
         </select>
@@ -1376,7 +1377,7 @@ if(!function_exists('wpp_render_search_input')):
           <select id="<?php echo $random_element_id; ?>" class="wpp_search_select_field wpp_search_select_field_<?php echo $attrib; ?> <?php echo $attribute_data['ui_class']; ?>" name="wpp_search[<?php echo $attrib; ?>]" >
           <option value="-1"><?php _e( 'Any' ,'wpp' ) ?></option>
           <?php foreach( $search_values[$attrib] as $v ) : ?>
-            <option value="<?php echo esc_attr($v); ?>" <?php selected($req_attr,$v); ?>><?php echo esc_attr( apply_filters("wpp_stat_filter_$attrib", $v) ); ?></option>
+            <option value="<?php echo esc_attr($v); ?>" <?php selected($req_attr,$v); ?>><?php echo esc_attr( apply_filters("wpp_stat_filter_{$attrib}", $v) ); ?></option>
           <?php endforeach; ?>
           </select>
           <?php
@@ -1414,7 +1415,7 @@ if(!function_exists('wpp_render_search_input')):
         <option value="<?php echo (($attrib == 'property_type' && is_array($search_values[$attrib])) ? implode(',',(array_flip($search_values[$attrib]))) : '-1' ); ?>"><?php _e('Any','wpp') ?></option>
         <?php foreach($search_values[$attrib] as $key => $v) : ?>
           <option value='<?php echo (($attrib=='property_type')?$key:$v); ?>' <?php if($value == (($attrib=='property_type')?$key:$v)) echo " selected='true' "; ?>>
-          <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_$attrib", $v) ); ?>
+          <?php echo WPP_F::decode_mysql_output( apply_filters("wpp_stat_filter_{$attrib}", $v) ); ?>
           </option>
         <?php endforeach; ?>
         </select>

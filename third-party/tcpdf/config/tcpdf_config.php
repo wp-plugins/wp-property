@@ -26,7 +26,8 @@
  * @since 2004-10-27
  */
 
-// If you define the constant K_TCPDF_EXTERNAL_CONFIG, the following settings will be ignored.
+/** modified b potanin@UD */
+$wp_uploads = wp_upload_dir();
 
 if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 
@@ -80,13 +81,15 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 
 	/**
 	 * cache directory for temporary files (full path)
+   * modified b potanin@UD
 	 */
-	define ('K_PATH_CACHE', K_PATH_MAIN.'cache/');
+	define ('K_PATH_CACHE', $wp_uploads['basedir'].'/');
 
 	/**
 	 * cache directory for temporary files (url path)
+   * modified b potanin@UD
 	 */
-	define ('K_PATH_URL_CACHE', K_PATH_URL.'cache/');
+	define ('K_PATH_URL_CACHE', $wp_uploads['baseurl'].'/');
 
 	/**
 	 *images directory
@@ -111,22 +114,22 @@ if (!defined('K_TCPDF_EXTERNAL_CONFIG')) {
 	/**
 	 * document creator
 	 */
-	define ('PDF_CREATOR', 'TCPDF');
+	define ('PDF_CREATOR', 'WP-Property');
 
 	/**
 	 * document author
 	 */
-	define ('PDF_AUTHOR', 'TCPDF');
+	define ('PDF_AUTHOR', 'WP-Property');
 
 	/**
 	 * header title
 	 */
-	define ('PDF_HEADER_TITLE', 'TCPDF Example');
+	define ('PDF_HEADER_TITLE', 'WP-Property Example');
 
 	/**
 	 * header description string
 	 */
-	define ('PDF_HEADER_STRING', "by Nicola Asuni - Tecnick.com\nwww.tcpdf.org");
+	define ('PDF_HEADER_STRING', "by Usability Dynamics, Inc.- http://usabilitydynamics.com");
 
 	/**
 	 * image logo

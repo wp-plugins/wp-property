@@ -4,7 +4,7 @@ Plugin Name: WP-Property
 Plugin URI: http://twincitiestech.com/plugins/wp-property/
 Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
 Author: Usability Dynamics, Inc.
-Version: 1.31.0
+Version: 1.31.1
 Author URI: http://usabilitydynamics.com
 
 Copyright 2011  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.com)
@@ -27,7 +27,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** This Version  */
-define('WPP_Version', '1.31.0');
+define('WPP_Version', '1.31.1');
 
 /** Path for Includes */
 define('WPP_Path', WP_PLUGIN_DIR . '/wp-property');
@@ -44,13 +44,13 @@ define('WPP_Premium', WP_PLUGIN_DIR . '/wp-property/core/premium');
 /** Sets prefix for UD_UI and UD_F classes and their functions */
 define('UD_UI_PREFIX', 'wpp_');
 define('UD_PREFIX', 'wpp_');
- 
+
 // Global Usability Dynamics / TwinCitiesTech.com, Inc. Functions
 include_once WPP_Path . '/core/class_ud.php';
-	
+
 /** Loads built-in plugin metadata and allows for third-party modification to hook into the filters. Has to be included here to run after template functions.php */
 include_once WPP_Path . '/action_hooks.php';
-	
+
 /** Defaults filters and hooks */
 include_once WPP_Path . '/default_api.php';
 
@@ -65,7 +65,7 @@ include_once WPP_Path . '/core/class_property_export.php';
 
  /** Loads all the metaboxes for the property page */
 include_once WPP_Path . '/core/ui/property_metaboxes.php';
- 
+
 /** Loads all the metaboxes for the property page */
 include_once WPP_Path . '/core/class_core.php';
 
@@ -81,7 +81,7 @@ register_activation_hook(__FILE__,array('WPP_F', 'activation'));
 // Register activation hook -> has to be in the main plugin file
 register_deactivation_hook(__FILE__,array('WPP_F', 'deactivation'));
 
-// Setup widgets (they need to be called early)  
+// Setup widgets (they need to be called early)
 if(class_exists('FeaturedPropertiesWidget'))
 	add_action('widgets_init', create_function('', 'return register_widget("FeaturedPropertiesWidget");'));
 
@@ -102,6 +102,6 @@ add_action('widgets_init', create_function('', 'return register_widget("OtherPro
 
 if(class_exists('WP_Property_Tag_Cloud'))
 	add_action('widgets_init', create_function('', 'return register_widget("WP_Property_Tag_Cloud");'));
- 				
+
 // Initiate the plugin
 add_action("after_setup_theme", create_function('', 'new WPP_Core;'));
