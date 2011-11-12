@@ -311,6 +311,7 @@ ul.feps_property_input_fields .description {
 }
 
 
+/* WPP Sorter and Pagination Begin { */
 
 .wpp_pagination_slider_wrapper .wpp_pagination_back,
 .wpp_pagination_slider_wrapper .wpp_pagination_forward {
@@ -321,9 +322,11 @@ ul.feps_property_input_fields .description {
   line-height: 16px;
   cursor: pointer;
 }
+
 .wpp_sorter_options {
   float: right;
 }
+
 .properties_pagination.wpp_top_pagination,
 .properties_pagination.wpp_bottom_pagination {
   margin-bottom: 1em;
@@ -348,8 +351,7 @@ ul.feps_property_input_fields .description {
 }
 .wpp_pagination_slider_wrapper .wpp_pagination_back {
   float: left;
-}
- 
+} 
 
 .wpp_ui .wpp_pagination_slider.ui-slider-horizontal  {
    background: none repeat scroll 0 0 #DDDDDD;
@@ -409,6 +411,8 @@ ul.feps_property_input_fields .description {
 
 }
 
+/* WPP Sorter and Pagination End } */
+
 .wpp_agent_info_list {
 
 
@@ -434,16 +438,6 @@ ul.feps_property_input_fields .description {
   left: -3px;
 }
 
-
-
-/* Version 1.04 Begin */
-#infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_left_col { padding: 10px; }
-#infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_right_col { }
-/* Version 1.04 End */
-
-
-/* Version 1.0 Begin */
-
 .property_widget_block li span.value {
    display: block;
 }
@@ -464,19 +458,39 @@ ul.feps_property_input_fields .description {
   font-size: 0.5em;
 }
 
-#infowindow table.wpp_google_maps_infobox_table {
-   margin:0;
+
+.wpp_google_maps_attribute_row_directions_link {
+  height: 30px;
+  font-size: 0.9em;
+  border-top: 1px solid #E0E0E0;
+  font-size: 0.9em;
+  margin-top: 5px;
+  padding-top: 4px;
+}
+
+/* Must use ID on these elements to prevent themes unintentionally conflicting the styles */
+
+#infowindow table.wpp_google_maps_infobox_table, 
+#infowindow table.wpp_google_maps_infobox_table td {
+  margin:0;
   padding:0;
   border:0;
   font-size: 13px;
 }
 
-#infowindow table.wpp_google_maps_infobox_table .wpp_google_maps_attribute_row_directions_link {
-  font-size: 0.9em;
-      border-top: 1px solid #E0E0E0;
-      font-size: 0.9em;
-      margin-top: 5px;
-      padding-top: 4px;
+#infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_left_col { 
+  padding-right: 15px; 
+}
+
+#infowindow table.wpp_google_maps_infobox_table td.wpp_google_maps_right_col { 
+  padding:0;
+}
+#infowindow .wpp_google_maps_attribute_row_property_title {
+  font-size: 16px;
+  line-height: 20px;
+  padding-bottom: 5px;
+  border-bottom: 1px solid #EEEEEE;
+  margin-bottom: 10px;
 }
 
 #infowindow table.wpp_google_maps_infobox_table img {
@@ -489,36 +503,56 @@ ul.feps_property_input_fields .description {
   padding-right: 1px;
 }
 
-.wpp_google_maps_attribute_row_property_title {
-    border-bottom: 1px solid #EEEEEE;
-    margin-bottom: 5px;
-    padding-bottom: 5px;
-}
-
-
-ul.wpp_google_maps_infobox {
+#infowindow ul.infobox_child_property_list,
+#infowindow ul.wpp_google_maps_infobox {
   clear: both;
   list-style-type:none;
   margin:0;
-  padding:0;
+  padding:0px;
 }
 
-ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row {
-  clear: both;
+
+#infowindow ul.wpp_google_maps_infobox li.wpp_google_maps_attribute_row,
+#infowindow ul.infobox_child_property_list .infobox_child_property {
+  list-style: none;
+  line-height: 22px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+} 
+
+#infowindow ul.wpp_google_maps_infobox li.wpp_google_maps_attribute_row {
+  border-bottom: 1px solid #F1F1F1;
 }
 
-ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.attribute{
+#infowindow ul.wpp_google_maps_infobox li.wpp_google_maps_attribute_row:hover {
+  background: #F5F3ED;
+}
+
+#infowindow ul.wpp_google_maps_infobox li.wpp_google_maps_attribute_row.wpp_fillter_element,
+#infowindow ul.infobox_child_property_list li.infobox_child_property.wpp_fillter_element{
+  border-width: 0;
+  height: 10px;
+  background: transparent !important;
+}
+
+
+#infowindow ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.attribute{
   display:block;
   float:left;
-  margin-right: 10px;
-  width: 70px;
+  margin: 0 10px 0 4px;
+  width: 85px;  
 }
 
 ul.wpp_google_maps_infobox .wpp_google_maps_attribute_row span.value{
   display:block;
   float:left;
-  width: 90px;
+  width: auto;
   margin-right: 10px;
+}
+
+#infowindow ul.infobox_child_property_list .infobox_child_property {
+  margin-left: 5px;
 }
 
 #property_map img {
@@ -1242,19 +1276,31 @@ input.wpp_supermap_input_field_min, input.wpp_supermap_input_field_max { width: 
     .nivo-controlNav a.active { background-position: -10px 0; }
 
 /* Different Specific DOM elements */
+
 .true-checkbox-image {
-width:15px;
-height:15px;
-background:url("images/true-checkbox-image.png") no-repeat scroll 0 0 transparent;
-float:left;
+  width:15px;
+  height:15px;
+  background:url("images/true-checkbox-image.png") no-repeat scroll 0 0 transparent;
+  float:left;
+}
+
+.wpp_supermap_attribute_row .true-checkbox-image {
+  margin-right: 3px;
+  position: relative;
+  top: 2px;
+}
+
+.wpp_google_maps_attribute_row .true-checkbox-image {
+  position: relative;
+  top: 3px;
 }
 
  /* Global Slideshow Begin */
  .wpp_slideshow_global_wrapper {
- position:absolute;
- overflow:hidden;
- top:0;
- left:0;
+   position:absolute;
+   overflow:hidden;
+   top:0;
+   left:0;
  }
  /* Global Slideshow End*/
 

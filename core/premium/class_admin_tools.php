@@ -2,8 +2,8 @@
 /*
 Name: Admin Tools
 Feature ID: 1
-Minimum Core Version: 1.30.0
-Version: 3.3.0
+Minimum Core Version: 1.31.0
+Version: 3.4.0
 Description: Tools for developing themes and extensions for WP-Property.
 Class: class_admin_tools
 */
@@ -127,7 +127,12 @@ class class_admin_tools {
    * Copyright 2010 Andy Potanin, TwinCitiesTech.com, Inc.  <andy.potanin@twincitiestech.com>
    */
   function settings_page() {
-  global $wpdb, $wp_properties; ?>
+    global $wpdb, $wp_properties; 
+  
+    $wpp_inheritable_attributes = $wp_properties['property_stats'];    
+    
+    ?>
+    
   <script type="text/javascript">
     var geo_type_attrs = <?php echo json_encode((array)$wp_properties['geo_type_attributes']); ?>
 
@@ -248,7 +253,7 @@ class class_admin_tools {
             <th><?php _e('Slug','wpp') ?></th>
             <th><?php _e('Settings','wpp') ?></th>
             <th><?php _e('Hidden Attributes','wpp') ?></th>
-            <th><?php _e('Inheritance','wpp') ?></th>
+            <th><?php _e('Inherit from Parent','wpp') ?></th>
           </tr>
         </thead>
         <tbody>
@@ -286,7 +291,6 @@ class class_admin_tools {
           <td >
             <ul class="wp-tab-panel wpp_hidden_property_attributes">
 
-
             <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label) { ?>
             <li>
               <input id="<?php echo $property_slug . "_" .$property_stat_slug;?>_hidden_attributes" <?php if(isset($wp_properties['hidden_attributes'][$property_slug]) && in_array($property_stat_slug, $wp_properties['hidden_attributes'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[hidden_attributes][<?php echo $property_slug;?>][]" value="<?php echo $property_stat_slug; ?>" />
@@ -317,7 +321,7 @@ class class_admin_tools {
 
            <td >
             <ul class="wp-tab-panel wpp_inherited_property_attributes">
-            <?php foreach($wp_properties['property_stats'] as $property_stat_slug => $property_stat_label): ?>
+            <?php foreach($wpp_inheritable_attributes as $property_stat_slug => $property_stat_label): ?>
             <li>
               <input id="<?php echo $property_slug . "_" .$property_stat_slug;?>_inheritance" <?php if(isset($wp_properties['property_inheritance'][$property_slug]) && in_array($property_stat_slug, $wp_properties['property_inheritance'][$property_slug])) echo " CHECKED "; ?> type="checkbox" name="wpp_settings[property_inheritance][<?php echo $property_slug;?>][]" value="<?php echo $property_stat_slug; ?>" />
               <label for="<?php echo $property_slug . "_" .$property_stat_slug;?>_inheritance">
@@ -325,6 +329,8 @@ class class_admin_tools {
               </label>
             </li>
             <?php endforeach; ?>
+            <li>
+
 
             </ul>
           </td>

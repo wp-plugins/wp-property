@@ -4723,7 +4723,6 @@ Galleria.Picture.prototype = {
                     // http://code.google.com/p/adblockforchrome/issues/detail?id=3701
                     if ( ( !this.width || !this.height ) ) {
                         window.setTimeout( (function( img ) {
-                                console.log(img);
                             return function() {
                                 if ( img.width && img.height ) {
                                     complete.call( img );

@@ -36,18 +36,41 @@ if(!function_exists('get_attribute')) {
    */
   function get_attribute($attribute = false, $args = '') {
     global $property, $wp_properties;
+
     $defaults = array(
-      'return' => 'false'
+      'return' => 'false',
+      'property_object' => false,
+      'property_id' => false,
+      'do_not_format' => false
     );
 
-    if(is_object($property)) {
-      $original = 'object';
-      $this_property = (array) $property;
-    } else {
-      $this_property = $property;
+    $args = wp_parse_args( $args, $defaults );
+
+    //** Check if property object/array was passed */
+    if(!empty($args['property_object'])) {
+      $this_property = (array) $args['property_object'];
     }
 
-    $args = wp_parse_args( $args, $defaults );
+    //** Check if a property_id was passed */
+    if(!$this_property && !empty($args['property_id'])) {
+
+      $this_property = WPP_F::get_property($args['property_id']);
+
+      if($args['do_not_format'] != "true") {
+        $this_property = prepare_property_for_display($this_property);
+      }
+    }
+
+    //** If no property data passed, get from global variable */
+    if(!$this_property) {
+
+      if(is_object($property)) {
+        $this_property = (array) $property;
+      } else {
+        $this_property = $property;
+      }
+    }
+
 
     switch ($attribute) {
 
@@ -61,7 +84,11 @@ if(!function_exists('get_attribute')) {
 
     }
 
-    $value = apply_filters('wpp_get_attribute', $value, array('attribute' => $attribute,  'args' => $args, 'property' => $this_property));
+    $value = apply_filters('wpp_get_attribute', $value, array(
+      'attribute' => $attribute,
+      'args' => $args,
+      'property' => $this_property
+    ));
 
     if($args['return'] == 'true') {
       return $value;
@@ -649,6 +676,7 @@ if(!function_exists('prepare_property_for_display')):
    * Runs all filters through property variables
    *
    * Main function for preparing the property object to be displayed on the front-end.
+   * Same args are applied to main object, and child objects that are loade. So if gallery is not loaded for parent, it will not be loaded for children.
    *
    * Called in the_post() via WPP_F::the_post()
    *
@@ -666,12 +694,23 @@ if(!function_exists('prepare_property_for_display')):
     $return_type = (is_object($property) ? 'object' : 'array');
 
     if(is_numeric($property)) {
+
       $property_id = $property;
+
     } elseif(is_object($property)) {
-      $property = (array)$property;
+
+      $property = (array) $property;
       $property_id = $property['ID'];
+
     } elseif(is_array($property)) {
+
       $property_id = $property['ID'];
+
+    }
+
+    //** Check if this function has already been done */
+    if(is_array($property) && $property['system']['prepared_for_display']) {
+      return $property;
     }
 
     //** Load property from cache, or function, if not passed */
@@ -686,9 +725,9 @@ if(!function_exists('prepare_property_for_display')):
     }
 
     // Go through children properties
-    if(is_array($property['children'])) {
+    if(isset($property['children']) && is_array($property['children'])) {
       foreach($property['children'] as $child => $child_data) {
-        $property['children'][$child] = prepare_property_for_display($child_data);
+        $property['children'][$child] = prepare_property_for_display($child_data, $args);
       }
     }
 
@@ -696,11 +735,21 @@ if(!function_exists('prepare_property_for_display')):
 
       //** Only executed shortcodes if the value isn't an array */
       if(!is_array($attribute_value)) {
+
+        if($args['do_not_execute_shortcodes'] == 'true' || $meta_key == 'post_content') {
+          continue;
+        }
+
         $attribute_value = do_shortcode("{$attribute_value}");
+
+        $attribute_value = str_replace("\n", "", nl2br($attribute_value));
+
         $property[$meta_key] = apply_filters("wpp_stat_filter_$meta_key",$attribute_value);
       }
 
     }
+
+    $property['system']['prepared_for_display'] = true;
 
     wp_cache_add('property_for_display_' . $property_id, $property);
 
@@ -866,7 +915,6 @@ if(!function_exists('draw_stats')):
         continue;
       }
 
-
       //* Filter Value */
       $value =  trim(apply_filters("wpp_stat_filter_$tag", $value, $property));
 
@@ -1015,22 +1063,28 @@ if(!function_exists('sort_stats_by_groups')):
     }
 
     $original_stats = $stats;
+
     //** Get group deta */
     $groups = $wp_properties['property_groups'];
+
     /** Get attribute-group association */
     $stats_groups = $wp_properties['property_stats_groups'];
 
     if(!is_array($groups) || !is_array($stats_groups)) {
       return;
     }
+
     $defaults = array(
       'includes_values' => false,
       'fix_stats_array' => false
     );
 
     $args = wp_parse_args( $args, $defaults );
+
     $wpp_property_stat_labels = apply_filters('wpp_property_stat_labels', $wp_properties['property_stats']);
+
     $wpp_property_stat_labels_flip = array_flip($wpp_property_stat_labels);
+
     if($args['includes_values'] == true) {
       //** Fix data when an array is passed with actual values, such as from draw_stats() */
       foreach($stats as $meta_label => $real_value) {
@@ -1039,21 +1093,26 @@ if(!function_exists('sort_stats_by_groups')):
         $fixed_stats[$meta_label] = $meta_key;
       }
     }
+
     //** Convert regular stat array to array with values as keys */
     if($args['fix_stats_array'] = true) {
       foreach($stats as $meta_key) {
         $attribute_label = $wpp_property_stat_labels[$meta_key];
-        //echo "$meta_key - $attribute_label <br />";
         $fixed_stats[$attribute_label] = $meta_key;
       }
       $stats = $fixed_stats;
     }
+
     $labels_to_keys = array_flip($wp_properties['property_stats']);
     $group_keys = array_keys($wp_properties['property_groups']);
+
     //** Get group from settings, or set to first group as default */
     $main_stats_group = (!empty($wp_properties['configuration']['main_stats_group']) ? $wp_properties['configuration']['main_stats_group'] : $group_keys[0]);
+
     $filtered_stats = array($main_stats_group => array());
+
     $ungrouped_stats = array();
+
     foreach($stats as $label => $value) {
 
       $slug = $labels_to_keys[$label];
@@ -1075,7 +1134,6 @@ if(!function_exists('sort_stats_by_groups')):
         }
       }
 
-
       if($g_slug && !key_exists($g_slug, $groups)) {
         $g_slug = false;
       }
@@ -1093,12 +1151,14 @@ if(!function_exists('sort_stats_by_groups')):
         $filtered_stats[0][$label] = $value;
       }
     }
+
     //** Cycle back through to make sure we don't have any empty groups */
     foreach($filtered_stats as $key => $data) {
       if(empty($data)) {
         unset($filtered_stats[$key]);
       }
     }
+
     //echo "<pre>";print_r($filtered_stats);echo "</pre>";
     return $filtered_stats;
   }
@@ -1328,7 +1388,7 @@ if(!function_exists('wpp_render_search_input')):
           <?php $unique_id = rand(10000,99999);?>
           <li>
             <input name="wpp_search[<?php  echo $attrib; ?>][]" <?php echo (is_array($value) && in_array($value_label, $value) ? 'checked="true"' : '');?> id="wpp_attribute_checkbox_<?php echo $unique_id; ?>" type="checkbox" value="<?php echo $value_label; ?>" />
-            <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>"><?php echo $value_label; ?></label>
+            <label for="wpp_attribute_checkbox_<?php echo $unique_id; ?>" class="wpp_search_label_second_level"><?php echo $value_label; ?></label>
           </li>
         <?php endforeach; ?>
         </ul>

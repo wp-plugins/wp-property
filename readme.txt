@@ -3,7 +3,7 @@ Contributors:  usability_dynamics, anton-korotkoff, andypotanin
 Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.2.1
+Tested up to: 3.3.0
 Stable tag: trunk
 
 
@@ -210,6 +210,17 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.31.0 = 
+* New [property_attribute] shortcode arguments: before, after, if_empty, do_not_format, and strip_tags.
+* Improvements to Parent Property editor.  Values aggregated from child properties are uneditable and include a notification message so it can be easily identified which attributes are upward inherited, and which are not.
+* Improvement to Supermap and Property Map to display a list of child properties, when they exist, for the currently displayed property, and general redesign of the Google Map balloon Info Window.
+* Bug fixes to "Other Properties" widget.
+* Major improvements to template selection and general front-end page-type logic.
+* Settings page UI modification to work with deployments not utilizing permalinks.
+* WordPress 3.3 compatibility testing.
+* Super Map: Added JavaScript code minification.
+* XML Importer: A few bug fixes and more advanced removal of bad XML characters. 
 
 = 1.30.1 =
 * Patch release to fix Google Map problem.

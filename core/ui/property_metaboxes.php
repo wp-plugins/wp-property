@@ -266,11 +266,18 @@ class WPP_UI {
 
       <?php
 
+      //** Detect attributes that were taken from a range of child properties. */
+      $upwards_inherited_attributes = is_array($property['system']['upwards_inherited_attributes']) ? $property['system']['upwards_inherited_attributes'] : array();
 
       foreach ($property_stats as $slug => $label):
 
-
         $attribute_data = WPP_F::get_attribute_data($slug);
+        
+        $attribute_description = array();
+        
+        $attribute_description[] = ($attribute_data['numeric'] || $attribute_data['currency'] ? __('Numbers only.', 'wpp') : ''); 
+        $attribute_description[] = (!empty($wp_properties['descriptions'][$slug]) ? $wp_properties['descriptions'][$slug]: '');            
+            
         //* Setup row classes */
         $row_classes = array('wpp_attribute_row');
         $row_classes[] = "wpp_attribute_row_{$slug}";
@@ -282,9 +289,17 @@ class WPP_UI {
           $row_classes[] = 'wpp_hidden_frontend_attribute';
         }
 
+        //** Make note of attributes that consist of ranges upwards inherited from child properties */
+        if(in_array($slug, $upwards_inherited_attributes)) {
+          $row_classes[] = 'wpp_upwards_inherited_attributes';        
+          $disabled_attributes[] = $slug;
+          $attribute_description = array(__('Values aggregated from child properties.','wpp'));
+        }
+  
         //* Determine if attribute is assigned to group */
         $gslug = false;
         $group = false;
+        
         if(!empty($wp_properties['property_stats_groups'][$slug])) {
           $gslug = $wp_properties['property_stats_groups'][$slug];
           $group = $wp_properties['property_groups'][$gslug];
@@ -302,16 +317,15 @@ class WPP_UI {
           continue;
         }
 
-
         ?>
 
         <tr class="<?php echo implode(' ', $row_classes); ?>">
           <th><label for="wpp_meta_<?php echo $slug; ?>"><?php echo $label; ?></label></th>
           <td class="wpp_attribute_cell">
             <span class="disabled_message"><?php echo sprintf(__('Editing %s is disabled, it may be inherited.', 'wpp'), $label); ?></span>
-            <?php if($attribute_data['currency'] && $wp_properties['configuration']['currency_symbol_placement'] == 'before') : ?>
+            <?php if($attribute_data['currency'] && $wp_properties['configuration']['currency_symbol_placement'] == 'before') { ?>
               <span class="currency"><?php echo $wp_properties['configuration']['currency_symbol']; ?></span>
-            <?php endif; ?>
+            <?php } ?>
 
             <?php
             $value = $property[$slug];
@@ -345,8 +359,7 @@ class WPP_UI {
             <?php endif; ?>
 
             <span class="description">
-              <?php echo ($attribute_data['numeric'] || $attribute_data['currency'] ? __('Numbers only.', 'wpp') : ''); ?>
-              <?php if (!empty($wp_properties['descriptions'][$slug])) { echo $wp_properties['descriptions'][$slug]; } ?>
+              <?php echo implode('', $attribute_description); ?>
             </span>
 
             <?php do_action('wpp_ui_after_attribute_' . $slug, $object->ID); ?>

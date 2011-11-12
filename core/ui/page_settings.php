@@ -15,177 +15,208 @@
  * @author     TwinCitiesTech.com
  * @copyright  2011 TwinCitiesTech.com, Inc.
 */
- 
+
 
   //** Check if premium folder is writable */
   $wp_messages = WPP_F::check_premium_folder_permissions();
 
+  $wrapper_classes = array('wpp_settings_page');
+
   if(isset($_REQUEST['message'])) {
 
     switch($_REQUEST['message']) {
-    
-      case 'updated':    
+
+      case 'updated':
       $wp_messages['notice'][] = __("Settings updated.", 'wpp');
       break;
     }
   }
   $parseUrl = parse_url(trim(get_bloginfo('url')));
   $this_domain = trim($parseUrl['host'] ? $parseUrl['host'] : array_shift(explode('/', $parseUrl['path'], 2)));
-  
+
   /** Check if custom css exists */
   if ( file_exists( STYLESHEETPATH . '/wp_properties.css') || file_exists( TEMPLATEPATH . '/wp_properties.css')) {
     $using_custom_css = true;
   }
- 
+
+
+ if(get_option('permalink_structure') == '') {
+  $wrapper_classes[] = 'no_permalinks';
+ } else {
+  $wrapper_classes[] = 'have_permalinks';
+ }
+
 ?>
 
  <script type="text/javascript">
+
   jQuery(document).ready(function() {
-  
+
     //* Tabs for various UI elements */
     jQuery('.wpp_subtle_tabs').tabs();
 
-    jQuery("#wpp_settings_tabs").tabs({ cookie: {  name: 'wpp_settings_tabs', expires: 30 } });    
-  
-  // Show settings array
-  jQuery("#wpp_show_settings_array").click(function() {
-    jQuery("#wpp_show_settings_array_cancel").show();
-    jQuery("#wpp_show_settings_array_result").show();
-  });
+    wpp_setup_default_property_page();
 
-  // Hide settings array
-  jQuery("#wpp_show_settings_array_cancel").click(function() {
-    jQuery("#wpp_show_settings_array_result").hide();
-    jQuery(this).hide();
-  });
+    jQuery("#wpp_settings_base_slug").change(function() {
+      wpp_setup_default_property_page();
+    });
 
-  // Hide property query
-  jQuery("#wpp_ajax_property_query_cancel").click(function() {
-    jQuery("#wpp_ajax_property_result").hide();
-    jQuery(this).hide();
-  });
-  
-  // Hide image query
-  jQuery("#wpp_ajax_image_query_cancel").click(function() {
-    jQuery("#wpp_ajax_image_result").hide();
-    jQuery(this).hide();
-  });
+    jQuery("#wpp_settings_tabs").tabs({ cookie: {  name: 'wpp_settings_tabs', expires: 30 } });
 
-  // Check plugin updates
-  jQuery("#wpp_ajax_check_plugin_updates").click(function() {
+    // Show settings array
+    jQuery("#wpp_show_settings_array").click(function() {
+      jQuery("#wpp_show_settings_array_cancel").show();
+      jQuery("#wpp_show_settings_array_result").show();
+    });
 
-    jQuery('.plugin_status').remove();
+    // Hide settings array
+    jQuery("#wpp_show_settings_array_cancel").click(function() {
+      jQuery("#wpp_show_settings_array_result").hide();
+      jQuery(this).hide();
+    });
 
-    jQuery.post(ajaxurl, {
-        action: 'wpp_ajax_check_plugin_updates'
+    // Hide property query
+    jQuery("#wpp_ajax_property_query_cancel").click(function() {
+      jQuery("#wpp_ajax_property_result").hide();
+      jQuery(this).hide();
+    });
+
+    // Hide image query
+    jQuery("#wpp_ajax_image_query_cancel").click(function() {
+      jQuery("#wpp_ajax_image_result").hide();
+      jQuery(this).hide();
+    });
+
+    // Check plugin updates
+    jQuery("#wpp_ajax_check_plugin_updates").click(function() {
+
+      jQuery('.plugin_status').remove();
+
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_check_plugin_updates'
+          }, function(data) {
+
+          message = "<div class='plugin_status updated fade'><p>" + data + "</p></div>";
+          jQuery(message).insertAfter("h2");
+        });
+    });
+
+    // Revalidate all addresses
+    jQuery("#wpp_ajax_revalidate_all_addresses").click(function() {
+
+      jQuery(this).val('Processing...');
+      jQuery(this).attr('disabled', true);
+      jQuery('.address_revalidation_status').remove();
+
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_revalidate_all_addresses'
+          }, function(data) {
+
+          jQuery("#wpp_ajax_revalidate_all_addresses").val('Revalidate again');
+          jQuery("#wpp_ajax_revalidate_all_addresses").attr('disabled', false);
+
+          if(data.success == 'true')
+            message = "<div class='address_revalidation_status updated fade'><p>" + data.message + "</p></div>";
+          else
+            message = "<div class='address_revalidation_status error fade'><p>" + data.message + "</p></div>";
+
+          jQuery(message).insertAfter("h2");
+        }, 'json');
+    });
+
+    // Show property query
+    jQuery("#wpp_ajax_property_query").click(function() {
+
+      var property_id = jQuery("#wpp_property_class_id").val();
+
+      jQuery("#wpp_ajax_property_result").html("");
+
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_property_query',
+          property_id: property_id
+         }, function(data) {
+          jQuery("#wpp_ajax_property_result").show();
+          jQuery("#wpp_ajax_property_result").html(data);
+          jQuery("#wpp_ajax_property_query_cancel").show();
+
+        });
+
+    });
+
+    //** Mass set property type */
+    jQuery("#wpp_ajax_max_set_property_type").click(function() {
+
+      if(!confirm("<?php _e('You are about to set ALL your properties to the selected property type. Are you sure?', 'wpp'); ?>")) {
+        return;
+      }
+
+      var property_type = jQuery("#wpp_ajax_max_set_property_type_type").val();
+
+      jQuery.post(ajaxurl, {
+        action: 'wpp_ajax_max_set_property_type',
+        property_type: property_type
         }, function(data) {
+          jQuery("#wpp_ajax_max_set_property_type_result").show();
+          jQuery("#wpp_ajax_max_set_property_type_result").html(data);
+        });
 
-        message = "<div class='plugin_status updated fade'><p>" + data + "</p></div>";
-        jQuery(message).insertAfter("h2");
-      });
-  });  
-  
-  // Revalidate all addresses
-  jQuery("#wpp_ajax_revalidate_all_addresses").click(function() {
+    });
 
-    jQuery(this).val('Processing...');
-    jQuery(this).attr('disabled', true);
-    jQuery('.address_revalidation_status').remove();
+    // Show image data
+    jQuery("#wpp_ajax_image_query").click(function() {
 
-    jQuery.post(ajaxurl, {
-        action: 'wpp_ajax_revalidate_all_addresses'
-        }, function(data) {
+      var image_id = jQuery("#wpp_image_id").val();
 
-        jQuery("#wpp_ajax_revalidate_all_addresses").val('Revalidate again');
-        jQuery("#wpp_ajax_revalidate_all_addresses").attr('disabled', false);
-        
-        if(data.success == 'true')
-          message = "<div class='address_revalidation_status updated fade'><p>" + data.message + "</p></div>";
-        else
-          message = "<div class='address_revalidation_status error fade'><p>" + data.message + "</p></div>";
-        
-        jQuery(message).insertAfter("h2");
-      }, 'json');
-  });  
-  
-  // Show property query
-  jQuery("#wpp_ajax_property_query").click(function() {
+      jQuery("#wpp_ajax_image_result").html("");
 
-    var property_id = jQuery("#wpp_property_class_id").val();
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_image_query',
+          image_id: image_id
+         }, function(data) {
+          jQuery("#wpp_ajax_image_result").show();
+          jQuery("#wpp_ajax_image_result").html(data);
+          jQuery("#wpp_ajax_image_query_cancel").show();
 
-    jQuery("#wpp_ajax_property_result").html("");
+        });
 
-    jQuery.post(ajaxurl, {
-        action: 'wpp_ajax_property_query',
-				property_id: property_id
-       }, function(data) {
-        jQuery("#wpp_ajax_property_result").show();
-        jQuery("#wpp_ajax_property_result").html(data);
-        jQuery("#wpp_ajax_property_query_cancel").show();
+    });
 
-      });
+    // Show property query
+    jQuery("#wpp_check_premium_updates").click(function() {
 
-  });   
-  
-  //** Mass set property type */
-  jQuery("#wpp_ajax_max_set_property_type").click(function() {
-  
-    if(!confirm("<?php _e('You are about to set ALL your properties to the selected property type. Are you sure?', 'wpp'); ?>")) {
-      return;
+      jQuery("#wpp_plugins_ajax_response").hide();
+
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_check_plugin_updates'
+         }, function(data) {
+          jQuery("#wpp_plugins_ajax_response").show();
+          jQuery("#wpp_plugins_ajax_response").html(data);
+
+        });
+
+    });
+
+
+  });
+
+  /* Modifies UI to reflect Default Property Page selection */
+  function wpp_setup_default_property_page() {
+    var selection = jQuery("#wpp_settings_base_slug").val();
+
+    /* Default Property Page is dynamic. */
+    if(selection == "property") {
+      jQuery(".wpp_non_property_page_settings").hide();
+      jQuery(".wpp_non_property_page_settings input[type=checkbox]").attr("checked", false);
+      jQuery(".wpp_non_property_page_settings input[type=checkbox]").attr("disabled", true);
+    } else {
+      jQuery(".wpp_non_property_page_settings").show();
+      jQuery(".wpp_non_property_page_settings input[type=checkbox]").attr("disabled", false);
     }
-    
-    var property_type = jQuery("#wpp_ajax_max_set_property_type_type").val();
 
-    jQuery.post(ajaxurl, {
-      action: 'wpp_ajax_max_set_property_type',
-      property_type: property_type
-      }, function(data) {
-        jQuery("#wpp_ajax_max_set_property_type_result").show();
-        jQuery("#wpp_ajax_max_set_property_type_result").html(data); 
-      });
-
-  }); 
-
-  // Show image data
-  jQuery("#wpp_ajax_image_query").click(function() {
-
-    var image_id = jQuery("#wpp_image_id").val();
-
-    jQuery("#wpp_ajax_image_result").html("");
-
-    jQuery.post(ajaxurl, {
-        action: 'wpp_ajax_image_query',
-				image_id: image_id
-       }, function(data) {
-        jQuery("#wpp_ajax_image_result").show();
-        jQuery("#wpp_ajax_image_result").html(data);
-        jQuery("#wpp_ajax_image_query_cancel").show();
-
-      });
-
-  });
-
-  // Show property query
-  jQuery("#wpp_check_premium_updates").click(function() {
-
-
-    jQuery("#wpp_plugins_ajax_response").hide();
-
-    jQuery.post(ajaxurl, {
-				action: 'wpp_ajax_check_plugin_updates'
-       }, function(data) {
-        jQuery("#wpp_plugins_ajax_response").show();
-        jQuery("#wpp_plugins_ajax_response").html(data);
-
-      });
-
-  });
-
-
-  });
+  }
  </script>
 
-<div class="wrap">
+<div class="wrap <?php echo implode(' ', $wrapper_classes); ?>">
 <?php screen_icon(); ?>
 <h2 class='wpp_settings_page_header'><?php  echo $wp_properties['labels']['name'] . ' ' . __('Settings','wpp') ?></h2>
 
@@ -205,7 +236,7 @@
 </div>
 <?php endif; ?>
 
- 
+
 
 <form method="post" action="<?php echo admin_url('edit.php?post_type=property&page=property_settings'); ?>"  enctype="multipart/form-data" />
 <?php wp_nonce_field('wpp_setting_save'); ?>
@@ -246,37 +277,40 @@
      <?php do_action('wpp_settings_main_top', $wp_properties); ?>
 
     <table class="form-table">
+
+
     <tr>
-      <th><?php echo __('Default', 'wpp') . ' ' . $wp_properties['labels']['name'] . ' ' . __('Page','wpp'); ?></th>
+      <th><?php printf(__('Default %1s Page', 'wpp'), $wp_properties['labels']['name']);  ?></th>
       <td>
-        <select name="wpp_settings[configuration][base_slug]" id="wpp_settings_base_slug">
-          <option <?php selected($wp_properties['configuration']['base_slug'], 'property'); ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
-          <?php foreach(get_pages() as $page): ?>
-            <?php if(!WPP_F::is_permalink_has_post_name($page)) continue; ?>
-            <option <?php selected($wp_properties['configuration']['base_slug'],$page->post_name); ?> value="<?php echo $page->post_name; ?>"><?php echo $page->post_title; ?></option>
-          <?php endforeach; ?>
-        </select>
+
+        <div class="must_have_permalinks">
+          <select name="wpp_settings[configuration][base_slug]" id="wpp_settings_base_slug">
+            <option <?php selected($wp_properties['configuration']['base_slug'], 'property'); ?> value="property"><?php _e('Property (Default)','wpp'); ?></option>
+            <?php foreach(get_pages() as $page): ?>
+              <?php if(!WPP_F::is_permalink_has_post_name($page)) continue; ?>
+              <option <?php selected($wp_properties['configuration']['base_slug'],$page->post_name); ?> value="<?php echo $page->post_name; ?>"><?php echo $page->post_title; ?></option>
+            <?php endforeach; ?>
+          </select>
+          <span wpp_scroll_to="h3.default_property_page" class="wpp_link wpp_toggle_contextual_help"><?php _e('What is this?', 'wpp'); ?></span>
+        </div>
+        <div class="must_not_have_permalinks">
+          <p class="description"><?php printf(__('You must have permalinks enabled to change the Default %1s page.', 'wpp'), $wp_properties['labels']['name']); ?></p>
+        </div>
+
       </td>
     </tr>
 
 
-
-    <tr>
+    <tr class="wpp_non_property_page_settings hidden">
       <th>&nbsp;</th>
       <td>
         <ul>
-
-
           <li>
-            <?php echo WPP_UD_UI::checkbox('name=wpp_settings[configuration][automatically_insert_overview]&label='. __('Always overwrite this page\'s content with [property_overview].','wpp'), $wp_properties['configuration']['automatically_insert_overview']); ?>
+            <?php echo WPP_UD_UI::checkbox('name=wpp_settings[configuration][automatically_insert_overview]&label='. __('Automatically overwrite this page\'s content with [property_overview].','wpp'), $wp_properties['configuration']['automatically_insert_overview']); ?>
           </li>
-        <li class="wpp_wpp_settings_configuration_do_not_override_search_result_page_row <?php if($wp_properties['configuration']['automatically_insert_overview'] == 'true') echo " hidden ";?>">
-            <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_override_search_result_page]&label=When showing search results, don't override the page content with [property_overview].", $wp_properties['configuration']['do_not_override_search_result_page']); ?>
-            <br />
-            <span class="description"><?php _e('If checked, be sure to include [property_overview] somewhere in the content, or no properties will be displayed.','wpp'); ?></span>
-          </li>
-          <li>
-            <a href="http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet/"><?php _e('View list of available shortcodes.','wpp'); ?></a>
+          <li class="wpp_wpp_settings_configuration_do_not_override_search_result_page_row <?php if($wp_properties['configuration']['automatically_insert_overview'] == 'true') echo " hidden ";?>">
+            <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_override_search_result_page]&label=" . __('When showing property search results, don\'t override the page content with [property_overview].', 'wpp'), $wp_properties['configuration']['do_not_override_search_result_page']); ?>
+            <div class="description"><?php _e('If checked, be sure to include [property_overview] somewhere in the content, or no properties will be displayed.','wpp'); ?></div>
           </li>
       </ul>
       </td>
@@ -296,8 +330,8 @@
         <?php echo WPP_F::draw_attribute_dropdown("name=wpp_settings[configuration][address_attribute]&selected={$wp_properties['configuration']['address_attribute']}"); ?>
         <?php _e('and localize for:','wpp'); ?> <?php echo WPP_F::draw_localization_dropdown("name=wpp_settings[configuration][google_maps_localization]&selected={$wp_properties['configuration']['google_maps_localization']}"); ?>
       </td>
-    </tr>   
-    
+    </tr>
+
     <tr>
       <th><?php _e('Options','wpp'); ?></th>
       <td>
@@ -308,7 +342,7 @@
           <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_enable_text_widget_shortcodes]&label=" . __('Do not execute shortcodes in Text Widgets.', 'wpp'), $wp_properties['configuration']['do_not_enable_text_widget_shortcodes']); ?></li>
         </ul>
       </td>
-    </tr>    
+    </tr>
 
 
     <?php do_action('wpp_settings_main_tab_bottom', $wp_properties); ?>
@@ -324,19 +358,19 @@
 
         <ul>
           <li>
-          <?php 
-            if($using_custom_css) { 
-              echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Load default CSS. If unchecked, the wp-properties.css in your theme folder will not be loaded.','wpp'), $wp_properties['configuration']['autoload_css']); 
+          <?php
+            if($using_custom_css) {
+              echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Load default CSS. If unchecked, the wp-properties.css in your theme folder will not be loaded.','wpp'), $wp_properties['configuration']['autoload_css']);
             } else {
               echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][autoload_css]&label=" . __('Load default CSS.','wpp'), $wp_properties['configuration']['autoload_css']);
             }
             ?>
           </li>
-           
+
            <li>
           <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][load_scripts_everywhere]&label=" . __('Load WP-Property scripts on all front-end pages.','wpp'), $wp_properties['configuration']['load_scripts_everywhere']); ?>
           </li>
-            
+
             <?php if(WPP_F::has_theme_specific_stylesheet()) { ?>
             <li>
                  <?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" .  __('Do not load theme-specific stylesheet.','wpp'), $wp_properties['configuration']['do_not_load_theme_specific_css']); ?>
@@ -352,16 +386,7 @@
     <tr>
       <th><?php _e('Image Sizes','wpp'); ?></th>
       <td>
-        <p>
-        <?php _e('Image sizes used throughout the plugin.','wpp'); ?> <br />
-        <?php if(class_exists("RegenerateThumbnails")): ?>
-            <?php echo sprintf(__('After adding/removing image size, be sure to <a href="%s">regenerate thumbnails</a> using the Regenerate Thumbnails plugin.','wpp'), admin_url("tools.php?page=regenerate-thumbnails")); ?><br />
-        <?php endif; ?>
-
-        <?php if(!class_exists('RegenerateThumbnails')): ?>
-        <?php _e('We strongly recommend to <a href="http://wordpress.org/extend/plugins/regenerate-thumbnails/">Regenerate Thumbnails</a> plugin by Viper007Bond.','wpp'); ?>
-        <?php endif; ?>
-        </p>
+        <p><?php _e('Image sizes used throughout the plugin.','wpp'); ?> </p>
 
           <table id="wpp_image_sizes" class="ud_ui_dynamic_table widefat">
             <thead>
@@ -460,9 +485,9 @@
            </li>
            <li>
             <?php
-              
+
               echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __('Show pagination on bottom of results.','wpp'), $wp_properties['configuration']['bottom_insert_pagenation']);
-            ?>          
+            ?>
           </li>
          </ul>
 
@@ -482,7 +507,6 @@
       </td>
     </tr>
 
-
     <tr>
       <th><?php _e('Google Maps','wpp') ?></th>
       <td>
@@ -490,7 +514,7 @@
         <ul>
           <li><?php _e('Map Thumbnail Size:','wpp') ?> <?php WPP_F::image_sizes_dropdown("name=wpp_settings[configuration][single_property_view][map_image_type]&selected=" . $wp_properties['configuration']['single_property_view']['map_image_type']); ?></li>
           <li><?php _e('Map Zoom Level:','wpp') ?> <?php echo WPP_UD_UI::input("name=wpp_settings[configuration][gm_zoom_level]&style=width: 30px;",$wp_properties['configuration']['gm_zoom_level']); ?></li>
-          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkboxes Image instead of "Yes" and hide "No" on Yes/No values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][show_true_as_image]&label=". __('Show Checkboxed Image instead of "true" and hide "false" for true/false values','wpp'), $wp_properties['configuration']['google_maps']['show_true_as_image']); ?></li>
         </ul>
 
         <p><?php _e('Attributes to display in popup after a property on a map is clicked.', 'wpp'); ?></p>
@@ -507,7 +531,7 @@
           <?php endforeach; ?>
 
           <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][show_direction_link]&label=". __('Show Directions Link', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['show_direction_link']); ?></li>
-
+          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][google_maps][infobox_settings][do_not_show_child_properties]&label=". __('Do not show a list of child properties in Infobox. ', 'wpp'), $wp_properties['configuration']['google_maps']['infobox_settings']['do_not_show_child_properties']); ?></li>
         </ul>
         </div>
       </td>
@@ -539,9 +563,9 @@
               <option value="," <?php selected($wp_properties['configuration']['thousands_sep'],','); ?>><?php _e(', (comma)', 'wpp'); ?></option>
              </select>
              <span class="description"><?php _e('The character separating the 1 and the 5: $1<b>,</b>500'); ?></span>
-              
-          </li>          
-          
+
+          </li>
+
           <li>
             <?php _e('Currency symbol placement:', 'wpp'); ?>
             <select name="wpp_settings[configuration][currency_symbol_placement]">
@@ -549,9 +573,9 @@
               <option value="before" <?php selected($wp_properties['configuration']['currency_symbol_placement'],'before'); ?>><?php _e('Before number', 'wpp'); ?></option>
               <option value="after" <?php selected($wp_properties['configuration']['currency_symbol_placement'],'after'); ?>><?php _e('After number', 'wpp'); ?></option>
              </select>
-               
+
           </li>
-          
+
        </ul>
       </td>
     </tr>
@@ -575,7 +599,7 @@
 
     </table>
   </div>
- 
+
 
 
   <?php
@@ -610,18 +634,18 @@
         <input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][tagline]" value="<?php echo $plugin_data['tagline']; ?>" />
         <input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][image]" value="<?php echo $plugin_data['image']; ?>" />
         <input type="hidden" name="wpp_settings[available_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $plugin_data['description']; ?>" />
-        
+
         <?php $installed = WPP_F::check_premium($plugin_slug); ?>
         <?php $active = (@$wp_properties['installed_features'][$plugin_slug]['disabled'] != 'false' ? true : false); ?>
-        
-        <?php if($installed): ?> 
+
+        <?php if($installed): ?>
         <?php /* Do this to preserve settings after page save. */ ?>
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][disabled]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['disabled']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][name]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['name']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][version]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>" />
         <input type="hidden" name="wpp_settings[installed_features][<?php echo $plugin_slug; ?>][description]" value="<?php echo $wp_properties['installed_features'][$plugin_slug]['description']; ?>" />
         <?php endif; ?>
-        
+
         <tr class="wpp_premium_feature_block">
 
           <td valign="top" class="wpp_premium_feature_image">
@@ -646,17 +670,17 @@
                 <div class="alignleft">
                 <?php
 
-                if($wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] == 'true')  { 
+                if($wp_properties['installed_features'][$plugin_slug]['needs_higher_wpp_version'] == 'true')  {
                   printf(__('This feature is disabled because it requires WP-Property %1$s or higher.'), $wp_properties['installed_features'][$plugin_slug]['minimum_wpp_version']);
-                } else {                    
-                  echo WPP_UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=" . __('Disable plugin.','wpp'), $wp_properties['installed_features'][$plugin_slug]['disabled']); 
-                
+                } else {
+                  echo WPP_UD_UI::checkbox("name=wpp_settings[installed_features][$plugin_slug][disabled]&label=" . __('Disable plugin.','wpp'), $wp_properties['installed_features'][$plugin_slug]['disabled']);
+
                  ?>
                 </div>
                 <div class="alignright"><?php _e('Feature installed, using version','wpp') ?> <?php echo $wp_properties['installed_features'][$plugin_slug]['version']; ?>.</div>
-              <?php } 
+              <?php }
               } else {
-                  $pr_link = 'https://usabilitydynamics.com/products/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">UsabilityDynamics.com</a> to purchase this feature.','wpp'),$pr_link); 
+                  $pr_link = 'https://usabilitydynamics.com/products/wp-property/premium/'; echo sprintf(__('Please visit <a href="%s">UsabilityDynamics.com</a> to purchase this feature.','wpp'),$pr_link);
               } ?>
             </div>
             </div>
@@ -670,13 +694,13 @@
 
   <div id="tab_troubleshooting">
     <div class="wpp_inner_tab">
-    
+
       <div class="wpp_settings_block">
         <?php _e('Force check of allowed premium features.','wpp');?>
          <input type="button" value="<?php _e('Check Updates','wpp');?>" id="wpp_ajax_check_plugin_updates">
       </div>
 
-      
+
       <div class="wpp_settings_block"><?php _e('Enter in the ID of the property you want to look up, and the class will be displayed below.','wpp') ?>
         <input type="text" id="wpp_property_class_id" />
         <input type="button" value="<?php _e('Lookup','wpp') ?>" id="wpp_ajax_property_query"> <span id="wpp_ajax_property_query_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
@@ -696,22 +720,22 @@
       <div class="wpp_settings_block">
         <?php _e('Look up the <b>$wp_properties</b> global settings array.  This array stores all the default settings, which are overwritten by database settings, and custom filters.','wpp') ?>
         <input type="button" value="<?php _e('Show $wp_properties','wpp') ?>" id="wpp_show_settings_array"> <span id="wpp_show_settings_array_cancel" class="wpp_link hidden"><?php _e('Cancel','wpp') ?></span>
-        <pre id="wpp_show_settings_array_result" class="wpp_class_pre hidden"><?php print_r($wp_properties); ?></pre>        
+        <pre id="wpp_show_settings_array_result" class="wpp_class_pre hidden"><?php print_r($wp_properties); ?></pre>
       </div>
 
 
-      <div class="wpp_settings_block">      
+      <div class="wpp_settings_block">
         <?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />
         <a href="<?php echo wp_nonce_url( "edit.php?post_type=property&page=property_settings&wpp_action=download-wpp-backup", 'download-wpp-backup'); ?>"><?php _e('Download Backup of Current WP-Property Configuration.', 'wpp');?></a>
       </div>
 
-      
+
       <div class="wpp_settings_block">
         <?php $google_map_localizations = WPP_F::draw_localization_dropdown('return_array=true'); ?>
         <?php _e('Revalidate all addresses using', 'wpp'); ?> <b><?php echo $google_map_localizations[$wp_properties['configuration']['google_maps_localization']]; ?></b> <?php _e('localization', 'wpp'); ?>.
          <input type="button" value="<?php _e('Revalidate','wpp');?>" id="wpp_ajax_revalidate_all_addresses">
       </div>
-      
+
       <div class="wpp_settings_block"><?php _e('Set all properties to same property type:','wpp') ?>
         <select id="wpp_ajax_max_set_property_type_type">
         <?php foreach($wp_properties['property_types'] as $p_slug => $p_label) { ?>
@@ -720,16 +744,16 @@
         <input type="button" value="<?php _e('Set','wpp') ?>" id="wpp_ajax_max_set_property_type">
         <pre id="wpp_ajax_max_set_property_type_result" class="wpp_class_pre hidden"></pre>
       </div>
-      
+
       <div class="wpp_settings_block">
         <?php if(function_exists('memory_get_usage')): ?>
-        <?php _e('Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes. 
+        <?php _e('Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_usage() / 1048576), 2); ?> megabytes.
         <?php endif; ?>
         <?php if(function_exists('memory_get_peak_usage')): ?>
-        <?php _e('Peak Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_peak_usage() / 1048576), 2); ?> megabytes. 
-        <?php endif; ?>     
+        <?php _e('Peak Memory Usage:', 'wpp'); ?> <?php echo round((memory_get_peak_usage() / 1048576), 2); ?> megabytes.
+        <?php endif; ?>
       </div>
-      
+
       <?php do_action('wpp_settings_help_tab'); ?>
     </div>
   </div>

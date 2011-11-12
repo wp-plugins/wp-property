@@ -18,89 +18,20 @@
 */
 
 
-
-/**
- * Tag cloud widget class
- *
- * @todo Need to fix the result page
- * @since 1.01
- */ /*
-class WP_Property_Tag_Cloud extends WP_Widget {
-
-  function WP_Property_Tag_Cloud() {
-    $widget_ops = array( 'description' => __( "Your most used property tags in cloud format") );
-    $this->WP_Widget('tag_cloud', __('Property Tag Cloud'), $widget_ops);
-  }
-
-  function widget( $args, $instance ) {
-    extract($args);
-    $current_taxonomy = $this->_get_current_taxonomy($instance);
-    if ( !empty($instance['title']) ) {
-      $title = $instance['title'];
-    } else {
-      if ( 'post_tag' == $current_taxonomy ) {
-        $title = __('Tags');
-      } else {
-        $tax = get_taxonomy($current_taxonomy);
-        $title = $tax->labels->name;
-      }
-    }
-    $title = apply_filters('widget_title', $title, $instance, $this->id_base);
-
-    echo $before_widget;
-    if ( $title )
-      echo $before_title . $title . $after_title;
-    echo '<div>';
-    wp_tag_cloud( apply_filters('widget_tag_cloud_args', array('taxonomy' => $current_taxonomy) ) );
-    echo "</div>\n";
-    echo $after_widget;
-  }
-
-  function update( $new_instance, $old_instance ) {
-    $instance['title'] = strip_tags(stripslashes($new_instance['title']));
-    $instance['taxonomy'] = stripslashes($new_instance['taxonomy']);
-    return $instance;
-  }
-
-  function form( $instance ) {
-    $current_taxonomy = $this->_get_current_taxonomy($instance);
-?>
-  <p><label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:') ?></label>
-  <input type="text" class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" value="<?php if (isset ( $instance['title'])) {echo esc_attr( $instance['title'] );} ?>" /></p>
-  <p><label for="<?php echo $this->get_field_id('taxonomy'); ?>"><?php _e('Taxonomy:') ?></label>
-  <select class="widefat" id="<?php echo $this->get_field_id('taxonomy'); ?>" name="<?php echo $this->get_field_name('taxonomy'); ?>">
-  <?php foreach ( get_object_taxonomies('property') as $taxonomy ) :
-        $tax = get_taxonomy($taxonomy);
-        if ( !$tax->show_tagcloud || empty($tax->labels->name) )
-          continue;
-  ?>
-    <option value="<?php echo esc_attr($taxonomy) ?>" <?php selected($taxonomy, $current_taxonomy) ?>><?php echo $tax->labels->name; ?></option>
-  <?php endforeach; ?>
-  </select></p><?php
-  }
-
-  function _get_current_taxonomy($instance) {
-    if ( !empty($instance['taxonomy']) && taxonomy_exists($instance['taxonomy']) )
-      return $instance['taxonomy'];
-
-    return 'post_tag';
-  }
-}
-*/
-
 /**
 Other Properties Widget
  */
 class OtherPropertiesWidget extends WP_Widget {
   /** constructor */
   function OtherPropertiesWidget() {
-    parent::WP_Widget(false, $name = __('Other Properties','wpp'), array('description' => __('Show other properties (if any) with the same Parent', 'wpp')));
+    parent::WP_Widget(false, $name = __('Other Properties','wpp'), array('description' => __('Display a list of properties that share a parent witht the currently displayed property', 'wpp')));
   }
 
   /** @see WP_Widget::widget */
   function widget($args, $instance) {
     global $post, $wp_properties;
     extract( $args );
+
     $title       = apply_filters('widget_title', $instance['title']);
     $instance = apply_filters('OtherPropertiesWidget', $instance);
     $show_title    = $instance['show_title'];
@@ -110,84 +41,95 @@ class OtherPropertiesWidget extends WP_Widget {
     $address_format = $instance['address_format'];
     $amount_items  = $instance['amount_items'];
 
-    if(!isset($post->ID))
+
+    if(!isset($post->ID) || $post->post_parent == 0) {
       return;
+    }
 
-    $bill = $post->post_parent;
-
-    $argus = array(
-      'post_type'      => 'property',
-      'numberposts'    => $amount_items +1,
-      'post_status'    => 'publish',
-      'post_parent'    => $bill
-    );
-
-    $jams = get_posts($argus);
-
-    // Bail out if no children
-    if(count($jams) < 2)
-        return;
-
-    //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
-    /*
-      Removed since this will cause problems with jQuery Tabs in Denali.
-      $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-    */
-
-    echo $before_widget;
-    echo "<div class='wpp_other_properties_widget'>";
+    $properties = get_posts(array(
+      'post_type'     => 'property',
+      'post_status'   => 'publish',
+      'post_parent'    => $post->post_parent,
+      'exclude'         => $post->ID
+    ));
 
 
-    if ( $title )
-        echo $before_title . $title . $after_title;
+    $html[] = $before_widget;
+    $html[] = "<div class='wpp_other_properties_widget'>";
 
+    if ( $title ) {
+      $html[] = $before_title . $title . $after_title;
+    }
 
-    foreach($jams as $jam):
-    if ($jam->ID == $post->ID){
-        continue;
-       }
+    ob_start();
 
-        $this_property  = WPP_F::get_property($jam->ID, 'return_object=true');
-        $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+    foreach($properties as $single) {
+
+      $this_property  = WPP_F::get_property($single->ID, 'return_object=true');
+
+      $this_property = prepare_property_for_display($this_property);
+
+      $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
 
         ?>
         <div class="property_widget_block apartment_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>" >
 
-      <?php if ($hide_image !=='on'){ ?>
+        <?php if ($hide_image !== 'on' && !empty($image)) { ?>
           <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
-        <?php if ($show_title == 'on'): ?>
-          <p class="title"><a href="<?php echo $this_property->permalink; ?>"><?php echo $this_property->post_title; ?></a></p>
-        <?php endif; ?>
-            <?php if(!empty($image)){ ?>
-              <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
-            <?php } ?>
+            <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
           </a>
-      <?php } ?>
+        <?php } ?>
+
+        <?php if ($show_title == 'on') { ?>
+        <p class="title"><a href="<?php echo $this_property->permalink; ?>"><?php echo $this_property->post_title; ?></a></p>
+        <?php } ?>
 
         <ul class="wpp_widget_attribute_list">
-        <?php if(is_array($stats)): ?>
-        <?php foreach($stats as $stat):
-        $content = nl2br(apply_filters('wpp_stat_filter_' . $stat, $this_property->$stat, $this_property, $address_format));
+          <?php
 
-        if(empty($content)) continue; ?>
-        <li class="<?php echo $stat ?>">
-          <span class='attribute'><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>
-          <span class='value'><?php echo $content;  ?></span></li>
-        <?php endforeach; ?>
-        <?php endif; ?>
+          if(is_array($stats)) {
+            foreach($stats as $stat) {
+
+              $content = $this_property->$stat;
+
+              if(empty($content)) {
+                continue;
+              }
+
+              ?>
+            <li class="<?php echo $stat ?>">
+              <span class="attribute"><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>
+              <span class="value"><?php echo $content;  ?></span>
+            </li>
+          <?php
+            }
+          } ?>
         </ul>
 
-        <?php if ($instance['enable_more'] =='on')
-                  echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>'; ?>
-           </div>
-            <?php
-                unset($this_property);
-        endforeach;
-        if ($instance['enable_view_all'] =='on')
-            echo '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
-        echo '</div>';
+        <?php if ($instance['enable_more'] =='on') {
+          echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>';
+        } ?>
 
-        echo $after_widget;
+         </div>
+
+        <?php
+        unset($this_property);
+      }
+
+      $html['widget_content'] = ob_get_contents();
+      ob_end_clean();
+
+      if ($instance['enable_view_all'] =='on') {
+        $html[] = '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
+      }
+
+      $html[] = '</div>';
+
+      $html[] = $after_widget;
+
+      if(!empty($html['widget_content'])) {
+        echo implode('', $html);
+      }
 
     }
 
@@ -198,21 +140,23 @@ class OtherPropertiesWidget extends WP_Widget {
 
     /** @see WP_Widget::form */
     function form($instance) {
-        global $wp_properties;
-        $title         = esc_attr($instance['title']);
-        $show_title      = $instance['show_title'];
-        $amount_items     = esc_attr($instance['amount_items']);
-        $address_format   = esc_attr($instance['address_format']);
-        $image_type     = esc_attr($instance['image_type']);
-        $property_stats   = $instance['stats'];
-        $hide_image     = $instance['hide_image'];
-        $enable_more     = $instance['enable_more'];
-        $enable_view_all   = $instance['enable_view_all'];
 
-        if(empty($address_format))
-            $address_format = "[street_number] [street_name], [city], [state]";
+      global $wp_properties;
+      $title         = esc_attr($instance['title']);
+      $show_title      = $instance['show_title'];
+      $amount_items     = esc_attr($instance['amount_items']);
+      $address_format   = esc_attr($instance['address_format']);
+      $image_type     = esc_attr($instance['image_type']);
+      $property_stats   = $instance['stats'];
+      $hide_image     = $instance['hide_image'];
+      $enable_more     = $instance['enable_more'];
+      $enable_view_all   = $instance['enable_view_all'];
 
-          ?>
+      if(empty($address_format)) {
+        $address_format = "[street_number] [street_name], [city], [state]";
+      }
+
+        ?>
 
 <script type="text/javascript">
 //hide and show dropdown whith thumb settings
@@ -328,23 +272,13 @@ jQuery(document).ready(function($){
             'numberposts'    => $amount_items ,
             'post_status'    => 'publish',
             'post_parent'    => $post->ID,
-
-           );
-
+         );
 
         $attachments = get_posts($argus);
-
 
         // Bail out if no children
         if(count($attachments) < 1)
             return;
-
-
-      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
-      /*
-        Removed since this will cause problems with jQuery Tabs in Denali.
-        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-      */
 
         echo $before_widget;
         echo "<div class='wpp_child_properties_widget'>";

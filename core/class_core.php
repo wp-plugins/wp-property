@@ -199,7 +199,7 @@ class WPP_Core {
 
     // Ajax functions
     add_action('wp_ajax_wpp_ajax_max_set_property_type', create_function("",' die(WPP_F::mass_set_property_type($_REQUEST["property_type"]));'));
-    add_action('wp_ajax_wpp_ajax_property_query', create_function("",' $class = WPP_F::get_property($_REQUEST["property_id"]); if($class) { echo "WPP_F::get_property() output: \n\n"; print_r($class); echo "\nAfter prepare_property_for_display() filter:\n\n"; print_r(prepare_property_for_display($class));  } else { echo __("No property found.","wpp"); } die();'));
+    add_action('wp_ajax_wpp_ajax_property_query', create_function("",' $class = WPP_F::get_property(trim($_REQUEST["property_id"])); if($class) { echo "WPP_F::get_property() output: \n\n"; print_r($class); echo "\nAfter prepare_property_for_display() filter:\n\n"; print_r(prepare_property_for_display($class));  } else { echo __("No property found.","wpp"); } die();'));
     add_action('wp_ajax_wpp_ajax_image_query', create_function("",' $class = WPP_F::get_property_image_data($_REQUEST["image_id"]); if($class)  print_r($class); else echo __("No image found.","wpp"); die();'));
     add_action('wp_ajax_wpp_ajax_check_plugin_updates', create_function("",'  echo WPP_F::check_plugin_updates(); die();'));
     add_action('wp_ajax_wpp_ajax_revalidate_all_addresses', create_function("",'  echo WPP_F::revalidate_all_addresses(); die();'));
@@ -211,9 +211,6 @@ class WPP_Core {
         add_action('wp_ajax_wpp_make_featured', create_function("",'  $post_id = $_REQUEST[post_id]; echo WPP_F::toggle_featured($post_id); die();'));
       }
     }
-
-
-    //add_action('wp_ajax_wpp_setup_default_widgets', create_function("",'  echo WPP_F::setup_default_widgets(); die();'));
 
     // Plug page actions -> Add Settings Link to plugin overview page
     add_filter('plugin_action_links', array('WPP_Core', 'plugin_action_links'), 10, 2 );
@@ -274,7 +271,7 @@ class WPP_Core {
     add_action('pre_get_posts', array('WPP_F', 'pre_get_posts'));
 
     // Fix 404 errors
-    add_filter("parse_query", array($this, "parse_query"));
+    add_filter("parse_request", array($this, "parse_request"));
 
     add_filter("posts_results", array('WPP_F', "posts_results"));
 
@@ -350,8 +347,48 @@ class WPP_Core {
     wp_enqueue_script('wp-property-backend-global');
     wp_enqueue_script('wp-property-global');
 
+
     // Property Overview Page
-    if($current_screen->id == 'property_page_all_properties' || $current_screen->id == 'edit-property') {
+    if($current_screen->id == 'property_page_all_properties' || $current_screen->id == 'property') {
+
+
+      if(is_callable(array('WP_Screen','add_help_tab'))) {
+
+        $contextual_help = '<p>Full contextual documentation coming shortly.</p>';
+
+        get_current_screen()->add_help_tab( array(
+          'id'      => 'general-help',
+          'title'   => __('General Help', 'wpp'),
+          'content' => apply_filters('wpp_contextual_help_overview', $contextual_help),
+        ));
+
+        get_current_screen()->add_help_tab( array(
+          'id'      => 'shortcodes',
+          'title'   => __('Shortcodes', 'wpp'),
+          'content' => apply_filters('wpp_contextual_help_overview', $contextual_help),
+        ));
+
+        get_current_screen()->add_help_tab( array(
+          'id'      => 'common-questions',
+          'title'   => __('Common Questions', 'wpp'),
+          'content' => apply_filters('wpp_contextual_help_overview', $contextual_help),
+        ));
+
+        get_current_screen()->add_help_tab( array(
+          'id'      => 'best-practices',
+          'title'   => __('Best Practices', 'wpp'),
+          'content' => apply_filters('wpp_contextual_help_overview', $contextual_help),
+        ));
+
+        get_current_screen()->set_help_sidebar(
+          '<p><strong>' . __('For more information:') . '</strong></p>' .
+          '<p>' . __('<a href="http://usabilitydynamics.com/products/wp-property/" target="_blank">WP-Property Product Page</a>') . '</p>' .
+          '<p>' . __('<a href="https://usabilitydynamics.com/products/wp-property/forum/" target="_blank">WP-Property Forums</a>') . '</p>' .
+          '<p>' . __('<a href="http://usabilitydynamics.com/help/" target="_blank">WP-Property Tutorials</a>') . '</p>'
+        );
+      } else {
+        add_contextual_help($current_screen->id, __('Please upgrade to WordPress 3.3 for detailed contextual help.', 'wpp'));
+      }
 
       // Get width of overview table thumbnail, and set css
       $thumbnail_attribs = WPP_F::image_sizes($wp_properties['configuration']['admin_ui']['overview_table_thumbnail_size']);
@@ -364,8 +401,7 @@ class WPP_Core {
       wp_enqueue_style('jquery-fancybox-css');
       wp_enqueue_style('jquery-data-tables');
 
-      if($thumbnail_width):
-      ?>
+      if($thumbnail_width) { ?>
       <style typ="text/css">
       #wp-list-table.wp-list-table .column-thumbnail {width: <?php echo $thumbnail_width + 20; ?>px;}
       #wp-list-table.wp-list-table td.column-thumbnail {text-align: right;}
@@ -376,7 +412,7 @@ class WPP_Core {
       #wp-list-table.wp-list-table .check-column  {width: 26px;}
        </style>
       <?php
-      endif;
+      }
     }
 
     // Property Editing Page
@@ -391,12 +427,21 @@ class WPP_Core {
       wp_enqueue_script('jquery-colorpicker');
       wp_enqueue_style('jquery-colorpicker-css');
 
-      $contextual_help['content'][] = '<h3>' . __('WP-Property Help') .'</h3>';
-      $contextual_help['content'][] = '<p>' . __('The <b>property page</b> will be used to display property search results, as well as the base for property URLs.  For example, if the URL of your property page is ' . get_bloginfo('url') . '<b>/real_estate/</b>, then you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp') .'</p>';
+      $contextual_help['content'][] = '<h3 class="default_property_page">' . __('Default Properties Page') .'</h3>';
+      $contextual_help['content'][] = '<p>' . __('The default <b>property page</b> will be used to display property search results, as well as be the base for property URLs. ','wpp') .'</p>';
+      $contextual_help['content'][] = '<p>' . __('By default, the <b>Default Properties Page</b> is set to <b>property</b>, which is a dynamically created page used for displaying property search results. ','wpp') .'</p>';
+      $contextual_help['content'][] = '<p>' . __('We recommend you create an actual WordPress page to be used as the <b>Default Properties Page</b>. For example, you may create a root page called "Real Estate" - the URL of the default property page will be ' . get_bloginfo('url') . '<b>/real_estate/</b>, and you properties will have the URLs of ' . get_bloginfo('url') . '/real_estate/<b>property_name</b>/','wpp') .'</p>';
+
+      $contextual_help['content'][] = '<h3>' . __('Options') .'</h3>';
       $contextual_help['content'][] = '<p>' . __('On-the-fly image generation means that image sizes, such as different sized thumbnails, are generated automatically when a visitor requests it online.  Alternatively, you could manually regenerate thumbnails by using a third-party plugin.','wpp') .'</p>';
 
+      $contextual_help['content'][] = '<h3>' . __('More Help') .'</h3>';
+      $contextual_help['content'][] = '<p>' . __('Visit <a href="http://usabilitydynamics.com/forums">Usability Dynamics forums</a> for support, read over the <a href="http://usabilitydynamics.com/help/">WP-Property help tutorials</a>, or check out the <a href="http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet/">shortcode cheatsheet</a> for quick reference.','wpp') .'</p>';
+
       $contextual_help = apply_filters('wpp_contextual_help', array('page' => $current_screen->id, 'content' => $contextual_help['content']));
+
       add_contextual_help($current_screen->id, implode("\n", $contextual_help['content']));
+
     }
 
     // Widgets Page
@@ -441,77 +486,7 @@ class WPP_Core {
 
     // Load jQuery UI Tabs and Cookie into settings page (settings_page_property_settings)
     add_action('admin_print_scripts-' . $settings_page, create_function('', "wp_enqueue_script('jquery-ui-tabs');wp_enqueue_script('jquery-cookie');"));
-    add_action('admin_head-edit.php', array("WPP_Core", "overview_page_scripts"));
-    add_action('admin_head-'.$all_properties, array("WPP_Core", "overview_page_scripts"));
 
-  }
-
-  /**
-   * Prints header javascript on admin side
-   *
-   * Called after print_scripts so loaded scripts can be utilized.
-   *
-   * @since 0.54
-   *
-   */
-  function overview_page_scripts() {
-    global $current_screen, $wp_properties;
-
-    switch ($current_screen->id) {
-
-      // Property overview page
-      case 'property_page_all_properties':
-
-        $contextual_help = '
-        <h3>Theme Problems</h3>
-        We do theme customizations, and if you need help customizing your theme, please <a href="http://usabilitydynamics.com/contact-us/">contact us</a>.<br />
-        <h3>Premium Theme</h3>
-        If you would like to purchase the official WP-Property theme, <a href="http://usabilitydynamics.com/products/wp-property/wp-property-premium-theme-the-denali/">please view it here</a>. <br />
-        <h3>Shortcodes</h3>
-        For examples of how to use shortcodes, visit the <a href="http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet//">shortcode cheatsheet page<a>.
-        ';
-
-        $contextual_help = apply_filters('wpp_contextual_help_overview', $contextual_help);
-
-        add_contextual_help('property_page_all_properties', $contextual_help);
-
-        // If settings not configured
-        if(get_option('wpp_settings') == ""):
-
-        $default_url =  WPP_UD_F::base_url($wp_properties['configuration']['base_slug']);
-        $settings_page =  admin_url('edit.php?post_type=property&page=property_settings');
-        $permalink_problem = (get_option('permalink_structure') == '' )
-          ? sprintf(__('Be advised, since you don\'t have permalinks enabled, you must visit the <a href="%s">Settings Page</a> and set a custom property overview page.', 'wpp'), $settings_page)
-          : sprintf(__('By default, your property overview will be displayed on the <a href="%s">%s</a> page. You may change the overview page on the <a href="%s">Settings Page</a>', 'wpp'), $default_url, $default_url, $settings_page);
-        ?>
-
-        <script type="text/javascript">
-          jQuery(document).ready(function() {
-            var message = "<div class='updated fade'>" +
-              "<p><b><?php _e('Thank you for installing WP-Property!','wpp') ?></b> " +
-              "<?php echo $permalink_problem; ?></p>" +
-              "<p><?php _e('You may also visit <a href="http://usabilitydynamics.com/products/wp-property/">TwinCitiesTech.com</a> for more information, and <a href="http://usabilitydynamics.com/products/wp-property/screencasts/">screencasts</a>.', 'wpp') ?></p></div>";
-
-             jQuery(message).insertAfter(".wp-list-table   h2");
-          });
-        </script>
-
-      <?php endif; ?>
-        <script type="text/javascript">
-          jQuery(document).ready(function() {
-            jQuery("<p class='wpp_notification'>Help improve WP-Property by <a href='http://feedback.twincitiestech.com/forums/95259-wp-property'>suggesting ideas</a>. Support WP-Property by using the <a href='http://sites.usabilitydynamics.com/the-denali/'>official premium theme</a>.</p>").insertAfter("#posts-filter");
-          });
-        </script>
-
-      <?php
-
-      break;
-
-      case 'property':
-      // Property Editing Page
-      break;
-
-    }
   }
 
 
@@ -539,7 +514,7 @@ class WPP_Core {
   /**
    * Fixed property pages being seen as 404 pages
    *
-   * Ran on parse_query;
+   * Ran on parse_request;
    *
    * WP handle_404() function decides if current request should be a 404 page
    * Marking the global variable $wp_query->is_search to true makes the function
@@ -549,17 +524,65 @@ class WPP_Core {
    * @since 0.5
    *
    */
-  function parse_query($query) {
-    global $wp_query, $wp_properties, $wpdb;
+  function parse_request($query) {
+    global $wp, $wp_query, $wp_properties, $wpdb;
 
-    //** If base slug is not set, we do nothing? */
-    if(empty($wp_properties['configuration']['base_slug'])) {
-      return;
+    //** If we don't have permalinks, our base slug is always default */
+    if(get_option('permalink_structure') == '') {
+      $wp_properties['configuration']['base_slug'] = 'property';
     }
 
-    if($query->query_vars['name'] == $wp_properties['configuration']['base_slug']  || $query->query_vars['category_name'] == $wp_properties['configuration']['base_slug']) {
-      $query->is_search = true;
+    //** If we are displaying search results, we can assume this is the default property page */
+    if(is_array($_REQUEST['wpp_search'])) {
+      $wp_query->wpp_root_property_page = true;
+      $wp_query->wpp_search_page = true;
     }
+    //** Determine if this is the Default Property Page */
+
+    if($wp->request == $wp_properties['configuration']['base_slug']) {
+      $wp_query->wpp_root_property_page = true;
+    }
+
+    if($wp->query_string == "p=" . $wp_properties['configuration']['base_slug']) {
+      $wp_query->wpp_root_property_page = true;
+    }
+
+    if($query->query_vars['name'] == $wp_properties['configuration']['base_slug']) {
+      $wp_query->wpp_root_property_page = true;
+    }
+
+    if($query->query_vars['pagename'] == $wp_properties['configuration']['base_slug']) {
+      $wp_query->wpp_root_property_page = true;
+    }
+
+    if($query->query_vars['category_name'] == $wp_properties['configuration']['base_slug']) {
+      $wp_query->wpp_root_property_page = true;
+    }
+
+    //** If this is a the root property page, and the Dynamic Default Property page is used */
+    if($wp_query->wpp_root_property_page && $wp_properties['configuration']['base_slug'] == 'property') {
+      $wp_query->wpp_default_property_page = true;
+
+      /** Set to override the 404 status */
+      add_action('wp', create_function('', 'status_header( 200 );'));
+    }
+
+    if($wp_query->wpp_search_page) {
+      $wpp_pages[] = 'Search Page';
+    }
+
+    if($wp_query->wpp_default_property_page) {
+      $wpp_pages[] = 'Default Property Page';
+    }
+
+    if($wp_query->wpp_root_property_page) {
+      $wpp_pages[] = 'Root Property Page.';
+    }
+
+    if(is_array($wpp_pages)) {
+      WPP_F::console_log('WPP_F::parse_request() ran, determined that request is for: ' . implode(', ', $wpp_pages));
+    }
+
 
    }
 
@@ -570,15 +593,24 @@ class WPP_Core {
    *
    */
   function the_content($content) {
-    global $post, $wp_properties;
+    global $post, $wp_properties, $wp_query;
 
-    if(empty($wp_properties['configuration']['base_slug'])) {
+    if(!isset($wp_query->is_property_overview)) {
       return $content;
     }
 
-    if($wp_properties['configuration']['base_slug'] == $post->post_name && $wp_properties['configuration']['automatically_insert_overview'] == 'true') {
+    //** Handle automatic PO inserting for non-search root page */
+    if(!$wp_query->wpp_search_page && $wp_query->wpp_root_property_page && $wp_properties['configuration']['automatically_insert_overview'] == 'true') {
+      WPP_F::console_log('Automatically inserted property overview shortcode into page content.');
       return WPP_Core::shortcode_property_overview();
     }
+
+    //** Handle automatic PO inserting for search pages */
+    if($wp_query->wpp_search_page && $wp_properties['configuration']['do_not_override_search_result_page'] != 'true') {
+      WPP_F::console_log('Automatically inserted property overview shortcode into search page content.');
+      return WPP_Core::shortcode_property_overview();
+    }
+
 
     return $content;
   }
@@ -879,21 +911,23 @@ class WPP_Core {
       add_filter('widget_text', 'do_shortcode');
     }
 
-
     do_action('wpp_template_redirect');
 
+    //** Handle single property page previews */
     if ( !empty($wp_query->query_vars['preview']) && $post->post_type == "property" && $post->post_status == "publish" ) {
       wp_redirect( get_permalink($post->ID) );
       die();
     }
 
-    // Call on all pages because styles are used in widgets
+    //** Load essential styles that are used in widgets */
     wp_enqueue_style('wp-property-frontend');
     wp_enqueue_style('wp-property-theme-specific');
 
+    //** Load non-essential scripts and styles if option is enabled to load them globally */
     if($wp_properties['configuration']['load_scripts_everywhere'] == 'true') {
-      wp_enqueue_style('jquery-fancybox-css');
-      wp_enqueue_style('jquery-ui');
+
+      WPP_F::console_log('Loading WP-Property scripts globally.');
+
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
@@ -901,12 +935,14 @@ class WPP_Core {
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
+      wp_enqueue_style('jquery-fancybox-css');
+      wp_enqueue_style('jquery-ui');
+
     }
 
-    //** Must include these everywhere since do_action() property_overview calls cannot be detected */
-
+    //** Capture signle-property pages  */
     if($post->post_type == "property" || $wp_query->is_child_property) {
-      $single_page = true;
+      $wp_query->single_property_page = true;
 
       //** This is a hack and should be done better */
       if(!$post) {
@@ -916,29 +952,41 @@ class WPP_Core {
       }
     }
 
-    $is_search = (is_array($_REQUEST['wpp_search']) ? true : false);
-
-    // Determine if current request is for the overview page
-    if($wp->request == $wp_properties['configuration']['base_slug'] ||
-        $wp->query_string == "p=" . $wp_properties['configuration']['base_slug'] ||
-          strpos($post->post_content, "property_overview")) {
-
-      // Update global $wp_query var
+    //** If viewing root property page that is the default dynamic page. */
+    if($wp_query->wpp_default_property_page) {
       $wp_query->is_property_overview = true;
-
     }
 
+    //** If this is the root page with a manually inserted shortcode, or any page with a PO shortcode */
+    if(strpos($post->post_content, "property_overview")) {
+      $wp_query->is_property_overview = true;
+    }
 
-    // Scripts for both types of views
-    if ($single_page || $wp_query->is_property_overview) {
+    //** If this is the root page and the shortcode is automatically inserted */
+    if($wp_query->wpp_root_property_page && $wp_properties['configuration']['automatically_insert_overview'] == 'true') {
+      $wp_query->is_property_overview = true;
+    }
 
+    //** If search result page, and system not explicitly configured to not include PO on search result page automatically */
+    if($wp_query->wpp_search_page && $wp_properties['configuration']['do_not_override_search_result_page'] != 'true') {
+      $wp_query->is_property_overview = true;
+    }
+
+    //** Scripts and styles to load on all overview and signle listing pages */
+    if ($wp_query->single_property_page || $wp_query->is_property_overview) {
+
+      WPP_F::console_log('Including scripts for all single and overview property pages.');
+
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-fancybox');"));
-      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
-
+      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
       wp_enqueue_style('jquery-fancybox-css');
       wp_enqueue_style('jquery-ui');
+
       // Check for and load conditional browser styles
       $conditional_styles = apply_filters('wpp_conditional_style_slugs', array('IE','IE 7','msie'));
 
@@ -962,17 +1010,20 @@ class WPP_Core {
 
     }
 
-    if ($single_page && empty($post->post_password))  {
+    //** Scripts loaded only on single property pages */
+    if ($wp_query->single_property_page && empty($post->post_password)) {
+
+      WPP_F::console_log('Including scripts for all single property pages.');
 
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
       add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
 
-      // Allow plugins to insert header scripts/styles using wp_head_single_property hook
       do_action('template_redirect_single_property');
+
       add_action('wp_head', create_function('', "do_action('wp_head_single_property'); "));
 
       $property = WPP_F::get_property($post->ID, "load_gallery=true");
-      
+
       $property = prepare_property_for_display($property);
 
       $type = $property['property_type'];
@@ -989,43 +1040,49 @@ class WPP_Core {
       }
 
       if(file_exists(STYLESHEETPATH . "/property-$type.php")) {
-        load_template(STYLESHEETPATH . "/property-$type.php");
-        die();
+        $template_found[] = STYLESHEETPATH . "/property-$type.php";
       }
 
       if(file_exists(STYLESHEETPATH . "/property.php")) {
-        load_template(STYLESHEETPATH . "/property.php");
-        die();
+        $template_found[] = STYLESHEETPATH . "/property.php";
       }
 
       if(file_exists(TEMPLATEPATH . "/property-$type.php")) {
-        load_template(TEMPLATEPATH . "/property-$type.php");
-        die();
+        $template_found[] = TEMPLATEPATH . "/property-$type.php";
       }
 
       if(file_exists(TEMPLATEPATH . "/property.php")) {
-        load_template(TEMPLATEPATH . "/property.php");
-        die();
+        $template_found[] = TEMPLATEPATH . "/property.php";
       }
 
       if(file_exists(WPP_Templates . "/property-$type.php")) {
-        load_template(WPP_Templates . "/property-$type.php");
-        die();
+        $template_found[] = WPP_Templates . "/property-$type.php";
       }
 
       // 4. If all else fails, try the default general template
       if(file_exists(WPP_Templates . "/property.php")) {
-        load_template(WPP_Templates . "/property.php");
+        $template_found[] = WPP_Templates . "/property.php";
+      }
+
+      //** Load the first found template */
+      if(isset($template_found[0])) {
+        WPP_F::console_log('Found single property page template:' . $template_found[0]);
+        load_template($template_found[0]);
         die();
       }
 
     }
 
-     if($wp_query->is_property_overview) {
+    //** Current requests includes a property overview.  PO may be via shortcode, search result, or due to this being the Default Dynamic Property page */
+    if($wp_query->is_property_overview) {
 
-      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
-      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
-      add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
+      WPP_F::console_log('Including scripts for all property overview pages.');
+
+      if($wp_query->wpp_default_property_page) {
+        WPP_F::console_log('Dynamic Default Property page detected, will load custom template.');
+      } else {
+        WPP_F::console_log('Custom Default Property page detected, property overview content may be rendered via shortcode.');
+      }
 
       //** Make certain variables available to be used within the single listing page */
       $overview_page_vars = apply_filters('wpp_overview_page_vars', array(
@@ -1038,44 +1095,43 @@ class WPP_Core {
         $wp_query->query_vars = array_merge($wp_query->query_vars, $overview_page_vars);
       }
 
-      // Allow plugins to insert header scripts/styles using wp_head_single_property hook
       do_action('template_redirect_property_overview');
+
       add_action('wp_head', create_function('', "do_action('wp_head_property_overview'); "));
 
-      /*
-        Show custom property overview template if this is a search result and not a post
-        If do_not_override_search_result_page is set to true, then we do not use custom template, but depend
-        on user to include [property_overview] in their post content
-      */
-      if(($is_search || !$post) && $wp_properties['configuration']['do_not_override_search_result_page'] != 'true') {
+      //** If using Dynamic Property Root page, we must load a template */
+      if($wp_query->wpp_default_property_page) {
 
+        //** Unset any post that may have been found based on query */
+        $post = false;
 
         if(file_exists(STYLESHEETPATH . "/property-search-result.php")) {
-          load_template(STYLESHEETPATH . "/property-search-result.php");
-          die();
+          $template_found[] = STYLESHEETPATH . "/property-search-result.php";
         }
 
          if(file_exists(STYLESHEETPATH . "/property-overview-page.php")) {
-           load_template(STYLESHEETPATH . "/property-overview-page.php");
-          die();
+           $template_found[] = STYLESHEETPATH . "/property-overview-page.php";
         }
 
         // 1. Try custom search-result template in theme folder
-
         if(file_exists(TEMPLATEPATH . "/property-search-result.php")) {
-          load_template(TEMPLATEPATH . "/property-search-result.php");
-          die();
+          $template_found[] = TEMPLATEPATH . "/property-search-result.php";
         }
 
         // 2. Try custom template with property-overview-page.php name in theme folder
         if(file_exists(TEMPLATEPATH . "/property-overview-page.php")) {
-           load_template(TEMPLATEPATH . "/property-overview-page.php");
-          die();
+           $template_found[]  = TEMPLATEPATH . "/property-overview-page.php";
         }
 
         // 4. If all else fails, trys the default general template
         if(file_exists(WPP_Templates . "/property-overview-page.php")) {
-          load_template(WPP_Templates . "/property-overview-page.php");
+          $template_found[] = WPP_Templates . "/property-overview-page.php";
+        }
+
+        //** Load the first found template */
+        if(isset($template_found[0])) {
+          WPP_F::console_log('Found Default property overview page template:' . $template_found[0]);
+          load_template($template_found[0]);
           die();
         }
 
@@ -1273,7 +1329,7 @@ class WPP_Core {
     $widget_id = $post->ID . "_search";
 
     ob_start();
-    echo "<div class='wpp_shortcode_search'>";
+    echo '<div class="wpp_shortcode_search">';
 
     $search_args['searchable_attributes'] = $searchable_attributes;
     $search_args['searchable_property_types'] = $searchable_property_types;
@@ -1570,7 +1626,7 @@ class WPP_Core {
 
     $this_property = $property;
 
-    if(empty($this_property)) {
+    if(empty($this_property) && $post->post_type == 'property') {
       $this_property = $post;
     }
 
@@ -1582,7 +1638,12 @@ class WPP_Core {
 
     $defaults = array(
       'property_id' => $this_property['ID'],
-      'attribute' => ''
+      'attribute' => '',
+      'before' => '',
+      'after' => '',
+      'if_empty' => '',
+      'do_not_format' => '',
+      'strip_tags' => ''
     );
 
     $args = array_merge($defaults, $atts);
@@ -1594,19 +1655,58 @@ class WPP_Core {
     $attribute = $args['attribute'];
 
     if($args['property_id'] != $this_property['ID']) {
-      $the_property = WPP_F::get_property($args['property_id']);
+
+      $this_property = WPP_F::get_property($args['property_id']);
+
+      if($args['do_not_format'] != "true") {
+        $this_property = prepare_property_for_display($this_property);
+      }
+
     } else {
-      $the_property = $this_property;
+      $this_property = $this_property;
     }
+
 
     //** Try to get value using get get_attribute() function */
     if(function_exists('get_attribute')) {
-      $value = get_attribute($attribute, array('return' => 'true'));
+      $value = get_attribute($attribute, array(
+        'return' => 'true',
+        'property_object' => $this_property
+        ));
     }
 
-    $value = apply_filters('wpp_property_attribute_shortcode', $value, $the_property);
 
-    return $value;
+
+    if(!empty($args['before'])) {
+      $return['before'] = html_entity_decode($args['before']);
+    }
+
+    $return['value'] = apply_filters('wpp_property_attribute_shortcode', $value, $the_property);
+
+    if($args['strip_tags'] == "true" && !empty($return['value'])) {
+      $return['value'] = strip_tags($return['value']);
+    }
+
+    if(!empty($args['after'])) {
+      $return['after'] =  html_entity_decode($args['after']);
+    }
+
+    //** When no value is found */
+    if(empty($value['value'])) {
+
+      if(!empty($args['if_empty'])) {
+        return $args['if_empty'];
+      } else {
+        return false;
+      }
+    }
+
+
+    if(is_array($return)) {
+      return implode('', $return);
+    }
+
+    return false;
 
   }
 
@@ -1625,6 +1725,7 @@ class WPP_Core {
     if(!$atts) {
       $atts = array();
     }
+
 
     $defaults = array(
       'width' => '100%',
@@ -1649,14 +1750,14 @@ class WPP_Core {
     //** Convert to object */
     $property = (object) $property;
 
-
     //** Find most appropriate template */
     if(file_exists(STYLESHEETPATH . "/content-single-property-map.php")) {
       $template_found[] = STYLESHEETPATH  . "/content-single-property-map.php";
     } elseif (file_exists(TEMPLATEPATH . "/content-single-property-map.php")) {
       $template_found[] = TEMPLATEPATH  . "/content-single-property-map.php";
+    } elseif(file_exists(WPP_Templates . "/property-map.php")) {
+      $template_found[] = WPP_Templates . "/property-map.php";
     }
-
 
     //** Force map to be enabled here */
     $skip_default_google_map_check = true;
@@ -1665,6 +1766,10 @@ class WPP_Core {
     $map_height = $args['height'];
     $hide_infobox = ($args['hide_infobox'] == 'true' ? true : false);
 
+
+    if(!isset($template_found[0])) {
+      return false;
+    }
 
     ob_start();
     if(isset($template_found[0])) {
