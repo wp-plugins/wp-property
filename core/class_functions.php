@@ -12,6 +12,186 @@
 
 class WPP_F {
 
+  /**
+   * Get the label for "Propery"
+   *
+   * @since 1.10
+   *
+   */
+  function property_label($type = 'singular') {
+    global $wp_post_types;
+
+    if($type == 'plural') {
+      return ($wp_post_types['property']->labels->name ? $wp_post_types['property']->labels->name : __('Properties'));
+    }
+
+    if($type == 'singular') {
+      return ($wp_post_types['property']->labels->singular_name ? $wp_post_types['property']->labels->singular_name : __('Property'));
+    }
+
+  }
+
+
+  /**
+   * Setup widgets and widget areas.
+   *
+   * @since 1.31.0
+   *
+   */
+  function widgets_init() {
+    global $wp_properties;
+
+    /** Loads widgets */
+    include_once WPP_Path . '/core/class_widgets.php';
+
+    if(class_exists('Property_Attributes_Widget')) {
+      register_widget("Property_Attributes_Widget");
+    }
+
+    if(class_exists('ChildPropertiesWidget')) {
+      register_widget("ChildPropertiesWidget");
+    }
+
+    if(class_exists('SearchPropertiesWidget')) {
+      register_widget("SearchPropertiesWidget");
+    }
+
+    if(class_exists('GalleryPropertiesWidget')) {
+      register_widget("GalleryPropertiesWidget");
+    }
+
+    if(class_exists('LatestPropertiesWidget')) {
+      register_widget("LatestPropertiesWidget");
+    }
+
+    if(class_exists('OtherPropertiesWidget')) {
+      register_widget("OtherPropertiesWidget");
+    }
+
+
+    // Register a sidebar for each property type
+    if($wp_properties['configuration']['do_not_register_sidebars'] != 'true') {
+      foreach($wp_properties['property_types'] as $property_slug => $property_title) {
+        register_sidebar( array(
+          'name'=> sprintf(__('Property: %s', 'wpp'), $property_title),
+          'id' => "wpp_sidebar_$property_slug",
+          'description' =>  sprintf(__('Sidebar located on the %s page.', 'wpp'), $property_title),
+          'before_widget' => '<li id="%1$s"  class="wpp_widget %2$s">',
+          'after_widget' => '</li>',
+          'before_title' => '<h3 class="widget-title">',
+          'after_title' => '</h3>',
+        ));
+      }
+    }
+
+
+
+  }
+
+  /**
+   * Setup widgets.
+   *
+   * @since 1.31.0
+   *
+   */
+  function register_post_type_and_taxonomies() {
+    global $wp_properties;
+
+    // Setup taxonomies
+    $wp_properties['taxonomies'] = apply_filters('wpp_taxonomies', $wp_properties['taxonomies']);
+
+    $wp_properties['labels'] = apply_filters('wpp_object_labels', array(
+      'name' => __('Properties', 'wpp'),
+      'all_items' =>  __( 'All Properties', 'wpp'),
+      'singular_name' => __('Property', 'wpp'),
+      'add_new' => __('Add Property', 'wpp'),
+      'add_new_item' => __('Add New Property','wpp'),
+      'edit_item' => __('Edit Property','wpp'),
+      'new_item' => __('New Property','wpp'),
+      'view_item' => __('View Property','wpp'),
+      'search_items' => __('Search Properties','wpp'),
+      'not_found' =>  __('No properties found','wpp'),
+      'not_found_in_trash' => __('No properties found in Trash','wpp'),
+      'parent_item_colon' => ''
+    ));
+
+    // Register custom post types
+    register_post_type('property', array(
+      'labels' => $wp_properties['labels'],
+      'public' => true,
+      'exclude_from_search' => true, /* Added post 1.30.1 to stop properties from coming up in regular search results. */
+      'show_ui' => true,
+      '_edit_link' => 'post.php?post=%d',
+      'capability_type' => array('wpp_property','wpp_properties'),
+      'hierarchical' => true,
+      'rewrite' => array(
+        'slug'=> $wp_properties['configuration']['base_slug']
+      ),
+      'query_var' => $wp_properties['configuration']['base_slug'],
+      'supports' => array('title','editor', 'thumbnail'),
+      'menu_icon' => WPP_URL . '/images/pp_menu-1.6.png'
+    ));
+
+    if($wp_properties['taxonomies']) {
+      foreach($wp_properties['taxonomies'] as $taxonomy => $taxonomy_data) {
+
+        //** Check if taxonomy is disabled */
+        if(is_array($wp_properties['configuration']['disabled_taxonomies']) && in_array($taxonomy, $wp_properties['configuration']['disabled_taxonomies'])) {
+          continue;
+        }
+
+        register_taxonomy( $taxonomy, 'property', array(
+          'hierarchical' => $taxonomy_data['hierarchical'],
+          'label' => $taxonomy_data['label'],
+          'labels' => $taxonomy_data['labels'],
+          'query_var' => $taxonomy,
+          'rewrite' => array('slug' => $taxonomy ),
+          'capabilities' => array('manage_terms' => 'manage_wpp_categories')
+        ));
+      }
+    }
+
+    register_taxonomy_for_object_type('property_features', 'property');
+
+  }
+
+
+  /**
+   * Loads applicable WP-Properrty scripts and styles
+   *
+   * @since 1.10
+   *
+   */
+  function load_assets($types = array()) {
+
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-widget');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-fancybox');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-address');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-scrollTo');"));
+    add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('wp-property-frontend');"));
+    wp_enqueue_style('jquery-fancybox-css');
+    wp_enqueue_style('jquery-ui');
+
+    foreach($types as $type) {
+
+      switch($type) {
+
+        case 'single':
+          add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
+          add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
+        break;
+
+        case 'overview':
+
+        break;
+
+      }
+
+    }
+
+  }
 
   /**
    * Checks if script or style have been loaded.
@@ -44,7 +224,7 @@ class WPP_F {
   /**
    * PHP function to echoing a message to JS console
    *
-   * @since Denali 3.0
+   * @since 1.32.0
    */
   function console_log($text = false) {
     global $wp_properties;
@@ -57,9 +237,17 @@ class WPP_F {
       return;
     }
 
-    add_filter('wp_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
-  }
+    if(is_array($text) || is_object($text)) {
+      $text = str_replace("\n", '', print_r($text, true));
+    }
 
+    //** Cannot use quotes */
+    $text = str_replace('"', '-', $text);
+
+    add_filter('wp_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
+    add_filter('admin_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
+
+  }
 
 
   /**
@@ -211,8 +399,7 @@ class WPP_F {
       return false;
     }
 
-
-  /*
+    /*
     For troubleshooting, for now we just assume file isn't JSON
     switch (json_last_error()) {
         case JSON_ERROR_NONE:
@@ -237,37 +424,137 @@ class WPP_F {
             echo ' - Unknown error';
         break;
     }
-  */
+    */
 
-  $data['objects'] = $data;
+    $data['objects'] = $data;
 
-  // An array of serializer options
-  $serializer_options = array (
-    'indent' => " ",
-    'linebreak' => "\n",
-    'addDecl' => true,
-    'encoding' => 'ISO-8859-1',
-    'rootName' => 'objects',
-    'defaultTagName' => 'object',
-    'mode' => 'simplexml'
-  );
+    // An array of serializer options
+    $serializer_options = array (
+      'indent' => " ",
+      'linebreak' => "\n",
+      'addDecl' => true,
+      'encoding' => 'ISO-8859-1',
+      'rootName' => 'objects',
+      'defaultTagName' => 'object',
+      'mode' => 'simplexml'
+    );
 
-  $Serializer = &new XML_Serializer($serializer_options);
+    $Serializer = &new XML_Serializer($serializer_options);
 
-  $status = $Serializer->serialize($data);
+    $status = $Serializer->serialize($data);
 
 
-  if (PEAR::isError($status)) {
+    if (PEAR::isError($status)) {
+      return false;
+    }
+
+    if($Serializer->getSerializedData()) {
+      return $Serializer->getSerializedData();
+    }
+
     return false;
-  }
-
-  if($Serializer->getSerializedData()) {
-    return $Serializer->getSerializedData();
-  }
-
-  return false;
 
   }
+
+
+  /**
+   * Convert CSV to XML
+   *
+   * Function ported over from List Attachments Shortcode plugin.
+   *
+   * @version 1.32.0
+   */
+  function detect_encoding($string) {
+  
+    $encoding[] = "UTF-8";
+    $encoding[] = "windows-1251";
+    $encoding[] = "ISO-8859-1";
+    $encoding[] = "GBK";
+    $encoding[] = "ASCII";
+    $encoding[] = "JIS";
+    $encoding[] = "EUC-JP";
+    
+    foreach($encoding as $single) {
+       if(@mb_detect_encoding($string, $single, true)) {
+        $matched = $single;
+       }
+    }
+    
+    return $matched ?  $matched : new WP_Error('encoding_error',__('Could not detect.', 'wpp'));
+    
+  
+  }
+  
+  
+
+  /**
+   * Convert CSV to XML
+   *
+   * Function ported over from List Attachments Shortcode plugin.
+   *
+   * @version 1.32.0
+   */
+  function csv_to_xml($string, $args = false) {
+
+    $uploads = wp_upload_dir();
+
+    $defaults = array(
+      'delimiter' => ',',
+      'enclosure' => '"',
+      'escape' => "\\"
+    );
+
+    extract( wp_parse_args( $args, $defaults ), EXTR_SKIP ); 
+
+    $temp_file = $uploads['path'] . time() . '.csv';
+
+    file_put_contents($temp_file, $string);
+
+    ini_set("auto_detect_line_endings", 1);
+    $current_row = 1;
+
+    $handle = fopen($temp_file, "r");
+    while ( ($data = fgetcsv($handle, 10000, ",") ) !== FALSE )  {
+      $number_of_fields = count($data);
+
+      if ($current_row == 1) {
+        for ($c=0; $c < $number_of_fields; $c++)  {
+            $header_array[$c] = $data[$c];
+        }
+      } else {
+      
+          $data_array = array();
+
+          for ($c=0; $c < $number_of_fields; $c++) {          
+            
+            //** Clean up values */                  
+            if($value = trim($data[$c])) {
+              $data_array[$header_array[$c]] = trim($data[$c]);
+            }          
+            
+          }
+          
+          $data_array = array_filter($data_array);
+          
+          if(!empty($data_array)) {
+            $csv[] = $data_array;
+          }
+          
+      }
+      $current_row++;
+    }
+    
+    fclose($handle);
+
+    unlink($temp_file);
+
+    //** Get it into XML (We want to use json_to_xml because it does all the cleansing of weird characters) */
+    $xml = WPP_F::json_to_xml(json_encode($csv));
+
+    return $xml;
+
+  }
+
 
   /**
    * Get filesize of a file.
@@ -485,10 +772,12 @@ class WPP_F {
         $return['storage_type'] = 'meta_key';
         $return['label'] = $wp_properties['property_meta'][$attribute];
         $return['input_type'] = 'textarea';
+        $return['data_input_type'] = 'textarea';
       }
 
       if($wp_properties['searchable_attr_fields'][$attribute]) {
         $return['input_type'] = $wp_properties['searchable_attr_fields'][$attribute];
+        $return['data_input_type'] = $wp_properties['admin_attr_fields'][$attribute];
         $ui_class[] = $return['input_type'];
       }
 
@@ -576,11 +865,30 @@ class WPP_F {
         }
       }
     }
-
     //** Force script into footer */
     $wp_scripts->in_footer[] = $handle;
+  }
 
-    //  echo "<pre>" . print_r($wp_scripts, true) . "</pre>"; return;
+  /**
+   * Makes sure the style is loaded, otherwise loads it
+   *
+   * @param string $handle registered style's name
+   * @author Maxim Peshkov
+   */
+  function force_style_inclusion($handle = false) {
+    global $wp_styles;
+    static $printed_styles = array();
+
+    if(!$handle) {
+      return;
+    }
+    //** Check if already included */
+    if(wp_style_is($handle, 'done') || isset($printed_styles[$handle])) {
+      return true;
+    } else {
+      $printed_styles[$handle] = true;
+      wp_print_styles($handle);
+    }
   }
 
   /**
@@ -656,17 +964,15 @@ class WPP_F {
     function posts_results($posts) {
       global $wpdb, $wp_query;
 
-
       //** Look for child properties */
       if(!empty($wp_query->query_vars['attachment'])) {
         $post_name = $wp_query->query_vars['attachment'];
 
-        if($child = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '$post_name' AND post_type = 'property' AND post_parent != '' LIMIT 0, 1")) {
+        if($child = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '{$post_name}' AND post_type = 'property' AND post_parent != '' LIMIT 0, 1")) {
           $posts[0] = $child;
           return $posts;
         }
       }
-
 
       //** Look for regular pages that are placed under base slug */
       if($wp_query->query_vars['post_type'] == 'property' && count($wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'property'  LIMIT 0, 1")) == 0) {
@@ -674,9 +980,8 @@ class WPP_F {
       }
 
       return $posts;
-
-
     }
+
 
   /**
    * Pre post query - for now mostly to disable caching
@@ -693,8 +998,6 @@ class WPP_F {
       if($query->query_vars['post_type'] == 'property') {
         $query->query_vars['cache_results'] = false;
       }
-
-
 
     }
 
@@ -1245,38 +1548,25 @@ class WPP_F {
   }
 
   /**
-   * Gets image dimensions for WP-Property images
-   *
+    * Gets image dimensions for WP-Property images.
+    *
+    * This function is no longer used, only here for legacy support.
     *
     * @since 1.0
-   *
+    *
     */
    static function get_image_dimensions($type = false) {
-    global $wp_properties;
-
-    if(!$type) {
-      return;
-    }
-
-    $dimensions = $wp_properties['image_sizes'][$type];
-
-    $return[0] = $dimensions['width'];
-    $return[1] = $dimensions['height'];
-    $return['width'] = $dimensions['width'];
-    $return['height'] = $dimensions['height'];
-
-    return $return;
-
+    return WPP_F::image_sizes($type);
    }
 
 
   /**
    * Prevents all columns on the overview page from being enabled if nothing is configured
    *
-    *
-    * @since 0.721
    *
-    */
+   * @since 0.721
+   *
+   */
   static function fix_screen_options() {
     global $current_user;
 
@@ -1470,10 +1760,11 @@ class WPP_F {
   static function get_total_attribute_array($args = '', $extra_values = false) {
     global $wp_properties, $wpdb;
 
-    $defaults = array('use_optgroups' => 'false');
+    $defaults = array(
+      'use_optgroups' => 'false'
+    );
 
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
-
 
     $property_stats = $wp_properties['property_stats'];
     $property_meta = $wp_properties['property_meta'];
@@ -1490,8 +1781,13 @@ class WPP_F {
       $attributes = $property_stats + $property_meta + $extra_values;
     }
 
-    return apply_filters('wpp_total_attribute_array', $attributes);
+    $attributes = apply_filters('wpp_total_attribute_array', $attributes);
 
+    if(!is_array($attributes)) {
+      $attributes = array();
+    }
+
+    return $attributes;
 
   }
 
@@ -1753,7 +2049,7 @@ class WPP_F {
    * @since 3.0
    */
   function overview_columns($columns) {
-    global $wp_properties;
+    global $wp_properties, $wp_taxonomies;
 
     $overview_columns = apply_filters('wpp_overview_columns',  array(
       'cb' => '',
@@ -1763,6 +2059,10 @@ class WPP_F {
       'features' => __('Features', 'wpp'),
       'featured' => __('Featured', 'wpp')
     ));
+
+    if(!in_array('property_feature', array_keys($wp_taxonomies))) {
+      unset($overview_columns['features']);
+    }
 
     $overview_columns['thumbnail'] = __('Thumbnail', 'wpp');
 
@@ -1811,9 +2111,7 @@ class WPP_F {
       $id = $name;
     }
 
-
     $image_array = get_intermediate_image_sizes();
-
 
     ?>
       <select id="<?php echo $id ?>" name="<?php echo $name ?>" >
@@ -1822,8 +2120,9 @@ class WPP_F {
             foreach($image_array as $name) {
             $sizes = WPP_F::image_sizes($name);
 
-            if(!$sizes)
+            if(!$sizes) {
               continue;
+            }
 
           ?>
             <option value='<?php echo $name; ?>' <?php if($selected == $name) echo 'SELECTED'; ?>>
@@ -1839,10 +2138,11 @@ class WPP_F {
   /**
    * Returns image sizes for a passed image size slug
    *
-    *
-    * @since 0.54
+   * Looks through all images sizes.
    *
-    */
+   * @since 0.54
+   * @returns array keys: 'width' and 'height' if image type sizes found.
+   */
   static function image_sizes($type = false, $args = "") {
     global $_wp_additional_image_sizes;
 
@@ -1875,18 +2175,21 @@ class WPP_F {
 
     }
 
-    if(!is_array($return))
+    if(!is_array($return)) {
       return;
+    }
 
     if(!$return_all) {
 
       // Zeroed out dimensions means they are deleted
-      if(empty($return['width']) || empty($return['height']))
+      if(empty($return['width']) || empty($return['height'])) {
         return;
+      }
 
       // Zeroed out dimensions means they are deleted
-      if($return['width'] == '0' || $return['height'] == '0')
+      if($return['width'] == '0' || $return['height'] == '0') {
         return;
+      }
 
     }
 
@@ -2259,6 +2562,39 @@ class WPP_F {
 
   }
 
+
+  /**
+   * Modifies value of specific property stat (property attribute)
+   *
+   * Used by filter wpp_attribute_filter in WPP_Object_List_Table::single_row();
+   *
+   * @param $value
+   * @param $slug
+   * @return $value Modified value
+   */
+  function attribute_filter( $value, $slug ) {
+    global $wp_properties;
+
+    // Filter bool values
+    if ( $value == 'true' ) {
+      $value = __('Yes', 'wp');
+    } elseif ( $value == 'false' ) {
+      $value = __('No', 'wp');
+    }
+
+    // Filter currency
+    if ( !empty( $wp_properties['currency_attributes'] ) ) {
+      foreach( $wp_properties['currency_attributes'] as $id => $attr ) {
+        if ( $slug == $attr ) {
+          $value = apply_filters("wpp_stat_filter_price", $value);
+        }
+      }
+    }
+
+    return $value;
+  }
+
+
   /**
    * Returns array of searchable attributes and their ranges
    *
@@ -2398,34 +2734,21 @@ class WPP_F {
     global $wp_properties;
 
     // First, check if any conversions exists for this attribute, if not, return value
-    if(count($wp_properties['search_conversions'][$attribute]) < 1)
+    if(count($wp_properties['search_conversions'][$attribute]) < 1) {
       return $value;
-
+    }
 
     // If reverse is set to true, means we are trying to convert a value to integerer (most likely),
     // For isntance: in "bedrooms", $value = 0 would be converted to "Studio"
     if($reverse) {
 
-
       $flipped_conversion = array_flip($wp_properties['search_conversions'][$attribute]);
 
-      // Debug:
-      //echo "reverse conversion: $attribute - $value; -" .$flipped_conversion['search_conversions'][$attribute][$value]. "<br />";
-
-
-      if(!empty($flipped_conversion[$value]))
+      if(!empty($flipped_conversion[$value])) {
         return $flipped_conversion[$value];
-
+      }
 
     }
-
-
-
-    // Debug:
-    //echo "doing conversion: $attribute - $value; -" .$wp_properties['search_conversions'][$attribute][$value]. "<br />";
-
-
-    // Search conversion does exist, make sure its not an empty value.
     // Need to $conversion == '0' or else studios will not work, since they have 0 bedrooms
     $conversion = $wp_properties['search_conversions'][$attribute][$value];
     if($conversion == '0' || !empty($conversion))
@@ -2433,7 +2756,6 @@ class WPP_F {
 
     // Return value in case something messed up
     return $value;
-
 
   }
 
@@ -2460,9 +2782,18 @@ class WPP_F {
       'post_date'   => 'date'
     );
 
+    $capture_sql_args = array('limit_query');
+
     //** added to avoid range and "LIKE" searches on single numeric values *
     if(is_array($args)) {
       foreach($args as $thing => $value) {
+
+        if(in_array($thing, $capture_sql_args)) {
+          $sql_args[$thing] = $value;
+          unset($args[$thing]);
+          continue;
+        }
+
         // unset empty filter options
         if ( empty( $value ) ) {
           unset($args[$thing]);
@@ -2527,17 +2858,19 @@ class WPP_F {
       }
     }
 
-    if (substr_count($query['pagi'], '--')) {
+    if(!empty($sql_args['limit_query'])) {
+      $sql_args['starting_row'] = ($sql_args['starting_row'] ? $sql_args['starting_row'] : 0);
+      $limit_query = "LIMIT {$sql_args[starting_row]}, {$sql_args[limit_query]};";
+
+    } elseif (substr_count($query['pagi'], '--')) {
       $pagi = explode('--', $query['pagi']);
       if(count($pagi) == 2 && is_numeric($pagi[0]) && is_numeric($pagi[1])) {
         $limit_query = "LIMIT $pagi[0], $pagi[1];";
       }
     }
 
-    unset( $query['pagi'] );
-    unset( $query['pagination'] );
 
-    /* Handles the sort_by parameter in the Short Code */
+    /** Handles the sort_by parameter in the Short Code */
     if( $query['sort_by'] ) {
       $sql_sort_by = $query['sort_by'];
       $sql_sort_order = ($query['sort_order']) ? strtoupper($query['sort_order']) : 'ASC';
@@ -2546,6 +2879,11 @@ class WPP_F {
       $sql_sort_order = 'ASC';
     }
 
+    //** Unsert arguments that will conflict with attribute query */
+    unset( $query['pagi'] );
+    unset( $query['pagination'] );
+    unset( $query['limit_query'] );
+    unset( $query['starting_row'] );
     unset( $query['sort_by'] );
     unset( $query['sort_order'] );
 
@@ -2738,37 +3076,29 @@ class WPP_F {
        * we use CAST in SQL query to avoid sort issues
        */
       if(self::meta_has_number_data_type ($matching_ids, $sql_sort_by)) {
-        $meta_value = "CAST(pm.meta_value AS SIGNED)";
+        $meta_value = "CAST(meta_value AS SIGNED)";
       } else {
-        $meta_value = "pm.meta_value";
+        $meta_value = "meta_value";
       }
 
       $result = $wpdb->get_col("
-        SELECT p.ID FROM {$wpdb->posts} AS p
-          LEFT JOIN {$wpdb->postmeta} AS pm
-          ON p.ID = pm.post_id
+        SELECT p.ID , (SELECT pm.meta_value FROM {$wpdb->postmeta} AS pm WHERE pm.post_id = p.ID AND pm.meta_key = '{$sql_sort_by}') as meta_value
+          FROM {$wpdb->posts} AS p
           WHERE p.ID IN (" . implode(",", $matching_ids) . ")
-            AND p.ID = pm.post_id
-            AND pm.meta_key = '$sql_sort_by'
-            $additional_sql
-          ORDER BY $meta_value $sql_sort_order
-          $limit_query");
+          {$additional_sql}
+          ORDER BY {$meta_value} {$sql_sort_order}
+          {$limit_query}");
 
       // Stores the total Properties returned
       if ($total) {
         $total = count($wpdb->get_col("
-          SELECT p.ID FROM {$wpdb->posts} AS p
-          LEFT JOIN {$wpdb->postmeta} AS pm
-          ON p.ID = pm.post_id
-          WHERE p.ID IN (" . implode(",", $matching_ids) . ")
-          AND p.ID = pm.post_id
-          AND pm.meta_key = '$sql_sort_by'
-          $additional_sql
-          ORDER BY $meta_value"));
+          SELECT p.ID
+            FROM {$wpdb->posts} AS p
+            WHERE p.ID IN (" . implode(",", $matching_ids) . ")
+            {$additional_sql}"));
       }
 
     } else {
-
 
       $result = $wpdb->get_col("
         SELECT ID FROM {$wpdb->posts } AS p
@@ -2782,8 +3112,7 @@ class WPP_F {
         $total = count($wpdb->get_col("
           SELECT ID FROM {$wpdb->posts} AS p
           WHERE ID IN (" . implode(",", $matching_ids) . ")
-          $additional_sql
-          ORDER BY $sql_sort_by"));
+          {$additional_sql}"));
       }
     }
 
@@ -2993,10 +3322,6 @@ class WPP_F {
             break;
 
           }
-           // if a property_meta value, we do a nl2br since it will most likely have line breaks
-          if(array_key_exists($key, $wp_properties['property_meta'])) {
-            $real_value = nl2br($real_value);
-          }
 
           // Handle keys with multiple values
           if(count($value) > 1) {
@@ -3056,6 +3381,9 @@ class WPP_F {
      * Load all attached images and their sizes
      */
     if($load_gallery == 'true') {
+
+      $return['gallery'] = array();
+
       // Get gallery images
       if($attachments) {
         foreach ( $attachments as $attachment_id => $attachment ) {

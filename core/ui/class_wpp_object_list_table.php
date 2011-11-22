@@ -65,23 +65,19 @@ class WPP_Object_List_Table extends WPP_List_Table {
    */
   function single_row( $ID ) {
     global $post, $wp_properties;
-
+    
     $ID = (int) $ID;
-
+    
     $post = WPP_F::get_property($ID);
-
-    //print_r( $ID );
-
-    $post = (object)$post;
-
-    //$post_owner = ( get_current_user_id() == $post->post_author ? 'self' : 'other' );
-    //$edit_link = admin_url("admin.php?page=wpi_page_manage_invoice&wpi[existing_invoice][invoice_id]={$post->ID}");
+    
+    $post = (object) $post;
+    
     $title = _draft_or_post_title($post->ID);
     $post_type_object = get_post_type_object( $post->post_type );
     $can_edit_post = current_user_can( $post_type_object->cap->edit_post);
-
+    
     $result = "<tr id='object-{$ID}' class='wpp_parent_element'>";
-
+    
     list( $columns, $hidden ) = $this->get_column_info();
 
     //print_r( $columns );

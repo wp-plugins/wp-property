@@ -213,6 +213,21 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.32.0 = 
+* Added "Property Attributes" widget. When placed on a property page, can be used to display a list of attributes related to the property.  The widget allows selection of specific widgets, as well as configuration of the sort order.
+* Added input type selection for data entry, available: free text, dropdown selection and checkbox. (in Developer tab)
+* Updated [property_attribute] to query taxonomies. New arguments: "make_terms_links" and "separator".
+* Bug fix with back-end property overview page breaking when certain attributes were set to display in overview column.
+* "Property Type" label can now be renamed by creating a custom attribute with property_type slug, and giving it a different label.
+* "Features" taxonomy hidden from overview table when disabled via Power Tools feature.
+* Removed some labels for "Property" to make application more universal. 
+* Update to prevent single property pages from taking over taxonomy archives on front-end. 
+* Updated post type registration to exclude property type from regular search results. 
+* Re-ordered contents of "Developer" tab placing Attributes at the top for convenience.
+* Several property search improvements
+* FEPS: Pre-defined values and input types are now set by the newly available "Data Entry" settings in the Developer tab.
+* Developer notes: WPP_Core::init() broken up into WPP_Core::init_upper() and WPP_Core::init_lower(). Widget and widget area loading compartmentalized into WPP_F::widgets_init(). Back-end scripts consolidated into WPP_F::load_assets();
+
 = 1.31.1 = 
 * Patch release.
 * "Area" attribute will not only be appended with "sq ft." if it is set as numeric in the Developer tab.

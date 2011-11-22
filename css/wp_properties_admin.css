@@ -4,6 +4,11 @@
 }
 
 
+select.wpp_error {
+  border: 1px solid #a50000;
+  background: #FFDDDD;
+}
+
 /* XML Importer Styles Begin { */
 
 body.property_page_wpp_property_import  tr.step_one{
@@ -192,8 +197,9 @@ select.wpp_field_disabled {
   text-decoration: line-through;
 }
 
-.wpp_subtle_tabs.wpp_search_widget_tab .wp-tab-panel ul.wpp_sortable_attributes {
+.wp-tab-panel ul.wpp_sortable_attributes {
   padding: 0;
+  margin: 5px 0;
 }
 
 .wpp_sortable_attributes li {
@@ -282,15 +288,10 @@ select.wpp_field_disabled {
     border-bottom: 1px solid #D5D5D5;
     font-weight: bold;
 }
-
     
-.property_page_page_feps  .wpp_feps_tabs .wpp_add_tab {
-    background: none;
-    border: none;
-    float: right;
-    margin:0;
-    }
-    
+.property_page_page_feps  .wpp_add_tab {
+    cursor: pointer;
+  }    
     
 .property_page_page_feps  .feps_form_info label {
   width: 150px;
@@ -355,6 +356,20 @@ select.wpp_field_disabled {
     left: 69px;
     position: relative;
   }
+
+.property_page_page_feps a.wpp_forms_remove_attribute {
+  margin-left:68px;
+}
+
+.property_page_page_feps .wpp_dynamic_table_row.required {
+  background:#ffffe0;
+}
+
+.property_page_page_feps ul.feps_form_info input.wpp_number {
+  width:40px !important;
+}
+
+
 
 .wpp_attribute_row_parent #parent_id {
   width: 100%;
@@ -488,6 +503,18 @@ body.property_page_show_agents .wp-list-table .column-id {
 #wpp_inquiry_attribute_fields .wpp_search_input_col {
   width: 160px;
 }
+
+#wpp_inquiry_attribute_fields .wpp_settings_input_col {
+  width: 120px;
+}
+
+.wpp_search_input_col select,
+.wpp_search_input_col textarea, 
+.wpp_admin_input_col select, 
+.wpp_admin_input_col textarea {
+  width: 100%;
+  max-width: 200px;
+} 
 
 #wpp_inquiry_attribute_fields .wpp_notice {
   width:96%;
@@ -860,10 +887,12 @@ input.wpp_featured_toggle {
     position: relative; }
  
     .wpp_tabs  ul.tabs li a {
-      color: #000;
-      outline: none;
+      color: #000000;
+      line-height: 25px;
+      outline: medium none;
       padding: 0 10px;
-      text-decoration: none; }
+      text-decoration: none;
+    }
  
       .wpp_tabs  ul.tabs li a:hover { color: #9D611D; }
  

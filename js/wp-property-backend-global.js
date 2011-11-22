@@ -334,7 +334,7 @@ function toggle_advanced_options() {
     var show_type_element_attribute = false;
     
     //* Try getting arguments automatically */
-    var wrapper = jQuery(this).parents('tr.wpp_dynamic_table_row');
+    var wrapper = (jQuery(this).attr('wrapper') ? jQuery(this).closest('.' + jQuery(this).attr('wrapper'))  : jQuery(this).parents('tr.wpp_dynamic_table_row'));
     
     if(jQuery(this).attr("advanced_option_class") !== undefined) {
       var advanced_option_class = "." + jQuery(this).attr("advanced_option_class");

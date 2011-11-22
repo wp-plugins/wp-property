@@ -470,10 +470,6 @@
 
     }
 
-
-
-    //$display_address =   nl2br($display_address);
-
     if(is_array($return)) {
       return implode("\n", $return);
     }
