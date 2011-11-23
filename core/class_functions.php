@@ -56,6 +56,10 @@ class WPP_F {
       register_widget("SearchPropertiesWidget");
     }
 
+    if(class_exists('FeaturedPropertiesWidget')) {
+      register_widget("FeaturedPropertiesWidget");
+    }
+
     if(class_exists('GalleryPropertiesWidget')) {
       register_widget("GalleryPropertiesWidget");
     }
@@ -68,13 +72,12 @@ class WPP_F {
       register_widget("OtherPropertiesWidget");
     }
 
-
-    // Register a sidebar for each property type
+    //** Register a sidebar for each property type */
     if($wp_properties['configuration']['do_not_register_sidebars'] != 'true') {
       foreach($wp_properties['property_types'] as $property_slug => $property_title) {
         register_sidebar( array(
           'name'=> sprintf(__('Property: %s', 'wpp'), $property_title),
-          'id' => "wpp_sidebar_$property_slug",
+          'id' => "wpp_sidebar_{$property_slug}",
           'description' =>  sprintf(__('Sidebar located on the %s page.', 'wpp'), $property_title),
           'before_widget' => '<li id="%1$s"  class="wpp_widget %2$s">',
           'after_widget' => '</li>',
@@ -83,8 +86,6 @@ class WPP_F {
         ));
       }
     }
-
-
 
   }
 

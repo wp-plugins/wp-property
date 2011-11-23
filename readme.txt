@@ -213,6 +213,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.32.1 = 
+* Featured Properties widget restoration.
+
 = 1.32.0 = 
 * Added "Property Attributes" widget. When placed on a property page, can be used to display a list of attributes related to the property.  The widget allows selection of specific widgets, as well as configuration of the sort order.
 * Added input type selection for data entry, available: free text, dropdown selection and checkbox. (in Developer tab)
