@@ -2,7 +2,7 @@
 /*
 Name: Admin Tools
 Feature ID: 1
-Minimum Core Version: 1.31.0
+Minimum Core Version: 1.32.0
 Version: 3.5.0
 Description: Tools for developing themes and extensions for WP-Property.
 Class: class_admin_tools
@@ -250,8 +250,6 @@ class class_admin_tools {
         var wrapper = jQuery(setter_element).closest("ul");
         var setting = jQuery(setter_element).val();
         var value_field = jQuery("textarea.wpp_attribute_pre_defined_values", wrapper);
-
-        console.log(setting);
 
         switch (setting) {
 

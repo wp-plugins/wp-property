@@ -89,14 +89,22 @@
 
     // Check plugin updates
     jQuery("#wpp_ajax_check_plugin_updates").click(function() {
-
       jQuery('.plugin_status').remove();
-
       jQuery.post(ajaxurl, {
           action: 'wpp_ajax_check_plugin_updates'
-          }, function(data) {
-
+        }, function(data) {
           message = "<div class='plugin_status updated fade'><p>" + data + "</p></div>";
+          jQuery(message).insertAfter("h2");
+        });
+    });
+
+    /** Clear Cache */
+    jQuery("#wpp_clear_cache").click(function() {
+      jQuery('.clear_cache_status').remove();
+      jQuery.post(ajaxurl, {
+          action: 'wpp_ajax_clear_cache'
+        }, function(data) {
+          message = "<div class='clear_cache_status updated fade'><p>" + data + "</p></div>";
           jQuery(message).insertAfter("h2");
         });
     });
@@ -181,21 +189,16 @@
 
     });
 
-    // Show property query
+    /** Show property query */
     jQuery("#wpp_check_premium_updates").click(function() {
-
       jQuery("#wpp_plugins_ajax_response").hide();
-
       jQuery.post(ajaxurl, {
-          action: 'wpp_ajax_check_plugin_updates'
+           action: 'wpp_ajax_check_plugin_updates'
          }, function(data) {
-          jQuery("#wpp_plugins_ajax_response").show();
-          jQuery("#wpp_plugins_ajax_response").html(data);
-
+           jQuery("#wpp_plugins_ajax_response").show();
+           jQuery("#wpp_plugins_ajax_response").html(data);
         });
-
     });
-
 
   });
 
@@ -499,7 +502,6 @@
       <td>
         <p><?php _e('These are the settings for the [property_overview] shortcode.  The shortcode displays a list of all building / root properties.<br /> The display settings may be edited further by customizing the <b>wp-content/plugins/wp-properties/templates/property.php</b> file.  To avoid losing your changes during updates, create a <b>property.php</b> file in your template directory, which will be automatically loaded.','wpp') ?>
         <ul>
-          <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][display_slideshow]&label=" .__('Display larger image, or slideshow, at the top of the property listing.','wpp'), $wp_properties['configuration']['property_overview']['display_slideshow']); ?></li>
           <li><?php echo WPP_UD_UI::checkbox("name=wpp_settings[configuration][property_overview][sort_stats_by_groups]&label=" .__('Sort property stats by groups.','wpp'), $wp_properties['configuration']['property_overview']['sort_stats_by_groups']); ?></li>
           <?php do_action('wpp_settings_page_property_page');?>
         </ul>
@@ -723,6 +725,10 @@
         <pre id="wpp_show_settings_array_result" class="wpp_class_pre hidden"><?php print_r($wp_properties); ?></pre>
       </div>
 
+      <div class="wpp_settings_block">
+        <?php _e('Clear WPP Cache. Some shortcodes and widgets use cache, so the good practice is clear it after widget, shortcode changes.','wpp') ?>
+        <input type="button" value="<?php _e('Clear Cache','wpp') ?>" id="wpp_clear_cache">
+      </div>
 
       <div class="wpp_settings_block">
         <?php _e("Restore Backup of WP-Property Configuration", 'wpp'); ?>: <input name="wpp_settings[settings_from_backup]" type="file" />

@@ -107,6 +107,7 @@ class WPP_Core {
     add_action('wp_ajax_wpp_ajax_property_query', create_function("",' $class = WPP_F::get_property(trim($_REQUEST["property_id"])); if($class) { echo "WPP_F::get_property() output: \n\n"; print_r($class); echo "\nAfter prepare_property_for_display() filter:\n\n"; print_r(prepare_property_for_display($class));  } else { echo __("No property found.","wpp"); } die();'));
     add_action('wp_ajax_wpp_ajax_image_query', create_function("",' $class = WPP_F::get_property_image_data($_REQUEST["image_id"]); if($class)  print_r($class); else echo __("No image found.","wpp"); die();'));
     add_action('wp_ajax_wpp_ajax_check_plugin_updates', create_function("",'  echo WPP_F::check_plugin_updates(); die();'));
+    add_action('wp_ajax_wpp_ajax_clear_cache', create_function("",'  echo WPP_F::clear_cache(); die();'));
     add_action('wp_ajax_wpp_ajax_revalidate_all_addresses', create_function("",'  echo WPP_F::revalidate_all_addresses(); die();'));
     add_action('wp_ajax_wpp_ajax_list_table', create_function("", ' die(WPP_F::list_table());'));
     
@@ -494,9 +495,17 @@ class WPP_Core {
 
     //** If we are displaying search results, we can assume this is the default property page */
     if(is_array($_REQUEST['wpp_search'])) {
+
+      if(isset($_POST['wpp_search'])) {
+        $query = '?' . http_build_query(array('wpp_search' => $_REQUEST['wpp_search']));
+        wp_redirect(UD_F::base_url($wp_properties['configuration']['base_slug']) . $query);
+        die();
+      }
+      
       $wp_query->wpp_root_property_page = true;
       $wp_query->wpp_search_page = true;
     }
+    
     //** Determine if this is the Default Property Page */
 
     if($wp->request == $wp_properties['configuration']['base_slug']) {
@@ -1367,6 +1376,7 @@ class WPP_Core {
       $defaults['detail_button'] = false;
       $defaults['stats'] = '';
       $defaults['class'] = 'wpp_property_overview_shortcode';
+      $defaults['in_new_window'] = false;
 
       $defaults = apply_filters('shortcode_property_overview_allowed_args', $defaults, $atts);
 
@@ -1503,6 +1513,7 @@ class WPP_Core {
       $show_children = $wpp_query['show_children'];
       $class = $wpp_query['class'];
       $stats = $wpp_query['stats'];
+      $in_new_window = (!empty($wpp_query['in_new_window']) ? " target=\"_blank\" " : "");
 
       //** Make query_vars available to emulate WP template loading */
       extract($wp_query->query_vars, EXTR_SKIP);

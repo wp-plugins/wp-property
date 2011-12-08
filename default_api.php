@@ -653,8 +653,8 @@
    * Modifies $wp_properties['property_inheritance'] in WPP_F::settings_action(), overriding database settings
    *
    * @since 1.0
-    * @param array $property_inheritance
-    * @return array $property_inheritance
+   * @param array $property_inheritance
+   * @return array $property_inheritance
    */
   function add_city_to_inheritance($property_inheritance) {
 
@@ -666,16 +666,21 @@
   /**
    * Adds city to searchable
    *
-    * Modifies $wp_properties['searchable_attributes'] in WPP_F::settings_action(), overriding database settings
-    *
+   * Modifies $wp_properties['searchable_attributes'] in WPP_F::settings_action(), overriding database settings
+   *
    * @since 1.0
-    * @param string $area
-    * @return string $area
+   * @param string $area
+   * @return string $area
    */
   function add_city_to_searchable($array) {
 
-    if(is_array($array) && !in_array('city', $array)) {
-      array_push($array, 'city');
+    global $wp_properties;
+
+    /** Determine if property attribute 'city' already exists, we don't need to set searchable here */
+    if(empty($wp_properties['property_stats'])) {
+      if(is_array($array) && !in_array('city', $array)) {
+        array_push($array, 'city');
+      }
     }
 
     return $array;

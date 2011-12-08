@@ -163,6 +163,7 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 = 1.31.1 = 
 * "Area" attribute will only be appended with " sq ft." if it is set as numeric in the Developer tab.
+
 = 1.24.0 =
 * Changed property export function to export in JSON format.
 
@@ -212,6 +213,16 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.33.0 = 
+* Update to detect plugin name so can be placed into different folder.
+* Added $_POST to $_GET conversion for search results.
+* Added new arument "in_new_window" (value:true|false) to [property_overview] shortcode.
+* Added 'Clear Cache' functionality. See Settings page, Tab "Help".
+* Removed depreciated setting "Display larger image, or slideshow, at the top of the property listing." which is not used anymore.
+* Bug fix with property type viewing in "Latest properties" and "featured properties" widgets.
+* Bug fix with property's attribute "city". Now "Searchable" can be manually set for it.
+* Other minor fixes.
 
 = 1.32.1 = 
 * Featured Properties widget restoration.

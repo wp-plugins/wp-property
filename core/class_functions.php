@@ -245,8 +245,8 @@ class WPP_F {
     //** Cannot use quotes */
     $text = str_replace('"', '-', $text);
 
-    add_filter('wp_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
-    add_filter('admin_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">console.log("\' . $echo_text . \'")</script>\'; '));
+    add_filter('wp_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">if(typeof console == "object"){console.log("\' . $echo_text . \'");}</script>\'; '));
+    add_filter('admin_footer', create_function('$nothing,$echo_text = "'. $text .'"', 'echo \'<script type="text/javascript">if(typeof console == "object"){console.log("\' . $echo_text . \'");}</script>\'; '));
 
   }
 
@@ -1871,7 +1871,21 @@ class WPP_F {
 
   }
 
-
+  /**
+   * Removes all WPP cache files
+   * 
+   * @return string Response
+   * @version 0.1
+   * @since 1.32.2
+   * @author Maxim Peshkov
+   */
+  function clear_cache() {
+    $cache_dir = WPP_Path . '/cache/';
+    if(file_exists($cache_dir)) {
+      wpp_recursive_unlink($cache_dir);
+    }
+    return __('Cache was successfully cleared','wpp');
+  }
 
   /**
    * Checks for updates against TwinCitiesTech.com Server
@@ -4679,4 +4693,32 @@ if(!function_exists('array_fill_keys')){
 
   }
 
+}
+
+/**
+ * Delete a file or recursively delete a directory
+ *
+ * @param string $str Path to file or directory
+ * @param boolean $flag If false, doesn't remove root directory
+ * @version 0.1
+ * @since 1.32.2
+ * @author Maxim Peshkov
+ */
+if(!function_exists('wpp_recursive_unlink')){
+  function wpp_recursive_unlink($str, $flag = false){
+    if(is_file($str)){
+      return @unlink($str);
+    }
+    elseif(is_dir($str)){
+      $scan = glob(rtrim($str,'/').'/*');
+      foreach($scan as $index=>$path){
+        wpp_recursive_unlink($path, true);
+      }
+      if($flag) {
+        return @rmdir($str);
+      } else {
+        return true;
+      }
+    }
+  }
 }

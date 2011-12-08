@@ -39,9 +39,9 @@
 
             <ul class="wpp_overview_data">
                 <li class="property_title">
-                    <a href="<?php echo $property['permalink']; ?>"><?php echo $property['post_title']; ?></a>
+                    <a <?php echo $in_new_window; ?> href="<?php echo $property['permalink']; ?>"><?php echo $property['post_title']; ?></a>
                     <?php if($property['is_child']): ?>
-                        of <a href='<?php echo $property['parent_link']; ?>'><?php echo $property['parent_title']; ?></a>
+                        of <a <?php echo $in_new_window; ?> href='<?php echo $property['parent_link']; ?>'><?php echo $property['parent_title']; ?></a>
                     <?php endif; ?>
                 </li>
 
@@ -66,7 +66,7 @@
             <?php if($property['price']): ?>
                 <li class="property_price"><?php echo $property['price']; ?></li>
             <?php endif; ?>
-
+            
             <?php if($show_children && $property['children']): ?>
             <li class="child_properties">
                 <div class="wpd_floorplans_title"><?php echo $child_properties_title; ?></div>
@@ -80,9 +80,9 @@
                 </table>
             </li>
             <?php endif; ?>
-
+            
             <?php if(!empty($wpp_query['detail_button'])) : ?>
-            <li><a class="button" href="<?php echo $property['permalink']; ?>"><?php echo $wpp_query['detail_button'] ?></a></li>
+            <li><a <?php echo $in_new_window; ?> class="button" href="<?php echo $property['permalink']; ?>"><?php echo $wpp_query['detail_button'] ?></a></li>
             <?php endif; ?>
        </ul>
 

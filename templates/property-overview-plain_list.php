@@ -24,7 +24,7 @@ if($properties): ?>
     <?php if($show_children && $property['children']): ?>
         <ul class="child_properties">
             <?php foreach($property['children'] as $child): ?>
-            <li><a href="<?php echo $child['permalink']; ?>"><?php echo $child['post_title']; ?></a></li>
+            <li><a <?php echo $in_new_window; ?> href="<?php echo $child['permalink']; ?>"><?php echo $child['post_title']; ?></a></li>
             <?php endforeach; ?>
         </ul>
     <?php endif; ?>

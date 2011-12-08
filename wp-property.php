@@ -4,7 +4,7 @@ Plugin Name: WP-Property
 Plugin URI: http://twincitiestech.com/plugins/wp-property/
 Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
 Author: Usability Dynamics, Inc.
-Version: 1.32.0
+Version: 1.33.0
 Author URI: http://usabilitydynamics.com
 
 Copyright 2011  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.com)
@@ -27,19 +27,22 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** This Version  */
-define('WPP_Version', '1.32.1');
+define('WPP_Version', '1.33.0');
+
+/** Get Directory - not always wp-property */
+define('WPP_Directory', dirname(plugin_basename( __FILE__ )));
 
 /** Path for Includes */
-define('WPP_Path', WP_PLUGIN_DIR . '/wp-property');
+define('WPP_Path', WP_PLUGIN_DIR . '/' . WPP_Directory);
 
 /** Path for front-end links */
-define('WPP_URL', WP_PLUGIN_URL . '/wp-property');
+define('WPP_URL', WP_PLUGIN_URL . '/' . WPP_Directory);
 
 /** Directory path for includes of template files  */
-define('WPP_Templates', WP_PLUGIN_DIR . '/wp-property/templates');
+define('WPP_Templates', WPP_Path . '/templates');
 
 /** Directory path for includes of template files  */
-define('WPP_Premium', WP_PLUGIN_DIR . '/wp-property/core/premium');
+define('WPP_Premium', WPP_Path . '/core/premium');
 
 /** Sets prefix for UD_UI and UD_F classes and their functions */
 define('UD_UI_PREFIX', 'wpp_');

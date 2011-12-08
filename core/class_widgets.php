@@ -632,278 +632,287 @@ jQuery(document).ready(function($){
 }
 
 /**
- Lookup Widget
+ * Lookup Widget
  */
- class FeaturedPropertiesWidget extends WP_Widget {
-    /** constructor */
-    function FeaturedPropertiesWidget() {
-        parent::WP_Widget(false, $name =  sprintf(__('Featured %1s','wpp'), WPP_F::property_label('plural')), array('description' => __('List of properties that were marked as Featured', 'wpp')));
+class FeaturedPropertiesWidget extends WP_Widget {
+  /** 
+   * constructor 
+   */
+  function FeaturedPropertiesWidget() {
+    parent::WP_Widget(false, $name =  sprintf(__('Featured %1s','wpp'), WPP_F::property_label('plural')), array('description' => __('List of properties that were marked as Featured', 'wpp')));
+  }
+  
+  /** 
+   * @see WP_Widget::widget
+   *  
+   */
+  function widget($args, $instance) {
+    global  $wp_properties;
+    extract( $args );
+    $title = apply_filters('widget_title', $instance['title']);
+    $instance = apply_filters('FeaturedPropertiesWidget', $instance);
+    $show_title = $instance['show_title'];
+    $image_type = $instance['image_type'];
+    $amount_items = $instance['amount_items'];
+    $stats = $instance['stats'];
+    $address_format = $instance['address_format'];
+    $hide_image = $instance['hide_image'];
+    $amount_items = $instance['amount_items'];
+    $property_stats = $wp_properties['property_stats'];
+    
+    if(empty($address_format)) {
+      $address_format = "[street_number] [street_name], [city], [state]";
+    }
+    if(!$image_type) {
+      $image_type = '';
+    }
+    
+    if(!isset($property_stats['property_type'])) {
+      $property_stats['property_type'] = __('Property Type', 'wpp');
     }
 
-    /** @see WP_Widget::widget */
-    function widget($args, $instance) {
-      global  $wp_properties;
-      extract( $args );
-      $title       = apply_filters('widget_title', $instance['title']);
-      $instance = apply_filters('FeaturedPropertiesWidget', $instance);
-      $show_title   = $instance['show_title'];
-      $image_type   = $instance['image_type'];
-      $amount_items  = $instance['amount_items'];
-      $stats       = $instance['stats'];
-      $address_format = $instance['address_format'];
-      $hide_image   = $instance['hide_image'];
-      $amount_items  = $instance['amount_items'];
-      if(empty($address_format))
-          $address_format = "[street_number] [street_name], [city], [state]";
+    $all_featured = WPP_F::get_properties("featured=true&property_type=all&pagi=0--$amount_items");
 
-      if(!$image_type) {
-          $image_type == '';
-      }
-
-      $all_featured = WPP_F::get_properties("featured=true&property_type=all&pagi=0--$amount_items");
-
-      // Bail out if no children
-      if(!$all_featured) {
+    /** Bail out if no children */
+    if(!$all_featured) {
       return;
-      }
+    }
 
-      //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
-      /*
-        Removed since this will cause problems with jQuery Tabs in Denali.
-        $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
-      */
+    //** The current widget can be used on the page twice. So ID of the current DOM element (widget) has to be unique */
+    /*
+    //Removed since this will cause problems with jQuery Tabs in Denali.
+    $before_widget = preg_replace('/id="([^\s]*)"/', 'id="$1_'.rand().'"', $before_widget);
+    //*/
 
     echo $before_widget;
     echo "<div class='wpp_featured_properties_widget'>";
 
-
-      if ( $title )
-          echo $before_title . $title . $after_title;
-
+    if ( $title ) {
+      echo $before_title . $title . $after_title;
+    }
 
     $count = 0;
 
-      foreach($all_featured as $featured):
-
-
-
-      if($amount_items == $count)
+    foreach($all_featured as $featured) {
+      if($amount_items == $count) {
         continue;
-
+      }
       $count++;
+      $this_property = WPP_F::get_property($featured, 'return_object=true');
+      $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+      ?>
+      <div class="property_widget_block  clearfix"  style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?> min-height: <?php echo $image['height']; ?>px;">
+      <?php if ($hide_image !=='on' && !empty($image)){ ?>
+        <a class="sidebar_property_thumbnail" href="<?php echo $this_property->permalink; ?>"><img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" /></a>
+      <?php } ?>
 
-            $this_property = WPP_F::get_property($featured, 'return_object=true');
-            $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+      <?php if ($show_title == 'on'): ?>
+        <p class="title"><a href="<?php echo $this_property->permalink; ?>"><?php echo $this_property->post_title; ?></a></p>
+      <?php endif; ?>
+
+      <ul class="wpp_widget_attribute_list">
+        <?php if(is_array($stats)): ?>
+          <?php foreach($stats as $stat):
+            $pstat = $stat;
+            /** Determine if stat is property_type we switch it to property_type_label */
+            if($pstat == 'property_type') {
+              $pstat = 'property_type_label';
+            }
+            $content = nl2br(apply_filters("wpp_stat_filter_{$pstat}", $this_property->$pstat));
+            if(empty($content)) {
+              continue;
+            }
             ?>
-            <div class="property_widget_block  clearfix"  style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?> min-height: <?php echo $image['height']; ?>px;">
-
-        <?php if ($hide_image !=='on'){ ?>
-                <a class="sidebar_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
-                    <?php if(!empty($image)){ ?>
-                        <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['link'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
-                    <?php } ?>
-                </a>
-
-        <?php } ?>
-
-
-        <?php if ($show_title == 'on'): ?>
-                <p class="title"><a href="<?php echo $this_property->permalink; ?>"><?php echo $this_property->post_title; ?></a></p>
+            <li class="<?php echo $stat ?>"><span class='attribute'><?php echo $property_stats[$stat]; ?>:</span>  <span class='value'><?php echo $content;  ?></span></li>
+          <?php endforeach; ?>
         <?php endif; ?>
-
-                <ul class="wpp_widget_attribute_list">
-                <?php if(is_array($stats)): ?>
-                <?php foreach($stats as $stat):
-                    $content = nl2br(apply_filters("wpp_stat_filter_{$stat}", $this_property->$stat));
-
-                    if(empty($content)) continue; ?>
-
-                    <li class="<?php echo $stat ?>"><span class='attribute'><?php echo $wp_properties['property_stats'][$stat]; ?>:</span>  <span class='value'><?php echo $content;  ?></span></li>
-                <?php endforeach; ?>
-                <?php endif; ?>
-                </ul>
-                <?php if ($instance['enable_more'] =='on')
-                  echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>'; ?>
-           </div>
-            <?php
-                unset($this_property);
-        endforeach;
-        if ($instance['enable_view_all'] =='on')
-            echo '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
-        echo '</div>';
-        echo $after_widget;
-
+      </ul>
+      <?php if ($instance['enable_more'] =='on') : ?>
+        <p class="more"><a href="<?php echo $this_property->permalink; ?>"><?php _e('More','wpp'); ?></a></p>
+      <?php endif; ?>
+      </div>
+      <?php
+      unset($this_property);
     }
-
-    /** @see WP_Widget::update */
-    function update($new_instance, $old_instance) {
-        return $new_instance;
+    if ($instance['enable_view_all'] =='on') {
+      echo '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
     }
+    echo '</div>';
+    echo $after_widget;
+  }
 
-    /** @see WP_Widget::form */
-    function form($instance) {
+  /** 
+   * @see WP_Widget::update 
+   */
+  function update($new_instance, $old_instance) {
+    return $new_instance;
+  }
 
-        global $wp_properties;
-        $title         = esc_attr($instance['title']);
-        $image_type     = esc_attr($instance['image_type']);
-        $amount_items     = esc_attr($instance['amount_items']);
-        $property_stats   = $instance['stats'];
-        $show_title      = $instance['show_title'];
-        $hide_image      = $instance['hide_image'];
-        $address_format   = esc_attr($instance['address_format']);
-        $enable_more     = $instance['enable_more'];
-        $enable_view_all   = $instance['enable_view_all'];
+  /** 
+   * @see WP_Widget::form 
+   */
+  function form($instance) {
+    global $wp_properties;
+    $title = esc_attr($instance['title']);
+    $image_type = esc_attr($instance['image_type']);
+    $amount_items = esc_attr($instance['amount_items']);
+    $instance_stats = $instance['stats'];
+    $show_title = $instance['show_title'];
+    $hide_image = $instance['hide_image'];
+    $address_format = esc_attr($instance['address_format']);
+    $enable_more = $instance['enable_more'];
+    $enable_view_all = $instance['enable_view_all'];
+    $property_stats = $wp_properties['property_stats'];
 
-
-
-        if(empty($address_format))
-            $address_format = "[street_number] [street_name],[city], [state]";
-
-          ?>
-<script type="text/javascript">
-//hide and show dropdown whith thumb settings
-jQuery(document).ready(function($){
-  $('input.check_me_featured').change(function(){
-    if($(this).attr('checked') !== true){
-      $('p#choose_thumb_featured').css('display','block');
-    }else{
-      $('p#choose_thumb_featured').css('display','none');
+    if(empty($address_format)) {
+      $address_format = "[street_number] [street_name],[city], [state]";
     }
-  })
-});
-</script>
-             <p>
-                <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
-                <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
-                </label>
-            </p>
-
-
-            <p>
-                <label for="<?php echo $this->get_field_id('hide_image'); ?>">
-                    <input id="<?php echo $this->get_field_id('hide_image'); ?>" class="check_me_featured" name="<?php echo $this->get_field_name('hide_image'); ?>" type="checkbox" value="on" <?php if($hide_image=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Hide Images?','wpp'); ?>
-                </label>
-            </p>
-             <p id="choose_thumb_featured" <?php
-             if($hide_image !== 'on')
-               echo 'style="display:block;"';
-             else
-               echo 'style="display:none;"';
-             ?>>
-                <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Image Size:','wpp'); ?>
-                <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
-            </label>
-
-            <p>
-            <label for="<?php echo $this->get_field_id('amount_items'); ?>"><?php _e('Listings to display?', 'wpp'); ?>
-                    <input style="width:30px" id="<?php echo $this->get_field_id('amount_items'); ?>" name="<?php echo $this->get_field_name('amount_items'); ?>" type="text" value="<?php echo (empty($amount_items)) ? 5 : $amount_items; ?>" />
-                </label>
-            </p>
-
-            <p><?php _e('Select the stats you want to display','wpp') ?></p>
-
-                  <p>
-                <label for="<?php echo $this->get_field_id('show_title'); ?>">
-                    <input id="<?php echo $this->get_field_id('show_title'); ?>" name="<?php echo $this->get_field_name('show_title'); ?>" type="checkbox" value="on" <?php if($show_title=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Title','wpp'); ?>
-                </label>
-            </p>
-
-
-                <?php foreach($wp_properties['property_stats'] as $stat => $label): ?>
-                    <label for="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>">
-                    <input id="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>" name="<?php echo $this->get_field_name('stats'); ?>[]" type="checkbox" value="<?php echo $stat; ?>"
-                    <?php if(is_array($property_stats) && in_array($stat, $property_stats)) echo " checked "; ?>">
-
-                        <?php echo $label;?>
-                    </label><br />
-                <?php endforeach; ?>
-            <p>
-                <label for="<?php echo $this->get_field_id('address_format'); ?>"><?php _e('Address Format:','wpp'); ?>
-                <textarea style="width: 100%" id="<?php echo $this->get_field_id('address_format'); ?>" name="<?php echo $this->get_field_name('address_format'); ?>"><?php echo $address_format; ?></textarea>
-                </label>
-            </p>
-
-            <p>
-                <label for="<?php echo $this->get_field_id('enable_more'); ?>">
-                    <input id="<?php echo $this->get_field_id('enable_more'); ?>" name="<?php echo $this->get_field_name('enable_more'); ?>" type="checkbox" value="on" <?php if($enable_more=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Show "More" link?','wpp'); ?>
-                </label>
-            </p>
-
-            <p>
-                <label for="<?php echo $this->get_field_id('enable_view_all'); ?>">
-                    <input id="<?php echo $this->get_field_id('enable_view_all'); ?>" name="<?php echo $this->get_field_name('enable_view_all'); ?>" type="checkbox" value="on" <?php if($enable_view_all=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Show "View All" link?','wpp'); ?>
-                </label>
-            </p>
-
-         <?php
+    
+    if(!isset($property_stats['property_type'])) {
+      $property_stats['property_type'] = __('Property Type', 'wpp');
     }
+    ?>
+    <script type="text/javascript">
+      //hide and show dropdown whith thumb settings
+      jQuery(document).ready(function($){
+        jQuery('input.check_me_featured').change(function(){
+          if(jQuery(this).attr('checked') !== true){
+            jQuery('p#choose_thumb_featured').css('display','block');
+          }else{
+            jQuery('p#choose_thumb_featured').css('display','none');
+          }
+        });
+      });
+    </script>
+    <p>
+      <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
+        <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo $title; ?>" />
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('hide_image'); ?>">
+        <input id="<?php echo $this->get_field_id('hide_image'); ?>" class="check_me_featured" name="<?php echo $this->get_field_name('hide_image'); ?>" type="checkbox" value="on" <?php if($hide_image=='on') echo " checked='checked';"; ?> />
+        <?php _e('Hide Images?','wpp'); ?>
+      </label>
+    </p>
+    <p id="choose_thumb_featured" <?php echo ($hide_image !== 'on' ? 'style="display:block;"' : 'style="display:none;"'); ?>>
+      <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Image Size:','wpp'); ?>
+        <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('amount_items'); ?>"><?php _e('Listings to display?', 'wpp'); ?>
+        <input style="width:30px" id="<?php echo $this->get_field_id('amount_items'); ?>" name="<?php echo $this->get_field_name('amount_items'); ?>" type="text" value="<?php echo (empty($amount_items)) ? 5 : $amount_items; ?>" />
+      </label>
+    </p>
+    <p><?php _e('Select the stats you want to display','wpp') ?></p>
+    <p>
+      <label for="<?php echo $this->get_field_id('show_title'); ?>">
+        <input id="<?php echo $this->get_field_id('show_title'); ?>" name="<?php echo $this->get_field_name('show_title'); ?>" type="checkbox" value="on" <?php if($show_title=='on') echo " checked='checked';"; ?> />
+        <?php _e('Title','wpp'); ?>
+      </label>
+    <?php foreach($property_stats as $stat => $label): ?>
+      <br/>
+      <label for="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>">
+        <input id="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>" name="<?php echo $this->get_field_name('stats'); ?>[]" type="checkbox" value="<?php echo $stat; ?>"
+        <?php if(is_array($instance_stats) && in_array($stat, $instance_stats)) echo " checked "; ?>">
+        <?php echo $label;?>
+      </label>
+    <?php endforeach; ?>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('address_format'); ?>"><?php _e('Address Format:','wpp'); ?>
+        <textarea style="width: 100%" id="<?php echo $this->get_field_id('address_format'); ?>" name="<?php echo $this->get_field_name('address_format'); ?>"><?php echo $address_format; ?></textarea>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('enable_more'); ?>">
+        <input id="<?php echo $this->get_field_id('enable_more'); ?>" name="<?php echo $this->get_field_name('enable_more'); ?>" type="checkbox" value="on" <?php if($enable_more=='on') echo " checked='checked';"; ?> />
+        <?php _e('Show "More" link?','wpp'); ?>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('enable_view_all'); ?>">
+        <input id="<?php echo $this->get_field_id('enable_view_all'); ?>" name="<?php echo $this->get_field_name('enable_view_all'); ?>" type="checkbox" value="on" <?php if($enable_view_all=='on') echo " checked='checked';"; ?> />
+        <?php _e('Show "View All" link?','wpp'); ?>
+      </label>
+    </p>
+    <?php
+  }
 
 }
-
-// Default function to use in template directly
-function wpp_featured_properties($args = false, $custom = false){
-    if (!$args)
-        $args = array(
-            'before_title' => '<h3>',
-            'after_title' => '</h3>',
-            'before_widget' => '',
-            'after_widget' => ''
-        );
-
-    $default = array(
-        'title'         => __('Featured Properies','wpp'),
-        'image_type'    => 'thumbnail',
-        'stats'         => array('bedrooms','location', 'price'),
-        'address_format'=> '[street_number] [street_name], [city], [state]'
-    );
-    if($custom)
-        $default = array_merge($default, $custom);
-
-    FeaturedPropertiesWidget::widget($args, $default);
-}
-
-
 
 /**
- Latest properties Widget
+ * Default function to use in template directly
+ * 
+ * @param $args
+ * @param $custom
  */
+function wpp_featured_properties($args = false, $custom = false){
+  if (!$args) {
+    $args = array(
+      'before_title' => '<h3>',
+      'after_title' => '</h3>',
+      'before_widget' => '',
+      'after_widget' => ''
+    );
+  }
+  $default = array(
+    'title'         => __('Featured Properies','wpp'),
+    'image_type'    => 'thumbnail',
+    'stats'         => array('bedrooms','location', 'price'),
+    'address_format'=> '[street_number] [street_name], [city], [state]'
+  );
+  if($custom) {
+    $default = array_merge($default, $custom);
+  }
+  FeaturedPropertiesWidget::widget($args, $default);
+}
 
- class LatestPropertiesWidget extends WP_Widget {
-    /** constructor */
-    function LatestPropertiesWidget() {
-        parent::WP_Widget(false, $name =  sprintf(__('Latest %1s','wpp'), WPP_F::property_label('plural')), array('description' => __('List of the latest properties created on this site', 'wpp')));
+/**
+ * Latest properties Widget
+ */
+class LatestPropertiesWidget extends WP_Widget {
+  /** 
+   * constructor 
+   */
+  function LatestPropertiesWidget() {
+    parent::WP_Widget(false, $name =  sprintf(__('Latest %1s','wpp'), WPP_F::property_label('plural')), array('description' => __('List of the latest properties created on this site', 'wpp')));
+  }
+
+  /** 
+   * @see WP_Widget::widget 
+   */
+  function widget($args, $instance) {
+    global $wp_properties;
+
+    extract( $args );
+
+    $title = apply_filters('widget_title', $instance['title']);
+    $instance = apply_filters('LatestPropertiesWidget', $instance);
+    $stats = $instance['stats'];
+    $image_type = $instance['image_type'];
+    $hide_image = $instance['hide_image'];
+    $show_title = $instance['show_title'];
+    $address_format = $instance['address_format'];
+    $property_stats = $wp_properties['property_stats'];
+
+    if(!$image_type) {
+      $image_type == '';
     }
 
-    /** @see WP_Widget::widget */
-    function widget($args, $instance) {
-      global $wp_properties;
+    if(!isset($property_stats['property_type'])) {
+      $property_stats['property_type'] = __('Property Type', 'wpp');
+    }
 
-      extract( $args );
-
-      $title       = apply_filters('widget_title', $instance['title']);
-      $instance = apply_filters('LatestPropertiesWidget', $instance);
-      $stats       = $instance['stats'];
-      $image_type    = $instance['image_type'];
-      $hide_image   = $instance['hide_image'];
-      $show_title   = $instance['show_title'];
-      $address_format = $instance['address_format'];
-
-      if(!$image_type) {
-        $image_type == '';
-      }
-
-      $arg = array(
-        'post_type'      => 'property',
-        'numberposts'    => $instance['amount_items'],
-        'post_status'    => 'publish',
-        'post_parent'    => null, // any parent
-        'order'        => 'DESC',
-        'orderby'      => 'post_date'
-      );
+    $arg = array(
+      'post_type' => 'property',
+      'numberposts' => $instance['amount_items'],
+      'post_status' => 'publish',
+      'post_parent' => null, // any parent
+      'order' => 'DESC',
+      'orderby' => 'post_date'
+    );
 
     $postslist = get_posts($arg);
 
@@ -914,24 +923,19 @@ function wpp_featured_properties($args = false, $custom = false){
       echo $before_title . $title . $after_title;
     }
 
-
-     foreach ($postslist as $post) {
-       $this_property = WPP_F::get_property($post->ID, 'return_object=true');
-       $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
-
-          ?>
-
-       <div class="property_widget_block latest_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>">
-
-       <?php if ($hide_image !=='on'){ ?>
-          <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
-            <?php if(!empty($image)){ ?>
-            <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['url'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
-            <?php } ?>
-          </a>
-        <?php
-        }
-
+    foreach ($postslist as $post) {
+      $this_property = WPP_F::get_property($post->ID, 'return_object=true');
+      $image = wpp_get_image_link($this_property->featured_image, $image_type, array('return'=>'array'));
+      ?>
+      <div class="property_widget_block latest_entry clearfix" style="<?php echo ($image['width'] ? 'width: ' . ($image['width']+5) . 'px;' : ''); ?>">
+      <?php if ($hide_image !=='on'){ ?>
+        <a class="sidebar_property_thumbnail latest_property_thumbnail"  href="<?php echo $this_property->permalink; ?>">
+          <?php if(!empty($image)){ ?>
+          <img width="<?php echo $image['width']; ?>" height="<?php echo $image['height']; ?>" src="<?php echo $image['url'];?>" alt="<?php echo sprintf(__('%s at %s for %s','wpp'), $this_property->post_title, $this_property->location, $this_property->price); ?>" />
+          <?php } ?>
+        </a>
+      <?php
+      }
       if ($show_title == 'on'){
         echo '<p class="title"><a href="'. $this_property->permalink.'">'. $post->post_title .'</a></p>';
       }
@@ -939,134 +943,137 @@ function wpp_featured_properties($args = false, $custom = false){
       echo '<ul class="wpp_widget_attribute_list">';
       if(is_array($stats)){
        foreach($stats as $stat){
-        $content = nl2br(apply_filters("wpp_stat_filter_{$stat}", $this_property->$stat));
-        if(empty($content)) continue;
-        echo '<li class="'. $stat .'"><span class="attribute">'. $wp_properties['property_stats'][$stat] .':</span> <span class="value">'. $content .'</span></li>';
+         $pstat = $stat;
+         /** Determine if stat is property_type we switch it to property_type_label */
+         if($pstat == 'property_type') {
+           $pstat = 'property_type_label';
+         }
+         $content = nl2br(apply_filters("wpp_stat_filter_{$pstat}", $this_property->$pstat));
+         if(empty($content)) { 
+           continue;
+         }
+         echo '<li class="'. $stat .'"><span class="attribute">'. $property_stats[$stat] .':</span> <span class="value">'. $content .'</span></li>';
+       }
       }
-      }
-     echo '</ul>';
+      echo '</ul>';
 
-     if ($instance['enable_more'] =='on') {
-      echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>';
+      if ($instance['enable_more'] =='on') {
+        echo '<p class="more"><a href="'. $this_property->permalink.'">'.__('More','wpp').'</a></p>';
       }
       ?>
-           </div>
+      </div>
       <?php
-                unset($this_property);
+      unset($this_property);
+    }
 
-        }
-        if ($instance['enable_view_all'] =='on')
-            echo '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
-        echo '</div>';
+    if ($instance['enable_view_all'] =='on') {
+      echo '<p class="view-all"><a href="'. site_url() .'/'. $wp_properties['configuration']['base_slug'] .'">'.__('View All','wpp').'</a></p>';
+    }
+    echo '</div>';
     echo $after_widget;
+  }
+
+  /** 
+   * @see WP_Widget::update 
+   */
+  function update($new_instance, $old_instance) {
+    return $new_instance;
+  }
+
+  /** 
+   * @see WP_Widget::form 
+   */
+  function form($instance) {
+    global $wp_properties;
+
+    $title = esc_attr($instance['title']);
+    $amount_items = esc_attr($instance['amount_items']);
+    $address_format = esc_attr($instance['address_format']);
+    $instance_stats = $instance['stats'];
+    $image_type = esc_attr($instance['image_type']);
+    $hide_image = $instance['hide_image'];
+    $show_title = $instance['show_title'];
+    $enable_more = $instance['enable_more'];
+    $enable_view_all = $instance['enable_view_all'];
+    $property_stats = $wp_properties['property_stats'];
+
+    if(empty($address_format)) {
+      $address_format = "[street_number] [street_name],[city], [state]";
     }
-
-
-    /** @see WP_Widget::update */
-    function update($new_instance, $old_instance) {
-        return $new_instance;
+    
+    if(!isset($property_stats['property_type'])) {
+      $property_stats['property_type'] = __('Property Type', 'wpp');
     }
-
-     /** @see WP_Widget::form */
-    function form($instance) {
-
-        global $wp_properties;
-
-        $title         = esc_attr($instance['title']);
-        $amount_items     = esc_attr($instance['amount_items']);
-        $address_format   = esc_attr($instance['address_format']);
-        $property_stats   = $instance['stats'];
-        $image_type     = esc_attr($instance['image_type']);
-        $hide_image      = $instance['hide_image'];
-        $show_title      = $instance['show_title'];
-        $enable_more     = $instance['enable_more'];
-        $enable_view_all   = $instance['enable_view_all'];
-
-        if(empty($address_format)) {
-          $address_format = "[street_number] [street_name],[city], [state]";
-        }
-?>
-<script type="text/javascript">
-//hide and show dropdown whith thumb settings
-jQuery(document).ready(function($){
-  $('input.check_me').change(function(){
-    if($(this).attr('checked') !== true){
-      $('p#choose_thumb').css('display','block');
-    }else{
-      $('p#choose_thumb').css('display','none');
-    }
-  })
-});
-</script>
-             <p>
-                <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
-                  <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo (!empty($title)) ? $title : __('Latest Properties', 'wpp'); ?>" />
-                </label>
-            </p>
-            <p>
-                <label for="<?php echo $this->get_field_id('hide_image'); ?>">
-                    <input id="<?php echo $this->get_field_id('hide_image'); ?>" class="check_me" name="<?php echo $this->get_field_name('hide_image'); ?>" type="checkbox" value="on" <?php if($hide_image=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Hide Images?','wpp'); ?>
-                </label>
-            </p>
-             <p id="choose_thumb" <?php
-             if($hide_image !== 'on')
-               echo 'style="display:block;"';
-             else
-               echo 'style="display:none;"';
-             ?>>
-                <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Image Size:','wpp'); ?>
-                <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
-            </label>
-
-            <p>
-            <label for="<?php echo $this->get_field_id('per_page'); ?>"><?php _e('Listings to display?', 'wpp'); ?>
-                    <input style="width:30px" id="<?php echo $this->get_field_id('amount_items'); ?>" name="<?php echo $this->get_field_name('amount_items'); ?>" type="text" value="<?php echo (empty($amount_items)) ? 5 : $amount_items; ?>" />
-                </label>
-            </p>
-
-
-            <p><?php _e('Select stats you want to display','wpp') ?></p>
-
-            <p>
-                <label for="<?php echo $this->get_field_id('show_title'); ?>">
-                    <input id="<?php echo $this->get_field_id('show_title'); ?>" name="<?php echo $this->get_field_name('show_title'); ?>" type="checkbox" value="on" <?php if($show_title=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Title','wpp'); ?>
-                </label>
-            </p>
-                <?php foreach($wp_properties['property_stats'] as $stat => $label): ?>
-                    <label for="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>">
-                    <input id="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>" name="<?php echo $this->get_field_name('stats'); ?>[]" type="checkbox" value="<?php echo $stat; ?>"
-                    <?php if(is_array($property_stats) && in_array($stat, $property_stats)) echo " checked "; ?>">
-
-                        <?php echo $label;?>
-                    </label><br />
-                <?php endforeach; ?>
-
-         <p>
-                <label for="<?php echo $this->get_field_id('address_format'); ?>"><?php _e('Address Format:','wpp'); ?>
-                <textarea  style="width: 100%"  id="<?php echo $this->get_field_id('address_format'); ?>" name="<?php echo $this->get_field_name('address_format'); ?>"><?php echo $address_format; ?></textarea>
-                </label>
-            </p>
-             <p>
-                <label for="<?php echo $this->get_field_id('enable_more'); ?>">
-                    <input id="<?php echo $this->get_field_id('enable_more'); ?>" name="<?php echo $this->get_field_name('enable_more'); ?>" type="checkbox" value="on" <?php if($enable_more=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Show "More" link?','wpp'); ?>
-                </label>
-            </p>
-
-            <p>
-                <label for="<?php echo $this->get_field_id('enable_view_all'); ?>">
-                    <input id="<?php echo $this->get_field_id('enable_view_all'); ?>" name="<?php echo $this->get_field_name('enable_view_all'); ?>" type="checkbox" value="on" <?php if($enable_view_all=='on') echo " checked='checked';"; ?> />
-                    <?php _e('Show "View All" link?','wpp'); ?>
-                </label>
-            </p>
-
-  <?php  }
-
- }
-
-
+    ?>
+    <script type="text/javascript">
+      //hide and show dropdown whith thumb settings
+      jQuery(document).ready(function($){
+        jQuery('input.check_me').change(function(){
+          if($(this).attr('checked') !== true){
+            jQuery('p#choose_thumb').css('display','block');
+          }else{
+            jQuery('p#choose_thumb').css('display','none');
+          }
+        });
+      });
+    </script>
+    <p>
+      <label for="<?php echo $this->get_field_id('title'); ?>"><?php _e('Title:','wpp'); ?>
+        <input class="widefat" id="<?php echo $this->get_field_id('title'); ?>" name="<?php echo $this->get_field_name('title'); ?>" type="text" value="<?php echo (!empty($title)) ? $title : __('Latest Properties', 'wpp'); ?>" />
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('hide_image'); ?>">
+        <input id="<?php echo $this->get_field_id('hide_image'); ?>" class="check_me" name="<?php echo $this->get_field_name('hide_image'); ?>" type="checkbox" value="on" <?php if($hide_image=='on') echo " checked='checked';"; ?> />
+        <?php _e('Hide Images?','wpp'); ?>
+      </label>
+    </p>
+    <p id="choose_thumb" <?php echo ($hide_image !== 'on' ? 'style="display:block;"' : 'style="display:none;"'); ?>>
+      <label for="<?php echo $this->get_field_id('image_type'); ?>"><?php _e('Image Size:','wpp'); ?>
+        <?php WPP_F::image_sizes_dropdown("name=" . $this->get_field_name('image_type') . "&selected=" . $image_type); ?>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('per_page'); ?>"><?php _e('Listings to display?', 'wpp'); ?>
+        <input style="width:30px" id="<?php echo $this->get_field_id('amount_items'); ?>" name="<?php echo $this->get_field_name('amount_items'); ?>" type="text" value="<?php echo (empty($amount_items)) ? 5 : $amount_items; ?>" />
+      </label>
+    </p>
+    <p><?php _e('Select stats you want to display','wpp') ?></p>
+    <p>
+      <label for="<?php echo $this->get_field_id('show_title'); ?>">
+        <input id="<?php echo $this->get_field_id('show_title'); ?>" name="<?php echo $this->get_field_name('show_title'); ?>" type="checkbox" value="on" <?php if($show_title=='on') echo " checked='checked';"; ?> />
+        <?php _e('Title','wpp'); ?>
+      </label>
+    <?php foreach($property_stats as $stat => $label): ?>
+      <br/>
+      <label for="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>">
+        <input id="<?php echo $this->get_field_id('stats'); ?>_<?php echo $stat; ?>" name="<?php echo $this->get_field_name('stats'); ?>[]" type="checkbox" value="<?php echo $stat; ?>"
+        <?php if(is_array($instance_stats) && in_array($stat, $instance_stats)) echo " checked "; ?>">
+        <?php echo $label;?>
+      </label>
+    <?php endforeach; ?>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('address_format'); ?>"><?php _e('Address Format:','wpp'); ?>
+      <textarea  style="width: 100%"  id="<?php echo $this->get_field_id('address_format'); ?>" name="<?php echo $this->get_field_name('address_format'); ?>"><?php echo $address_format; ?></textarea>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('enable_more'); ?>">
+        <input id="<?php echo $this->get_field_id('enable_more'); ?>" name="<?php echo $this->get_field_name('enable_more'); ?>" type="checkbox" value="on" <?php if($enable_more=='on') echo " checked='checked';"; ?> />
+        <?php _e('Show "More" link?','wpp'); ?>
+      </label>
+    </p>
+    <p>
+      <label for="<?php echo $this->get_field_id('enable_view_all'); ?>">
+        <input id="<?php echo $this->get_field_id('enable_view_all'); ?>" name="<?php echo $this->get_field_name('enable_view_all'); ?>" type="checkbox" value="on" <?php if($enable_view_all=='on') echo " checked='checked';"; ?> />
+        <?php _e('Show "View All" link?','wpp'); ?>
+      </label>
+    </p>
+    <?php 
+  }
+  
+}
 
 /**
  * Property Search Widget
@@ -1217,6 +1224,7 @@ jQuery(document).ready(function($){
       $sort_order = $instance['sort_order'];
       $group_attributes = $instance['group_attributes'];
       $searchable_property_types = $instance['searchable_property_types'];
+      $property_stats = $wp_properties['property_stats'];
 
       //** Get WPP data */
       $all_searchable_property_types = array_unique($wp_properties['searchable_property_types']);
@@ -1233,9 +1241,9 @@ jQuery(document).ready(function($){
         $error['no_searchable_attributes'] = true;
       }
 
-      //** Set label for list below only */
-      if(!isset($wp_properties['property_stats']['property_type'])) {
-        $wp_properties['property_stats']['property_type'] = __('Property Type', 'wpp');
+      /** Set label for list below only */
+      if(!isset($property_stats['property_type'])) {
+        $property_stats['property_type'] = __('Property Type', 'wpp');
       }
 
        if(is_array($all_searchable_property_types) && count($all_searchable_property_types) > 1) {
@@ -1270,7 +1278,7 @@ jQuery(document).ready(function($){
       $temp_attrs = array();
 
       foreach($all_searchable_attributes as $slug) {
-        $attribute_label = $wp_properties['property_stats'][$slug];
+        $attribute_label = $property_stats['property_stats'][$slug];
 
         if(empty($attribute_label)) {
           $attribute_label = UD_F::de_slug($slug);
@@ -1404,7 +1412,7 @@ jQuery(document).ready(function($){
 
             <li class="wpp_attribute_wrapper <?php echo $attribute; ?>">
               <input id="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($searchable_attributes)) { echo  'checked="checked"'; } ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($searchable_attributes) && in_array($attribute, $searchable_attributes)) ? " checked " : ""); ?> />
-              <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
+              <label for="<?php echo $this->get_field_id('searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($property_stats[$attribute]) ? $property_stats[$attribute] : ucwords($attribute))  ;?></label>
             </li>
           <?php } ?>
           </ul>
@@ -1422,7 +1430,7 @@ jQuery(document).ready(function($){
             <?php foreach ($gstats as $attribute) { ?>
             <li>
                 <input id="<?php echo $this->get_field_id('grouped_searchable_attributes'); ?>_<?php echo $attribute; ?>" name="<?php echo $this->get_field_name('grouped_searchable_attributes'); ?>[]" type="checkbox" <?php if (empty($grouped_searchable_attributes)) { echo  'checked="checked"'; } ?> value="<?php echo $attribute; ?>" <?php echo ((is_array($grouped_searchable_attributes) && in_array($attribute, $grouped_searchable_attributes)) ? " checked " : ""); ?> />
-                <label for="<?php echo $this->get_field_id('grouped_searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($wp_properties['property_stats'][$attribute]) ? $wp_properties['property_stats'][$attribute] : ucwords($attribute))  ;?></label>
+                <label for="<?php echo $this->get_field_id('grouped_searchable_attributes'); ?>_<?php echo $attribute; ?>"><?php echo (!empty($property_stats[$attribute]) ? $property_stats[$attribute] : ucwords($attribute))  ;?></label>
             </li>
             <?php } ?>
             </ul>
@@ -1455,7 +1463,7 @@ jQuery(document).ready(function($){
               <select id="<?php echo $this->get_field_id('sort_by'); ?>" name="<?php echo $this->get_field_name('sort_by'); ?>">
                 <option></option>
                 <?php foreach($wp_properties['sortable_attributes'] as $attribute) { ?>
-                  <option value="<?php echo esc_attr($attribute); ?>"  <?php selected($sort_by, $attribute); ?> ><?php echo $wp_properties['property_stats'][$attribute]; ?></option>
+                  <option value="<?php echo esc_attr($attribute); ?>"  <?php selected($sort_by, $attribute); ?> ><?php echo $property_stats[$attribute]; ?></option>
                 <?php } ?>
               </select>
 
