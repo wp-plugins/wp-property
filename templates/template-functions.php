@@ -28,6 +28,7 @@ if(!function_exists('wpp_alternating_row')) {
   }
 }
 
+
 if(!function_exists('get_attribute')) {
   /**
    * Get an attribute for the property
@@ -695,6 +696,7 @@ if(!function_exists('prepare_property_for_display')):
     if($args['scope']) {
       $attribute_scope = $args['scope'];
     }
+
     $return_type = (is_object($property) ? 'object' : 'array');
 
     if(is_numeric($property)) {
@@ -768,6 +770,9 @@ endif;
 
 if(!function_exists('property_slideshow')):
   /**
+   * DEPRECIATED FUNCTION. SHOULD BE REMOVED IN THE NEXT REALEASES. MAXIM PESHKOV
+   * I don't see any places where this function is used.
+   *
    * Returns property slideshow images, or single image if plugin not installed
    *
    * @since 1.0
@@ -1252,7 +1257,9 @@ if(!function_exists('draw_property_search_form')):
       $search_groups['ungrouped'] = $search_attributes;
     }
     $main_stats_group = $wp_properties['configuration']['main_stats_group'];
+    $count = 0;
     foreach($search_groups as $group_key => $search_attributes) {
+      $count++;
       $this_group = $group_key;
       if($this_group == 'ungrouped' || $this_group === 0 || $this_group == $main_stats_group) {
          $is_a_group = false;
@@ -1264,6 +1271,8 @@ if(!function_exists('draw_property_search_form')):
       <li class="wpp_search_group wpp_group_<?php echo $this_group; ?>">
       <?php if($is_a_group) { ?>
       <span class="wpp_search_group_title wpp_group_<?php echo $this_group; ?>_title"><?php echo $groups[$this_group]['name']; ?></span>
+      <?php } elseif ($group_attributes && $count == count($search_groups)) { ?>
+      <span class="wpp_search_group_title" style="height:1px;line-height:1px;">&nbsp;</span>
       <?php } ?>
       <ul class="wpp_search_group wpp_group_<?php echo $this_group; ?>">
       <?php
@@ -1531,7 +1540,7 @@ endif;
 
 if(!function_exists('wpp_inquiry_form')):
   /*
-   * Overwtites default Wordpress function comment_form()
+   * Overwrites default Wordpress function comment_form()
    * @param array $args Options for strings, fields etc in the form
    * @param mixed $post_id Post ID to generate the form for, uses the current post if null
    * @return void

@@ -214,6 +214,11 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.33.1 = 
+* Encoding and EOL fixes.
+* Widgets' rendering and view fixes.
+* Grouped Property Search view fixes.
+
 = 1.33.0 = 
 * Update to detect plugin name so can be placed into different folder.
 * Added $_POST to $_GET conversion for search results.

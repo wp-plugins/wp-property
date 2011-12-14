@@ -59,19 +59,19 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 	if ( @!current_user_can( 'upload_files' ) )
 		$media_buttons = false;
 
-
+ 
 	$class = '';
  ?>
 	<div class="editor-toolbar" id="editor-toolbar-<?php echo $id; ?>">
 
 	<div class="zerosize"><input accesskey="e" type="button" onclick="switchEditors.go('<?php echo $id; ?>')" /></div>
-<?php
+<?php	 
 			$class = " class='theEditor'";
 			add_filter('the_editor_content', 'wp_richedit_pre'); ?>
 			<a id="edButtonHTML" class="hide-if-no-js" onclick="switchEditors.go('<?php echo $id; ?>', 'html');"><?php _e('HTML'); ?></a>
 			<a id="edButtonPreview" class="active hide-if-no-js" onclick="switchEditors.go('<?php echo $id; ?>', 'tinymce');"><?php _e('Visual'); ?></a>
-<?php
-
+<?php	 
+ 
 
 	if ( $media_buttons ) { ?>
 		<div id="media-buttons" class="hide-if-no-js">
@@ -80,7 +80,7 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 <?php
 	} ?>
 	</div>
-
+ 
 	<div id="quicktags-<?php echo $id; ?>"><?php
 	wp_print_scripts( 'quicktags' ); ?>
 	<script type="text/javascript">edToolbar()</script>
@@ -100,21 +100,21 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 }
 
 
- /**
+ /** 
   * Determine if an item is in array and return checked
   *
   *
   * @since 1.5.17
   */
  function checked_in_array($item, $array) {
-
+   
     if(is_array($array) && in_array($item, $array)) {
       echo ' checked="checked" ';
     }
-
+        
  }
-
-
+ 
+ 
   /**
    * Formats phone number for display
    *
@@ -135,7 +135,7 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
   }
 
 
-
+  
 
 	/**
 	 * Display post categories form fields.
@@ -145,8 +145,8 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 	 * @param object $post
 	 */
 	function object_taxonomy_meta_box( $post, $box ) {
-
-
+	
+		
 		$defaults = array('taxonomy' => 'category');
 		if ( !isset($box['args']) || !is_array($box['args']) )
 			$args = array();
@@ -155,9 +155,9 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 		extract( wp_parse_args($args, $defaults), EXTR_SKIP );
 		$tax = get_taxonomy($taxonomy);
 
-
+		
 		?>
-
+ 		
 		<div id="taxonomy-<?php echo $taxonomy; ?>" class="categorydiv">
 			<ul id="<?php echo $taxonomy; ?>-tabs" class="category-tabs">
 				<li class="tabs"><a href="#<?php echo $taxonomy; ?>-all" tabindex="3"><?php echo $tax->labels->all_items; ?></a></li>
@@ -216,13 +216,13 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 
 		if(empty($user_id))
 			return;
-
+		
 		if($maybe_user_id = email_exists($user_id))
 			$user = get_userdata($maybe_user_id);
 		else
 			$user = get_userdata($user_id);
-
-
+ 
+			
 		if($show_organization == 'true' && $user->user_organization)
 			$rank_org  = (empty($user->user_rank) ? "" : ", $user->user_rank") . ", $user->user_organization";
 
@@ -270,13 +270,13 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 	#<?php echo $metabox_name; ?> .handlediv {display:none;}
 	#<?php echo $metabox_name; ?> h3{display:none;}
 	<?php endif; ?>
-
+	
 	#<?php echo $metabox_name; ?> {background: transparent;border: 0px !important;}
 	#<?php echo $metabox_name; ?> .form-field label{font-size: 15px;}
 	</style>
 	<?php
 	}
-
+  
   /**
    * Return a link to a post or page from passed variable.
    *
@@ -342,26 +342,26 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
    */
   function checkbox($args = '', $checked = false) {
     $defaults = array(
-      'name' => '',
+      'name' => '', 
       'id' => false,
-      'class' => false,
+      'class' => false, 
       'group' => false,
       'special' => '',
-      'value' => 'true',
-      'label' => false,
+      'value' => 'true', 
+      'label' => false, 
       'maxlength' => false
     );
-
+    
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
     // Get rid of all brackets
     if(strpos("$name",'[') || strpos("$name",']')) {
 
       $class_from_name = $name;
-
+    
       //** Remove closing empty brackets to avoid them being displayed as __ in class name */
       $class_from_name = str_replace('][]', '', $class_from_name);
-
+      
       $replace_variables = array('][',']','[');
       $class_from_name = UD_PREFIX . str_replace($replace_variables, '_', $class_from_name);
     } else {
@@ -389,11 +389,11 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
 
 
     if(is_array($checked)) {
-
+      
       if(in_array($value, $checked)) {
         $checked = true;
       } else {
-        $checked = false;
+        $checked = false;      
       }
     } else {
       $checked = strtolower($checked);
@@ -413,9 +413,9 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
     $insert_class     =   " class='$class_from_name $class ".UD_PREFIX."checkbox " . ($group ? UD_PREFIX . $group . '_checkbox' : ''). "' ";
     $insert_maxlength  =   ($maxlength ? " maxlength='$maxlength' " : " ");
 
-
+    
     $opposite_value = '';
-
+    
     // Determine oppositve value
     switch ($value) {
       case 'yes':
@@ -431,7 +431,7 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
       break;
 
     }
-
+    
     $return = '';
 
     // Print label if one is set
@@ -553,7 +553,7 @@ function the_editor($content, $id = 'content', $prev_id = 'title', $media_button
       $id = $name;
       $class_from_name = $name;
     }
-
+    
     $return = '';
 
     if($label) $return .= "<label for='$name'>";
@@ -758,26 +758,26 @@ if(!class_exists('WPP_UD_F')):
 class WPP_UD_F {
 
 
-  function start_timer() {
+  function start_timer() {  
     global $ud_start_timer;
-
-    $mtime = microtime();
-    $mtime = explode(" ",$mtime);
-    $mtime = $mtime[1] + $mtime[0];
-    $ud_start_timer = $mtime;
-
+    
+    $mtime = microtime(); 
+    $mtime = explode(" ",$mtime); 
+    $mtime = $mtime[1] + $mtime[0]; 
+    $ud_start_timer = $mtime; 
+    
   }
-
+  
   function end_timer($note = false) {
     global $ud_start_timer;
-
-    $mtime = microtime();
-    $mtime = explode(" ",$mtime);
-    $mtime = $mtime[1] + $mtime[0];
-    $endtime = $mtime;
-    $totaltime = ($endtime - $ud_start_timer);
-
-    echo "\n <br />Time: {$note}: ".$totaltime;
+    
+    $mtime = microtime(); 
+    $mtime = explode(" ",$mtime); 
+    $mtime = $mtime[1] + $mtime[0]; 
+    $endtime = $mtime; 
+    $totaltime = ($endtime - $ud_start_timer); 
+    
+    echo "\n <br />Time: {$note}: ".$totaltime;   
 
   }
 
@@ -839,15 +839,15 @@ class WPP_UD_F {
     if ( '' != $permalink) {
       // Using Permalinks
 
-            if(!is_numeric($page)) {
+            if(!is_numeric($page)) { 
                 $page = $wpdb->get_var("SELECT ID FROM {$wpdb->prefix}posts where post_name = '$page'");
             }
-
+            
             // If the page doesn't exist, return default url (base_slug)
             if(empty($page)) {
                 return site_url() . "/" . $wp_properties['configuration']['base_slug'] . '/';
             }
-
+            
             return get_permalink($page);
 
 
@@ -1298,7 +1298,7 @@ class WPP_UD_F {
       'separator' => '-',
       'check_existance' => false
     );
-
+    
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
 
     $content = preg_replace('~[^\\pL0-9_]+~u', $separator, $content); // substitutes anything but letters, numbers and '_' with separator
@@ -1378,16 +1378,16 @@ class WPP_UD_F {
     $url = str_replace(" ", "+" ,"http://maps.google.com/maps/api/geocode/json?address={$address}&sensor=true&language=$localization");
 
     $obj = (json_decode(wp_remote_fopen($url)));
-
+    
 
     if($obj->status != "OK") {
-
+    
       // Return Google result if needed instead of just false
       if($return_obj_on_fail)
         return $obj;
-
+      
       return false;
-
+      
     }
 
     //print_r($obj->results);
@@ -1519,7 +1519,7 @@ class WPP_UD_F {
 		if(!is_array($remove_elements)) {
 			$remove_elements = array($remove_elements);
     }
-
+      
     if(is_array($wp_meta_boxes[$post_type])) {
       foreach($wp_meta_boxes[$post_type] as $context_slug => $priority_array) {
 
@@ -1573,7 +1573,7 @@ class WPP_UD_F {
 	 * Validate email  an address
 	 *
 	 * @since 1.1
-	 */
+	 */  
    function check_email_address($email) {
       // First, we check that there's one @ symbol,
       // and that the lengths are right.
@@ -1611,7 +1611,7 @@ class WPP_UD_F {
       }
       return true;
   }
-
+  
 
 	/**
 	 * Creates a 'dynamic' page and sets up metaboxes
@@ -1638,12 +1638,12 @@ class WPP_UD_F {
 
   /*
   That it is an implementation of the function money_format for the
-  platforms that do not it bear.
+  platforms that do not it bear. 
 
   The function accepts to same string of format accepts for the
-  original function of the PHP.
+  original function of the PHP. 
 
-  (Sorry. my writing in English is very bad)
+  (Sorry. my writing in English is very bad) 
 
   The function is tested using PHP 5.1.4 in Windows XP
   and Apache WebServer.
@@ -1737,7 +1737,7 @@ class WPP_UD_F {
     return $format;
   }
 
-
+  
 }
 
 endif; /* f(!class_exists('WPP_UD_F')): */

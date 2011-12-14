@@ -86,7 +86,7 @@
     'lease_terms' => __('Lease Terms','wpp'),
     'pet_policy' => __('Pet Policy','wpp'),
     'school' => __('School','wpp'),
-     'tagline' => __('Tagline','wpp')
+    'tagline' => __('Tagline','wpp')
   );
 
   // On property editing page - determines which fields to hide for a particular property type
@@ -120,10 +120,10 @@
   // Attributes to use in searching.
   if(!is_array($wp_properties_db['searchable_attributes']))
   $wp_properties['searchable_attributes'] =  array(
-     'area',
-     'deposit',
-     'bedrooms',
-     'bathrooms',
+    'area',
+    'deposit',
+    'bedrooms',
+    'bathrooms',
     'city',
     'price'
   );
@@ -135,10 +135,7 @@
     'bedrooms' => array(
       __('Studio','wpp') => '0.5'
   ));
-
-
-
-
+  
   /**
    *
    * Display and UI related filters

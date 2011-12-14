@@ -483,7 +483,7 @@ qq.FileUploader = function(o){
         element: null,
         // if set, will be used instead of qq-upload-list in template
         listElement: null,
-                
+                       
         template: '<div class="qq-uploader">' + 
                 '<div class="qq-upload-drop-area"><span>'+l10n.drop_file+'</span></div>' +
                 '<div class="qq-upload-button">'+l10n.upload_images+'</div>' +

@@ -48,19 +48,14 @@
 
 			?>
  			values: [<?php echo $min_value; ?>, <?php echo $max_value; ?>],
-
  			min: <?php echo min($search_values[$searchable_attribute]); ?>,
 			max: <?php echo max($search_values[$searchable_attribute]); ?>,
 			slide: function(event, ui) {
-
 				jQuery("#<?php echo $searchable_attribute; ?>_result").val('<?php echo WPP_F::get_attrib_prefix($searchable_attribute); ?>' + ui.values[0] + '<?php echo WPP_F::get_attrib_annex($searchable_attribute); ?> - <?php echo WPP_F::get_attrib_prefix($searchable_attribute); ?>' + ui.values[1] + '<?php echo WPP_F::get_attrib_annex($searchable_attribute); ?>');
 			},
 			stop: function(event, ui) {
-
-
-					wpp_s_filter();
-
-					}
+        wpp_s_filter();
+      }
 		});
 		jQuery("#<?php echo $searchable_attribute; ?>_result").val('<?php echo WPP_F::get_attrib_prefix($searchable_attribute); ?>' + jQuery("#<?php echo $searchable_attribute; ?>_slider").slider("values", 0) + '<?php echo WPP_F::get_attrib_annex($searchable_attribute); ?> - <?php echo WPP_F::get_attrib_prefix($searchable_attribute); ?>' + jQuery("#<?php echo $searchable_attribute; ?>_slider").slider("values", 1) + '<?php echo WPP_F::get_attrib_annex($searchable_attribute); ?>');
 

@@ -3,7 +3,7 @@
 <ul class="wpp_featured_properties_shortcode clearfix">
 
 <?php foreach ( returned_properties('load_gallery=false') as $property) {  ?>
-
+ 
 
 	<li class="<?php echo $class; ?> wpp_featured_property_container wp-caption clearfix " >
 
@@ -15,10 +15,10 @@
 		<ul class="wp-caption-text shortcode_featured_properties">
 
 		<?php foreach($stats as $stat):
-
+			 
 			if(empty($property[$stat]))
 				continue;
-
+        
 		?>
 			<li class="<?php echo $stat; ?>">
 				<dl>
@@ -29,7 +29,7 @@
 		<?php endforeach; ?>
 		</ul>
 		<?php endif; ?>
-
+    
    </li>
 <?php } ?>
 </ul>

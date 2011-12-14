@@ -1,3 +1,7 @@
+.wpp_no_image {
+  display:none;
+}
+
 /* Default Icons Begin  */
 .wpp_attachment_list {
   list-style-type:none;
