@@ -1663,14 +1663,13 @@ class WPP_F {
 
     /* If PHP version is newer than 4.3.0, else apply fix. */
     if ( strnatcmp(phpversion(),'4.3.0' ) >= 0 ) {
-      $result = str_replace( html_entity_decode('-', ENT_COMPAT, 'UTF-8'), '&ndash;', $input );
-
+      $result = str_replace(html_entity_decode('-', ENT_COMPAT, 'UTF-8'), '&ndash;', $input);
     } else {
       $result = str_replace( utf8_encode( html_entity_decode('-') ), '&ndash;', $input );
     }
 
     //** In case &ndash; is already converted and exists in its actual dash form */
-    $result = str_replace('â€“', '&ndash;', $result);
+    $result = str_replace('–', '&ndash;', $result);
 
     /* Uses WPs built in esc_html, works like a charm. */
     $result = esc_html( $result );
@@ -3728,7 +3727,7 @@ class WPP_F {
       }
 
     }
-
+    
     if(count($return) > 0) {
       return $return;
     }

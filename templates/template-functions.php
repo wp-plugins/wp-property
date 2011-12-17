@@ -949,6 +949,7 @@ if(!function_exists('draw_stats')):
 
       //* Make URLs into clickable links */
       if($make_link == 'true' && WPP_F::isURL($value)) {
+        $value = str_replace('&ndash;', '-', $value);
         $value = "<a href='{$value}' title='{$label}'>{$value}</a>";
       }
 

@@ -214,6 +214,12 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.33.2 =
+* Extra changes: reverted some fix which had conflicts.
+* Added URL trimming for images.
+* Fixed property attribute's value, which showed incorrect url (if url was set for property attribute).
+* Fixes to WPP_F::isURL().
+
 = 1.33.1 = 
 * Encoding and EOL fixes.
 * Widgets' rendering and view fixes.
