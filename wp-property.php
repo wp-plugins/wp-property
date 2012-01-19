@@ -4,7 +4,7 @@ Plugin Name: WP-Property
 Plugin URI: http://twincitiestech.com/plugins/wp-property/
 Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
 Author: Usability Dynamics, Inc.
-Version: 1.33.2
+Version: 1.34.0
 Author URI: http://usabilitydynamics.com
 
 Copyright 2011  TwinCitiesTech.com Inc.   (email : andy.potanin@twincitiestech.com)
@@ -27,53 +27,53 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 /** This Version  */
-define('WPP_Version', '1.33.2');
+define('WPP_Version', '1.34.0');
 
 /** Get Directory - not always wp-property */
 define('WPP_Directory', dirname(plugin_basename( __FILE__ )));
 
 /** Path for Includes */
-define('WPP_Path', WP_PLUGIN_DIR . '/' . WPP_Directory);
+define('WPP_Path', plugin_dir_path( __FILE__ ));
 
 /** Path for front-end links */
-define('WPP_URL', WP_PLUGIN_URL . '/' . WPP_Directory);
+define('WPP_URL', plugin_dir_url( __FILE__ ));
 
 /** Directory path for includes of template files  */
-define('WPP_Templates', WPP_Path . '/templates');
+define('WPP_Templates', WPP_Path . 'templates');
 
 /** Directory path for includes of template files  */
-define('WPP_Premium', WPP_Path . '/core/premium');
+define('WPP_Premium', WPP_Path . 'core/premium');
 
 /** Sets prefix for UD_UI and UD_F classes and their functions */
 define('UD_UI_PREFIX', 'wpp_');
 define('UD_PREFIX', 'wpp_');
  
 // Global Usability Dynamics / TwinCitiesTech.com, Inc. Functions
-include_once WPP_Path . '/core/class_ud.php';
+include_once WPP_Path . 'core/class_ud.php';
 	
 /** Loads built-in plugin metadata and allows for third-party modification to hook into the filters. Has to be included here to run after template functions.php */
-include_once WPP_Path . '/action_hooks.php';
+include_once WPP_Path . 'action_hooks.php';
 	
 /** Defaults filters and hooks */
-include_once WPP_Path . '/default_api.php';
+include_once WPP_Path . 'default_api.php';
 
 /** Loads general functions used by WP-Property */
-include_once WPP_Path . '/core/class_functions.php';
+include_once WPP_Path . 'core/class_functions.php';
 
 /** Loads export functionality */
-include_once WPP_Path . '/core/class_property_export.php';
+include_once WPP_Path . 'core/class_property_export.php';
 
  /** Loads all the metaboxes for the property page */
-include_once WPP_Path . '/core/ui/property_metaboxes.php';
+include_once WPP_Path . 'core/ui/property_metaboxes.php';
  
 /** Loads all the metaboxes for the property page */
-include_once WPP_Path . '/core/class_core.php';
+include_once WPP_Path . 'core/class_core.php';
 
 /** Bring in the RETS library */
-include_once WPP_Path . '/core/class_rets.php';
+include_once WPP_Path . 'core/class_rets.php';
 
 /** Load in hooks that deal with legacy and backwards-compat issues */
-include_once WPP_Path . '/legacy_support.php';
+include_once WPP_Path . 'legacy_support.php';
 
 // Register activation hook -> has to be in the main plugin file
 register_activation_hook(__FILE__,array('WPP_F', 'activation'));

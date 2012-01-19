@@ -150,7 +150,7 @@ class wpi_property_export {
   $starttime = $mtime; 
 
   // Set a new path
-  set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
+  set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'third-party/XML/');
   // Include our necessary libaries
   require_once 'Serializer.php';
   require_once 'Unserializer.php';

@@ -27,7 +27,12 @@ class WPP_Core {
    */
   function WPP_Core() {
     global $wp_properties;
-
+    
+    /** Determine if memory limit is low and increase it */
+    if((int)ini_get('memory_limit') < 128) {
+      ini_set('memory_limit', '128M');
+    }
+    
     //** Load premium features */
     WPP_F::load_premium();
 
@@ -68,7 +73,7 @@ class WPP_Core {
     do_action('wpp_init');
     
     //** Load languages */
-    load_plugin_textdomain('wpp', WPP_Path . false, '/wp-property/langs');
+    load_plugin_textdomain('wpp', WPP_Path . false, 'wp-property/langs');
 
     /** Making template-functions global but load after the premium features, giving the premium features priority. */
     include_once WPP_Templates . '/template-functions.php';
@@ -167,35 +172,35 @@ class WPP_Core {
     $scheme = (is_ssl() && !is_admin() ? 'https' : 'http');
 
     //** Load early so plugins can use them as well */
-    wp_register_script('jquery-fancybox', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array('jquery'), '1.7.3' );
-    wp_register_script('jquery-colorpicker', WPP_URL. '/third-party/colorpicker/colorpicker.js', array('jquery'));
-    wp_register_script('jquery-easing', WPP_URL. '/third-party/fancybox/jquery.easing-1.3.pack.js', array('jquery'), '1.7.3' );
-    wp_register_script('jquery-cookie', WPP_URL. '/js/jquery.smookie.js', array('jquery'), '1.7.3' );
-    wp_register_script('jquery-ajaxupload', WPP_URL. '/js/fileuploader.js', array('jquery'));
-    wp_register_script('wp-property-admin-overview', WPP_URL. '/js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
-    wp_register_script('wp-property-backend-global', WPP_URL. '/js/wp-property-backend-global.js', array('jquery'),WPP_Version);
-    wp_register_script('wp-property-global', WPP_URL. '/js/wp-property-global.js', array('jquery'),WPP_Version);
+    wp_register_script('jquery-fancybox', WPP_URL. 'third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array('jquery'), '1.7.3' );
+    wp_register_script('jquery-colorpicker', WPP_URL. 'third-party/colorpicker/colorpicker.js', array('jquery'));
+    wp_register_script('jquery-easing', WPP_URL. 'third-party/fancybox/jquery.easing-1.3.pack.js', array('jquery'), '1.7.3' );
+    wp_register_script('jquery-cookie', WPP_URL. 'js/jquery.smookie.js', array('jquery'), '1.7.3' );
+    wp_register_script('jquery-ajaxupload', WPP_URL. 'js/fileuploader.js', array('jquery'));
+    wp_register_script('wp-property-admin-overview', WPP_URL. 'js/wp-property-admin-overview.js', array('jquery'),WPP_Version);
+    wp_register_script('wp-property-backend-global', WPP_URL. 'js/wp-property-backend-global.js', array('jquery'),WPP_Version);
+    wp_register_script('wp-property-global', WPP_URL. 'js/wp-property-global.js', array('jquery'),WPP_Version);
 
     if(WPP_F::can_get_script($scheme . '://maps.google.com/maps/api/js?sensor=true')) {
       wp_register_script('google-maps', $scheme . '://maps.google.com/maps/api/js?sensor=true');
     }
 
-    wp_register_script('jquery-gmaps', WPP_URL. '/js/jquery.ui.map.min.js', array('google-maps','jquery-ui-core','jquery-ui-widget'));
-    wp_register_script('jquery-nivo-slider', WPP_URL. '/third-party/jquery.nivo.slider.pack.js', array('jquery'));
-    wp_register_script('jquery-address', WPP_URL. '/js/jquery.address-1.3.2.js', array('jquery'));
-    wp_register_script('jquery-scrollTo', WPP_URL. '/js/jquery.scrollTo-min.js', array('jquery'));
-    wp_register_script('jquery-validate', WPP_URL. '/js/jquery.validate.js', array('jquery'));
-    wp_register_script('jquery-number-format', WPP_URL. '/js/jquery.number.format.js', array('jquery'));
-    wp_register_script('jquery-ui-widget', WPP_URL. '/js/jquery.ui.widget.min.js', array('jquery-ui-core'));
-    wp_register_script('jquery-ui-mouse', WPP_URL. '/js/jquery.ui.mouse.min.js', array('jquery-ui-core'));
-    wp_register_script('jquery-ui-slider', WPP_URL. '/js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
-    wp_register_script('jquery-data-tables', WPP_URL . "/third-party/dataTables/jquery.dataTables.min.js", array('jquery'));
-    wp_register_script('wp-property-galleria', WPP_URL. '/third-party/galleria/galleria-1.2.5.js', array('jquery'));
+    wp_register_script('jquery-gmaps', WPP_URL. 'js/jquery.ui.map.min.js', array('google-maps','jquery-ui-core','jquery-ui-widget'));
+    wp_register_script('jquery-nivo-slider', WPP_URL. 'third-party/jquery.nivo.slider.pack.js', array('jquery'));
+    wp_register_script('jquery-address', WPP_URL. 'js/jquery.address-1.3.2.js', array('jquery'));
+    wp_register_script('jquery-scrollTo', WPP_URL. 'js/jquery.scrollTo-min.js', array('jquery'));
+    wp_register_script('jquery-validate', WPP_URL. 'js/jquery.validate.js', array('jquery'));
+    wp_register_script('jquery-number-format', WPP_URL. 'js/jquery.number.format.js', array('jquery'));
+    wp_register_script('jquery-ui-widget', WPP_URL. 'js/jquery.ui.widget.min.js', array('jquery-ui-core'));
+    wp_register_script('jquery-ui-mouse', WPP_URL. 'js/jquery.ui.mouse.min.js', array('jquery-ui-core'));
+    wp_register_script('jquery-ui-slider', WPP_URL. 'js/jquery.ui.slider.min.js', array('jquery-ui-widget', 'jquery-ui-mouse'));
+    wp_register_script('jquery-data-tables', WPP_URL . "third-party/dataTables/jquery.dataTables.min.js", array('jquery'));
+    wp_register_script('wp-property-galleria', WPP_URL. 'third-party/galleria/galleria-1.2.5.js', array('jquery'));
 
-    wp_register_style('jquery-fancybox-css', WPP_URL. '/third-party/fancybox/jquery.fancybox-1.3.4.css');
-    wp_register_style('jquery-colorpicker-css', WPP_URL. '/third-party/colorpicker/colorpicker.css');
-    wp_register_style('jquery-ui', WPP_URL. '/css/jquery-ui.css');
-    wp_register_style('jquery-data-tables', WPP_URL . "/third-party/dataTables/wpp-data-tables.css");
+    wp_register_style('jquery-fancybox-css', WPP_URL. 'third-party/fancybox/jquery.fancybox-1.3.4.css');
+    wp_register_style('jquery-colorpicker-css', WPP_URL. 'third-party/colorpicker/colorpicker.css');
+    wp_register_style('jquery-ui', WPP_URL. 'css/jquery-ui.css');
+    wp_register_style('jquery-data-tables', WPP_URL . "third-party/dataTables/wpp-data-tables.css");
 
     /** Find and register stylesheet  */
     if ( file_exists( STYLESHEETPATH . '/wp_properties.css') ) {
@@ -203,11 +208,11 @@ class WPP_Core {
     } elseif (file_exists( TEMPLATEPATH . '/wp_properties.css')) {
       wp_register_style('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.css',  array(),WPP_Version);
     } elseif (file_exists( WPP_Templates . '/wp_properties.css') && $wp_properties['configuration']['autoload_css'] == 'true') {
-      wp_register_style('wp-property-frontend', WPP_URL . '/templates/wp_properties.css',  array(),WPP_Version);
+      wp_register_style('wp-property-frontend', WPP_URL . 'templates/wp_properties.css',  array(),WPP_Version);
 
       //** Find and register theme-specific style if a custom wp_properties.css does not exist in theme */
       if($wp_properties['configuration']['do_not_load_theme_specific_css'] != 'true' && WPP_F::has_theme_specific_stylesheet()) {
-        wp_register_style('wp-property-theme-specific', WPP_URL . "/templates/theme-specific/".get_option('template').".css",  array('wp-property-frontend'),WPP_Version);
+        wp_register_style('wp-property-theme-specific', WPP_URL . "templates/theme-specific/".get_option('template').".css",  array('wp-property-frontend'),WPP_Version);
       }
     }
 
@@ -217,7 +222,7 @@ class WPP_Core {
     } elseif( file_exists( TEMPLATEPATH . '/wp_properties.js') ) {
       wp_register_script('wp-property-frontend', get_bloginfo('template_url') . '/wp_properties.js', array('jquery-ui-core'), WPP_Version, true);
     } elseif (file_exists( WPP_Templates . '/wp_properties.js')) {
-      wp_register_script('wp-property-frontend', WPP_URL . '/templates/wp_properties.js', array('jquery-ui-core'),WPP_Version, true);
+      wp_register_script('wp-property-frontend', WPP_URL . 'templates/wp_properties.js', array('jquery-ui-core'),WPP_Version, true);
     }
 
     //** Add custom image sizes */
@@ -605,7 +610,7 @@ class WPP_Core {
     }
 
     //* Delete cache files of search values for search widget's form */
-    $directory = WPP_Path . '/cache/searchwidget';
+    $directory = WPP_Path . 'cache/searchwidget';
 
     if(is_dir($directory)) {
       $dir = opendir($directory);
@@ -621,9 +626,32 @@ class WPP_Core {
     }
 
     $update_data = $_REQUEST['wpp_data']['meta'];
+    foreach($update_data as $meta_key => $meta_value) {
+      $attribute_data = WPP_F::get_attribute_data($meta_key);
+
+      //* Cleans the user input */
+      $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key );
+
+      //* Only admins can mark properties as featured. */
+      if( $meta_key == 'featured' && !current_user_can('manage_options') ) {
+        continue;
+      }
+
+      //* Remove certain characters */
+
+      if($attribute_data['currency'] || $attribute_data['numeric']) {
+        $meta_value = str_replace(array("$", ","), '', $meta_value);
+      }
+
+      //* Overwrite old post meta allowing only one value */
+      delete_post_meta($post_id, $meta_key);
+      add_post_meta($post_id, $meta_key, $meta_value);
+    }
 
     $old_location = get_post_meta($post_id, $wp_properties['configuration']['address_attribute'], true);
-    $coordinates = get_post_meta($post_id,'latitude', true) . get_post_meta($post_id,'longitude', true);
+    $latitude = get_post_meta($post_id,'latitude', true);
+    $longitude = get_post_meta($post_id,'longitude', true);
+    $coordinates = ($latitude == '0' || $longitude == '0') ? "" : $coordinates;
     $new_location = $update_data[$wp_properties['configuration']['address_attribute']];
 
     if($update_data['manual_coordinates'] != get_post_meta($post_id, 'manual_coordinates', true)) {
@@ -652,28 +680,6 @@ class WPP_Core {
 
     if($geo_data->status == 'OVER_QUERY_LIMIT') {
       //** Could add some sort of user notification that over limit */
-    }
-
-    foreach($update_data as $meta_key => $meta_value) {
-      $attribute_data = WPP_F::get_attribute_data($meta_key);
-
-      //* Cleans the user input */
-      $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key );
-
-      //* Only admins can mark properties as featured. */
-      if( $meta_key == 'featured' && !current_user_can('manage_options') ) {
-        continue;
-      }
-
-      //* Remove certain characters */
-
-      if($attribute_data['currency'] || $attribute_data['numeric']) {
-        $meta_value = str_replace(array("$", ","), '', $meta_value);
-      }
-
-      //* Overwrite old post meta allowing only one value */
-      delete_post_meta($post_id, $meta_key);
-      add_post_meta($post_id, $meta_key, $meta_value);
     }
 
     //* Check if property has children */
@@ -772,8 +778,8 @@ class WPP_Core {
   function admin_css() {
     global $current_screen;
 
-    if ( file_exists( WPP_Path . '/css/wp_properties_admin.css') ) {
-      wp_register_style('wpp-admin-styles', WPP_URL . '/css/wp_properties_admin.css');
+    if ( file_exists( WPP_Path . 'css/wp_properties_admin.css') ) {
+      wp_register_style('wpp-admin-styles', WPP_URL . 'css/wp_properties_admin.css');
       wp_enqueue_style( 'wpp-admin-styles');
     }
  
@@ -965,7 +971,7 @@ class WPP_Core {
         } elseif ( file_exists( TEMPLATEPATH . "/wp_properties-{$url_slug}.css") ) {
           wp_register_style('wp-property-frontend-'. $url_slug, get_bloginfo('template_url') . "/wp_properties-{$url_slug}.css",   array('wp-property-frontend'),'1.13' );
         } elseif (file_exists( WPP_Templates . "/wp_properties-{$url_slug}.css") && $wp_properties['configuration']['autoload_css'] == 'true') {
-          wp_register_style('wp-property-frontend-'. $url_slug, WPP_URL . "/templates/wp_properties-{$url_slug}.css",  array('wp-property-frontend'),WPP_Version);
+          wp_register_style('wp-property-frontend-'. $url_slug, WPP_URL . "templates/wp_properties-{$url_slug}.css",  array('wp-property-frontend'),WPP_Version);
         }
         // Mark every style as conditional
         $wp_styles->add_data('wp-property-frontend-'. $url_slug, 'conditional', $type );

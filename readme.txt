@@ -214,6 +214,12 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.34.0 =
+* Added options to "Other Properties" widget to show properties of same time, if no parent property exists, and to shuffle results.
+* Fixed bug with Property Features causing error when Microsoft Word apostrophe used
+* Fixed the issue with overwriting 'address attribute' to validated value.
+* Other simple fixes.
+
 = 1.33.2 =
 * Extra changes: reverted some fix which had conflicts.
 * Added URL trimming for images.

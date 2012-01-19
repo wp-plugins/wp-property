@@ -7,7 +7,7 @@
  * @access private
  */
  
-require_once(WPP_Path . '/core/class_list_table.php');
+require_once(WPP_Path . 'core/class_list_table.php');
 
 class WPP_Object_List_Table extends WPP_List_Table {
 
@@ -193,11 +193,19 @@ class WPP_Object_List_Table extends WPP_List_Table {
           
           if($features && !is_wp_error($features)) {
             foreach ($features as $feature) {
-              array_push($features_html, '<a href="' . get_term_link($feature->slug, "property_feature") . '">' . $feature->name . '</a>');
+            
+              $feature_link = get_term_link($feature, "property_feature");
+              
+              //** If for some reason get_term_link() returns a WP error object, we avoid using it in URL */
+              if(is_wp_error($feature_link)) {
+                continue;
+              }
+              
+              array_push($features_html, '<a href="' .  $feature_link .  '">' . $feature->name . '</a>');
             }
 
             $r .= implode($features_html, ", ");
-          }
+          } 
            
         break;
         

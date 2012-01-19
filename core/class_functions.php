@@ -42,7 +42,7 @@ class WPP_F {
     global $wp_properties;
 
     /** Loads widgets */
-    include_once WPP_Path . '/core/class_widgets.php';
+    include_once WPP_Path . 'core/class_widgets.php';
 
     if(class_exists('Property_Attributes_Widget')) {
       register_widget("Property_Attributes_Widget");
@@ -130,7 +130,7 @@ class WPP_F {
       ),
       'query_var' => $wp_properties['configuration']['base_slug'],
       'supports' => array('title','editor', 'thumbnail'),
-      'menu_icon' => WPP_URL . '/images/pp_menu-1.6.png'
+      'menu_icon' => WPP_URL . 'images/pp_menu-1.6.png'
     ));
 
     if($wp_properties['taxonomies']) {
@@ -376,7 +376,7 @@ class WPP_F {
     }
 
     if(!class_exists('XML_Serializer')) {
-      set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'/third-party/XML/');
+      set_include_path(get_include_path() . PATH_SEPARATOR . WPP_Path.'third-party/XML/');
       @require_once 'Serializer.php';
     }
 
@@ -1533,11 +1533,11 @@ class WPP_F {
   static function minify_js($data) {
 
     if(!class_exists('W3_Plugin')) {
-      include_once WPP_Path. '/third-party/jsmin.php';
+      include_once WPP_Path. 'third-party/jsmin.php';
     } elseif(file_exists(WP_PLUGIN_DIR . '/w3-total-cache/lib/Minify/JSMin.php')) {
       include_once WP_PLUGIN_DIR . '/w3-total-cache/lib/Minify/JSMin.php';
     } else {
-      include_once WPP_Path. '/third-party/jsmin.php';
+      include_once WPP_Path. 'third-party/jsmin.php';
     }
 
     if(class_exists('JSMin')) {
@@ -1879,7 +1879,7 @@ class WPP_F {
    * @author Maxim Peshkov
    */
   function clear_cache() {
-    $cache_dir = WPP_Path . '/cache/';
+    $cache_dir = WPP_Path . 'cache/';
     if(file_exists($cache_dir)) {
       wpp_recursive_unlink($cache_dir);
     }
@@ -2622,7 +2622,7 @@ class WPP_F {
 
     if($instance_id) {
       //** Load value array from cache if it exists (search widget creates it on update */
-      $cachefile = WPP_Path . '/cache/searchwidget/' . $instance_id . '.values.res';
+      $cachefile = WPP_Path . 'cache/searchwidget/' . $instance_id . '.values.res';
 
       if($cache && is_file($cachefile) && time() - filemtime($cachefile) < 3600) {
         $result = unserialize(file_get_contents($cachefile));
@@ -4178,7 +4178,7 @@ class WPP_F {
   function list_table() {
     global $current_screen;
 
-    include WPP_Path . '/core/ui/class_wpp_object_list_table.php';
+    include WPP_Path . 'core/ui/class_wpp_object_list_table.php';
 
     //** Get the paramters we care about */
     $sEcho = $_REQUEST['sEcho'];

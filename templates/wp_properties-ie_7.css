@@ -1,9 +1,6 @@
 html {
   overflow-x: hidden;
 }
-.footer {
-  margin-top: -40px !important;
-}
 .header_dropdown_div .wpp_search_properties_widget .wpp_search_elements li {
   overflow: hidden !important;
 }
@@ -12,18 +9,4 @@ html {
 }
 .wpp_pagination_slider_status {
   margin-bottom: 5px;
-}
-div.mid {
-	position: static !important;
-	padding-top: 0;
-}
-.log_menu {
-	position: static !important;
-	float: right;
-}
-.log_menu li {
-	position: static !important;
-}
-.header_business_card {
-	clear: both;
 }
