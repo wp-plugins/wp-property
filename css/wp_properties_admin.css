@@ -385,11 +385,6 @@ body  #normal-sortables .inside table.property_meta {
   padding: 0;
 }
 
-body  .wpp_agent_page  #metabox_profile_images .inside .wpp_widget_action {
-    margin-left: -11px;
-    margin-right: -10px;
-}
-
 #menu-posts-property .wp-menu-image img {
     left: -3px;
     position: relative;
@@ -588,12 +583,48 @@ body.property_page_show_agents .wp-list-table .column-id {
   overflow: auto;
 }
 
+.wpp_agent_page .wpp_agent_image_wrapper {
+  width:81px;
+  height:23px;
+  overflow:hidden;
+  padding-top:4px;
+  float:right;
+}
+.wpp_agent_page #wpp_ajax_uploader {
+  display:none;
+}
+.wpp_agent_page .wpp_ajax_loader {
+  background: url("images/ajax-loader.gif") no-repeat scroll left center transparent;
+  float:right;
+  height: 16px;
+  margin: 4px 12px 0 0;
+  width: 43px;
+  display:none;
+}
+.wpp_agent_page #wpp_agent_image_gallery li {
+  float:left;
+  margin: 0 0 10px 6px;
+  text-align:center;
+}
+.wpp_agent_page #wpp_agent_image_gallery li table {
+  width:154px;
+  height:154px;
+  background:#CECEDD;
+  border-collapse:separate;
+  border-spacing:0;
+  padding:0;
+}
+
 .wpp_agent_page #metabox_save .inside {
   margin:0;
 }
 
 .wpp_agent_page #major-publishing-actions {
   overflow: auto;
+}
+
+.wpp_agent_page #metabox_profile_images .inside{
+  padding:10px 0 0 0;
 }
 
 .wpp_agent_select_wrap {

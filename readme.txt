@@ -214,6 +214,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.34.1 =
+* Fixed 'Real Estate Agents' premium feature: reimplemented image adding
+* Added default sort attribute 'Title' to property overview shortcode (it was missed if any property attribute was sortable)
+
 = 1.34.0 =
 * Added options to "Other Properties" widget to show properties of same time, if no parent property exists, and to shuffle results.
 * Fixed bug with Property Features causing error when Microsoft Word apostrophe used

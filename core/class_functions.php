@@ -938,18 +938,16 @@ class WPP_F {
       }
 
       if(!empty($sortable_attrs)) {
+        /* Add default 'Title' sort attribute */
+        $sortable_attrs['post_title'] = __('Title', 'wpp');
         return $sortable_attrs;
       }
 
-      // If not set, menu_order will not be used at all if any of the attributes are marked as searchable
-      $sortable_attrs = array(
+      /* If not set, menu_order will not be used at all if any of the attributes are marked as searchable */
+      return $sortable_attrs = array(
         'menu_order' => __('Default', 'wpp'),
         'post_title' => __('Title', 'wpp')
       );
-
-      if(!empty($sortable_attrs)) {
-        return $sortable_attrs;
-      }
     }
 
 
