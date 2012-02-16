@@ -296,6 +296,10 @@ class WPP_UI {
           $attribute_description = array(__('Values aggregated from child properties.','wpp'));
         }
 
+        if($wp_properties['configuration']['allow_multiple_attribute_values'] == 'true' && !in_array($slug, apply_filters('wpp_single_value_attributes', array('property_type')))) {
+          $row_classes[] = 'wpp_allow_multiple';
+        }
+
         //* Determine if attribute is assigned to group */
         $gslug = false;
         $group = false;

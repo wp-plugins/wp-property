@@ -3,7 +3,7 @@ Contributors:  usability_dynamics, anton-korotkoff, andypotanin
 Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.0
-Tested up to: 3.3.0
+Tested up to: 3.3.1
 Stable tag: trunk
 
 
@@ -213,6 +213,17 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.35.0 =
+* Fixed potential issue with conflicts of TCPDF libraries.
+* Fixed sorting by numerical values on front end.
+* Fixed issues with CSV importing.
+* Added new WP-CRM notification events.
+* Added option to disable the default new account notification sent out by FEPS.
+* Real Estate Agents: Fix to agent image removing.
+* XML Property Importer: Updated to support changing RETS version.
+* FEPS: Added the ability to remove uploaded images before submitting.
+* Super Map: Fixed potential issue with address attribute.
 
 = 1.34.1 =
 * Fixed 'Real Estate Agents' premium feature: reimplemented image adding

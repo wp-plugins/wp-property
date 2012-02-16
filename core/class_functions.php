@@ -164,6 +164,7 @@ class WPP_F {
    *
    */
   function load_assets($types = array()) {
+    global $post, $property, $wp_properties;
 
     add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-slider');"));
     add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
@@ -180,7 +181,11 @@ class WPP_F {
       switch($type) {
 
         case 'single':
-          add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
+
+          if($wp_properties['configuration']['do_not_use']['locations'] != 'true') {
+            add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('google-maps');"));
+          }
+
           add_action('wp_enqueue_scripts', create_function('', "wp_enqueue_script('jquery-ui-mouse');"));
         break;
 
@@ -520,7 +525,7 @@ class WPP_F {
 
       if ($current_row == 1) {
         for ($c=0; $c < $number_of_fields; $c++)  {
-            $header_array[$c] = $data[$c];
+            $header_array[$c] = str_ireplace('-', '_', sanitize_key($data[$c]));
         }
       } else {
       
@@ -529,13 +534,12 @@ class WPP_F {
           for ($c=0; $c < $number_of_fields; $c++) {          
             
             //** Clean up values */                  
-            if($value = trim($data[$c])) {
-              $data_array[$header_array[$c]] = trim($data[$c]);
-            }          
+            $value = trim($data[$c]);
+            $data_array[$header_array[$c]] = $value;
             
           }
           
-          $data_array = array_filter($data_array);
+          /** Removing - this removes empty values from the CSV, we want to leave them to make sure the associative array is consistant for the importer - $data_array = array_filter($data_array); */
           
           if(!empty($data_array)) {
             $csv[] = $data_array;
@@ -754,6 +758,10 @@ class WPP_F {
         'post_mime_type',
         'comment_count');
 
+      if(!$attribute) {
+        return;
+      }
+
       $ui_class = array($attribute);
 
       if(in_array($attribute, $post_table_keys)) {
@@ -883,13 +891,19 @@ class WPP_F {
     if(!$handle) {
       return;
     }
+
+    wp_enqueue_style($handle);
+
     //** Check if already included */
     if(wp_style_is($handle, 'done') || isset($printed_styles[$handle])) {
       return true;
-    } else {
+    } elseif (headers_sent()) {
       $printed_styles[$handle] = true;
       wp_print_styles($handle);
+    } else {
+      return false;
     }
+
   }
 
   /**
@@ -943,11 +957,15 @@ class WPP_F {
         return $sortable_attrs;
       }
 
-      /* If not set, menu_order will not be used at all if any of the attributes are marked as searchable */
-      return $sortable_attrs = array(
+      //* If not set, menu_order will not be used at all if any of the attributes are marked as searchable */
+      $sortable_attrs = array(
         'menu_order' => __('Default', 'wpp'),
         'post_title' => __('Title', 'wpp')
       );
+
+      if(!empty($sortable_attrs)) {
+        return $sortable_attrs;
+      }
     }
 
 
@@ -1667,7 +1685,7 @@ class WPP_F {
     }
 
     //** In case &ndash; is already converted and exists in its actual dash form */
-    $result = str_replace('�', '&ndash;', $result);
+    $result = str_replace('–', '&ndash;', $result);
 
     /* Uses WPs built in esc_html, works like a charm. */
     $result = esc_html( $result );
@@ -3088,7 +3106,7 @@ class WPP_F {
        * we use CAST in SQL query to avoid sort issues
        */
       if(self::meta_has_number_data_type ($matching_ids, $sql_sort_by)) {
-        $meta_value = "CAST(meta_value AS SIGNED)";
+        $meta_value = "CAST(meta_value AS DECIMAL(20,3))";
       } else {
         $meta_value = "meta_value";
       }
@@ -3304,6 +3322,7 @@ class WPP_F {
 
     $return = array();
 
+    //** Load all meta keys for this object */
     if ( $keys = get_post_custom( $id ) ) {
         foreach ( $keys as $key => $value ) {
 
@@ -3348,6 +3367,10 @@ class WPP_F {
 
     $return = array_merge($return, $post);
 
+    //** Make sure certain keys were not messed up by custom attributes */
+    $return['system'] = array();
+    $return['gallery'] = array();
+
     /*
      * Figure out what the thumbnail is, and load all sizes
      */
@@ -3381,20 +3404,21 @@ class WPP_F {
       if($featured_image_id) {
         $return['featured_image'] = $featured_image_id;
 
-        $image_title = $wpdb->get_var("SELECT post_title  FROM {$wpdb->prefix}posts WHERE ID = '$featured_image_id' ");
+        $image_title = $wpdb->get_var("SELECT post_title  FROM {$wpdb->prefix}posts WHERE ID = '{$featured_image_id}' ");
 
         $return['featured_image_title'] = $image_title;
         $return['featured_image_url'] = wp_get_attachment_url($featured_image_id);
       }
 
-    } /* end load_thumbnail */
+    }
 
-    /*
-     * Load all attached images and their sizes
+
+   /*
+    *
+    * Load all attached images and their sizes
+    *
      */
     if($load_gallery == 'true') {
-
-      $return['gallery'] = array();
 
       // Get gallery images
       if($attachments) {
@@ -3412,10 +3436,12 @@ class WPP_F {
         $return['gallery'] = false;
       }
     }
-    // end load_gallery
 
-    /*
-      Load parent if exists and inherit Parent's atttributes.
+
+   /*
+    *
+    *  Load parent if exists and inherit Parent's atttributes.
+    *
     */
     if($load_parent == 'true' && $post['post_parent']) {
 
@@ -3437,15 +3463,17 @@ class WPP_F {
       }
     }
 
-    /*
-      Load Children and their attributes
+
+   /*
+    *
+    * Load Children and their attributes
+    *
     */
     if($get_children == 'true') {
 
-      // Calculate variables if based off children if children exist
+      //** Calculate variables if based off children if children exist */
       $children = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE  post_type = 'property' AND post_status = 'publish' AND post_parent = '{$id}' ORDER BY menu_order ASC ");
 
-      //print_r($children);
       if(count($children) > 0) {
 
         //** Cycle through children and get necessary variables */
@@ -3459,7 +3487,7 @@ class WPP_F {
             $return['system']['child_images'][$child_id] = $child_object['featured_image_url'];
           }
 
-          // Exclude variables from searchable attributes (to prevent ranges)
+          //** Exclude variables from searchable attributes (to prevent ranges) */
           $excluded_attributes = $wp_properties['geo_type_attributes'];
           $excluded_attributes[] = $wp_properties['configuration']['address_attribute'];
 
@@ -3477,16 +3505,16 @@ class WPP_F {
           }
         }
 
-        // Cycle through every type of range (i.e. price, deposit, bathroom, etc) and fix-up the respective data arrays
+        //* Cycle through every type of range (i.e. price, deposit, bathroom, etc) and fix-up the respective data arrays */
         foreach((array)$range as $range_attribute => $range_values) {
 
-          // Cycle through all values of this range (attribute), and fix any ranges that use dashes
+          //* Cycle through all values of this range (attribute), and fix any ranges that use dashes */
           foreach($range_values as $key => $single_value) {
 
-            // Remove dollar signs
+            //* Remove dollar signs */
             $single_value = str_replace("$" , '', $single_value);
 
-            // Fix ranges
+            //* Fix ranges */
             if(strpos($single_value, '&ndash;')) {
 
               $split = explode('&ndash;', $single_value);
@@ -3497,19 +3525,19 @@ class WPP_F {
                   array_push($range_values, trim($new_single_value));
                 }
 
-              // Unset original value with dash
+              //* Unset original value with dash */
               unset($range_values[$key]);
 
             }
           }
 
-          // Remove duplicate values from this range
+          //* Remove duplicate values from this range */
           $range[$range_attribute] =  array_unique($range_values);
 
-          // Sort the values in this particular range
-           sort($range[$range_attribute]);
+          //* Sort the values in this particular range */
+          sort($range[$range_attribute]);
 
-           if(count($range[$range_attribute] ) < 2) {
+          if(count($range[$range_attribute] ) < 2) {
             $return[$range_attribute] = $range[$range_attribute][0];
           }
 
@@ -3525,7 +3553,7 @@ class WPP_F {
         }
 
       }
-    } /* end get_children */
+    }
 
 
     if(!empty($return['location']) && !in_array('address', $editable_keys) && !isset($return['address'])) {
@@ -3533,7 +3561,6 @@ class WPP_F {
     }
 
     $return['wpp_gpid'] = WPP_F::maybe_set_gpid($id);
-
     $return['permalink'] = get_permalink($id);
 
     //** Make sure property_type stays as slug, or it will break many things:  (widgets, class names, etc)  */
@@ -3548,6 +3575,7 @@ class WPP_F {
       }
     }
 
+    //** If phone number is not set but set globally, we load it into property array here */
     if(empty($return['phone_number']) && !empty($wp_properties['configuration']['phone_number'])) {
       $return['phone_number'] = $wp_properties['configuration']['phone_number'];
     }
@@ -3558,10 +3586,10 @@ class WPP_F {
 
     $return = apply_filters('wpp_get_property', $return);
 
-    // Get rid of all empty values
+    //* Get rid of all empty values */
     foreach($return as $key => $item) {
 
-      // Don't keys starting w/ post_
+      //** Don't blank keys starting w/ post_  - this should be converted to use get_attribute_data() to check where data is stored for better check - potanin@UD */
       if(strpos($key, 'post_') === 0) {
         continue;
       }
@@ -3569,9 +3597,10 @@ class WPP_F {
       if(empty($item)) {
         unset($return[$key]);
       }
+
     }
 
-    // Convert to object
+    //** Convert to object */
     if($return_object == 'true') {
       $return = WPP_F::array_to_object($return);
     }
@@ -3580,27 +3609,33 @@ class WPP_F {
 
     return $return;
 
-
   }
+
+
   /**
   * Gets prefix to an attribute
+  *
+  * @todo This should be obsolete, in any case we can't assume everyone uses USD - potanin@UD (11/22/11)
+  *
   */
   static function get_attrib_prefix($attrib) {
 
-    if($attrib == 'price')
+    if($attrib == 'price') {
       return "$";
+    }
 
-    if($attrib == 'deposit')
+    if($attrib == 'deposit') {
       return "$";
+    }
 
   }
 
-/*
- * Gets annex to an attribute. (Unused Function)
- *
- * @todo This function does not seem to be used by anything. potanin@UD (11/12/11)
- *
- */
+  /*
+   * Gets annex to an attribute. (Unused Function)
+   *
+   * @todo This function does not seem to be used by anything. potanin@UD (11/12/11)
+   *
+   */
   static function get_attrib_annex($attrib) {
 
     if($attrib == 'area') {
@@ -3610,9 +3645,12 @@ class WPP_F {
   }
 
 
-/*
-  Get coordinates for property out of database
-*/
+  /*
+   * Get coordinates for property out of database
+   *
+   * @todo Is this function used? It's messy. potanin@UD (11/22/11)
+   *
+   */
   static function get_coordinates($listing_id = false) {
     global $post;
 
@@ -4136,7 +4174,8 @@ class WPP_F {
     foreach($values as $value) {
       $value = trim($value);
 
-      if(empty($value)) {
+      //** Hack for child properties. Skip values with dashes */
+      if(empty($value) || strstr($value, '&ndash;') || strstr($value, '–')) {
         continue;
       }
 

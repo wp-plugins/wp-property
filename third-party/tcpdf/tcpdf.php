@@ -141,6 +141,12 @@
 require_once(dirname(__FILE__).'/config/tcpdf_config.php');
 
 /**
+ * If system already has declared TCPDF class for some reason then we do not need declare it again.
+ * @author korotkov@ud <anton.korotkov@usabilitydynamics.com> UsabilityDynamics, Ink.
+ */
+if ( class_exists('TCPDF') ) return;
+
+/**
  * @class TCPDF
  * PHP class for generating PDF documents without requiring external extensions.
  * TCPDF project (http://www.tcpdf.org) has been originally derived in 2002 from the Public Domain FPDF class by Olivier Plathey (http://www.fpdf.org), but now is almost entirely rewritten.<br>

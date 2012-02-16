@@ -502,7 +502,7 @@ class WPP_Core {
     if(is_array($_REQUEST['wpp_search'])) {
 
       if(isset($_POST['wpp_search'])) {
-        $query = '?' . http_build_query(array('wpp_search' => $_REQUEST['wpp_search']));
+        $query = '?' . http_build_query(array('wpp_search' => $_REQUEST['wpp_search']), '', '&');
         wp_redirect(UD_F::base_url($wp_properties['configuration']['base_slug']) . $query);
         die();
       }
@@ -726,17 +726,15 @@ class WPP_Core {
 
     if($post->post_type == 'property') {
 
-      $featured = get_post_meta($post->ID, 'featured', true);
-
       ?>
       <div class="misc-pub-section ">
 
       <ul>
-        <li><?php _e('Menu Sort Order:','wpp')?> <?php echo WPP_UD_UI::input("name=menu_order&special=size=4",$post->menu_order); ?></li>
+        <li><?php _e('Menu Sort Order:','wpp')?> <?php echo WPP_UD_UI::input("name=menu_order&special=size=4", $post->menu_order); ?></li>
 
-        <?php if(current_user_can('manage_options')): ?>
-        <li><?php echo WPP_UD_UI::checkbox("name=wpp_data[meta][featured]&label=" . __('Display in featured listings.','wpp'), $featured); ?></li>
-        <?php endif; ?>
+        <?php if(current_user_can('manage_options') && $wp_properties['configuration']['do_not_use']['featured'] != 'true') { ?>
+        <li><?php echo WPP_UD_UI::checkbox("name=wpp_data[meta][featured]&label=" . __('Display in featured listings.','wpp'), get_post_meta($post->ID, 'featured', true)); ?></li>
+        <?php } ?>
 
          <?php do_action('wpp_publish_box_options'); ?>
       </ul>

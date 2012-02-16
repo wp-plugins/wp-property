@@ -126,7 +126,7 @@
   -khtml-box-shadow: 0 0 4px #000000;
   -o-box-shadow: 0 0 4px #000000;
   -ms-box-shadow: 0 0 4px #000000;
-  height: 124px;
+  height: auto;
   width: 188px !important;
 }
 

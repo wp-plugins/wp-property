@@ -296,9 +296,19 @@ select.wpp_field_disabled {
     cursor: pointer;
   }
 
+.property_page_page_feps  .feps_form_info {
+  width: 49%;
+  float: left;
+  margin-bottom: 1em;
+}
+
 .property_page_page_feps  .feps_form_info label {
   width: 150px;
   float: left;
+}
+
+.property_page_page_feps  .feps_form_info label.wpp_feps_right_label {
+  width: auto;
 }
 
 .property_page_page_feps  .wpp_checkbox_field_wrapper {
@@ -1059,13 +1069,21 @@ html .wpp_tabs  ul.tabs li.active, html .wpp_tabs  ul.tabs li.active a:hover {
       padding-left: 15px;
       vertical-align: top;
       width: 150px; }
-
+ 
     #property_meta .inside .widefat td,
-    .inside table.property_meta.widefat td { border-bottom: 1px solid #EFEFEF; vertical-align: middle;}
-
+    .inside table.property_meta.widefat td { 
+      border-bottom: 1px solid #EFEFEF; 
+      vertical-align: middle;
+      }
+      
+      td.wpp_attribute_cell .wpp_attribute_inner_wrapper {
+      position: relative;
+      overflow: auto;
+      }
+ 
     #property_meta .inside .widefat textarea,
     .inside table.property_meta.widefat textarea { width: 100%; }
-
+ 
     #property_meta .inside .widefat .description,
     .inside table.property_meta.widefat .description {
       color: #C1C1C1;
@@ -1089,9 +1107,24 @@ html .wpp_tabs  ul.tabs li.active, html .wpp_tabs  ul.tabs li.active a:hover {
       margin: 0;
       padding: 0;
     }
-
+    
+    .wpp_single_attribute_entry_list .wpp_add_line {
+      display: none;
+      margin-left: 5px;
+      cursor: pointer;
+      color: #C1C1C1;
+    }
+    
+    .wpp_single_attribute_entry_list li.wpp_field_wrapper:hover .wpp_add_line {
+      display: inline;
+    }
+    
+    .wpp_single_attribute_entry_list .wpp_add_line:hover {
+      color: #000;
+    }
+    
     #property_meta .inside .widefat input.text-input,
-    .inside table.property_meta.widefat input.text-input {
+    .inside table.property_meta.widefat input.text-input { 
       max-width: 400px;
       width: 95%;
     }

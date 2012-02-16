@@ -78,18 +78,14 @@ class WPP_Object_List_Table extends WPP_List_Table {
     $can_edit_post = current_user_can( $post_type_object->cap->edit_post);
     
     $result = "<tr id='object-{$ID}' class='wpp_parent_element'>";
-    
+
     list( $columns, $hidden ) = $this->get_column_info();
-    
-    //print_r( $columns );
-    
+
     foreach ( $columns as $column => $column_display_name ) {
-      
-      //echo $column_display_name;
-      
+
       $class = "class=\"$column column-$column\"";
       $style = '';
-      
+
       if ( in_array( $column, $hidden ) ) {
         $style = ' style="display:none;"';
       }
@@ -160,18 +156,34 @@ class WPP_Object_List_Table extends WPP_List_Table {
           
           foreach($overview_stats as $stat => $label) {
 
-            if(empty($post->$stat) || strlen($post->$stat) > 15) {
-              continue;
+            $values = $post->$stat;
+
+            if(!is_array($values)) {
+              $values = array($values);
             }
-            
-            $stat_count++;
-            
-            if($stat_count > 5) {
-              $stat_row_class = 'hidden wpp_overview_hidden_stats';
-              $hidden_count++;
+
+            foreach($values as $value) {
+
+              $print_values = array();
+
+              if(empty($value) || strlen($value) > 15) {
+                continue;
+              }
+
+              $print_values[] = apply_filters("wpp_stat_filter_{$stat}", $value);
+
+              $print_values = implode('<br />', $print_values);
+
+              $stat_count++;
+
+              if($stat_count > 5) {
+                $stat_row_class = 'hidden wpp_overview_hidden_stats';
+                $hidden_count++;
+              }
+
+              $display_stats[$stat] = '<li class="'.$stat_row_class.'"><span class="wpp_label">' . $label . ':</span> <span class="wpp_value">' . $print_values . '</span></li>';
+
             }
-            
-            $display_stats[$stat] = '<li class="'.$stat_row_class.'"><span class="wpp_label">' . $label . ':</span> <span class="wpp_value">' . apply_filters("wpp_stat_filter_{$stat}", $post->$stat) . '</span></li>';;
 
           }
           
@@ -247,10 +259,26 @@ class WPP_Object_List_Table extends WPP_List_Table {
           }
           
         break;  
-        
-        
+
+
         default:
-          $r .= apply_filters("wpp_attribute_filter", $post->{$column}, $column);
+
+          $print_values = array();
+
+          $value = $post->{$column};
+
+          if(!is_array($value)) {
+            $value = array($value);
+          }
+
+          foreach($value as $single_value) {
+            $print_values[] = apply_filters("wpp_attribute_filter", $single_value, $column);
+          }
+
+          $print_values = implode('<br />', $print_values);
+
+          $r .= $print_values;
+
         break;
       }
       

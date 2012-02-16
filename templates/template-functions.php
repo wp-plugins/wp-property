@@ -819,14 +819,21 @@ endif;
 if(!function_exists('the_tagline')):
    function the_tagline($before = '', $after = '', $echo = true) {
     global $post;
+    
     $content = $post->tagline;
-    if ( strlen($content) == 0 )
+    
+    if ( strlen($content) == 0 ) {
       return;
+    }
+      
     $content = $before . $content . $after;
-    if ( $echo )
+    
+    if ( $echo ) {
       echo $content;
-    else
+    } else {
       return $content;
+    }
+    
   }
 endif;
 
