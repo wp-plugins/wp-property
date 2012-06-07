@@ -161,6 +161,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.35.1 = 
+* Security fixes
+
 = 1.31.1 = 
 * "Area" attribute will only be appended with " sq ft." if it is set as numeric in the Developer tab.
 
@@ -213,6 +216,9 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions. 
 
 == Changelog ==
+
+= 1.35.1 = 
+* Security fixes
 
 = 1.35.0 =
 * Fixed potential issue with conflicts of TCPDF libraries.
