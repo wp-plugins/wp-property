@@ -477,7 +477,7 @@ class UD_API {
    * @author peshkov@UD
    * @version 1.0
    */
-  static function get_template_part( $name , $path = array() ) {    
+  static function get_template_part( $name , $path = array() ) {
     $name = (array)$name;
     $template = "";
 
