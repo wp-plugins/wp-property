@@ -1,10 +1,10 @@
 === WP-Property - WordPress Powered Real Estate and Property Management ===
 Contributors:  usability_dynamics, anton-korotkoff, andypotanin
 Donate link: http://usabilitydynamics.com/products/wp-property/
-Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
+Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import 
 Requires at least: 3.0
 Tested up to: 3.4.2
-Stable tag: trunk
+Stable tag: 1.36.1
 
 
 == Description ==
