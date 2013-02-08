@@ -1,0 +1,5568 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Property\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-06 18:20+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: rotcod <denys.kostin@usabilitydynamics.com>\n"
+"Language-Team: LeXeLL <lexell3@gmail.com>\n"
+"Language: sk_SK\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-KeywordsList: __;_e;_n;_x\n"
+"X-Poedit-Basepath: .\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ..\n"
+
+#: ../action_hooks.php:57
+msgid "Building"
+msgstr "Budova"
+
+#: ../action_hooks.php:58
+msgid "Floorplan"
+msgstr "Pôdorys"
+
+#: ../action_hooks.php:59
+msgid "Single Family Home"
+msgstr "Rodinný dom"
+
+#: ../action_hooks.php:72 ../core/premium/class_wpp_property_import.php:2270
+msgid "Address"
+msgstr "Adresa"
+
+#: ../action_hooks.php:73
+msgid "Price"
+msgstr "Cena"
+
+#: ../action_hooks.php:74
+msgid "Bedrooms"
+msgstr "Spálne"
+
+#: ../action_hooks.php:75
+msgid "Bathrooms"
+msgstr "Kúpeľne"
+
+#: ../action_hooks.php:76 ../action_hooks.php:79
+msgid "Deposit"
+msgstr "Záloha"
+
+#: ../action_hooks.php:77
+msgid "Area"
+msgstr "Plocha"
+
+#: ../action_hooks.php:78 ../core/class_functions.php:4391
+msgid "Phone Number"
+msgstr "Tel. číslo"
+
+#: ../action_hooks.php:86
+msgid "Lease Terms"
+msgstr "Podmienky nájmu"
+
+#: ../action_hooks.php:87
+msgid "Pet Policy"
+msgstr "Pravidlá pre domáce zvieratá"
+
+#: ../action_hooks.php:88
+msgid "School"
+msgstr "Škola"
+
+#: ../action_hooks.php:89 ../core/premium/class_wpp_pdf_flyer.php:1088
+msgid "Tagline"
+msgstr "Slogan"
+
+#: ../action_hooks.php:136
+msgid "Studio"
+msgstr "Štúdio"
+
+#: ../action_hooks.php:189
+msgid "The property type will determine the layout."
+msgstr "Typ nehnuteľnosti určí dizajnové rozloženie stránky."
+
+#: ../action_hooks.php:190
+msgid ""
+"Customize what appears in search results in the attribute section.  For "
+"example: 1bed, 2baths, area varies slightly."
+msgstr ""
+"Vyberte, ktoré vlastnosti sa zobrazia medzi atribútmi výsledkov "
+"vyhľadávania. Napríklad: 1 spálňa, 2 kúpeľne, tolerovaná malá odchýlka "
+"plochy."
+
+#: ../action_hooks.php:191
+msgid "Will appear on overview pages and on top of every listing page."
+msgstr ""
+"Zobrazí sa v kompletnom prehľade nehnuteľností aj na vrchu každého inzerátu."
+
+#: ../action_hooks.php:196
+#, fuzzy
+msgid "Uploading"
+msgstr "Načítavam"
+
+#: ../action_hooks.php:197
+msgid "Drop files here to upload"
+msgstr ""
+
+#: ../action_hooks.php:198 ../core/premium/class_wpp_feps.php:2158
+#, fuzzy
+msgid "Upload Image"
+msgstr "Všetky fotografie:"
+
+#: ../action_hooks.php:199 ../core/ui/page_settings.php:729
+#: ../core/ui/page_settings.php:736 ../core/ui/page_settings.php:742
+msgid "Cancel"
+msgstr "Zrušiť"
+
+#: ../action_hooks.php:200
+msgid "Failed"
+msgstr ""
+
+#: ../default_api.php:22
+msgid "Sorry, invalid request."
+msgstr ""
+
+#: ../default_api.php:242 ../core/premium/class_wpp_power_tools.php:361
+#, fuzzy
+msgid "View "
+msgstr "Zobraziť všetko"
+
+#: ../default_api.php:354 ../core/class_widgets.php:719
+#: ../core/class_widgets.php:827 ../core/class_widgets.php:962
+#: ../core/class_widgets.php:1067 ../core/class_widgets.php:1308
+#: ../core/premium/class_wpp_pdf_flyer.php:1058
+#: ../core/premium/class_wpp_property_import.php:2283
+#: ../templates/template-functions.php:1270
+msgid "Property Type"
+msgstr "Typ nehnuteľnosti"
+
+#: ../default_api.php:358 ../core/class_core.php:854
+#: ../core/class_functions.php:4386
+#: ../core/premium/class_wpp_property_import.php:2273
+msgid "City"
+msgstr "Mesto"
+
+#: ../default_api.php:478
+msgid "For Sale"
+msgstr "Na predaj"
+
+#: ../default_api.php:479
+msgid "For Rent"
+msgstr "Na prenájom"
+
+#: ../default_api.php:487
+msgid "This is a rental property."
+msgstr "Táto nehnuteľnosť je na prenájom."
+
+#: ../default_api.php:493
+msgid "This property is for sale."
+msgstr "Táto nehnuteľnosť je na predaj."
+
+#: ../default_api.php:511
+msgid "Set Coordinates Manually."
+msgstr ""
+
+#: ../default_api.php:516 ../core/premium/class_wpp_property_import.php:2278
+msgid "Latitude"
+msgstr "Zemepisná šírka"
+
+#: ../default_api.php:521 ../core/premium/class_wpp_property_import.php:2279
+msgid "Longitude"
+msgstr "Zemepisná dĺžka"
+
+#: ../default_api.php:600 ../default_api.php:606
+#: ../core/class_functions.php:2854 ../core/class_functions.php:4177
+#: ../core/premium/class_wpp_supermap.php:1055
+#: ../core/premium/class_wpp_supermap.php:1635
+#: ../core/ui/page_settings.php:525 ../core/ui/page_settings.php:539
+#: ../templates/template-functions.php:987
+msgid "Yes"
+msgstr "Áno"
+
+#: ../default_api.php:641
+#, fuzzy
+msgid "Format phone number."
+msgstr "Predvolené tel. číslo"
+
+#: ../default_api.php:653
+msgid "Convert \"Yes\" and \"True\" values to checked icons on the front-end."
+msgstr ""
+
+#: ../default_api.php:707
+#, fuzzy
+msgid " sq. ft."
+msgstr "m2"
+
+#: ../default_api.php:887
+#, fuzzy
+msgid "Address was validated by Google Maps."
+msgstr ""
+"<span class='description'>Adresa bola overená podľa Google Maps.</span>"
+
+#: ../default_api.php:889
+#, fuzzy
+msgid ""
+"Address has not yet been validated, should be formatted as: street, city, "
+"state, postal code, country. Locations are validated through Google Maps."
+msgstr ""
+"<span class='description'>Adresa zatiaľ nebola overená, vstupný formát by "
+"mal byť: ulica, mesto, PSČ, krajina. Umiestnenia sú overované cez Google "
+"Maps.</span>"
+
+#: ../core/class_core.php:300 ../core/class_core.php:396
+#: ../core/premium/class_admin_tools.php:384
+#: ../core/premium/class_admin_tools.php:526
+#: ../core/premium/class_admin_tools.php:585
+#: ../core/premium/class_wpp_feps.php:199
+#: ../core/premium/class_wpp_pdf_flyer.php:1020
+#: ../core/premium/class_wpp_property_import.php:3207
+#: ../core/premium/class_wpp_slideshow.php:1134
+#: ../core/ui/page_settings.php:240
+msgid "Settings"
+msgstr "Nastavenia"
+
+#: ../core/class_core.php:319
+msgid "Child Properties"
+msgstr "Dcérske nehnuteľnosti"
+
+#: ../core/class_core.php:744
+msgid "Menu Sort Order:"
+msgstr "Poradie v menu:"
+
+#: ../core/class_core.php:747
+#, fuzzy
+msgid "Display in featured listings."
+msgstr "Zobraziť nehnuteľnosť medzi odporúčanými inzerátmi."
+
+#: ../core/class_core.php:810
+#, fuzzy, php-format
+msgid "Property updated. <a href=\"%s\">view property</a>"
+msgstr ""
+"Nehnuteľnosť bola aktualizovaná. <a href=\"%s\">Zobraziť nehnuteľnosť</a>"
+
+#: ../core/class_core.php:811
+msgid "Custom field updated."
+msgstr "Vlastné pole bolo aktualizované."
+
+#: ../core/class_core.php:812
+msgid "Custom field deleted."
+msgstr "Vlastné pole bolo zmazané."
+
+#: ../core/class_core.php:813
+msgid "Property updated."
+msgstr "Nehnuteľnosť bola aktualizovaná."
+
+#: ../core/class_core.php:815
+#, php-format
+msgid "Property restored to revision from %s"
+msgstr "Nehnuteľnosť bola obnovená na revíziu z %s"
+
+#: ../core/class_core.php:816
+#, php-format
+msgid "Property published. <a href=\"%s\">View property</a>"
+msgstr ""
+"Nehnuteľnosť bola publikovaná. <a href=\"%s\">Zobraziť nehnuteľnosť</a>"
+
+#: ../core/class_core.php:817
+msgid "Property saved."
+msgstr "Nehnuteľnosť bola uložená."
+
+#: ../core/class_core.php:818
+#, php-format
+msgid ""
+"Property submitted. <a target=\"_blank\" href=\"%s\">Preview property</a>"
+msgstr ""
+"Nehnuteľnosť bola odoslaná. <a target=\"_blank\" href=\"%s\">Zobraziť "
+"nehnuteľnosť</a>"
+
+#: ../core/class_core.php:819
+#, php-format
+msgid ""
+"Property scheduled for: <strong>%1$s</strong>. <a target=\"_blank\" href="
+"\"%2$s\">Preview property</a>"
+msgstr ""
+"Nehnuteľnosť naplánovaná na: <strong>%1$s</strong>. <a target=\"_blank\" "
+"href=\"%2$s\">Zobraziť nehnuteľnosť</a>"
+
+#: ../core/class_core.php:821
+#: ../core/premium/class_wpp_property_import.php:301
+msgid "M j, Y @ G:i"
+msgstr "j. F Y G:i"
+
+#: ../core/class_core.php:822
+#, php-format
+msgid ""
+"Property draft updated. <a target=\"_blank\" href=\"%s\">Preview property</a>"
+msgstr ""
+"Koncept nehnuteľnosti bol aktualizovaný. <a target=\"_blank\" href=\"%s"
+"\">Zobraziť nehnuteľnosť</a>"
+
+#: ../core/class_core.php:844 ../core/class_functions.php:1100
+#: ../core/class_functions.php:1107 ../core/class_functions.php:2326
+#: ../core/class_widgets.php:423 ../core/class_widgets.php:641
+#: ../core/class_widgets.php:867 ../core/class_widgets.php:1107
+#: ../core/premium/class_wpp_feps.php:1973
+#: ../core/premium/class_wpp_feps.php:2005
+msgid "Title"
+msgstr "Názov"
+
+#: ../core/class_core.php:845 ../core/class_functions.php:2327
+#: ../core/class_functions.php:4537 ../core/ud_api.php:989
+#: ../core/premium/class_admin_tools.php:583
+msgid "Type"
+msgstr "Typ"
+
+#: ../core/class_core.php:855 ../core/class_functions.php:2328
+msgid "Overview"
+msgstr "Prehľad"
+
+#: ../core/class_core.php:856 ../core/class_functions.php:2330
+#: ../core/class_functions.php:4541
+#: ../core/ui/class_wpp_object_list_table.php:252
+#: ../core/ui/class_wpp_object_list_table.php:257
+msgid "Featured"
+msgstr "Odporúčané"
+
+#: ../core/class_core.php:857 ../core/ui/property_metaboxes.php:66
+#: ../core/ui/property_metaboxes.php:67
+msgid "Order"
+msgstr "Poradie"
+
+#: ../core/class_core.php:858 ../core/class_functions.php:2337
+#: ../core/premium/class_wpp_pdf_flyer.php:823
+msgid "Thumbnail"
+msgstr "Náhľad"
+
+#: ../core/class_core.php:1105
+msgid "General Information"
+msgstr "Základné informácie"
+
+#: ../core/class_core.php:1115
+msgid "NO NAME"
+msgstr ""
+
+#: ../core/class_core.php:1121 ../templates/template-functions.php:1387
+msgid "Search"
+msgstr "Hľadať"
+
+#: ../core/class_core.php:1332
+msgid "Floor plans at location:"
+msgstr "Pôdorysy v tejto lokalite:"
+
+#: ../core/class_core.php:1336
+msgid "Sort By:"
+msgstr ""
+
+#: ../core/class_core.php:1806 ../core/class_functions.php:256
+msgid "Edit Property"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/class_core.php:1807
+#, fuzzy
+msgid "Read Property"
+msgstr "Nová nehnuteľnosť"
+
+#: ../core/class_core.php:1808
+#, fuzzy
+msgid "Delete Property"
+msgstr "Nová nehnuteľnosť"
+
+#: ../core/class_core.php:1809
+#, fuzzy
+msgid "Edit Properties"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/class_core.php:1810
+#, fuzzy
+msgid "Edit Other Properties"
+msgstr "Ďalšie nehnuteľnosti"
+
+#: ../core/class_core.php:1811
+#, fuzzy
+msgid "Publish Properties"
+msgstr "Nehnuteľnosti"
+
+#: ../core/class_core.php:1812
+#, fuzzy
+msgid "Read Private Properties"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/class_core.php:1814
+#, fuzzy
+msgid "Manage Settings"
+msgstr "Hlavné nastavenia"
+
+#: ../core/class_core.php:1816
+msgid "Manage Categories"
+msgstr ""
+
+#: ../core/class_core.php:1868
+#, fuzzy
+msgid "For more information:"
+msgstr "Základné informácie"
+
+#: ../core/class_core.php:1869
+msgid ""
+"<a href=\"https://usabilitydynamics.com/products/wp-property/\" target="
+"\"_blank\">WP-Property Product Page</a>"
+msgstr ""
+
+#: ../core/class_core.php:1870
+msgid ""
+"<a href=\"https://usabilitydynamics.com/products/wp-property/forum/\" target="
+"\"_blank\">WP-Property Forums</a>"
+msgstr ""
+
+#: ../core/class_core.php:1871
+msgid ""
+"<a href=\"https://usabilitydynamics.com/help/\" target=\"_blank\">WP-"
+"Property Tutorials</a>"
+msgstr ""
+
+#: ../core/class_core.php:1877
+msgid "Please upgrade Wordpress to the latest version for detailed help."
+msgstr ""
+
+#: ../core/class_core.php:1877
+msgid ""
+"Or visit <a href=\"https://usabilitydynamics.com/tutorials/wp-property-help/"
+"\" target=\"_blank\">WP-Property Help Page</a> on UsabilityDynamics.com"
+msgstr ""
+
+#: ../core/class_functions.php:67
+#, fuzzy, php-format
+msgid "An error occurred during API key request: <b>%s</b>."
+msgstr "Vyskytla sa chyba pri overovaní prémiového doplnku: <b> %s </b>."
+
+#: ../core/class_functions.php:109 ../core/class_functions.php:251
+#: ../core/class_functions.php:1244
+#: ../core/premium/class_wpp_power_tools.php:333
+msgid "Properties"
+msgstr "Nehnuteľnosti"
+
+#: ../core/class_functions.php:113 ../core/class_functions.php:253
+#: ../core/premium/class_wpp_facebook_tabs.php:839
+#: ../core/premium/class_wpp_facebook_tabs.php:888
+msgid "Property"
+msgstr "Nehnuteľnosť"
+
+#: ../core/class_functions.php:163
+#, php-format
+msgid "Property: %s"
+msgstr "Nehnuteľnosť: %s"
+
+#: ../core/class_functions.php:165
+#, php-format
+msgid "Sidebar located on the %s page."
+msgstr ""
+
+#: ../core/class_functions.php:190 ../core/class_functions.php:192
+#: ../core/class_functions.php:202 ../core/class_functions.php:203
+#: ../core/class_functions.php:2329
+msgid "Features"
+msgstr "Vybavenosť"
+
+#: ../core/class_functions.php:193 ../core/class_functions.php:204
+#: ../core/class_functions.php:213
+msgid "Feature"
+msgstr "Odporučiť"
+
+#: ../core/class_functions.php:194 ../core/class_functions.php:205
+#, fuzzy
+msgid "Search Features"
+msgstr "Vyhľadávať v nehnuteľnostiach"
+
+#: ../core/class_functions.php:195 ../core/class_functions.php:206
+#, fuzzy
+msgid "All Features"
+msgstr "Vybavenosť"
+
+#: ../core/class_functions.php:196 ../core/class_functions.php:207
+#, fuzzy
+msgid "Parent Feature"
+msgstr "Odporučiť"
+
+#: ../core/class_functions.php:197 ../core/class_functions.php:208
+#, fuzzy
+msgid "Parent Feature:"
+msgstr "Odporučiť"
+
+#: ../core/class_functions.php:198 ../core/class_functions.php:209
+#, fuzzy
+msgid "Edit Feature"
+msgstr "Odporučiť"
+
+#: ../core/class_functions.php:199 ../core/class_functions.php:210
+#, fuzzy
+msgid "Update Feature"
+msgstr "Odporučiť"
+
+#: ../core/class_functions.php:200 ../core/class_functions.php:211
+#, fuzzy
+msgid "Add New Feature"
+msgstr "Pridať novú nehnuteľnosť"
+
+#: ../core/class_functions.php:201 ../core/class_functions.php:212
+#, fuzzy
+msgid "New Feature Name"
+msgstr "Názov doplnku"
+
+#: ../core/class_functions.php:220 ../core/class_functions.php:222
+#: ../core/class_functions.php:232 ../core/class_functions.php:233
+msgid "Community Features"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:223 ../core/class_functions.php:234
+#: ../core/class_functions.php:243
+#, fuzzy
+msgid "Community Feature"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:224 ../core/class_functions.php:235
+#, fuzzy
+msgid "Search Community Features"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:225 ../core/class_functions.php:236
+#, fuzzy
+msgid "All Community Features"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:226 ../core/class_functions.php:237
+#, fuzzy
+msgid "Parent Community Feature"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:227 ../core/class_functions.php:238
+#, fuzzy
+msgid "Parent Community Feature:"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:228 ../core/class_functions.php:239
+#, fuzzy
+msgid "Edit Community Feature"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:229 ../core/class_functions.php:240
+#, fuzzy
+msgid "Update Community Feature"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:230 ../core/class_functions.php:241
+#, fuzzy
+msgid "Add New Community Feature"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:231 ../core/class_functions.php:242
+#, fuzzy
+msgid "New Community Feature Name"
+msgstr "Občianska vybavenosť"
+
+#: ../core/class_functions.php:252
+#, fuzzy
+msgid "All Properties"
+msgstr "Nehnuteľnosti"
+
+#: ../core/class_functions.php:254
+#, fuzzy
+msgid "Add Property"
+msgstr "Pridať novú nehnuteľnosť"
+
+#: ../core/class_functions.php:255
+msgid "Add New Property"
+msgstr "Pridať novú nehnuteľnosť"
+
+#: ../core/class_functions.php:257
+msgid "New Property"
+msgstr "Nová nehnuteľnosť"
+
+#: ../core/class_functions.php:258 ../core/premium/class_wpp_supermap.php:1071
+#: ../core/premium/class_wpp_supermap.php:1650
+msgid "View Property"
+msgstr "Zobraziť nehnuteľnosť"
+
+#: ../core/class_functions.php:259
+msgid "Search Properties"
+msgstr "Vyhľadávať v nehnuteľnostiach"
+
+#: ../core/class_functions.php:260
+msgid "No properties found"
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/class_functions.php:261
+msgid "No properties found in Trash"
+msgstr "Žiadne nehnuteľnosti neboli v koši nájdené"
+
+#: ../core/class_functions.php:617
+msgid "Could not detect."
+msgstr ""
+
+#: ../core/class_functions.php:738
+#, php-format
+msgid "Set %1s properties to \"%2s\" property type"
+msgstr ""
+
+#: ../core/class_functions.php:1106
+#, fuzzy
+msgid "Default"
+msgstr "Zmazať"
+
+#: ../core/class_functions.php:1558
+msgid ""
+"If you have problems automatically downloading premium features, it may be "
+"due to PHP not having ownership issues over the premium feature folder."
+msgstr ""
+
+#: ../core/class_functions.php:1568
+msgid ""
+"There is an ownership issue with the premium folder, which means your site "
+"cannot download WP-Property premium features and receive updates.  Please "
+"contact your host to fix this - PHP needs ownership over the <b>wp-content/"
+"plugins/wp-property/core/premium</b> folder.  Be advised: changing the file "
+"permissions will not fix this."
+msgstr ""
+
+#: ../core/class_functions.php:1575
+msgid ""
+"One of the folders that is necessary for downloading additional features for "
+"the WP-Property plugin is not writable.  This means features cannot be "
+"downloaded.  To fix this, you need to set the <b>wp-content/plugins/wp-"
+"property/core/premium</b> permissions to 0755."
+msgstr ""
+"Pre jeden z priečinkov nutných pre stiahnutie dodatočných funkcií pre WP-"
+"Property nemáte zapisovacie práva, stiahnutie preto nie je možné. Pre opravu "
+"je potrebné nastaviť prístupové práva priečinka <b>wp-content/plugins/wp-"
+"property/core/premium</b> na 0755."
+
+#: ../core/class_functions.php:1739
+#, php-format
+msgid "Updated %1$d %2$s using the %3$s localization."
+msgstr ""
+
+#: ../core/class_functions.php:1742
+#, php-format
+msgid "%1$d %2$s has empty address."
+msgstr ""
+
+#: ../core/class_functions.php:1746
+#, php-format
+msgid "%1$d %2$s could not be updated."
+msgstr ""
+
+#: ../core/class_functions.php:1750
+#, php-format
+msgid "%1$d %2$s was ignored because query limit was exceeded."
+msgstr ""
+
+#: ../core/class_functions.php:2141
+#, fuzzy
+msgid "Cache was successfully cleared"
+msgstr "Aktualizácia úspešne dokončená."
+
+#: ../core/class_functions.php:2181
+#, fuzzy, php-format
+msgid "An error occurred during premium feature check: <b> %s </b>."
+msgstr "Vyskytla sa chyba pri overovaní prémiového doplnku: <b> %s </b>."
+
+#: ../core/class_functions.php:2211
+msgid "The API key could not be generated."
+msgstr ""
+
+#: ../core/class_functions.php:2213
+#, fuzzy, php-format
+msgid "An error occurred during premium feature check: <b>%s</b>."
+msgstr "Vyskytla sa chyba pri overovaní prémiového doplnku: <b> %s </b>."
+
+#: ../core/class_functions.php:2243
+msgid "Feature Name"
+msgstr "Názov doplnku"
+
+#: ../core/class_functions.php:2244 ../core/class_functions.php:2624
+msgid "Version"
+msgstr "Verzia"
+
+#: ../core/class_functions.php:2245 ../core/class_functions.php:2625
+#: ../core/premium/class_wpp_feps.php:1957
+#: ../core/premium/class_wpp_pdf_flyer.php:1286
+msgid "Description"
+msgstr "Popis"
+
+#: ../core/class_functions.php:2259
+#, php-format
+msgid "WP-Property Premium Feature: %s updated to version %s from %s."
+msgstr "Prémiový doplnok WP-Property: %s bol aktualizovaný na verziu %s z %s."
+
+#: ../core/class_functions.php:2261
+#, php-format
+msgid "WP-Property Premium Feature: %s updated to version %s."
+msgstr "Prémiový doplnok WP-Property: %s bol aktualizovaný na verziu %s."
+
+#: ../core/class_functions.php:2278
+msgid ""
+"Update ran successfully but no features were downloaded because the setting "
+"is disabled. Enable in the \"Developer\" tab."
+msgstr ""
+
+#: ../core/class_functions.php:2281
+msgid "Update ran successfully."
+msgstr "Aktualizácia úspešne dokončená."
+
+#: ../core/class_functions.php:2623 ../core/class_functions.php:4392
+#: ../core/premium/class_agents.php:1674
+#: ../core/premium/class_wpp_supermap.php:202
+#: ../core/premium/class_wpp_supermap.php:344
+#: ../templates/template-functions.php:1631
+msgid "Name"
+msgstr "Meno"
+
+#: ../core/class_functions.php:2626
+msgid "Minimum Core Version"
+msgstr ""
+
+#: ../core/class_functions.php:2856 ../core/ui/page_settings.php:525
+#: ../core/ui/page_settings.php:539 ../templates/template-functions.php:992
+msgid "No"
+msgstr ""
+
+#: ../core/class_functions.php:3912
+msgid " sq ft."
+msgstr "m2"
+
+#: ../core/class_functions.php:4145 ../core/class_functions.php:4154
+msgid "Get Directions"
+msgstr "Ukázať cestu"
+
+#: ../core/class_functions.php:4383
+#: ../core/premium/class_wpp_pdf_flyer.php:139
+msgid "General Settings"
+msgstr "Hlavné nastavenia"
+
+#: ../core/class_functions.php:4384
+msgid "Find your property"
+msgstr ""
+
+#: ../core/class_functions.php:4385 ../core/premium/class_agents.php:444
+#: ../core/premium/class_wpp_property_import.php:3917
+#: ../core/ui/class_wpp_object_list_table.php:120
+msgid "Edit"
+msgstr ""
+
+#: ../core/class_functions.php:4387
+msgid "Contact us"
+msgstr ""
+
+#: ../core/class_functions.php:4388
+#, fuzzy
+msgid "Login"
+msgstr "Log"
+
+#: ../core/class_functions.php:4389
+msgid "Explore"
+msgstr ""
+
+#: ../core/class_functions.php:4390
+msgid "Message"
+msgstr ""
+
+#: ../core/class_functions.php:4393
+msgid "E-mail"
+msgstr ""
+
+#: ../core/class_functions.php:4394
+msgid "Send Message"
+msgstr ""
+
+#: ../core/class_functions.php:4395
+msgid "Submit Inquiry"
+msgstr ""
+
+#: ../core/class_functions.php:4396
+msgid "Inquiry"
+msgstr ""
+
+#: ../core/class_functions.php:4397
+msgid "Comment About"
+msgstr ""
+
+#: ../core/class_functions.php:4398
+msgid "Inquire About"
+msgstr ""
+
+#: ../core/class_functions.php:4399
+msgid "Inquiry About:"
+msgstr ""
+
+#: ../core/class_functions.php:4400
+msgid "Inquiry message:"
+msgstr ""
+
+#: ../core/class_functions.php:4401
+msgid "You forgot to enter your e-mail."
+msgstr ""
+
+#: ../core/class_functions.php:4402
+msgid "You forgot to enter a message."
+msgstr ""
+
+#: ../core/class_functions.php:4403
+msgid "You forgot to enter your  name."
+msgstr ""
+
+#: ../core/class_functions.php:4404
+msgid "Error with sending message. Please contact site administrator."
+msgstr ""
+
+#: ../core/class_functions.php:4405
+msgid "Thank you for your message."
+msgstr ""
+
+#: ../core/class_functions.php:4546
+msgid "Status"
+msgstr ""
+
+#: ../core/class_functions.php:4551
+msgid "Author"
+msgstr ""
+
+#: ../core/class_functions.php:4556
+#, fuzzy
+msgid "Date"
+msgstr "Zmazať"
+
+#: ../core/class_functions.php:4638
+msgid "All"
+msgstr ""
+
+#: ../core/class_functions.php:4648 ../core/premium/class_agents.php:1975
+#: ../templates/template-functions.php:1436
+#: ../templates/template-functions.php:1448
+#: ../templates/template-functions.php:1485
+msgid "Any"
+msgstr "Nepodstatné"
+
+#: ../core/class_functions.php:4657 ../core/class_list_table.php:306
+#, fuzzy
+msgid "Show all dates"
+msgstr "Zobraziť %s fotografií"
+
+#: ../core/class_functions.php:4767
+#, fuzzy
+msgid "General Help"
+msgstr "Hlavné nastavenia"
+
+#: ../core/class_functions.php:4768
+msgid "Comming soon..."
+msgstr ""
+
+#: ../core/class_functions.php:4785
+#, fuzzy
+msgid "Default Properties Page"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/class_functions.php:4786
+#, fuzzy
+msgid ""
+"The default <b>property page</b> will be used to display property search "
+"results, as well as be the base for property URLs. "
+msgstr ""
+"Stránka <b>Nehnuteľnosti</b> bude použitá na zobrazenie výsledkov "
+"vyhľadávania, ako aj pre URL adresy nehnuteľností.  Napríklad, ak URL adresa "
+"Vašej stránky Nehnuteľnosti "
+
+#: ../core/class_functions.php:4787
+msgid ""
+"By default, the <b>Default Properties Page</b> is set to <b>properties</b>, "
+"which is a dynamically created page used for displaying property search "
+"results. "
+msgstr ""
+
+#: ../core/class_functions.php:4788
+msgid ""
+"We recommend you create an actual WordPress page to be used as the "
+"<b>Default Properties Page</b>. For example, you may create a root page "
+"called \"Real Estate\" - the URL of the default property page will be "
+msgstr ""
+
+#: ../core/class_functions.php:4790 ../core/ui/page_settings.php:268
+msgid "Display"
+msgstr "Zobrazenie"
+
+#: ../core/class_functions.php:4791
+msgid ""
+"This tab allows you to do many things. Make custom picture sizes that will "
+"let you to make posting pictures easier. Change the way you view property "
+"photos with the use of Fancy Box, Choose  to use pagination on the bottom of "
+"property pages and whether or not to show child properties. Manage Google "
+"map attributes and map thumbnail sizes. Select here which attributes you "
+"want to show once a property is pin pointed on your map. Change your "
+"currency and placement of symbols."
+msgstr ""
+
+#: ../core/class_functions.php:4793 ../core/ui/page_settings.php:289
+#, fuzzy
+msgid "Premium Features"
+msgstr "Prémiové doplnky WP-Property"
+
+#: ../core/class_functions.php:4794
+#, fuzzy
+msgid "Tab allows you to manage your WP-Property Premium Features"
+msgstr "Prémiové doplnky WP-Property"
+
+#: ../core/class_functions.php:4796 ../core/ui/page_settings.php:291
+msgid "Help"
+msgstr ""
+
+#: ../core/class_functions.php:4797
+msgid ""
+"This tab will help you troubleshoot your plugin, do exports and check for "
+"updates for Premium Features"
+msgstr ""
+
+#: ../core/class_functions.php:4802
+#, fuzzy
+msgid "More Help"
+msgstr "Viac"
+
+#: ../core/class_functions.php:4803
+msgid ""
+"Visit <a target=\"_blank\" href=\"https://usabilitydynamics.com/products/wp-"
+"property/\">WP-Property Help Page</a> on UsabilityDynamics.com for more help."
+msgstr ""
+
+#: ../core/class_functions.php:4912
+#, php-format
+msgid ""
+"You cannot use your site as Facebook Application. You should <a href=\"%s"
+"\">purchase</a> WP-Property Premium Feature \"Facebook Tabs\" to manage your "
+"Facebook Tabs."
+msgstr ""
+
+#: ../core/class_list_table.php:378
+#, fuzzy
+msgid "Nothing found."
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/class_property_export.php:34
+msgid "Feed URL:"
+msgstr ""
+
+#: ../core/class_property_export.php:36
+msgid "Open"
+msgstr ""
+
+#: ../core/class_property_export.php:38
+msgid "You may append the export URL with the following arguments:"
+msgstr ""
+
+#: ../core/class_property_export.php:45
+msgid "Slug for the property type."
+msgstr ""
+
+#: ../core/class_property_export.php:46
+#, fuzzy
+msgid "or"
+msgstr "Viac"
+
+#: ../core/class_property_export.php:59
+msgid "There has been an error retreiving your API key."
+msgstr ""
+
+#: ../core/class_property_export.php:97
+msgid "Invalid API key."
+msgstr ""
+
+#: ../core/class_property_export.php:137
+#, fuzzy
+msgid "No published properties."
+msgstr "Zobraziť dcérske nehnuteľnosti."
+
+#: ../core/class_widgets.php:40 ../core/premium/class_admin_tools.php:300
+#, fuzzy, php-format
+msgid "%1s Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/class_widgets.php:43
+#, php-format
+msgid ""
+"Display a list of selected %1s attributes when loaded on a single %2s page."
+msgstr ""
+
+#: ../core/class_widgets.php:176 ../core/class_widgets.php:399
+#: ../core/class_widgets.php:606 ../core/class_widgets.php:843
+#: ../core/class_widgets.php:1083 ../core/class_widgets.php:1444
+#: ../core/class_widgets.php:1743 ../core/premium/class_agents.php:2153
+msgid "Title:"
+msgstr "Názov:"
+
+#: ../core/class_widgets.php:180
+#, fuzzy
+msgid "Attributes to Display:"
+msgstr "Zobrazenie adresy"
+
+#: ../core/class_widgets.php:196
+msgid "Display attributes labels."
+msgstr ""
+
+#: ../core/class_widgets.php:219
+#, php-format
+msgid "Other %1s"
+msgstr ""
+
+#: ../core/class_widgets.php:221
+#, php-format
+msgid ""
+"Display a list of %1s that share a parent with the currently displayed "
+"property."
+msgstr ""
+
+#: ../core/class_widgets.php:301 ../core/class_widgets.php:534
+#: ../core/class_widgets.php:757 ../core/class_widgets.php:993
+#, php-format
+msgid "%s at %s for %s"
+msgstr "%s v %s za %s"
+
+#: ../core/class_widgets.php:332 ../core/class_widgets.php:554
+#: ../core/class_widgets.php:785 ../core/class_widgets.php:1022
+msgid "More"
+msgstr "Viac"
+
+#: ../core/class_widgets.php:345 ../core/class_widgets.php:562
+#: ../core/class_widgets.php:792 ../core/class_widgets.php:1031
+msgid "View All"
+msgstr "Zobraziť všetko"
+
+#: ../core/class_widgets.php:396
+#, fuzzy
+msgid ""
+"The widget will show other properties that share a parent with the currently "
+"displayed property."
+msgstr ""
+"Zobraziť dcérske nehnuteľnosti (ak existujú) pri aktuálnej nehnuteľnosti"
+
+#: ../core/class_widgets.php:405
+#, fuzzy
+msgid "Hide images."
+msgstr "Skryť fotografie?"
+
+#: ../core/class_widgets.php:409 ../core/class_widgets.php:624
+#: ../core/class_widgets.php:854 ../core/class_widgets.php:1094
+msgid "Image Size:"
+msgstr "Veľkosť fotografií:"
+
+#: ../core/class_widgets.php:414 ../core/class_widgets.php:629
+#: ../core/class_widgets.php:859 ../core/class_widgets.php:1099
+msgid "Listings to display?"
+msgstr "Inzeráty na zobrazenie?"
+
+#: ../core/class_widgets.php:418
+#, fuzzy
+msgid "Select the attributes you want to display: "
+msgstr "Vyberte štatistiky, ktoré chcete zobraziť"
+
+#: ../core/class_widgets.php:436 ../core/class_widgets.php:655
+#: ../core/class_widgets.php:879 ../core/class_widgets.php:1119
+msgid "Address Format:"
+msgstr "Formát adresy:"
+
+#: ../core/class_widgets.php:444 ../core/class_widgets.php:662
+#: ../core/class_widgets.php:886 ../core/class_widgets.php:1126
+msgid "Show \"More\" link?"
+msgstr "Zobraziť odkaz \"Viac\"?"
+
+#: ../core/class_widgets.php:448 ../core/class_widgets.php:669
+#: ../core/class_widgets.php:892 ../core/class_widgets.php:1132
+msgid "Show \"View All\" link?"
+msgstr "Zobraziť odkaz \"Prezerať všetky\"?"
+
+#: ../core/class_widgets.php:452
+msgid "If property has no parent, show other properties of same type."
+msgstr ""
+
+#: ../core/class_widgets.php:456
+msgid "Randomize order of displayed properties."
+msgstr ""
+
+#: ../core/class_widgets.php:473
+#, php-format
+msgid "Child %1s"
+msgstr ""
+
+#: ../core/class_widgets.php:473
+msgid "Show child properties (if any) for currently displayed property"
+msgstr ""
+"Zobraziť dcérske nehnuteľnosti (ak existujú) pri aktuálnej nehnuteľnosti"
+
+#: ../core/class_widgets.php:604
+msgid ""
+"The widget will not be displayed if the currently viewed property has no "
+"children."
+msgstr ""
+"Widget nebude zobrazený, ak prezeraná nehnuteľnosť nemá žiadne dcérske "
+"nehnuteľnosti."
+
+#: ../core/class_widgets.php:615 ../core/class_widgets.php:850
+#: ../core/class_widgets.php:1090
+msgid "Hide Images?"
+msgstr "Skryť fotografie?"
+
+#: ../core/class_widgets.php:637 ../core/class_widgets.php:863
+msgid "Select the stats you want to display"
+msgstr "Vyberte štatistiky, ktoré chcete zobraziť"
+
+#: ../core/class_widgets.php:688
+#, fuzzy, php-format
+msgid "Featured %1s"
+msgstr "Vybavenosť"
+
+#: ../core/class_widgets.php:688
+msgid "List of properties that were marked as Featured"
+msgstr "Nehnuteľnosti, ktoré sme vybrali ako odporúčané"
+
+#: ../core/class_widgets.php:916
+msgid "Featured Properies"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/class_widgets.php:935
+#, php-format
+msgid "Latest %1s"
+msgstr ""
+
+#: ../core/class_widgets.php:935
+msgid "List of the latest properties created on this site"
+msgstr "Zoznam najnovšie pridaných nehnuteľností"
+
+#: ../core/class_widgets.php:1084
+msgid "Latest Properties"
+msgstr "Najnovšie pridané nehnuteľnosti"
+
+#: ../core/class_widgets.php:1103
+msgid "Select stats you want to display"
+msgstr "Vyberte štatistiky, ktoré chcete zobraziť"
+
+#: ../core/class_widgets.php:1153
+#, fuzzy, php-format
+msgid "%1s Search"
+msgstr "Hľadať"
+
+#: ../core/class_widgets.php:1156
+#, fuzzy, php-format
+msgid "Display a highly customizable  %1s search form."
+msgstr "Zobraziť detailne prispôsobiteľný vyhľadávací formulár"
+
+#: ../core/class_widgets.php:1357
+msgid "No searchable property types were found."
+msgstr "Žiadne vyhľadávateľné typy nehnuteľností neboli nájdené."
+
+#: ../core/class_widgets.php:1450
+msgid "Property types to search:"
+msgstr "Typy nehnuteľností, ktoré budú prehľadávané:"
+
+#: ../core/class_widgets.php:1464
+msgid "Select the attributes you want to search."
+msgstr "Vyberte atribúty, ktoré budú prehľadávané."
+
+#: ../core/class_widgets.php:1468
+#, fuzzy
+msgid "All Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/class_widgets.php:1471
+#, fuzzy
+msgid "Grouped Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/class_widgets.php:1492
+msgid "Ungrouped"
+msgstr ""
+
+#: ../core/class_widgets.php:1516
+msgid "Group attributes together."
+msgstr ""
+
+#: ../core/class_widgets.php:1528
+#, fuzzy
+msgid "Default Sort Order"
+msgstr "Poradie v menu:"
+
+#: ../core/class_widgets.php:1538
+msgid "Descending"
+msgstr ""
+
+#: ../core/class_widgets.php:1539
+msgid "Acending"
+msgstr ""
+
+#: ../core/class_widgets.php:1547
+msgid "Use pagination"
+msgstr ""
+
+#: ../core/class_widgets.php:1552
+msgid "Items per page"
+msgstr "Položiek na jednu stránku"
+
+#: ../core/class_widgets.php:1558
+msgid "Toggle Advanced Search Options"
+msgstr ""
+
+#: ../core/class_widgets.php:1590
+msgid "Search Properies"
+msgstr "Vyhľadávať v nehnuteľnostiach"
+
+#: ../core/class_widgets.php:1614
+#, php-format
+msgid "%1s Gallery"
+msgstr ""
+
+#: ../core/class_widgets.php:1614
+msgid "List of all images attached to the current property"
+msgstr "Zoznam všetkých fotografií pridaných k aktuálnej nehnuteľnosti"
+
+#: ../core/class_widgets.php:1748
+msgid "Regular Size:"
+msgstr ""
+
+#: ../core/class_widgets.php:1753
+#, fuzzy
+msgid "Large Image Size:"
+msgstr "Veľkosť fotografií:"
+
+#: ../core/class_widgets.php:1760
+#, php-format
+msgid "Show %s Images"
+msgstr "Zobraziť %s fotografií"
+
+#: ../core/class_widgets.php:1765
+#, fuzzy
+msgid "Show Image Captions"
+msgstr "Zobraziť %s fotografií"
+
+#: ../core/class_widgets.php:1770
+#, fuzzy
+msgid "Show Image Descriptions."
+msgstr "Popis"
+
+#: ../core/ud_api.php:53
+msgid "API service not specified."
+msgstr ""
+
+#: ../core/ud_api.php:71
+#, fuzzy, php-format
+msgid "API Failure: %1s."
+msgstr "Vybavenosť"
+
+#: ../core/ud_api.php:746
+msgid "Unknown error."
+msgstr ""
+
+#: ../core/ud_api.php:834
+#, php-format
+msgid ""
+"You cannot call UD_API::log() before the %1$s hook, since the current user "
+"is not yet known."
+msgstr ""
+
+#: ../core/ud_api.php:848
+msgid "Log Started."
+msgstr "Logovanie spustené."
+
+#: ../core/ud_api.php:953
+#, php-format
+msgid "You cannot call UD_API::add_log_page() after the %1$s hook."
+msgstr ""
+
+#: ../core/ud_api.php:982
+#, fuzzy
+msgid "Log Page for"
+msgstr "Stránka UD log pre"
+
+#: ../core/ud_api.php:983
+msgid "Clear Log"
+msgstr "Vymazať log"
+
+#: ../core/ud_api.php:988
+msgid "Timestamp"
+msgstr "Čas"
+
+#: ../core/ud_api.php:990
+msgid "Event"
+msgstr "Udalosť"
+
+#: ../core/ud_api.php:991
+msgid "User"
+msgstr "Užívateľ"
+
+#: ../core/ud_api.php:992
+msgid "Related Object"
+msgstr ""
+
+#: ../core/ud_api.php:1002 ../templates/template-functions.php:642
+msgid "None"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:68
+msgid "Manage Admin Tools"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:82
+#: ../core/premium/class_admin_tools.php:109
+msgid "Developer"
+msgstr "Developer"
+
+#: ../core/premium/class_admin_tools.php:83
+msgid ""
+"The <b>slug</b> is automatically created from the title and is used in the "
+"back-end.  It is also used for template selection, example: floorplan will "
+"look for a template called property-floorplan.php in your theme folder, or "
+"default to property.php if nothing is found."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:84
+msgid ""
+"If <b>Searchable</b> is checked then the property will be loaded for search, "
+"and available on the property search widget."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:85
+msgid ""
+"If <b>Location Matters</b> is checked, then an address field will be "
+"displayed for the property, and validated against Google Maps API.  "
+"Additionally, the property will be displayed on the SuperMap, if the feature "
+"is installed."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:86
+msgid ""
+"<b>Hidden Attributes</b> determine which attributes are not applicable to "
+"the given property type, and will be grayed out in the back-end."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:87
+msgid ""
+"<b>Inheritance</b> determines which attributes should be automatically "
+"inherited from the parent property"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:88
+#, fuzzy
+msgid ""
+"Property attributes are meant to be short entries that can be searchable, on "
+"the back-end attributes will be displayed as single-line input boxes. On the "
+"front-end they are displayed using a definitions list."
+msgstr ""
+"<p>Atribúty nehnuteľností sú krátke údaje, podľa ktorých sa dá vyhľadávať vo "
+"formulári, v administrátorskom rozhraní sú zobrazené ako jednoriadkové "
+"vstupné polia. Na webstránke sa zobrazia v prehľadovom zozname.</p>\n"
+"\t\t\t\t<p>Označenie atribútu ako \"vyhľadávateľný\" ho pridá medzi "
+"vyhľadávacie parametre do widgetu vyhľadávacieho formulára.</p>\n"
+"\t\t\t\t<p>Pozor, atribúty pridané prostredníctvom funkcie add_filter() sú "
+"nadradené - prepisujú nastavenia na tejto stránke.</p>"
+
+#: ../core/premium/class_admin_tools.php:89
+msgid ""
+"Making an attribute as \"searchable\" will list it as one of the searchable "
+"options in the Property Search widget settings."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:90
+msgid ""
+"Be advised, attributes added via add_filter() function supercede the "
+"settings on this page."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:91
+msgid ""
+"<b>Search Input:</b> Select and input type and enter comma-separated values "
+"that you would like to be used in property search, on the front-end."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:92
+msgid ""
+"<b>Data Entry:</b> Enter comma-separated values that you would like to use "
+"on the back-end when editing properties."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:235
+#: ../core/premium/class_admin_tools.php:410
+msgid ""
+"Attention! This attribute (slug) is used by Google Validator and Address "
+"Display functionality. It is set automaticaly and can not be edited on "
+"Property Adding/Updating page."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:303
+#, fuzzy
+msgid "Advanced Stats Settings:"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_admin_tools.php:304
+msgid "expand all"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:305
+msgid "collapse all"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:306
+msgid "Sort Stats by Groups"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:318
+msgid "Group Name"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:319
+#: ../core/premium/class_admin_tools.php:584
+#: ../core/premium/class_agents.php:723
+#: ../core/premium/class_wpp_supermap.php:203 ../core/ui/page_settings.php:426
+msgid "Slug"
+msgstr "Slug"
+
+#: ../core/premium/class_admin_tools.php:320
+#: ../core/premium/class_wpp_feps.php:1956 ../core/ui/page_settings.php:267
+msgid "Main"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_admin_tools.php:321
+msgid "Group Color"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:340
+msgid "Assign"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:356
+#: ../core/premium/class_agents.php:445 ../core/premium/class_agents.php:732
+#: ../core/premium/class_wpp_facebook_tabs.php:862
+#: ../core/premium/class_wpp_facebook_tabs.php:913
+#: ../core/premium/class_wpp_pdf_flyer.php:1146
+#: ../core/premium/class_wpp_property_import.php:3918
+#: ../core/premium/class_wpp_supermap.php:230
+#: ../core/premium/class_wpp_supermap.php:377
+#: ../core/ui/class_wpp_object_list_table.php:56
+#: ../core/ui/page_settings.php:466
+msgid "Delete"
+msgstr "Zmazať"
+
+#: ../core/premium/class_admin_tools.php:365
+#, fuzzy
+msgid "Add Group"
+msgstr "Pridať typ údaju"
+
+#: ../core/premium/class_admin_tools.php:366
+msgid "Unassign from Group"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:369
+msgid "Apply"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:382
+#: ../core/premium/class_admin_tools.php:524
+#, fuzzy
+msgid "Attribute Name"
+msgstr "Názov doplnku"
+
+#: ../core/premium/class_admin_tools.php:383
+msgid "Group"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:385
+#, fuzzy
+msgid "Search Input"
+msgstr "Hľadať"
+
+#: ../core/premium/class_admin_tools.php:386
+msgid "Data Entry"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:415
+#: ../core/premium/class_wpp_feps.php:1977
+#: ../core/premium/class_wpp_feps.php:2016
+#, fuzzy
+msgid "Toggle Advanced Settings"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_admin_tools.php:430
+#, fuzzy
+msgid "Sortable."
+msgstr "Zoraditeľné"
+
+#: ../core/premium/class_admin_tools.php:436
+#, fuzzy
+msgid "Searchable."
+msgstr "Vyhľadávateľné"
+
+#: ../core/premium/class_admin_tools.php:442
+#, fuzzy
+msgid "Admin Only."
+msgstr "Administrátorské rozhranie"
+
+#: ../core/premium/class_admin_tools.php:448
+msgid "Format: numeric."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:454
+msgid "Format: currency."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:460
+#, fuzzy
+msgid "Show in \"All Properties\" table."
+msgstr "Zobraziť dcérske nehnuteľnosti."
+
+#: ../core/premium/class_admin_tools.php:464
+#, fuzzy
+msgid "Delete Attribute"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_admin_tools.php:474
+#: ../core/premium/class_admin_tools.php:493
+msgid "Free Text"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:475
+msgid "Text Input Range"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:476
+#, fuzzy
+msgid "Range Dropdown"
+msgstr "Rozsah (rozbaľovací zoznam)"
+
+#: ../core/premium/class_admin_tools.php:477
+#: ../core/premium/class_admin_tools.php:494
+msgid "Dropdown Selection"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:478
+#: ../core/premium/class_admin_tools.php:495
+#, fuzzy
+msgid "Single Checkbox"
+msgstr "Zaškrtávacie pole"
+
+#: ../core/premium/class_admin_tools.php:479
+#, fuzzy
+msgid "Multi-Checkbox"
+msgstr "Zaškrtávacie pole"
+
+#: ../core/premium/class_admin_tools.php:510
+#: ../core/premium/class_admin_tools.php:568
+#: ../core/premium/class_admin_tools.php:682
+#: ../core/premium/class_agents.php:738
+#: ../core/premium/class_wpp_feps.php:2032
+#: ../core/premium/class_wpp_property_import.php:2301
+#: ../core/premium/class_wpp_supermap.php:385 ../core/ui/page_settings.php:491
+msgid "Add Row"
+msgstr "Pridať typ údaju"
+
+#: ../core/premium/class_admin_tools.php:517
+#, php-format
+msgid "%1s Meta"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:518
+msgid ""
+"Meta is used for descriptions,  on the back-end  meta fields will be "
+"displayed as textareas.  On the front-end they will be displayed as "
+"individual sections."
+msgstr ""
+"Cez tieto atribúty môžete vkladať slovné opisy nehnuteľností (názov každého "
+"atribútu bude zároveň nadpisom textu). V administrátorskom rozhraní sa tieto "
+"atribúty zobrazia ako vstupné textové polia, na webstránke ako osobitné "
+"odseky."
+
+#: ../core/premium/class_admin_tools.php:525
+msgid "Attribute Slug"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:552
+msgid "Show in Admin Only"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:558
+msgid "Delete Meta Attribute"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:579
+#, fuzzy, php-format
+msgid "%1s Types"
+msgstr "Typ"
+
+#: ../core/premium/class_admin_tools.php:586
+msgid "Hidden Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_admin_tools.php:587
+#, fuzzy
+msgid "Inherit from Parent"
+msgstr "Dedičnosť"
+
+#: ../core/premium/class_admin_tools.php:607
+msgid "Searchable"
+msgstr "Vyhľadávateľné"
+
+#: ../core/premium/class_admin_tools.php:614
+msgid "Location Matters"
+msgstr "Záleží na lokalite"
+
+#: ../core/premium/class_admin_tools.php:629
+#: ../core/premium/class_admin_tools.php:661
+msgid "Toggle Attributes Selection"
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:652
+#, fuzzy
+msgid "Parent Selection"
+msgstr "Nastavenia modulu Nehnuteľnosti"
+
+#: ../core/premium/class_admin_tools.php:694
+#: ../core/premium/class_wpp_property_import.php:2083
+#, fuzzy
+msgid "Advanced Options"
+msgstr "Nastavenia"
+
+#: ../core/premium/class_admin_tools.php:697
+msgid "Show Log."
+msgstr "Zobraziť log."
+
+#: ../core/premium/class_admin_tools.php:698
+msgid ""
+"The log is always active, but the UI is hidden.  If enabled, it will be "
+"visible in the admin sidebar."
+msgstr ""
+"Log je aktívny vždy, ale užívateľské rozhranie je vypnuté. Ak voľbu "
+"aktivujete, log sa zobrazí v bočnom paneli administrátorského rozhrania."
+
+#: ../core/premium/class_admin_tools.php:701
+msgid "Disable automatic feature updates."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:702
+msgid "If disabled, feature updates will not be downloaded automatically."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:705
+msgid "Disable WordPress update_post_caches() function."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:706
+msgid "This may solve Out of Memory issues if you have a lot of properties."
+msgstr ""
+
+#: ../core/premium/class_admin_tools.php:709
+msgid ""
+"Enable developer mode - some extra information displayed via Firebug console."
+msgstr ""
+
+#: ../core/premium/class_agents.php:151
+#, fuzzy
+msgid "Agent Shortcodes"
+msgstr "Skratkový kód - hlavný zoznam"
+
+#: ../core/premium/class_agents.php:152
+#, fuzzy
+msgid "Show agent information:"
+msgstr "Základné informácie"
+
+#: ../core/premium/class_agents.php:152
+msgid ", or you can specify which fields to show:"
+msgstr ""
+
+#: ../core/premium/class_agents.php:153
+#, fuzzy
+msgid "To query agent properties:"
+msgstr "Zobraziť dcérske nehnuteľnosti."
+
+#: ../core/premium/class_agents.php:155
+#, fuzzy
+msgid "Shortcode Attribute Fields"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_agents.php:156
+msgid "The following attributes can be used in the [agent_card] shortcode."
+msgstr ""
+
+#: ../core/premium/class_agents.php:174
+msgid "Example Using All Available Fields"
+msgstr ""
+
+#: ../core/premium/class_agents.php:202
+msgid "Manage Real Estate Agents"
+msgstr ""
+
+#: ../core/premium/class_agents.php:249
+#, php-format
+msgid "%1$s <span class=\"count\">(%2$s)</span>"
+msgstr ""
+
+#: ../core/premium/class_agents.php:276
+msgid "Match the \"Property Agent\" attribute to "
+msgstr ""
+
+#: ../core/premium/class_agents.php:282
+msgid " field, when it is found, and associate with agent."
+msgstr ""
+
+#: ../core/premium/class_agents.php:347
+#, fuzzy
+msgid "Agent Image Size"
+msgstr "Veľkosť fotografií:"
+
+#: ../core/premium/class_agents.php:373
+#, fuzzy
+msgid "Agent Information"
+msgstr "Základné informácie"
+
+#: ../core/premium/class_agents.php:422 ../core/premium/class_agents.php:1969
+#, fuzzy
+msgid "Agent"
+msgstr "Udalosť"
+
+#: ../core/premium/class_agents.php:518
+#, fuzzy
+msgid "No Properties."
+msgstr "Nehnuteľnosti"
+
+#: ../core/premium/class_agents.php:540
+msgid "Create Agent"
+msgstr ""
+
+#: ../core/premium/class_agents.php:540
+msgid "Update Agent"
+msgstr ""
+
+#: ../core/premium/class_agents.php:556 ../core/premium/class_agents.php:2141
+#, fuzzy
+msgid "Display Name"
+msgstr "Zobrazenie"
+
+#: ../core/premium/class_agents.php:561
+#, fuzzy
+msgid "Username"
+msgstr "Užívateľ"
+
+#: ../core/premium/class_agents.php:564
+msgid "Usernames cannot be changed."
+msgstr ""
+
+#: ../core/premium/class_agents.php:569
+#, fuzzy
+msgid "E-Mail"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_agents.php:575
+msgid "Widget Bio"
+msgstr ""
+
+#: ../core/premium/class_agents.php:579
+msgid "Content that is displayed in the agent widget."
+msgstr ""
+
+#: ../core/premium/class_agents.php:585
+#: ../core/premium/class_wpp_pdf_flyer.php:1021
+#: ../core/premium/class_wpp_pdf_flyer.php:1472
+#: ../core/premium/class_wpp_supermap.php:833
+#: ../core/premium/class_wpp_supermap.php:1170
+#: ../core/ui/page_settings.php:325
+msgid "Options"
+msgstr "Nastavenia"
+
+#: ../core/premium/class_agents.php:591
+msgid "Allow property inquiries to be sent directly to agent."
+msgstr ""
+
+#: ../core/premium/class_agents.php:599 ../core/premium/class_agents.php:2144
+msgid "Full Bio"
+msgstr ""
+
+#: ../core/premium/class_agents.php:603
+msgid "Content that can be displayed in the shortcode."
+msgstr ""
+
+#: ../core/premium/class_agents.php:629
+msgid "Primary"
+msgstr ""
+
+#: ../core/premium/class_agents.php:630
+msgid "Save"
+msgstr ""
+
+#: ../core/premium/class_agents.php:631
+#, fuzzy
+msgid "Associated Properties"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/premium/class_agents.php:632
+#, fuzzy
+msgid "Images"
+msgstr "Všetky fotografie:"
+
+#: ../core/premium/class_agents.php:651 ../core/premium/class_agents.php:832
+#: ../core/premium/class_agents.php:871
+msgid "Agents"
+msgstr ""
+
+#: ../core/premium/class_agents.php:695
+msgid "Agent Roles"
+msgstr ""
+
+#: ../core/premium/class_agents.php:696
+msgid "User roles that can be associated with properties as agents."
+msgstr ""
+
+#: ../core/premium/class_agents.php:713
+#, fuzzy
+msgid "Agent Fields"
+msgstr "Údajové polia"
+
+#: ../core/premium/class_agents.php:714
+msgid "Extra data fields to be used for agent profiles."
+msgstr ""
+
+#: ../core/premium/class_agents.php:717
+msgid ""
+"Custom fields may be used to adapt the information about agents to suit your "
+"needs."
+msgstr ""
+
+#: ../core/premium/class_agents.php:722
+msgid "Field name"
+msgstr ""
+
+#: ../core/premium/class_agents.php:871
+#: ../core/premium/class_wpp_feps.php:1841
+#: ../core/premium/class_wpp_property_import.php:3824
+msgid "Add New"
+msgstr "Pridať"
+
+#: ../core/premium/class_agents.php:893
+msgid "User removed."
+msgstr ""
+
+#: ../core/premium/class_agents.php:958
+msgid "Please enter a valid e-mail."
+msgstr ""
+
+#: ../core/premium/class_agents.php:968
+#, fuzzy
+msgid "Agent updated."
+msgstr "Nehnuteľnosť bola aktualizovaná."
+
+#: ../core/premium/class_agents.php:971
+#, fuzzy
+msgid "Agent created."
+msgstr "Tabuľka nebola vytvorená."
+
+#: ../core/premium/class_agents.php:974
+#, fuzzy
+msgid "Edit Agent"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/premium/class_agents.php:1043
+msgid "Associated Agents"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1108
+#, php-format
+msgid "You can add fields on the <a href=\"%s\">settings page</a>."
+msgstr ""
+
+#: ../core/premium/class_agents.php:1113
+msgid "Flyer Writeup"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1116
+msgid "Please enter a writeup for flyers."
+msgstr ""
+
+#: ../core/premium/class_agents.php:1186
+#: ../core/premium/class_wpp_supermap.php:497
+msgid "File should be an image"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1188
+msgid "Agent ID is not set"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1219
+#: ../core/premium/class_wpp_supermap.php:550
+msgid "Looks like, Image can not be uploaded."
+msgstr ""
+
+#: ../core/premium/class_agents.php:1223
+msgid "Image of Real Estate Agent #"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1224
+msgid "Image for User #"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1260
+msgid "Please save first to add images."
+msgstr ""
+
+#: ../core/premium/class_agents.php:1267
+#, fuzzy
+msgid "No images found."
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/premium/class_agents.php:1277 ../core/premium/class_agents.php:1323
+msgid "Remove"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1286
+msgid "Please enable JavaScript to use file uploader"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1290
+#, fuzzy
+msgid "Add Image"
+msgstr "Všetky fotografie:"
+
+#: ../core/premium/class_agents.php:1547
+msgid "Moderate comments"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1548
+msgid "Manage categories"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1549
+msgid "Manage links"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1550
+msgid "Upload files"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1551
+#, fuzzy
+msgid "Edit posts"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/premium/class_agents.php:1552
+msgid "Edit other's posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1553
+msgid "Edit published posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1554
+msgid "Publish posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1555
+#, fuzzy
+msgid "Edit pages"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/premium/class_agents.php:1556
+msgid "Read"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1557
+msgid "Edit other's pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1558
+msgid "Edit published pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1559
+#, fuzzy
+msgid "Publish pages"
+msgstr "Fotografie v Slideshow:"
+
+#: ../core/premium/class_agents.php:1560
+#, fuzzy
+msgid "Delete pages"
+msgstr "Zmazať"
+
+#: ../core/premium/class_agents.php:1561
+msgid "Delete other's pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1562
+msgid "Delete published pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1563
+#, fuzzy
+msgid "Delete posts"
+msgstr "Zmazať"
+
+#: ../core/premium/class_agents.php:1564
+msgid "Delete other's posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1565
+msgid "Delete published posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1566
+msgid "Delete private posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1567
+msgid "Edit private posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1568
+msgid "Read private posts"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1569
+msgid "Delete private pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1570
+msgid "Edit private pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1571
+msgid "Read private pages"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1673
+#: ../templates/template-functions.php:1633
+msgid "Email"
+msgstr ""
+
+#: ../core/premium/class_agents.php:1782
+msgid ""
+"Agent can see only the properties which are assigned to him. Agent will be "
+"automaticly assigned to the property which he will create."
+msgstr ""
+
+#: ../core/premium/class_agents.php:2142
+#: ../core/premium/class_wpp_supermap.php:201
+#, fuzzy
+msgid "Image"
+msgstr "Veľkosť fotografií:"
+
+#: ../core/premium/class_agents.php:2143
+msgid "Widget Text"
+msgstr ""
+
+#: ../core/premium/class_agents.php:2150
+#, fuzzy
+msgid "Email Address"
+msgstr "Adresa"
+
+#: ../core/premium/class_wpp_dynamic_filter.php:56
+msgid "Manage Dynamic Filter"
+msgstr ""
+
+#: ../core/premium/class_wpp_dynamic_filter.php:68
+msgid "Dynamic Filter"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:184
+msgid "Facebook Tabs"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:185
+msgid ""
+"Feature allows you to create Facebook Canvases for Tabs or Applications."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:186
+msgid ""
+"Note that SSL support for your page tab app has been mandatory since October "
+"1, 2011."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:187
+msgid "Use form below for managing you Canvases."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:188
+msgid "<b>Name</b><br />General name of your Canvas."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:189
+msgid ""
+"<b>Slug</b><br />Sanitized name of your Canvas' name which is used by "
+"Facebook for determining which Canvas it should display. Make sure you do "
+"not have Canvases with the same slugs."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:190
+msgid ""
+"<b>Page</b><br />The page of your site which has the content which you need "
+"to display in your Facebook Tab or Application."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:191
+msgid ""
+"<b>Template</b><br />Specify one of existing templates for displaying Page "
+"content. Default is <code>templates/fb-tab-template.php</code>. You can add "
+"your own templates named like <code>fb-tab-{your name}.php</code> and with "
+"the comment inside like: <pre>/** * Template Name: {your name}\n"
+" */</pre> in your theme folder. Use Default template as a base for your own."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:193
+msgid ""
+"<b>App ID</b><br />App ID is your application's App ID/API Key which you can "
+"get from Application Settings page."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:194
+msgid ""
+"<b>Secret</b><br />Secret is long hashed string associated with your "
+"application. You can get it from Application Settings page."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:195
+msgid ""
+"<a href=\"https://developers.facebook.com/docs/guides/canvas/\" target="
+"\"_blank\">How to create Facebook Application</a>"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:197
+msgid ""
+"<b>Open links in new window</b><br />Check this option if you need to open "
+"EACH link of your WP-Property Facebook Tab in new window."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:198
+msgid ""
+"<b>Open forms in new window</b><br />The same as <b>Open links in new "
+"window</b> but for forms. Every form will be submitted in new window."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:200
+msgid ""
+"<b>Hide Selected Pages from Regular WordPress</b><br />List of pages you can "
+"select to be completely hidden on your site. You can select pages which you "
+"use for your Canvases. Note that hidden pages won't be accessible in other "
+"Premium Features."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:244
+msgid "Requested Canvas does not exist."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:310
+msgid "Can't find proper Facebook Template file \""
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:315
+msgid "You did not specify Facebook Template for requested Canvas"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:320
+msgid "Canvas settings are invalid. Check \"Secret\" field."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:362
+msgid "Manage Facebook Tabs"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:398
+msgid "Facebook"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:681
+#: ../core/premium/class_wpp_facebook_tabs.php:689
+#: ../core/premium/class_wpp_facebook_tabs.php:977
+msgid "There are no pages used for Facebook Tabs"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:701
+#: ../core/premium/class_wpp_facebook_tabs.php:709
+#: ../core/premium/class_wpp_facebook_tabs.php:786
+msgid ""
+"Canvas URL will be changed after save! Please change your Facebook App "
+"settings"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:800
+msgid "Application/Tab Canvases"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:801
+msgid ""
+"Apps on Facebook are web apps that are loaded in the context of Facebook in "
+"what we refer to as a Canvas Page."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:802
+msgid ""
+"You will need to create an app using your Facebook account.  Once the app is "
+"created, you will be able to add it to one of your pages."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:802
+msgid "Create Facebook App."
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:808
+#, fuzzy
+msgid "General"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:809
+#: ../core/ui/property_metaboxes.php:60
+msgid "Template"
+msgstr "Šablóna"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:810
+msgid "Assigned App Info"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:822
+#: ../core/premium/class_wpp_facebook_tabs.php:871
+#, fuzzy
+msgid "Name:"
+msgstr "Meno"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:824
+#: ../core/premium/class_wpp_facebook_tabs.php:873
+#, fuzzy
+msgid "Slug:"
+msgstr "Slug"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:828
+#: ../core/premium/class_wpp_facebook_tabs.php:877
+msgid "Open <b>links</b> in new window"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:831
+#: ../core/premium/class_wpp_facebook_tabs.php:880
+msgid "Open <b>forms</b> in new window"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:837
+#: ../core/premium/class_wpp_facebook_tabs.php:886
+#, fuzzy
+msgid "Page"
+msgstr "Materská nehnuteľnosť"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:847
+#: ../core/premium/class_wpp_facebook_tabs.php:896
+#, fuzzy
+msgid "Search..."
+msgstr "Hľadať"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:849
+#: ../core/premium/class_wpp_facebook_tabs.php:898
+#, fuzzy
+msgid "Template:"
+msgstr "Šablóna"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:857
+msgid "App ID/API Key:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:859
+msgid "App Secret:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:907
+msgid "App ID:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:909
+msgid "Secret:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:915
+msgid "Add to Facebook"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:917
+msgid "Setup Application"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:927
+msgid "Facebook Application Setup"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:928
+msgid "Create Facebook Application using next settings"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:930
+msgid "Canvas URL:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:934
+msgid "Secure Canvas URL:"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:937
+msgid "Applicable for both Application and Page Tab"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:947
+msgid "Add Another Canvas"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:954
+#, fuzzy
+msgid "General Options"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_wpp_facebook_tabs.php:962
+msgid "Hide Selected Pages from Regular WordPress"
+msgstr ""
+
+#: ../core/premium/class_wpp_facebook_tabs.php:963
+msgid ""
+"Note that hidden pages will not be accessible in other Premium Features too."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:200
+msgid ""
+"<b>New User Role:</b> Role to assign to users submitting properties if they "
+"do not already have an account."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:201
+msgid "<b>Form Name:</b> For internal reference."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:202
+msgid "<b>Shortcode:</b> Shortcode to render the form."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:203
+msgid ""
+"<b>Property Status:</b> Status to assign to new properties after they are "
+"submitted."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:204
+msgid "<b>Property Type:</b> Default property type of submitted properties."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:205
+msgid ""
+"<b>Preview Thumbnail Size:</b> The size of the image to be used to display "
+"the thumbnail of an uploaded image."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:206
+msgid ""
+"<b>Image Upload Limit:</b> The maximum number of images that can be uploaded "
+"per submission."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:208
+msgid "Notifications"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:210
+msgid ""
+"Please install <a href=\"https://usabilitydynamics.com/products/wp-crm/\">WP-"
+"CRM</a> to setup notifications."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:212
+msgid ""
+"You have ability to manage FEPS notifications using WP-CRM plugin. Go to CRM "
+"-> Settings -> Notifications. "
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:212
+msgid ""
+"<a target=\"_blank\" href=\"https://usabilitydynamics.com/tutorials/wp-"
+"property-help/front-end-property-submissions-feps/\">More...</a>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:231
+msgid "<h3>WP-Property</h3>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:233
+msgid ""
+"<h3>You have ability to manage FEPS notifications using WP-CRM plugin.</h3>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:234
+msgid ""
+"<p>For your notifications on any of this Trigger actions &mdash; <i>FEPS: "
+"Pending Approval</i>, <i>FEPS: Property Submitted</i>, <i>FEPS: User Account "
+"Approved</i>, <i>FEPS: User Account Created</i> &mdash; you can use this "
+"shortcodes:</p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:243
+msgid ""
+"<p>For Trigger action <i>FEPS: Pending Approval</i> &mdash; you can use this "
+"shortcodes:</p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:251
+msgid ""
+"<p>For Trigger action <i>FEPS: Property Submitted</i> &mdash; you can use "
+"this shortcodes:</p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:259
+msgid ""
+"<p>For Trigger action <i>FEPS: User Account Approved</i> &mdash; you can use "
+"this shortcodes:</p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:267
+msgid ""
+"<p>For Trigger action <i>FEPS: User Account Created</i> &mdash; you can use "
+"this shortcodes:</p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:381
+msgid "Account Created"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:391
+#: ../core/premium/class_wpp_feps.php:399
+#, php-format
+msgid ""
+"Hello.%1$s%1$sYour account on %2$s has been created and is waiting for "
+"approval.%1$s%1$sAccess data:%1$s%3$s / %4$s"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:405
+#, php-format
+msgid ""
+"Hello.%1$s%1$sYour account on %2$s has been created.%1$s%1$sAccess data:%1$s"
+"%3$s / %4$s"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:416
+msgid "User Account Created"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:432
+#, php-format
+msgid "User account created via FEPS property submission of (%1s)."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:477
+msgid "Submission Approved"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:488
+#, php-format
+msgid "User-submitted property (%1s) approved and published."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:506
+msgid "User Account Approved"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:535
+msgid "Submission Received"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:545
+#, php-format
+msgid "User submitted property (%1s) using FEPS."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:633
+msgid "Manage FEPS"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:651
+msgid "Approve Listing"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:749
+msgid " (Pending Approval)"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:846
+msgid "An error occurred, the form could not be found"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:883
+msgid "Your submission was not successful: "
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1117
+#, fuzzy
+msgid "Publish Now"
+msgstr "Slideshow"
+
+#: ../core/premium/class_wpp_feps.php:1127
+msgid "This listing is pending your approval."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1211
+#, fuzzy
+msgid "Property Forms"
+msgstr "Nehnuteľnosť: %s"
+
+#: ../core/premium/class_wpp_feps.php:1258
+msgid "Requested FEPS form not found."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1289
+msgid "The requested form does not have any fields."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1408
+msgid "Publish"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1483
+msgid "Your e-mail:"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1494
+msgid "Your Password:"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1505
+msgid "Submit"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1560
+msgid "Please type in your e-mail address."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1570
+msgid "Checking if account exists."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1573
+msgid "Checking your credentials."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1588
+msgid "Your credentials have been verified."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1594
+msgid "Your login credentials are not correct."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1599
+msgid "Account found, please type in your password."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1605
+msgid "Your account will be setup after your submission is approved."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1642
+#, fuzzy
+msgid "FEPS forms updated."
+msgstr "Nehnuteľnosť bola aktualizovaná."
+
+#: ../core/premium/class_wpp_feps.php:1649
+#: ../core/premium/class_wpp_property_import.php:79
+#, fuzzy
+msgid "Property Content"
+msgstr "Slovné opisy nehnuteľností"
+
+#: ../core/premium/class_wpp_feps.php:1653
+#: ../core/premium/class_wpp_feps.php:2297
+msgid "Image Upload"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1707
+msgid "Unnamed Form"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1840
+msgid "Front End Property Submissions"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1882
+#, fuzzy
+msgid "Form Name:"
+msgstr "Na predaj"
+
+#: ../core/premium/class_wpp_feps.php:1888
+#, fuzzy
+msgid "Shortcode:"
+msgstr "Skratkový kód - hlavný zoznam"
+
+#: ../core/premium/class_wpp_feps.php:1893
+#, fuzzy
+msgid "Property Status:"
+msgstr "Štatistické údaje"
+
+#: ../core/premium/class_wpp_feps.php:1902
+#, fuzzy
+msgid "Property Type:"
+msgstr "Typ nehnuteľnosti"
+
+#: ../core/premium/class_wpp_feps.php:1912
+#, fuzzy
+msgid "Preview Thumbnail Size:"
+msgstr "Veľkosť náhľadu:"
+
+#: ../core/premium/class_wpp_feps.php:1917
+msgid "Image Upload Limit:"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1933
+msgid "New User Role:"
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1941
+#, fuzzy
+msgid "Other Settings:"
+msgstr "Hlavné nastavenia"
+
+#: ../core/premium/class_wpp_feps.php:1944
+msgid "Disable new user account creation notification."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:1966
+#: ../core/premium/class_wpp_feps.php:1992
+#, fuzzy
+msgid "Attribute"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_wpp_feps.php:1969
+#: ../core/premium/class_wpp_pdf_flyer.php:818
+#: ../core/premium/class_wpp_property_import.php:78
+#, fuzzy
+msgid "Property Title"
+msgstr "Typ nehnuteľnosti"
+
+#: ../core/premium/class_wpp_feps.php:2010
+#, fuzzy
+msgid "Required"
+msgstr "Odporúčané"
+
+#: ../core/premium/class_wpp_feps.php:2043 ../core/ui/page_settings.php:779
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: ../core/premium/class_wpp_feps.php:2163
+#, php-format
+msgid "No more than %1d image(s). Click image to delete it."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:2455
+msgid "<strong>ERROR</strong>: Account is not approved."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:2472
+msgid ""
+"There is a JavaScript error on this page preventing it from displaying the "
+"dynamic map."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:2499
+msgid "Your location has been successfully found by Google Maps."
+msgstr ""
+
+#: ../core/premium/class_wpp_feps.php:2502
+msgid "Your address could not be found, please try again."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:109
+msgid "Manage PDF Flyer"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:140
+msgid ""
+"Unless <b>Don't make accessible for public</b> is checked for a list, it "
+"will be accessible by anybody who visits your website, provided they have a "
+"link to the list.  The lists are stored in your uploads folder, but to the "
+"users they appear to be below your main <b>Property Page</b>.  In other "
+"words, if your default property page is 'all-properties', all your lists "
+"will have urls that will go something like: http://website.com/all-"
+"properties/the-list-filename.pdf"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:141
+msgid ""
+"By default, the PDF lists are generated every time you save this page, and "
+"when any property is updated or created.  You may select <b>Regenerate list "
+"every time it is opened</b> to have the list generated every time it is "
+"opened in a browser, however, this may cause some unnecessary strain on your "
+"server."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:142
+#: ../core/premium/class_wpp_pdf_flyer.php:1103
+msgid "Advanced Query"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:143
+msgid ""
+"The advanced query can be used just like the [property_overview] shortcode. "
+"For example, if you wanted the list to only show two bedroom properties, "
+"your query would simply be: <b>[property_overview bedrooms=2]</b>."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:144
+msgid ""
+"You could make these as complex as you would like. If you wanted to query "
+"all apartments between $400 and $700 dollars in St. Paul, you would use: <b>"
+"[property_overview property_type=apartment price=400-700 city='St. Paul' "
+"sort_by=route limit_query=10]</b>."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:145
+msgid "List Creation"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:146
+msgid ""
+"PDF Lists are deleted every time a change is made to this page, and may "
+"either be regenerated by clicking the Regenerate button below, or by trying "
+"to open the list on the front-end."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:147
+msgid ""
+"When a single property is updated, the list(s) it is included on are deleted "
+"as well.  It is up to you if you want to regenerate the lists manually, or "
+"wait for a visitor to attempt to open a list, at which point it will be "
+"regenerated automatically."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:162
+#, fuzzy
+msgid "PDF Flyer Options"
+msgstr "Nastavenia Supermap"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:174
+#, fuzzy
+msgid "Exclude property from PDF Lists"
+msgstr "Vynechať nehnuteľnosť v supermape"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:799
+#: ../core/premium/class_wpp_pdf_flyer.php:996
+msgid "PDF Lists"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:822
+#, fuzzy
+msgid "Full Description"
+msgstr "Popis"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:857
+msgid "List settings updated and old lists have been deleted. "
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:896
+msgid "Sample PDF List"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:957
+msgid ""
+"Regenerating PDF Lists. If you have a lot of properties this process may "
+"take a while, please do not close this browser window until it is complete."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:977
+#: ../core/premium/class_wpp_pdf_flyer.php:1697
+msgid "Finished."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1022
+#: ../core/premium/class_wpp_property_import.php:2265
+#, fuzzy
+msgid "Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1035
+msgid "List Name:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1040
+#, fuzzy
+msgid "File Name:"
+msgstr "Názov doplnku"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1045
+#, fuzzy
+msgid "Actions:"
+msgstr "Nastavenia"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1046
+#, fuzzy
+msgid "View PDF"
+msgstr "Zobraziť všetko"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1057
+msgid "Group by:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1062
+#, fuzzy
+msgid "Properties per page:"
+msgstr "Položiek na jednu stránku"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1072
+#, fuzzy
+msgid "Show child properties."
+msgstr "Zobraziť dcérske nehnuteľnosti."
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1077
+msgid "Don't make accessible for public."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1082
+msgid "Regenerate list every time it is opened."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1095
+#, fuzzy
+msgid "Contact Information"
+msgstr "Základné informácie"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1098
+msgid "Contact Information will be shown on every page"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1106
+msgid ""
+"You may use WPP Query arguments here to perform a more advanced queryies, "
+"and limits. Wrap your query into [property_overview] as with a regular "
+"shortcode."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1111
+msgid "Header & Footer background color:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1116
+msgid "Header & Footer text color:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1121
+msgid "Text color:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1157
+msgid "Add List"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1158
+msgid "Save Lists"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1166
+msgid ""
+"Regenerate all PDF Lists.  This will create, or recreate, all your lists."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1168
+#, fuzzy
+msgid "Refresh Page"
+msgstr "Prehľad nehnuteľností"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1173
+msgid "Shortcode examples:"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1175
+msgid "Returns a formatted HTML link to the PDF List."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1176
+msgid "Returns a html link to the PDF List with custom title."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1177
+msgid "Returns the raw URL to the PDF List (for use in custom html)."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1178
+msgid "For use with a custom CSS class."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1179
+msgid "Returns url_to_custom_image with a link to the PDF List."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1243
+msgid "PDF Flyer"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1274
+#: ../core/premium/class_wpp_pdf_flyer.php:1523
+msgid "Details"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1302
+#, fuzzy
+msgid "Location"
+msgstr "Načítavam"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1417
+#, php-format
+msgid ", or <a href=\"%s\" target=\"_blank\">view flyer</a>."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1431
+msgid "PDF"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1466
+#, php-format
+msgid "Warning: <b>%s</b> is not writable, PDF flyer cannot be created."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1478
+msgid "Show panel that allows you to create PDF property lists."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1483
+msgid ""
+"Generate property flyers automatically when somebody tries to view them for "
+"the first time."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1488
+msgid "Generate QR Code."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1493
+msgid ""
+"Truncate the Description when it's displayed in Flyer (It can be helpful, "
+"when the data can not be placed on one page)."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1501
+#, fuzzy
+msgid "Flyer Display"
+msgstr "Zobrazenie"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1506
+msgid "Title (Header)"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1511
+msgid "Tagline under Title (Header)"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1516
+msgid "QR Code's note (a note explaining what a QR Code is, if it exists)"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1559
+#, fuzzy
+msgid "Description (if exists)"
+msgstr "Popis"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1564
+#, fuzzy
+msgid "Location on Map (if exists)"
+msgstr "Záleží na lokalite"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1569
+msgid "Features (if exists)"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1574
+msgid "Agent Information (if exists)"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1581
+msgid "Primary Photo Size"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1586
+#, fuzzy
+msgid "Secondary Images"
+msgstr "Fotografie v Slideshow:"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1593
+#, fuzzy, php-format
+msgid "Show %1$s images."
+msgstr "Zobraziť %s fotografií"
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1599
+msgid "Logo URL"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1602
+msgid "Use JPEG and GIF images only."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1618
+#: ../core/premium/class_wpp_pdf_flyer.php:1621
+msgid "Header color"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1626
+msgid "Section background color"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1643
+msgid "Shortcode examples:<br />"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1644
+msgid ""
+"<strong>[property_flyer]</strong> - Returns a html link to the PDF Flyer<br /"
+">"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1645
+msgid ""
+"<strong>[property_flyer title='PDF Flyer']</strong> - Returns a html link to "
+"the PDF Flyer with custom title.<br />"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1646
+msgid ""
+"<strong>[property_flyer urlonly='yes']</strong> -  Returns the raw URL to "
+"the PDF Flyer (for use in custom html).<br />"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1647
+msgid ""
+"<strong>[property_flyer class='custom_css_class']</strong> - For use with a "
+"custom CSS class.<br />"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1648
+msgid ""
+"<strong>[property_flyer image='url_to_custom_image']</strong> - Returns "
+"url_to_custom_image with a link to the PDF Flyer."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1655
+msgid ""
+"You can regenerate all your PDF flyers, but depending on your server, it can "
+"be very time consuming if you have many properties."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1656
+msgid "Regenerate all Flyers"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1657
+msgid "Close Result's Logs"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1677
+msgid "Property List is got. Start generate PDF Flyers..."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1687
+msgid "PDF Flyer for property \""
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1687
+#, fuzzy
+msgid "\" is generated."
+msgstr "Tabuľka nebola vytvorená."
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1689
+msgid "<b>Error. PDF Flyer for property \""
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1689
+msgid "\" could not be generated.</b>"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1693
+msgid "Could not regenerate PDF Flyer for property \""
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1693
+msgid "\". Looks like, something caused error on server."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1699
+msgid "There are no any property to generate PDF Flyer for."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1703
+msgid ""
+"Looks like, something caused error on server. Please, try to regenerate PDF "
+"Flyers later."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:1789
+#, php-format
+msgid "Could not find a PDF flyer for %1s."
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:2102
+msgid "Flyer"
+msgstr ""
+
+#: ../core/premium/class_wpp_pdf_flyer.php:2111
+msgid "PDF flyer for "
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:112
+msgid "Manage Capabilities"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:113
+msgid "Manage White Label"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:153
+#: ../core/premium/class_wpp_power_tools.php:174
+msgid "Capabilities"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:169
+#, fuzzy
+msgid "WP Property Capabilities"
+msgstr "WP-Property Slideshow"
+
+#: ../core/premium/class_wpp_power_tools.php:173
+msgid "Role"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:186
+msgid "Administrator has all capabilities which can not be managed."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:246
+#: ../core/premium/class_wpp_property_import.php:2260
+msgid "Taxonomies"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:250
+#, php-format
+msgid "Disable %1$s taxonomy."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:277
+msgid "White Label"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:282
+msgid "Labels"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:283
+msgid "Contextual Menus"
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:289
+msgid ""
+"Use this menu to rename WP-Property components, for example if you are "
+"listing \"Real Estate\", or \"Vehicles\"."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:293
+#, fuzzy
+msgid "Singular Property:"
+msgstr "Upraviť nehnuteľnosť"
+
+#: ../core/premium/class_wpp_power_tools.php:295
+msgid "Default is \"Property\", will change the label in the navigation menus."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:299
+#, fuzzy
+msgid "Plural Property:"
+msgstr "Nehnuteľnosť"
+
+#: ../core/premium/class_wpp_power_tools.php:301
+msgid ""
+"Default is \"Properties\", will change the label in the navigation menus."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:308
+msgid ""
+"Contextual menus are displayed when a user clicks the \"Help\" tab in the "
+"top right corner of a page."
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:313
+#, fuzzy
+msgid "Overview Page Contextual Help:"
+msgstr "Prehľad nehnuteľností"
+
+#: ../core/premium/class_wpp_power_tools.php:357
+#, fuzzy
+msgid "Add "
+msgstr "Pridať"
+
+#: ../core/premium/class_wpp_power_tools.php:358
+#, fuzzy
+msgid "Add New "
+msgstr "Pridať"
+
+#: ../core/premium/class_wpp_power_tools.php:359
+msgid "Edit "
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:360
+msgid "New "
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:373
+msgid "All "
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:374
+#, fuzzy
+msgid "Search "
+msgstr "Hľadať"
+
+#: ../core/premium/class_wpp_power_tools.php:375
+msgid "No "
+msgstr ""
+
+#: ../core/premium/class_wpp_power_tools.php:375
+#: ../templates/template-functions.php:643
+msgid " found."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:80
+#, fuzzy
+msgid "Property Excerpt"
+msgstr "Slovné opisy nehnuteľností"
+
+#: ../core/premium/class_wpp_property_import.php:81
+#, fuzzy
+msgid "Property Status"
+msgstr "Štatistické údaje"
+
+#: ../core/premium/class_wpp_property_import.php:82
+#, fuzzy
+msgid "Property Order"
+msgstr "Vyhľadávanie nehnuteľností"
+
+#: ../core/premium/class_wpp_property_import.php:83
+#, fuzzy
+msgid "Property Date"
+msgstr "Stránka s nehnuteľnosťami"
+
+#: ../core/premium/class_wpp_property_import.php:84
+#, fuzzy
+msgid "Property Author"
+msgstr "Slovné opisy nehnuteľností"
+
+#: ../core/premium/class_wpp_property_import.php:177
+#, php-format
+msgid ""
+"Starting Browser-Initiated Import: %1s. Using XML Importer %2s and WP-"
+"Property %3s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:248
+msgid "Manage XML Importer"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:305
+#, php-format
+msgid "Imported on: <b>%1$s</b> <a href=\"%2$s\" title=\"%3$s\">Importer</a>"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:417
+msgid "ago"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:426
+msgid "Last Import"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:471
+#: ../core/premium/class_wpp_property_import.php:476
+#: ../core/premium/class_wpp_property_import.php:499
+#, fuzzy
+msgid "Time: "
+msgstr "Názov:"
+
+#: ../core/premium/class_wpp_property_import.php:562
+#: ../core/premium/class_wpp_property_import.php:2978
+msgid "An error occured."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:587
+#, php-format
+msgid ""
+"There are (%1s) unattached files related to listings that were imported "
+"using the XML Importer."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:588
+msgid "Delete Unattached Files"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:594
+msgid "Look up XML import history."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:595
+msgid "Show XML Import History"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:597
+msgid "Show last 500 imported items in descending order."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:677
+msgid "( Imported )"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:686
+msgid "Schedule coult not be imported."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:732
+msgid "Importer"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:808
+#, php-format
+msgid ""
+"Starting Cron-Initiated Import: %1s. Using XML Importer %2s and WP-Property "
+"%3s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:863
+msgid "XML Importer Help"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:864
+msgid ""
+"By default, xPath are executed in the xPath input boxes. <a target=\"_blank"
+"\" href=\"http://www.w3schools.com/xpath/xpath_syntax.asp\">W3 Schools XPath "
+"Syntax</a>. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:865
+msgid ""
+"Example: get all the option values that have a label for \"height\": "
+"<b>options/option[label = \"Height\"]/value </b>"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:867
+msgid ""
+"<b>Property Resource Class:</b> Typically this is used to specify the type "
+"of property listing, such as Commercial or Residential, the naming "
+"convention varies depending on RETS provider. Use <a href=\"http://rets."
+"usabilitydynamics.com/\" target=\"_blank\">rets.usabilitydynamics.com</a> to "
+"determine. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:869
+msgid "XPath Query to Property Elements"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:870
+msgid ""
+"In order to begin importing data, you must first identify what the "
+"\"repeating property element\" is in the XML file.  Typically this would be "
+"something like <b>property</b> or <b>object</b>, where the corresponding "
+"XPath rules would be <b>//property</b> or <b>//object</b>, respectively. The "
+"easiest way to identify it is to look through the feed for a repeating "
+"pattern. The query must select the elements in order to cycle through them "
+"and apply the XPath Rules in the Attribute Map section. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:872
+msgid "Import Limits"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:873
+msgid ""
+"There are two type of limits - the first limit will stop the import after a "
+"certain number of objects have been processed before they are checked for "
+"quality, while the second limit will stop only after the specified number of "
+"objects has actually passsed quality inspection, and have been saved to the "
+"database."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:874
+msgid ""
+"Limiting imports works well when you are running incremental imports.  A "
+"limit of <b>10</b> will stop after 10 properties have been created.  The "
+"importer does not count properties that were skipped during import or that "
+"already exist in the system - properties that already exist will be marked "
+"as updated."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:876
+msgid "Running the Import"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:877
+msgid ""
+"There are two ways to process an import, using the browser, or by setting up "
+"a cron job.  Using the browser is easy, and viable when you have a small "
+"feed, or a very good server. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:878
+msgid ""
+"When working with larger feeds, or for the purposes of automation, it is "
+"advisable to execute your import script using a cron job.  For every "
+"\"Import Schedule\" you create, a <b>Cron Command</b> field will be "
+"displayed, followed by the command you would need to enter into the cron job "
+"builder, for the import schedule to be executed."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:880
+msgid "Function: free_text"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:881
+msgid ""
+"To insert some common text, use the <b>free_text</b> command, like so: "
+"<b>free_text: Imported from Some List</b> and the text will be kept as is."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:883
+msgid "Function: concat"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:884
+msgid ""
+"You can also combine free text wtih xPath rule results using <b>concat</b>, "
+"example: <b>concat:http://sourcesite.com/images/'Photo7'</b> will result in "
+"the text between the quotes being executed as xPath rules, while text "
+"outside of quotes being inserted as it is."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:885
+msgid ""
+"You can also use concat to combine multiple xPath rules together, for "
+"example you can create the Property Title from a few XML attributes: "
+"<b>concat:'bedrooms' bedroom house in 'location/city'</b>"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:887
+msgid "Function: concat_list"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:888
+msgid ""
+"Example: [concat_list root_path=\"options/option\" label_path=\"label\" "
+"value_path=\"value\" concat_character=\":\" ] will look for options/option "
+"path, then grab child \"value\" and \"label\" paths and import them as a "
+"single line. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:931
+#, php-format
+msgid "Found %1s properties from database that were imported from this feed."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:945
+#, php-format
+msgid "Property ID %1s has been deleted. Total deleted so far: %2s"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1201
+#, php-format
+msgid ""
+"Deleted %1s unattached property files that were created from an XML import."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1209
+msgid "Something went wrong, did not delete any unattached images."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1247
+#, php-format
+msgid "All %1$s properties have been deleted in %2$s seconds."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1249
+#, php-format
+msgid ""
+"Although %1$s properties were found, only %2$s have been deleted in %3$s "
+"seconds."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1253
+msgid "Something went wrong, no properties were found to delete."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1333
+#, php-format
+msgid "Created temporary directory for import: %1$s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1366
+#, php-format
+msgid "Could not load XML Object from raw data: %1s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1368
+msgid "Could not load XML Object from raw data - empty result returned."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1370
+msgid "Could not load XML Object from raw data."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1374
+msgid "XML data cannot be loaded."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1407
+msgid "Data loaded from cache."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1413
+msgid " object(s) found with XPath Rule: "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1414
+#, php-format
+msgid ""
+"%1s objects identified: <a href=\"%2s\" target=\"_blank\">download processed "
+"XML file</a> ( %3s )."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1416
+msgid "Root Element XPath Rule: "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1420
+msgid "No Root Element XPath Rule, displaying most root elements."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1424
+#, fuzzy
+msgid "No objects found."
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/premium/class_wpp_property_import.php:1431
+#, php-format
+msgid "Preview truncated: showing: %1s of full feed:"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1436
+#, fuzzy, php-format
+msgid "Available tags in source: %1s"
+msgstr "Dostupné značky:"
+
+#: ../core/premium/class_wpp_property_import.php:1669
+#, php-format
+msgid "XPath rules for object #%1d processed with %2d extracted attributes."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1675
+#, php-format
+msgid "Stopping import due to specified pre-QC limit of %1d."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1696
+#, php-format
+msgid "Importing %1s"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1736
+#: ../core/premium/class_wpp_property_import.php:1737
+#, php-format
+msgid "Deleted all ( %1s ) properties that originated from this feed."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1739
+#: ../core/premium/class_wpp_property_import.php:1814
+msgid ""
+"Did not find any properties that have been imported from this feed to remove."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1744
+msgid "Did not remove any old properties."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1757
+#, php-format
+msgid "Stopping import due to specified post-QC limit of %1d."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1803
+#, php-format
+msgid "Object cycle done. Completed %1d cycles."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1811
+#: ../core/premium/class_wpp_property_import.php:1812
+#, php-format
+msgid "Deleted ( %1s ) properties that are no longer in the feed."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1838
+msgid "Deleted the import temporary directory."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1840
+msgid "Unable to delete the import temporary directory"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1935
+msgid "Import name"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1944
+#, fuzzy
+msgid "Source"
+msgstr "Viac"
+
+#: ../core/premium/class_wpp_property_import.php:1949
+msgid "URL"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1952
+#, fuzzy
+msgid "Type:"
+msgstr "Typ"
+
+#: ../core/premium/class_wpp_property_import.php:1955
+msgid "XML / JSON"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1956
+msgid "CSV"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1957
+#, fuzzy
+msgid "Google Spreadsheet"
+msgstr "Google Maps"
+
+#: ../core/premium/class_wpp_property_import.php:1958
+#, fuzzy
+msgid "WP-Property Feed"
+msgstr "Údajové polia"
+
+#: ../core/premium/class_wpp_property_import.php:1959
+msgid "RETS"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1970
+msgid "Send GET variables as POST data."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1980
+#, fuzzy
+msgid "Google Username"
+msgstr "Google Maps"
+
+#: ../core/premium/class_wpp_property_import.php:1984
+#, fuzzy
+msgid "Google Password"
+msgstr "Google Maps"
+
+#: ../core/premium/class_wpp_property_import.php:1988
+msgid "Google Extra Query Vars"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1989
+msgid ""
+"See the <a href=\"http://code.google.com/apis/spreadsheets/data/3.0/"
+"reference.html#ListParameters\" target=\"_blank\">Google Spreadsheet API "
+"docs</a> for the format of this field ( should be name value pairs, without "
+"the beginning \"?\" )"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1993
+msgid "RETS Username."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:1997
+msgid "RETS Password."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2001
+#, fuzzy
+msgid "Property Resource Class."
+msgstr "Nehnuteľnosť bola uložená."
+
+#: ../core/premium/class_wpp_property_import.php:2005
+msgid "Primary Key for Resource."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2005
+msgid "Also referred to as \"Key Field\". Default is \"ListingKey\""
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2009
+msgid "Photo Object."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2009
+msgid "Default is \"Photo\""
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2013
+msgid "User-Agent String."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2013
+#: ../core/premium/class_wpp_property_import.php:2017
+msgid "May be required by your RETS"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2017
+msgid "User-Agent Password."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2026
+#, fuzzy
+msgid "RETS Version."
+msgstr "Verzia"
+
+#: ../core/premium/class_wpp_property_import.php:2026
+msgid "Version is set by your RETS provider."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2030
+#, fuzzy
+msgid "Property Query."
+msgstr "Fotogaléria nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:2030
+msgid ""
+"Accepts <a href=\"https://www.flexmls.com/support/rets/tutorials/dmql/\" "
+"target=\"_blank\">DMQL</a> - Default is \"(ListingStatus=|Active)\""
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2034
+msgid "Toggle Advanced Source Options"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2040
+msgid "Root XPath Query:"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2042
+#: ../core/ui/page_settings.php:347
+msgid "What is this?"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2050
+#: ../core/premium/class_wpp_property_import.php:2719
+#: ../core/premium/class_wpp_property_import.php:2792
+msgid "Preview Raw Data"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2052
+msgid "Close Preview"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2068
+#, fuzzy
+msgid "Default Property Type"
+msgstr "Typ nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:2076
+msgid "Will be defaulted to if no xPath rule exists for the \"Property Type\"."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2092
+msgid "<b>Pre-QC Limit:</b> Limit import to the first"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2094
+#, fuzzy
+msgid "properties in the feed."
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/premium/class_wpp_property_import.php:2095
+msgid "More about limits."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2099
+msgid "<b>Post-QC Limit:</b> Limit import to the first"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2101
+msgid "created properties that have passed quality standards."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2107
+#, php-format
+msgid "Only import images that are over %1spx in width, and %2spx in height."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2112
+msgid "Minimum sizes are ignored if blank."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2116
+msgid "Imported properties must have at least "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2117
+msgid ", but no more than "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2119
+#, fuzzy
+msgid " valid images."
+msgstr "Skryť fotografie?"
+
+#: ../core/premium/class_wpp_property_import.php:2124
+msgid "Do not import properties that have been imported less than "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2126
+#, fuzzy
+msgid "hour(s) ago."
+msgstr "pred %s hodinami"
+
+#: ../core/premium/class_wpp_property_import.php:2133
+msgid "Automatically set the first image as the thumbnail."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2140
+msgid ""
+"Remove properties that are no longer in source XML from this site's "
+"database. This can now be done if the the import configuration has a Pre-QC "
+"or Post-QC Limit."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2146
+msgid ""
+"When updating an existing property, remove all old images before downloading "
+"new ones."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2152
+#, php-format
+msgid ""
+"Send email updates to the site admin e-mail address ( %1s ) when import "
+"schedules are executed and completed."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2159
+msgid ""
+"Remove all properties that were originally imported from this feed on import."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2166
+msgid "Completely remove <b>all</b> existing properties prior to import."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2173
+msgid "Fix strings that are in all caps."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2180
+msgid "Scan for any formatting tags and strip them out."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2188
+msgid "Automatically load imported images into property slideshow."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2196
+msgid ""
+"Geolocate listings that do not already have latitute and longitude values."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2202
+msgid "Enable detailed logging to assist with troubleshooting."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2208
+msgid "Show SQL Queries and errors."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2215
+msgid "Toggle Advanced Options"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2222
+msgid "Automatic Matching"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2224
+#: ../core/premium/class_wpp_property_import.php:3599
+#, fuzzy
+msgid "Automatically Match"
+msgstr "Automaticky priložiť predvolené CSS."
+
+#: ../core/premium/class_wpp_property_import.php:2225
+msgid ""
+"This will work for WP-Property exports and imports, but will have mixed "
+"results with uniquely formatted feeds."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2230
+#, fuzzy
+msgid "Attribute Map"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_wpp_property_import.php:2233
+msgid ""
+"Use XPath rules to setup the paths to the individual XML attributes to match "
+"them up with WP-Property attributes."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2234
+msgid "Sort Attribute Rules"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2240
+#, fuzzy
+msgid "WP-Property Attribute"
+msgstr "Prémiové doplnky WP-Property"
+
+#: ../core/premium/class_wpp_property_import.php:2241
+msgid "XPath Rule"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2253
+#, fuzzy
+msgid "WordPress Attributes"
+msgstr "Atribút Adresa"
+
+#: ../core/premium/class_wpp_property_import.php:2271
+#, fuzzy
+msgid "Street Number"
+msgstr "Tel. číslo"
+
+#: ../core/premium/class_wpp_property_import.php:2272
+msgid "Street"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2274
+#, fuzzy
+msgid "County"
+msgstr "Mesto"
+
+#: ../core/premium/class_wpp_property_import.php:2275
+#, fuzzy
+msgid "State"
+msgstr "Zoraditeľné"
+
+#: ../core/premium/class_wpp_property_import.php:2276
+msgid "Country"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2277
+msgid "Postal Code"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2282
+#, fuzzy
+msgid "WP-Property Attributes"
+msgstr "Prémiové doplnky WP-Property"
+
+#: ../core/premium/class_wpp_property_import.php:2285
+#, fuzzy
+msgid "Property Agent"
+msgstr "Slovné opisy nehnuteľností"
+
+#: ../core/premium/class_wpp_property_import.php:2287
+#, fuzzy
+msgid "Global Property ID"
+msgstr "Nehnuteľnosť"
+
+#: ../core/premium/class_wpp_property_import.php:2288
+#, fuzzy
+msgid "Display Address"
+msgstr "Adresa"
+
+#: ../core/premium/class_wpp_property_import.php:2300
+msgid "Delete Selected"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2319
+#: ../core/premium/class_wpp_property_import.php:2816
+#: ../core/premium/class_wpp_property_import.php:2852
+msgid "Save Configuration"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2335
+msgid "Preview Import"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2336
+msgid "Process Full Import"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2395
+#, php-format
+msgid ""
+"No UI data was returned. Mostly likely an encoding error. Encoding: %1s "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2469
+msgid "Schedule imported from file."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2664
+msgid "Please save schedule first."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2711
+#: ../core/premium/class_wpp_property_import.php:2791
+msgid ""
+"500 Internal Server Error! Your hosting account is most likely running out "
+"of memory."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2740
+#: ../core/premium/class_wpp_slideshow.php:1440
+#: ../core/premium/class_wpp_supermap.php:1675
+#, fuzzy
+msgid "Loading..."
+msgstr "Načítavam"
+
+#: ../core/premium/class_wpp_property_import.php:2766
+msgid "Preview Again"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2818
+msgid "Saving the XML Importer schedule, please wait..."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2820
+#: ../core/premium/class_wpp_property_import.php:2856
+#: ../core/premium/class_wpp_property_import.php:3799
+msgid "Processing..."
+msgstr "Spracúvam..."
+
+#: ../core/premium/class_wpp_property_import.php:2836
+msgid "Schedule has been saved."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2854
+msgid "Updating the XML Importer schedule, please wait..."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2871
+msgid "Schedule has been updated."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2962
+msgid "Confirm that you want to delete all "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2962
+msgid ""
+" properties from this feed by typing in in 'delete' below, or press 'Cancel' "
+"to cancel."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:2993
+msgid "Are you sure?"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3140
+#, fuzzy
+msgid "Enabled Options"
+msgstr "Nastavenia"
+
+#: ../core/premium/class_wpp_property_import.php:3207
+msgid "Toggle Advanced"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3321
+msgid "Select a unique ID attribute."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3323
+msgid "Unique ID attribute."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3623
+msgid "The source evaluation resulted in an Internal Server Error!"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3629
+msgid "Request error:"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3794
+msgid "Check Source"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3804
+msgid "Source is Good: Reload."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3809
+msgid "Cannot Load Source: Reload."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3814
+msgid "Internal Server Error!"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3823
+#, fuzzy
+msgid "Property Importer"
+msgstr "Typ nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3853
+#, fuzzy
+msgid "Sort by:"
+msgstr "Zoraditeľné"
+
+#: ../core/premium/class_wpp_property_import.php:3854
+msgid "Last Run"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3855
+#, fuzzy
+msgid "Created Properties"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3856
+#, fuzzy
+msgid "Updated Properties"
+msgstr "Odporúčané nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3857
+#, fuzzy
+msgid "Total Properties"
+msgstr "Nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3858
+msgid "Limit"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3866
+msgid "Saved Import Schedules"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3879
+msgid "Last run "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3879
+msgid " ago."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3884
+msgid "Updated "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3884
+#: ../core/premium/class_wpp_property_import.php:3889
+#: ../core/premium/class_wpp_property_import.php:3894
+msgid " objects."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3889
+#, fuzzy
+msgid "Created "
+msgstr "Odporúčané"
+
+#: ../core/premium/class_wpp_property_import.php:3894
+msgid "Limited to "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3899
+#, fuzzy
+msgid "Total Properties: "
+msgstr "Nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3911
+msgid "Source URL:"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3912
+msgid "Cron Command:"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3919
+msgid "Run Import in Browser"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3920
+msgid "Save to File"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3922
+#, fuzzy
+msgid "Delete All Properties"
+msgstr "Ďalšie nehnuteľnosti"
+
+#: ../core/premium/class_wpp_property_import.php:3934
+msgid "You do not have any saved schedules. Create one now."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3943
+msgid "Import Schedule"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:3945
+msgid "Upload File"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4027
+msgid "Updating existing listing."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4044
+msgid ""
+"Attempted to update property, but wp_update_post() did not return an ID. "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4069
+msgid "Skipping property, last import "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4069
+msgid " ago"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4085
+msgid "Creating new listing."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4107
+#, php-format
+msgid "Object import failed. Error: %1s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4111
+msgid ""
+"Object import failed - no Property Title detected or set, a requirement to "
+"creating a property."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4115
+msgid ""
+"Object import failed.  Post cold not be created nor updated, and post_id was "
+"not found or created."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4154
+#, php-format
+msgid ""
+"Attachment referenced in database not found on disk: (%1s), removing "
+"reference from DB."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4167
+#, php-format
+msgid "Duplicate attachment file found (%1s) and deleted."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4420
+msgid ""
+"After import property has less than the required amount of images - deleting "
+"property as configured."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4423
+msgid ""
+"After import property has no images, but was unable to delete the property."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4428
+#, php-format
+msgid "After import property has a total of %1s images."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4709
+#, php-format
+msgid "Image directory %1s could not be created."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4743
+msgid "Could not save image saved image - empty file returned by server."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4760
+#, php-format
+msgid "Image %1s downloaded, but appears corrupt - deleting."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4778
+#: ../core/premium/class_wpp_property_import.php:5066
+#, php-format
+msgid ""
+"Image %1s downloaded, but image size failed quality standards - deleting."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:4808
+#, php-format
+msgid "Downloaded %1s image(s) for %2s #%3s."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:5012
+msgid "on disk using file_get_contents()"
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:5017
+msgid "Attempting to get image  ( "
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:5031
+#, php-format
+msgid "Unable to get image %1s using the %2s method."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:5047
+#, php-format
+msgid "Image %1s corrupted - skipped."
+msgstr ""
+
+#: ../core/premium/class_wpp_property_import.php:5086
+#, php-format
+msgid "Unable to save image %1s."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:93
+#, fuzzy
+msgid "Manage Slideshow"
+msgstr "Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:249
+msgid "Display as carousel gallery."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:253
+msgid "Gallery transition type:"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:255
+msgid "Crossfade betweens images"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:256
+msgid "Fade into background color"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:257
+msgid "Pulse"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:258
+#, fuzzy
+msgid "Slide"
+msgstr "Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:259
+msgid "Fadeslide"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:265
+msgid "Crop images."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:270
+msgid "Enforce minimum image width."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:274
+#, fuzzy
+msgid "Carousel Thumbnail Size:"
+msgstr "Veľkosť náhľadu mapy:"
+
+#: ../core/premium/class_wpp_slideshow.php:477
+msgid "Slideshow Options"
+msgstr "Nastavenia Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:796
+#: ../core/premium/class_wpp_slideshow.php:1536
+msgid "Slideshow Images:"
+msgstr "Fotografie v Slideshow:"
+
+#: ../core/premium/class_wpp_slideshow.php:818
+#: ../core/premium/class_wpp_slideshow.php:1550
+msgid "All Images:"
+msgstr "Všetky fotografie:"
+
+#: ../core/premium/class_wpp_slideshow.php:887
+msgid "Image is too small."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:957
+#: ../core/premium/class_wpp_slideshow.php:973
+msgid "Slideshow"
+msgstr "Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:1031
+#: ../core/premium/class_wpp_slideshow.php:1215
+#: ../core/premium/class_wpp_slideshow.php:1498
+msgid "Global Slideshow"
+msgstr "Globálna Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:1036
+msgid "Clicking on an image will open up the property its attached to."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1040
+msgid "Show property title and tagline in slideshow."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1044
+#, fuzzy
+msgid "Slideshow Size: "
+msgstr "Fotografie v Slideshow:"
+
+#: ../core/premium/class_wpp_slideshow.php:1065
+#, php-format
+msgid ""
+"The global slideshow will look for all images that are over the specified "
+"size.  Add images to the global slideshow <a href=\"%1$s\">here</a>. The "
+"built-in sizes, such as <b>medium</b> and <b>large</b> may not work because "
+"WordPress does not crop them during resizing, resulting in artbitrary "
+"heights. "
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1075
+#, fuzzy
+msgid "Display in Global Slideshow Caption:"
+msgstr "Globálna Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:1079
+#, fuzzy
+msgid "Title."
+msgstr "Názov"
+
+#: ../core/premium/class_wpp_slideshow.php:1080
+msgid "Excerpt."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1081
+#, fuzzy
+msgid "Tagline."
+msgstr "Slogan"
+
+#: ../core/premium/class_wpp_slideshow.php:1087
+msgid "Single Listing Slideshow"
+msgstr "Slideshow pre jednotlivé inzeráty"
+
+#: ../core/premium/class_wpp_slideshow.php:1110
+msgid "Slideshow image size to be used for single property pages."
+msgstr ""
+"Veľkosť fotografií, ktorá bude použitá pre doplnok Slideshow (fotogalérie)."
+
+#: ../core/premium/class_wpp_slideshow.php:1114
+msgid "Show pagination buttons in slideshow."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1123
+#, fuzzy
+msgid "Thumbnail Size"
+msgstr "Veľkosť náhľadu:"
+
+#: ../core/premium/class_wpp_slideshow.php:1128
+msgid ""
+"This width is used on \"Slideshow\" page on the Property editing page to "
+"display available images, this setting <b>does not</b> affect the actual "
+"slideshow on the front-end."
+msgstr ""
+"Táto šírka bude použitá len na stránke \"Slideshow\" v editovacom prostredí "
+"nehnuteľností a <b>neovplyvňuje</b> skutočnú veľkosť fotografií vo verejne "
+"prístupnej fotogalérii na webe."
+
+#: ../core/premium/class_wpp_slideshow.php:1139
+msgid "Effect:"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1145
+msgid "Effect that will be used to change from one image to the next."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1149
+#, fuzzy
+msgid "Slices:"
+msgstr "Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:1155
+msgid ""
+"If the transition includes slices, this number determines how many slices to "
+"cut the image up into during transitions."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1159
+msgid "Animation Speed:"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1165
+msgid "How quickly the transition should happen, in miliseconds."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1169
+msgid "Pause Time:"
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1175
+msgid "The pause time between transitions."
+msgstr ""
+
+#: ../core/premium/class_wpp_slideshow.php:1261
+msgid "Slideshow selection and order saved."
+msgstr "Výber a poradie Slideshow boli uložené."
+
+#: ../core/premium/class_wpp_slideshow.php:1515
+msgid "WP-Property Slideshow"
+msgstr "WP-Property Slideshow"
+
+#: ../core/premium/class_wpp_slideshow.php:1516
+msgid ""
+"This slideshow can be integrated into your front-end pages by either using "
+"the shortcode, or pasting PHP code into your theme."
+msgstr ""
+"Táto fotogaléria môže byť vložená do Vašich inzerátov buď použitím shortcode "
+"(skratkového kódu), alebo vložením PHP kódu do Vašej WordPress témy."
+
+#: ../core/premium/class_wpp_slideshow.php:1519
+msgid ""
+"Drag images from selection on the left to the selection on the right, and "
+"then click save."
+msgstr ""
+"Potiahnite obrázky z výberu na ľavej strane do výberu na pravej strane a "
+"stlačte Uložiť."
+
+#: ../core/premium/class_wpp_slideshow.php:1520
+#, php-format
+msgid ""
+"This list gets all images from your media library that are over %s pixels "
+"wide and %s pixels tall."
+msgstr ""
+"Tento zoznam zobrazí všetky obrázky z Vašej multimediálnej knižnice, ktorých "
+"rozmer je aspoň %s pixelov na šírku a %s pixelov na výšku."
+
+#: ../core/premium/class_wpp_slideshow.php:1527
+msgid "Save Selection and Order"
+msgstr "Uložiť výber a poradie"
+
+#: ../core/premium/class_wpp_supermap.php:80
+#, fuzzy
+msgid "Manage Supermap"
+msgstr "Supermap"
+
+#: ../core/premium/class_wpp_supermap.php:94
+msgid "Supermap"
+msgstr "Supermap"
+
+#: ../core/premium/class_wpp_supermap.php:160
+#, fuzzy
+msgid "Sidebar Attributes"
+msgstr "Skryté atribúty"
+
+#: ../core/premium/class_wpp_supermap.php:162
+#, fuzzy
+msgid ""
+"Select the attributes you want to display in the left sidebar on the "
+"supermap."
+msgstr "Vyberte atribúty, ktoré budú prehľadávané."
+
+#: ../core/premium/class_wpp_supermap.php:176
+msgid ""
+"Display \"View Property\" link in the left sidebar. It directs user to "
+"Property Page."
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:182
+#, fuzzy
+msgid "Supermap Sidebar Thumbnail:"
+msgstr "Náhľad v bočnom paneli Supermap:"
+
+#: ../core/premium/class_wpp_supermap.php:187
+msgid "Do not show a property thumbnail in sidebar."
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:190
+msgid ""
+"If you create a new image size, please be sure to regenerate all thumbnails. "
+msgstr ""
+"Ak vytvoríte nový rozmer fotografií, nezabudnite prosím regenerovať všetky "
+"náhľady."
+
+#: ../core/premium/class_wpp_supermap.php:195
+msgid "Map Markers:"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:238
+msgid "Add Marker"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:338
+msgid "Map Areas:"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:340
+msgid ""
+"<p>Map areas let you draw our areas on the map, such as neighborhoods.</"
+"p><p>Just add to shortcode attribute <b>show_areas=all</b> to draw all areas "
+"on the map. Also You can use area's slugs to show them on the map, like as "
+"<b>show_areas=new_york,washington</b>. Please, use coordinates in this "
+"format: <b>(82.72, -37.79)(69.54, -57.48)(68.93, -18.63).</b></p><p><i>This "
+"is an experimental feature, you may not want to use it on a live site.  "
+"We're eager to hear your feedback regarding this feature and the "
+"capabilities that would be useful to you.</i></p>"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:345
+msgid "Coordinates"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:346
+msgid "Fill Color"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:347
+msgid "Opacity"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:348
+msgid "Stoke Color"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:349
+msgid "Hover Color"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:428
+#: ../core/premium/class_wpp_supermap.php:681
+msgid "Map Marker"
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:430
+#: ../core/premium/class_wpp_supermap.php:683
+#, fuzzy
+msgid "Default by Google"
+msgstr "Predvolená šablóna"
+
+#: ../core/premium/class_wpp_supermap.php:630
+msgid "Supermap Options"
+msgstr "Nastavenia Supermap"
+
+#: ../core/premium/class_wpp_supermap.php:643
+#, fuzzy
+msgid "Exclude property from Supermap"
+msgstr "Vynechať nehnuteľnosť v supermape"
+
+#: ../core/premium/class_wpp_supermap.php:843
+#, php-format
+msgid "Element cannot be rendered, missing %1s script."
+msgstr ""
+
+#: ../core/premium/class_wpp_supermap.php:1131
+#, fuzzy
+msgid "No results found."
+msgstr "Žiadne nehnuteľnosti neboli nájdené"
+
+#: ../core/premium/class_wpp_supermap.php:1674
+#, fuzzy
+msgid "Show More"
+msgstr "Zobraziť odkaz \"Viac\"?"
+
+#: ../core/premium/class_wpp_supermap.php:1754
+msgid "Loading"
+msgstr "Načítavam"
+
+#: ../core/ui/class_wpp_object_list_table.php:55
+#: ../core/ui/class_wpp_object_list_table.php:127
+msgid "Restore"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:112
+#, php-format
+msgid "Edit &#8220;%s&#8221;"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:120
+msgid "Edit this item"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:127
+msgid "Restore this item from the Trash"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:129
+msgid "Move this item to the Trash"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:129
+msgid "Trash"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:133
+msgid "Delete this item permanently"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:133
+msgid "Delete Permanently"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:138
+#, php-format
+msgid "View &#8220;%s&#8221;"
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:138
+#, fuzzy
+msgid "View"
+msgstr "Zobraziť všetko"
+
+#: ../core/ui/class_wpp_object_list_table.php:195
+#, php-format
+msgid "Toggle %1s more."
+msgstr ""
+
+#: ../core/ui/class_wpp_object_list_table.php:254
+#, fuzzy
+msgid "Add to Featured"
+msgstr "Pridať novú nehnuteľnosť"
+
+#: ../core/ui/page_settings.php:35
+#, fuzzy
+msgid "Settings updated."
+msgstr "Nehnuteľnosť bola aktualizovaná."
+
+#: ../core/ui/page_settings.php:173
+msgid ""
+"You are about to set ALL your properties to the selected property type. Are "
+"you sure?"
+msgstr ""
+
+#: ../core/ui/page_settings.php:303
+#, fuzzy
+msgid "Feature Updates"
+msgstr "Názov doplnku"
+
+#: ../core/ui/page_settings.php:309
+msgid "Check Updates"
+msgstr "Skontrolovať aktualizácie"
+
+#: ../core/ui/page_settings.php:310
+msgid "to download, or update, all premium features purchased for this domain."
+msgstr ""
+
+#: ../core/ui/page_settings.php:328
+#, php-format
+msgid "Include %1s in regular search results."
+msgstr ""
+
+#: ../core/ui/page_settings.php:329
+msgid "Disable \"on-the-fly\" image regeneration."
+msgstr ""
+
+#: ../core/ui/page_settings.php:331
+msgid ""
+"Automatically delete all property images and attachments when a property is "
+"deleted."
+msgstr ""
+
+#: ../core/ui/page_settings.php:337
+#, fuzzy, php-format
+msgid "Default %1s Page"
+msgstr "Predvolená šablóna"
+
+#: ../core/ui/page_settings.php:342
+msgid "Property (Default)"
+msgstr "Nehnuteľnosti (predvolená)"
+
+#: ../core/ui/page_settings.php:350
+#, php-format
+msgid "You must have permalinks enabled to change the Default %1s page."
+msgstr ""
+
+#: ../core/ui/page_settings.php:362
+#, fuzzy
+msgid "Automatically overwrite this page's content with [property_overview]."
+msgstr "Vždy prepísať obsah tejto stránky na [property_overview]."
+
+#: ../core/ui/page_settings.php:365
+#, fuzzy
+msgid ""
+"When showing property search results, don't override the page content with "
+"[property_overview]."
+msgstr "Vždy prepísať obsah tejto stránky na [property_overview]."
+
+#: ../core/ui/page_settings.php:366
+msgid ""
+"If checked, be sure to include [property_overview] somewhere in the content, "
+"or no properties will be displayed."
+msgstr ""
+"Ak zaškrtnete, ubezpečte sa, že Vaša vlastná stránka obsahuje kód "
+"[property_overview], inak sa nehnuteľnosti nezobrazia."
+
+#: ../core/ui/page_settings.php:373
+#, fuzzy
+msgid "Automatic Geolocation"
+msgstr "Automaticky priložiť predvolené CSS."
+
+#: ../core/ui/page_settings.php:376
+#, fuzzy
+msgid "Attribute to use for physical addresses:"
+msgstr "Atribút pre vkladanie adresy:"
+
+#: ../core/ui/page_settings.php:377
+msgid "Localize addresses in:"
+msgstr ""
+
+#: ../core/ui/page_settings.php:383
+msgid "Styles and Scripts"
+msgstr ""
+
+#: ../core/ui/page_settings.php:386
+msgid ""
+"Load default CSS. If unchecked, the wp-properties.css in your theme folder "
+"will not be loaded."
+msgstr ""
+
+#: ../core/ui/page_settings.php:386
+#, fuzzy
+msgid "Load default CSS."
+msgstr "Automaticky priložiť predvolené CSS."
+
+#: ../core/ui/page_settings.php:390
+msgid "Do not load theme-specific stylesheet."
+msgstr ""
+
+#: ../core/ui/page_settings.php:391
+msgid ""
+"This version of WP-Property has a stylesheet made specifically for the theme "
+"you are using."
+msgstr ""
+
+#: ../core/ui/page_settings.php:396
+msgid "Load WP-Property scripts on all front-end pages."
+msgstr ""
+
+#: ../core/ui/page_settings.php:403
+msgid "Default Phone Number"
+msgstr "Predvolené tel. číslo"
+
+#: ../core/ui/page_settings.php:404
+msgid ""
+"Phone number to use when a property-specific phone number is not specified."
+msgstr ""
+"Telefónne číslo použité v prípade, že nie je zadané žiadne číslo pre "
+"konkrétny inzerát."
+
+#: ../core/ui/page_settings.php:419
+msgid "Image Sizes"
+msgstr "Rozmery fotografií"
+
+#: ../core/ui/page_settings.php:421
+msgid "Image sizes used throughout the plugin."
+msgstr "Veľkosti fotografií použité v celom module."
+
+#: ../core/ui/page_settings.php:427
+msgid "Width"
+msgstr "Šírka"
+
+#: ../core/ui/page_settings.php:428
+msgid "Height"
+msgstr "Výška"
+
+#: ../core/ui/page_settings.php:504
+msgid "Overview Shortcode"
+msgstr "Skratkový kód - hlavný zoznam"
+
+#: ../core/ui/page_settings.php:507
+#, fuzzy
+msgid ""
+"These are the settings for the [property_overview] shortcode.  The shortcode "
+"displays a list of all building / root properties.<br />The display settings "
+"may be edited further by customizing the <b>wp-content/plugins/wp-properties/"
+"templates/property-overview.php</b> file.  To avoid losing your changes "
+"during updates, create a <b>property-overview.php</b> file in your template "
+"directory, which will be automatically loaded."
+msgstr ""
+"Toto sú nastavenia skratkového kódu [property_overview], ktorý zobrazuje "
+"zoznam všetkých nehnuteľností.<br />\n"
+"\t\t\t\tMožnosti zobrazenia môžete dodatočne upraviť prispôsobením súboru "
+"<b>wp-content/plugins/wp-properties/templates/property-overview.php</b>. Aby "
+"ste počas aktualizovania modulu WP-Property neprišli o tieto úpravy, "
+"vytvorte si vo Vašom priečinku so šablónou súbor <b>property-overview.php</"
+"b>, ktorý bude automaticky načítaný."
+
+#: ../core/ui/page_settings.php:510
+msgid "Thumbnail size:"
+msgstr "Rozmer náhľadu:"
+
+#: ../core/ui/page_settings.php:511
+msgid "Show children properties."
+msgstr "Zobraziť dcérske nehnuteľnosti."
+
+#: ../core/ui/page_settings.php:512
+msgid "Show larger image of property when image is clicked using fancybox."
+msgstr ""
+"Zobraziť väčšu fotografiu nehnuteľnosti, ak je otváraná cez rozhranie "
+"FancyBox."
+
+#: ../core/ui/page_settings.php:513
+#, fuzzy
+msgid "Show pagination on bottom of results."
+msgstr "Rozdelenie výsledkov vyhľadávania na menšie stránky"
+
+#: ../core/ui/page_settings.php:520
+msgid "Property Page"
+msgstr "Stránka s nehnuteľnosťami"
+
+#: ../core/ui/page_settings.php:522
+#, fuzzy
+msgid ""
+"These are the settings for the [property_overview] shortcode.  The shortcode "
+"displays a list of all building / root properties.<br /> The display "
+"settings may be edited further by customizing the <b>wp-content/plugins/wp-"
+"properties/templates/property.php</b> file.  To avoid losing your changes "
+"during updates, create a <b>property.php</b> file in your template "
+"directory, which will be automatically loaded."
+msgstr ""
+"Toto sú nastavenia skratkového kódu [property_overview], ktorý zobrazuje "
+"zoznam všetkých nehnuteľností.<br />\n"
+"\t\t\t\tMožnosti zobrazenia môžete dodatočne upraviť prispôsobením súboru "
+"<b>wp-content/plugins/wp-properties/templates/property.php</b>. Aby ste "
+"počas aktualizovania modulu WP-Property neprišli o tieto úpravy, vytvorte si "
+"vo Vašom priečinku so šablónou súbor <b>property.php</b>, ktorý bude "
+"automaticky načítaný."
+
+#: ../core/ui/page_settings.php:524
+msgid "Sort property stats by groups."
+msgstr ""
+
+#: ../core/ui/page_settings.php:525 ../core/ui/page_settings.php:539
+#, php-format
+msgid ""
+"Show Checkboxed Image instead of \"%s\" and hide \"%s\" for %s/%s values"
+msgstr ""
+
+#: ../core/ui/page_settings.php:533
+msgid "Google Maps"
+msgstr "Google Maps"
+
+#: ../core/ui/page_settings.php:537
+msgid "Map Thumbnail Size:"
+msgstr "Veľkosť náhľadu mapy:"
+
+#: ../core/ui/page_settings.php:538
+msgid "Map Zoom Level:"
+msgstr "Stupeň priblíženia mapy:"
+
+#: ../core/ui/page_settings.php:542
+msgid "Attributes to display in popup after a property on a map is clicked."
+msgstr ""
+
+#: ../core/ui/page_settings.php:546
+#, fuzzy
+msgid "Show Property Title"
+msgstr "Typ nehnuteľnosti"
+
+#: ../core/ui/page_settings.php:555
+#, fuzzy
+msgid "Show Directions Link"
+msgstr "Ukázať cestu"
+
+#: ../core/ui/page_settings.php:556
+msgid "Do not show a list of child properties in Infobox. "
+msgstr ""
+
+#: ../core/ui/page_settings.php:563
+msgid "Address Display"
+msgstr "Zobrazenie adresy"
+
+#: ../core/ui/page_settings.php:570
+msgid "Available tags:"
+msgstr "Dostupné značky:"
+
+#: ../core/ui/page_settings.php:576
+#, fuzzy
+msgid "Currency & Numbers"
+msgstr "Symbol meny."
+
+#: ../core/ui/page_settings.php:579
+msgid "Currency symbol."
+msgstr "Symbol meny."
+
+#: ../core/ui/page_settings.php:581
+msgid "Thousands separator symbol:"
+msgstr ""
+
+#: ../core/ui/page_settings.php:584
+msgid ". (period)"
+msgstr ""
+
+#: ../core/ui/page_settings.php:585
+msgid ", (comma)"
+msgstr ""
+
+#: ../core/ui/page_settings.php:587
+msgid "The character separating the 1 and the 5: $1<b>,</b>500"
+msgstr ""
+
+#: ../core/ui/page_settings.php:592
+#, fuzzy
+msgid "Currency symbol placement:"
+msgstr "Symbol meny."
+
+#: ../core/ui/page_settings.php:595
+#, fuzzy
+msgid "Before number"
+msgstr "Tel. číslo"
+
+#: ../core/ui/page_settings.php:596
+msgid "After number"
+msgstr ""
+
+#: ../core/ui/page_settings.php:608
+#, fuzzy
+msgid "Admin Settings"
+msgstr "Nastavenia"
+
+#: ../core/ui/page_settings.php:612
+msgid "Thumbnail size for property images displayed on Properties page: "
+msgstr ""
+
+#: ../core/ui/page_settings.php:614
+msgid "Completely hide hidden attributes when editing properties."
+msgstr ""
+
+#: ../core/ui/page_settings.php:670
+msgid "[purchase feature]"
+msgstr ""
+
+#: ../core/ui/page_settings.php:685
+#, php-format
+msgid ""
+"This feature is disabled because it requires WP-Property %1$s or higher."
+msgstr ""
+
+#: ../core/ui/page_settings.php:687
+msgid "Disable plugin."
+msgstr "Deaktivovať modul."
+
+#: ../core/ui/page_settings.php:691
+msgid "Feature installed, using version"
+msgstr "Doplnok nainštalovaný, verzia"
+
+#: ../core/ui/page_settings.php:694
+#, fuzzy, php-format
+msgid ""
+"Please visit <a href=\"%s\">UsabilityDynamics.com</a> to purchase this "
+"feature."
+msgstr ""
+"Pre zakúpenie tohto doplnku prosím navštívte <a href=\"%s\">TwinCitiesTech."
+"com</a>."
+
+#: ../core/ui/page_settings.php:711
+msgid ""
+"If prompted for your domain name during a premium feature purchase, enter as "
+"appears here:"
+msgstr ""
+
+#: ../core/ui/page_settings.php:717
+msgid "Restore Backup of WP-Property Configuration"
+msgstr ""
+
+#: ../core/ui/page_settings.php:718
+msgid "Download Backup of Current WP-Property Configuration."
+msgstr ""
+
+#: ../core/ui/page_settings.php:723
+msgid "Revalidate all addresses using"
+msgstr ""
+
+#: ../core/ui/page_settings.php:723
+msgid "localization"
+msgstr ""
+
+#: ../core/ui/page_settings.php:724
+msgid "Revalidate"
+msgstr "Znovu overiť"
+
+#: ../core/ui/page_settings.php:727
+msgid ""
+"Enter in the ID of the property you want to look up, and the class will be "
+"displayed below."
+msgstr ""
+"Zadajte ID nehnuteľnosti, ktorú chcete vyhadať, na zobrazenie jej kódu."
+
+#: ../core/ui/page_settings.php:729 ../core/ui/page_settings.php:736
+msgid "Lookup"
+msgstr "Vyhľadať"
+
+#: ../core/ui/page_settings.php:733
+#, fuzzy
+msgid "Get property image data."
+msgstr "Nehnuteľnosť bola uložená."
+
+#: ../core/ui/page_settings.php:734
+#, fuzzy
+msgid "Property ID:"
+msgstr "Nehnuteľnosť"
+
+#: ../core/ui/page_settings.php:741
+msgid ""
+"Look up the <b>$wp_properties</b> global settings array.  This array stores "
+"all the default settings, which are overwritten by database settings, and "
+"custom filters."
+msgstr ""
+"Prezrite si hlavné pole nastavení - <b>$wp_properties</b>, v ktorom sú "
+"uložené všetky predvolené nastavenia, prepísané databázovými nastaveniami a "
+"vlastnými filtrami."
+
+#: ../core/ui/page_settings.php:742
+msgid "Show $wp_properties"
+msgstr "Zobraziť $wp_properties"
+
+#: ../core/ui/page_settings.php:747
+msgid ""
+"Clear WPP Cache. Some shortcodes and widgets use cache, so the good practice "
+"is clear it after widget, shortcode changes."
+msgstr ""
+
+#: ../core/ui/page_settings.php:748
+#, fuzzy
+msgid "Clear Cache"
+msgstr "Vymazať log"
+
+#: ../core/ui/page_settings.php:751
+msgid "Set all properties to same property type:"
+msgstr ""
+
+#: ../core/ui/page_settings.php:756
+msgid "Set"
+msgstr ""
+
+#: ../core/ui/page_settings.php:762
+msgid "Memory Usage:"
+msgstr ""
+
+#: ../core/ui/page_settings.php:765
+msgid "Peak Memory Usage:"
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:48 ../core/ui/property_metaboxes.php:244
+msgid "(no parent)"
+msgstr "(žiadna materská nehnuteľnosť)"
+
+#: ../core/ui/property_metaboxes.php:51 ../core/ui/property_metaboxes.php:52
+msgid "Parent"
+msgstr "Materská nehnuteľnosť"
+
+#: ../core/ui/property_metaboxes.php:61
+msgid "Page Template"
+msgstr "Šablóna stránky"
+
+#: ../core/ui/property_metaboxes.php:62
+msgid "Default Template"
+msgstr "Predvolená šablóna"
+
+#: ../core/ui/property_metaboxes.php:69
+msgid "Need help? Use the Help tab in the upper right of your screen."
+msgstr ""
+"Potrebujete pomoc? Použite záložku Pomoc v pravom hornom rohu obrazovky."
+
+#: ../core/ui/property_metaboxes.php:110
+#, php-format
+msgid "<strong>Warning!</strong> The %1s property type has been deleted."
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:251 ../core/ui/property_metaboxes.php:257
+msgid "Falls Under"
+msgstr "Patrí pod"
+
+#: ../core/ui/property_metaboxes.php:260
+#, fuzzy
+msgid "ID of parent property"
+msgstr "Táto nehnuteľnosť je na prenájom."
+
+#: ../core/ui/property_metaboxes.php:278
+msgid "Numbers only."
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:296
+msgid "Values aggregated from child properties."
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:372 ../core/ui/property_metaboxes.php:442
+#, php-format
+msgid "Editing %s is disabled, it may be inherited."
+msgstr ""
+"Kategória %s je pre tento typ nehnuteľnosti neaktívna, môže byť ale zdedená "
+"od materskej nehnuteľnosti."
+
+#: ../core/ui/property_metaboxes.php:397
+msgid "Enable."
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:474
+msgid "Hide"
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:474
+#, fuzzy
+msgid "Show"
+msgstr "Slideshow"
+
+#: ../core/ui/property_metaboxes.php:553
+msgid "Filter Results"
+msgstr ""
+
+#: ../core/ui/property_metaboxes.php:567
+#, fuzzy, php-format
+msgid "%1s Type"
+msgstr "Typ"
+
+#: ../templates/fb_property.php:134 ../templates/property.php:153
+msgid "Interested?"
+msgstr "Máte záujem?"
+
+#: ../templates/fb_property.php:140 ../templates/property.php:159
+msgid "Return to building page."
+msgstr "Vrátiť sa na stránku nehnuteľnosti"
+
+#: ../templates/property-overview-page.php:19
+msgid ""
+"Sorry, we could not find what you were looking for.  Since you are here, "
+"take a look at some of our properties."
+msgstr ""
+"Ľutujeme, nenašli sa žiadne relevantné výsledky. Môžete však namiesto toho "
+"skúsiť nazrieť do zoznamu nehnuteľností."
+
+#: ../templates/property-overview.php:103
+#, php-format
+msgid ""
+"Sorry, no properties found - try expanding your search, or <a href=\"%s"
+"\">view all</a>."
+msgstr ""
+"Ľutujeme, žiadne nehnuteľnosti neboli nájdené - skúste zjednodušiť svoje "
+"vyhľadávanie, alebo <a href=\"%s\">zobrazte kompletný zoznam</a>."
+
+#: ../templates/template-functions.php:137
+msgid " of "
+msgstr ""
+
+#: ../templates/template-functions.php:646
+msgid "Viewing page"
+msgstr ""
+
+#: ../templates/template-functions.php:646
+msgid "of"
+msgstr ""
+
+#: ../templates/template-functions.php:672
+msgid "Prev"
+msgstr "Dozadu"
+
+#: ../templates/template-functions.php:673
+msgid "Next"
+msgstr "Dopredu"
+
+#: ../templates/template-functions.php:704
+msgid ""
+"Conditional query tags do not work before the query is run. Before then, "
+"they always return false."
+msgstr ""
+
+#: ../templates/template-functions.php:1052
+#, fuzzy
+msgid "Other"
+msgstr "Poradie"
+
+#: ../templates/template-functions.php:1635
+msgid "Website"
+msgstr ""
+
+#: ../templates/template-functions.php:1638
+#, php-format
+msgid "Required fields are marked %s"
+msgstr ""
+
+#: ../templates/template-functions.php:1641
+msgid "Comment"
+msgstr ""
+
+#: ../templates/template-functions.php:1642
+#, php-format
+msgid "You must be <a href=\"%s\">logged in</a> to post a comment."
+msgstr ""
+
+#: ../templates/template-functions.php:1643
+#, php-format
+msgid ""
+"Logged in as <a href=\"%1$s\">%2$s</a>. <a href=\"%3$s\" title=\"Log out of "
+"this account\">Log out?</a>"
+msgstr ""
+
+#: ../templates/template-functions.php:1644
+msgid "Your email address will not be published."
+msgstr ""
+
+#: ../templates/template-functions.php:1645
+#, php-format
+msgid ""
+"You may use these <abbr title=\"HyperText Markup Language\">HTML</abbr> tags "
+"and attributes: %s"
+msgstr ""
+
+#: ../templates/template-functions.php:1648
+msgid "Leave a Reply"
+msgstr ""
+
+#: ../templates/template-functions.php:1649
+#, php-format
+msgid "Leave a Reply to %s"
+msgstr ""
+
+#: ../templates/template-functions.php:1650
+#, fuzzy
+msgid "Cancel reply"
+msgstr "Zrušiť"
+
+#: ../templates/template-functions.php:1651
+msgid "Post Comment"
+msgstr ""
+
+#~ msgid "Cache table does not exist. Attempting to create:"
+#~ msgstr "Cache tabuľka neexistuje. Pokúšam sa o vytvorenie:"
+
+#~ msgid "SQL Ran: %s , verifying existance."
+#~ msgstr "SQL Ran: %s , overujem existenciu."
+
+#~ msgid "Table created and exists."
+#~ msgstr "Tabuľka bola vytvorená a existuje."
+
+#~ msgid "Table not created."
+#~ msgstr "Tabuľka nebola vytvorená."
+
+#~ msgid "Today"
+#~ msgstr "Dnes"
+
+#~ msgid "Tomorrow "
+#~ msgstr "Zajtra"
+
+#~ msgid "Yesterday "
+#~ msgstr "Včera"
+
+#~ msgid " in %d days "
+#~ msgstr "o %d dní"
+
+#~ msgid "%d days ago"
+#~ msgstr "pred %d dňami"
+
+#~ msgid "Automatically logged failed JSON response: "
+#~ msgstr "Automaticky zaznamenaná neúspešná JSON odpoveď:"
+
+#~ msgid "%s hours ago"
+#~ msgstr "pred %s hodinami"
+
+#~ msgid "%s minutes ago"
+#~ msgstr "pred %s minútami"
+
+#~ msgid "Address Attribute"
+#~ msgstr "Atribút Adresa"
+
+#~ msgid "and localize for:"
+#~ msgstr "Lokalizovať pre:"
+
+#~ msgid "WP-Property Premium Features"
+#~ msgstr "Prémiové doplnky WP-Property"
+
+#~ msgid "Force check of allowed premium features."
+#~ msgstr "Vynútiť kontrolu povolených prémiových doplnkov."
+
+#~ msgid "Order By:"
+#~ msgstr "Zoradiť podľa:"
+
+#~ msgid "Price:"
+#~ msgstr "Cena:"
+
+#~ msgid "Bed(s):"
+#~ msgstr "Lôžka:"
+
+#~ msgid "Bath(s):"
+#~ msgstr "Kúpeľne:"
+
+#~ msgid "Square Ft:"
+#~ msgstr "Štvorc. metre:"
+
+#~ msgid ""
+#~ "Set Coordinates Manually (When unchecked the coordinates will be set (and "
+#~ "validated) by Google Maps)"
+#~ msgstr ""
+#~ "Nastaviť súradnice manuálne (ak nezaškrtnete, súradnice budú nastavené a "
+#~ "overené podľa Google Maps)"
+
+#~ msgid ""
+#~ "Be advised, since you don't have permalinks enabled, you must visit the "
+#~ "<a href=\"%s\">Settings Page</a> and set a custom property overview page."
+#~ msgstr ""
+#~ "Pozor, keďže nemáte zapnuté trvalé odkazy (permalinks), musíte isť do <a "
+#~ "href=\"%s\">Nastavení</a> a zadať vlastnú stránku prehľadu nehnuteľností."
+
+#~ msgid ""
+#~ "By default, your property overview will be displayed on the <a href=\"%s"
+#~ "\">%s</a> page. You may change the overview page on the <a href=\"%s"
+#~ "\">Settings Page</a>"
+#~ msgstr ""
+#~ "Pri pôvodnom nastavení budú Vaše nehnuteľnosti zobrazené na stránke <a "
+#~ "href=\"%s\">%s</a>. Zmeniť tento parameter môžete na stránke <a href=\"%s"
+#~ "\">Nastavenia</a>"
+
+#~ msgid "Thank you for installing WP-Property!"
+#~ msgstr "Ďakujeme Vám za inštaláciu WP-Property!"
+
+#~ msgid ""
+#~ "<p>You may also visit <a href=\"http://twincitiestech.com/plugins/wp-"
+#~ "property/\">TwinCitiesTech.com</a> for more information, and <a href="
+#~ "\"http://twincitiestech.com/plugins/wp-property/screencasts/"
+#~ "\">screencasts</a>.</div>"
+#~ msgstr ""
+#~ "<p>Pre viac informácií môžete navštíviť <a href=\"http://twincitiestech."
+#~ "com/plugins/wp-property/\">TwinCitiesTech.com</a> a <a href=\"http://"
+#~ "twincitiestech.com/plugins/wp-property/screencasts/\">stránku "
+#~ "videonávodov</a>.</div>"
+
+#~ msgid "Validated:"
+#~ msgstr "Overené:"
+
+#~ msgid "view on map"
+#~ msgstr "zobraziť na mape"
+
+#~ msgid "Address not validated."
+#~ msgstr "Adresa nebola overená."
+
+#~ msgid "Show other properties (if any) with the same Parent"
+#~ msgstr ""
+#~ "Zobraziť ďalšie nehnuteľnosti (ak existujú) zdieľajúce tú istú materskú "
+#~ "nehnuteľnosť"
+
+#~ msgid "Do you want to use pagination?"
+#~ msgstr ""
+#~ "Chcete použiť rozdelenie výsledkov na menšie stránky po zvolený počet "
+#~ "položiek?"
+
+#~ msgid ""
+#~ "City is an automatically created attribute once the address is validated."
+#~ msgstr "Akonáhle je adresa overená, atribút Mesto je automaticky vytvorený."
+
+#~ msgid "Popup Image Size:"
+#~ msgstr "Veľkosť fotografie pri priblížení:"
+
+#~ msgid "Thumbnail Width"
+#~ msgstr "Šírka náhľadu"
+
+#~ msgid ""
+#~ "To include the slideshow into the content of a property, use the "
+#~ "following shortcode: [property_slideshow]"
+#~ msgstr ""
+#~ "Na vloženie Slideshow do obsahu inzerátu použite nasledujúci shortcode "
+#~ "(skratkový kód): [property_slideshow]"
+
+#~ msgid ""
+#~ "Developers: Include the slideshow in your PHP files by using "
+#~ "global_slideshow(); for the global slideshow and property_slideshow"
+#~ "(property_id); for property-specific slideshows. "
+#~ msgstr ""
+#~ "Vývojári: Slideshow môžete do Vašich PHP súborov vložiť použitím "
+#~ "global_slideshow(); pre globálnu fotogalériu a property_slideshow"
+#~ "(property_id); pre špecifické fotogalérie nehnuteľností."
+
+#~ msgid "Disable slideshow on property page."
+#~ msgstr "Vypnúť fotogalérie na stránke nehnuteľností."
+
+#~ msgid "Some Slideshow Options"
+#~ msgstr "Niektoré nastavenia Slideshow"
+
+#~ msgid "WPP Slideshow"
+#~ msgstr "WPP Slideshow"
+
+#~ msgid "WPP Slideshow with options"
+#~ msgstr "WPP Slideshow s nastaveniami"
+
+#~ msgid "Property Types"
+#~ msgstr "Typy nehnuteľností"
+
+#~ msgid ""
+#~ "<p>Create new property types using this menu. </p>\n"
+#~ "\t\t\t\t<p>The <b>slug</b> is automatically created from the title and is "
+#~ "used in the back-end.  It is also used for template selection, example: "
+#~ "floorplan will look for a template called property-floorplan.php in your "
+#~ "theme folder, or default to property.php if nothing is found.</p>\n"
+#~ "\t\t\t\t<p>If <b>Searchable</b> is checked then the property will be "
+#~ "loaded for search, and available on the property search widget.</p>\n"
+#~ "\t\t\t\t<p>If <b>Location Matters</b> is checked, then an address field "
+#~ "will be displayed for the property, and validated against Google Maps "
+#~ "API.  Additionally, the property will be displayed on the SuperMap, if "
+#~ "the feature is installed.</p>\n"
+#~ "\t\t\t\t<p><b>Hidden Attributes</b> determine which attributes are not "
+#~ "applicable to the given property type, and will be grayed out in the back-"
+#~ "end.</p>\n"
+#~ "\t\t\t\t<p><b>Inheritance</b> determines which attributes should be "
+#~ "automatically inherited from the parent property.</p>"
+#~ msgstr ""
+#~ "<p>Použitím tohto menu môžete vytvoriť nové typy nehnuteľností. </p>\n"
+#~ "\t\t\t\t<p>Tzv. <b>slug</b> je automaticky vygenerovaný z názvu a použitý "
+#~ "v administrátorskom rozhraní.  Aplikuje sa tiež pri výbere vzhľadovej "
+#~ "šablóny, napríklad: typ nehnuteľnosti kancelarskepriestory sa najprv "
+#~ "pokúsi v priečinku Vašej témy vyhľadať šablónu property-"
+#~ "kancelarskepriestory.php, a až ak tá neexistuje, použije štandardnú "
+#~ "šablónu rozloženia property.php.</p>\n"
+#~ "\t\t\t\t<p>Ak zaškrtnete pole <b>Vyhľadávateľné</b>, nehnuteľnosť bude "
+#~ "povolená vo vyhľadávaní a dostupná na widgete Vyhľadávanie nehnuteľností."
+#~ "</p>\n"
+#~ "\t\t\t\t<p>Ak zaškrtnete pole <b>Záleží na lokalite</b>, pri "
+#~ "nehnuteľnosti sa zobrazí pole pre vloženie adresy overovanej cez Google "
+#~ "Maps API.  Dodatočne bude nehnuteľnosť zobrazená v Supermap, ak je tento "
+#~ "doplnok nainštalovaný.</p>\n"
+#~ "\t\t\t\t<p>Parameter <b>Skryté atribúty</b> určuje atribúty, ktoré sú pre "
+#~ "daný typ nehnuteľnosti irelevantné a budú preto v tejto kategórii "
+#~ "neaktívne - nevložiteľné v administrátorskom rozhraní.</p>\n"
+#~ "\t\t\t\t<p>Parameter <b>Dedičnosť</b> určuje, ktoré atribúty zdedí "
+#~ "dcérska nehnuteľnosť od materskej automaticky.</p>"
+
+#~ msgid "input"
+#~ msgstr "Vstupné pole"
+
+#~ msgid "range (input)"
+#~ msgstr "Rozsah (2 vstupné polia)"
+
+#~ msgid "dropdown"
+#~ msgstr "Rozbaľovací zoznam"
+
+#~ msgid "Show common values."
+#~ msgstr "Zobraziť najpoužívanejšie hodnoty."
+
+#~ msgid "Cancel."
+#~ msgstr "Zrušiť."
+
+#~ msgid "Plugins"
+#~ msgstr "Moduly"
+
+#~ msgid "Troubleshooting"
+#~ msgstr "Riešenie problémov"
+
+#~ msgid "View list of available shortcodes."
+#~ msgstr "Zobraziť zoznam dostupných skratkových kódov (shortcodes)."
+
+#~ msgid "Currency"
+#~ msgstr "Mena"
+
+#~ msgid "These are the general display settings"
+#~ msgstr "Toto sú hlavné nastavenia zobrazenia."
+
+#~ msgid ""
+#~ "After adding/removing image size, be sure to <a href=\"%s\">regenerate "
+#~ "thumbnails</a> using the Regenerate Thumbnails plugin."
+#~ msgstr ""
+#~ "Po pridaní/odstránení veľkosti fotografie nezabudnite <a href=\"%s"
+#~ "\">znovu vygenerovať náhľady</a> použitím generovacieho modulu."
+
+#~ msgid ""
+#~ "We strongly recommend to <a href=\"http://wordpress.org/extend/plugins/"
+#~ "regenerate-thumbnails/\">Regenerate Thumbnails</a> plugin by Viper007Bond."
+#~ msgstr ""
+#~ "Na tento účel odporúčame modul <a href=\"http://wordpress.org/extend/"
+#~ "plugins/regenerate-thumbnails/\">Regenerate Thumbnails</a> od autora "
+#~ "Viper007Bond."
+
+#~ msgid ""
+#~ "Display larger image, or slideshow, at the top of the property listing."
+#~ msgstr ""
+#~ "Zobraziť väčšiu fotografiu alebo fotogalériu na vrchu stránky "
+#~ "nehnuteľnosti"
+
+#~ msgid "These settings are for the main property page on the back-end."
+#~ msgstr ""
+#~ "Tieto nastavenia sú pre hlavný zoznam nehnuteľností v administrátorskom "
+#~ "rozhraní."
+
+#~ msgid ""
+#~ "Premium features will become available shortly, we are still waiting on "
+#~ "more feedback on the core of the plugin."
+#~ msgstr ""
+#~ "Prémiové doplnky budú sprístupnené čoskoro, zatiaľ stále čakáme na spätnú "
+#~ "väzbu ohľadne základného modulu."
+
+#~ msgid "[learn more]"
+#~ msgstr "[dozvedieť sa viac]"
