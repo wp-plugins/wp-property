@@ -219,16 +219,16 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 == Changelog ==
 
 = 1.36.3 =
-- Fixed pagination slider on property_overview
-- Fixed property restoring from trash in Wordpress 3.5
-- Flush rules fixes.
-- Added RSS feed for properties
-- Fixed Attributes dragging on property search widget's form
-- Fixed Featured properties shortcode
-- Fixed themes specific CSS
-- Fixed Fancybox on Supermap's infobox
-- Added ability to sort slideshow images for single property
-- Updated localization files
+* Fixed pagination slider on property_overview
+* Fixed property restoring from trash in Wordpress 3.5
+* Flush rules fixes.
+* Added RSS feed for properties
+* Fixed Attributes dragging on property search widget's form
+* Fixed Featured properties shortcode
+* Fixed themes specific CSS
+* Fixed Fancybox on Supermap's infobox
+* Added ability to sort slideshow images for single property
+* Updated localization files
 
 = 1.36.2 =
 * Added WordPress 3.5 compatibility.
