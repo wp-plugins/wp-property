@@ -219,34 +219,34 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 == Changelog ==
 
 = 1.37.0 =
-= Changes in Address Validation due to OVER_QUERY_LIMIT issues
-= Global Slideshow fixes
-= Fixed property overview bottom pagination issue
-= Fixed PropertyType Label in Property Search widget
-= Fixed property search by address attributes
-= Fixed issues with widgets shown inside tabbed area
-= Corrected behavior when values were displayed as True from non-boolean fields if it starts from 1;
-= Fixed OtherProperties Widget
-= Fixed Search widget's selected values in dropdown fields on page result
-= Fixed global $property var type which caused fatal errors in different places
-= Fixed issue on Premium Features ( Settings page ) related to localization usage
-= Fixed Regenerate All PDF Flyers and Lists process
-= Fixed showing of currency symbols and number separators
-= Added ability to show email as a link
-= Fixed aggregating currency and number attributes for parent property which solves issues related to data sorting
-= Updated localization files
+* Changes in Address Validation due to OVER_QUERY_LIMIT issues
+* Global Slideshow fixes
+* Fixed property overview bottom pagination issue
+* Fixed PropertyType Label in Property Search widget
+* Fixed property search by address attributes
+* Fixed issues with widgets shown inside tabbed area
+* Corrected behavior when values were displayed as True from non-boolean fields if it starts from 1;
+* Fixed OtherProperties Widget
+* Fixed Search widget's selected values in dropdown fields on page result
+* Fixed global $property var type which caused fatal errors in different places
+* Fixed issue on Premium Features ( Settings page ) related to localization usage
+* Fixed Regenerate All PDF Flyers and Lists process
+* Fixed showing of currency symbols and number separators
+* Added ability to show email as a link
+* Fixed aggregating currency and number attributes for parent property which solves issues related to data sorting
+* Updated localization files
 
 = 1.36.3 =
-- Fixed pagination slider on property_overview
-- Fixed property restoring from trash in Wordpress 3.5
-- Flush rules fixes.
-- Added RSS feed for properties
-- Fixed Attributes dragging on property search widget's form
-- Fixed Featured properties shortcode
-- Fixed themes specific CSS
-- Fixed Fancybox on Supermap's infobox
-- Added ability to sort slideshow images for single property
-- Updated localization files
+* Fixed pagination slider on property_overview
+* Fixed property restoring from trash in Wordpress 3.5
+* Flush rules fixes.
+* Added RSS feed for properties
+* Fixed Attributes dragging on property search widget's form
+* Fixed Featured properties shortcode
+* Fixed themes specific CSS
+* Fixed Fancybox on Supermap's infobox
+* Added ability to sort slideshow images for single property
+* Updated localization files
 
 = 1.36.2 =
 * Added WordPress 3.5 compatibility.
