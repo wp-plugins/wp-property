@@ -218,6 +218,15 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.37.1 =
+* Address validation fixes
+* Added ability to sort attributes in Property Attributes widget
+* Added option for aggregating currency and number attributes
+* XML Importer's cron fixes
+* Fixed missing of tabs on settings page on the first plugin activation
+* Fixed property_gallery shortcode
+* Updated Portuguese and Russian localization files
+
 = 1.37.0 =
 * Changes in Address Validation due to OVER_QUERY_LIMIT issues
 * Global Slideshow fixes
