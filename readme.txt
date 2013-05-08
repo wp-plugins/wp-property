@@ -221,6 +221,17 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.37.3 =
+* Fixed double inclusion of JQuery UI files.
+* Fixed get property data functionality.
+* Fixed adding of meta boxes.
+* Fixed agent role's capabilities.
+* Fixed max execution time issue on properties exporting.
+* Fixed [property_overview] shortcode.
+* Updated get properties functionality.
+* Administrators can see 'admin only' attributes on frontend now.
+* Updated Italian localization.
+
 = 1.37.2.1 =
 * Fixed tab breaking on settings page.
 
