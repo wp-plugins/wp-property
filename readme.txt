@@ -162,6 +162,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 1.37.3.1 =
+* Fixed [property_overview] attributes settings.
+
 = 1.37.2.1 =
 * Fixed tab breaking on settings page.
 
@@ -220,6 +223,9 @@ We are moving out of beta stages, but you may still experience bugs now and then
 We are still in early stages, so updates will be coming out routinely.  Please do not hesitate to send us feedback and suggestions.
 
 == Changelog ==
+
+= 1.37.3.1 =
+* Fixed get properties functionality.
 
 = 1.37.3 =
 * Fixed double inclusion of JQuery UI files.
