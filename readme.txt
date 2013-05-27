@@ -224,6 +224,12 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.37.4 =
+* Fixed issue with en-dashes.
+* Fixed searching by address attribute.
+* Fixed warning message in Featured Properties widget
+* Added strict_search attribute to shortcode propery_overview.
+
 = 1.37.3.2 =
 * Fixed taxonomy links.
 * Fixed 'Display address' functionality.
