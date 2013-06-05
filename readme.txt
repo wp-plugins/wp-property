@@ -224,6 +224,14 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.37.5 =
+* Fixed issue with predefined values which contain ndash symbol.
+* Fixed [supermap] shortcode's issue related to property_type attribute.
+* Modified default sort of [property_overview] shortcode. Results are sorted by post_date in DESC order.
+* Prohibited selecting parent property which already has parent.
+* Fixed average aggregated value of parent property.
+* Fixed and improved 'Check Updates' functionality.
+
 = 1.37.4 =
 * Fixed issue with en-dashes.
 * Fixed searching by address attribute.
