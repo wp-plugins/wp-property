@@ -224,6 +224,16 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.37.6 =
+* Added fonts for PDF Flyer premium feature
+* Added ability to enable selecting parent property which already has parent
+* Added ability to set custom coordinates ( only for FEPS premium feature ).
+* Fixed search of non-numeric attributes where values contain +,-
+* Fixed double property_type on search widget settings if property_type attribute exists
+* Fixed fancybox images for [gallery] shortcode
+* Fixed draw_stats() function ( issue related to showing property meta on single property page in Denali theme )
+* Warning errors fixes
+
 = 1.37.5 =
 * Fixed issue with predefined values which contain ndash symbol.
 * Fixed [supermap] shortcode's issue related to property_type attribute.
