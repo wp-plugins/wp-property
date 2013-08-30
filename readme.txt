@@ -227,6 +227,16 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.38.2 =
+* General code clean-up of PHP and JavaScript libraries, core and templates files.
+* Added ablity to show decimals for numeric values.
+* Added /static directory which contains auto-generated code documentation for developers - generated via YUIDoc syntax.
+* Added a "makefile" for building WP-Property - build includes running unit tests and updating documentation.
+* Added testing environment via Mocha (Node.js) for developers.
+* Updated Portuguese translation thanks to Raphael Suzuki. (https://github.com/UsabilityDynamics/wp-property/pull/11)
+* Removed CustomInputs third-party library.
+* Improved Properties Export functionality.
+
 = 1.38.1 =
 * Added compatibility with Wordpress 3.6.
 * Removed anonymous function which caused parse error in PHP <5.3.
