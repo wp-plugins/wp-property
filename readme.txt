@@ -227,6 +227,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.38.3.2 =
+* Fixed fatal error related to redeclaration of class.
+
 = 1.38.3.1 =
 * Fixed typo which broke property_overview pagination.
 
