@@ -1921,8 +1921,15 @@ class WPP_Core {
     if ( isset( $data[ 'request' ][ 'wp_customize' ] ) && $data[ 'request' ][ 'wp_customize' ] == 'on' ) {
       $data[ 'iframe_enabled' ] = true;
     }
+    
+    $data = apply_filters( 'wpp::get_instance', $data );
+    
+    /** If we're not on an admin, we should remove the XMLI info */
+    if( !( is_admin() && current_user_can( 'manage_options' ) ) && isset( $data[ 'settings' ][ 'configuration' ][ 'feature_settings' ][ 'property_import' ] ) ){
+      unset( $data[ 'settings' ][ 'configuration' ][ 'feature_settings' ][ 'property_import' ] );
+    }
 
-    return apply_filters( 'wpp::get_instance', $data );
+    return $data;
   }
 
 }
