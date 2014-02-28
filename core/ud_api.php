@@ -2,11 +2,11 @@
 /**
  * UD API Distributable - Common Functions Used in Usability Dynamics, Inc. Products.
  *
- * @copyright Copyright (c) 2010 - 2012, Usability Dynamics, Inc.
+ * @copyright Copyright (c) 2010 - 2014, Usability Dynamics, Inc.
  * @license https://usabilitydynamics.com/services/theme-and-plugin-eula/
  * @link http://api.usabilitydynamics.com/readme/ud_api.txt UD API Changelog
  *
- * @version 1.0.3
+ * @version 1.1
  */
 
 if ( class_exists( 'UD_API' ) ) {
@@ -18,6 +18,7 @@ define( 'UD_API_Transdomain', 'UD_API_Transdomain' );
 /**
  * Used for performing various useful functions applicable to different plugins.
  *
+ * @class UD_API
  * @package UsabilityDynamics
  */
 class UD_API {
@@ -30,6 +31,36 @@ class UD_API {
    */
   function UD_API() {
     $this->__construct();
+  }
+
+  /**
+   * Generate prefix based on class calling a function. Requires PHP >=  5.3
+   *
+   * Examples:
+   * My_Class => my_
+   * NoSlug => noslug_
+   * UD_API => ud_
+   *
+   * @todo Would like a more elegant solution to determining calling class that works in PHP < 5.3 - potanin@UD 6/18/12
+   * @mehtod prefixed
+   * @for UD_API
+   * @since 1.0.1
+   */
+  static function prefixed( $annex = '' ) {
+
+    if ( version_compare( phpversion(), 5.3 ) < 0 || !function_exists( 'get_called_class' ) ) {
+      foreach ( debug_backtrace() as $step ) {
+        if ( isset( $step[ 'class' ] ) ) {
+          $_called_class = $step[ 'class' ];
+          break;
+        }
+      }
+    } else {
+      $_called_class = get_called_class();
+    }
+
+    return strtolower( $_called_class == __CLASS__ ? 'ud' : strpos( $_called_class, '_' ) ? reset( explode( '_', $_called_class ) ) : $_called_class ) . '_' . $annex;
+
   }
 
   /**
@@ -71,7 +102,28 @@ class UD_API {
     }
 
   }
-
+  
+  /**
+   * Parses Query.
+   * HACK. The current logic solves the issue of max_input_vars in the case if query is huge.
+   * 
+   * @see parse_str() Default PHP function
+   * @version 1.0
+   * @author peshkov@UD
+   */
+  function parse_str( $request, $data = array() ) {
+    $hash = md5( '%2B' );
+    $request = str_replace( '%2B', $hash, $_REQUEST[ 'data' ] );
+    $request = urldecode( $request );
+    $request = str_replace( $hash, '%2B', $request );
+    $tokens = explode( "&", $request );
+    foreach ( $tokens as $token ) {
+      $arr = array();
+      parse_str( $token, $arr );
+      $data = self::extend( $data, $arr );
+    }
+    return $data;
+  }
 
   /**
    * Port of jQuery.extend() function.
@@ -198,6 +250,61 @@ class UD_API {
       $new,
       array_slice( $array, $pos )
     );
+  }
+
+  /**
+   * Gracefully Die on Fatal Errors
+   *
+   * To Enable:  add_filter( 'wp_die_handler', function() { return 'ud_graceful_death'; } , 10, 3 );
+   *
+   * @author potanin@UD
+   */
+  static function ud_graceful_death( $message, $title = '', $args = array() ) {
+    $defaults = array( 'response' => 500 );
+    $r = wp_parse_args( $args, $defaults );
+    $backtrace = debug_backtrace();
+
+    if ( $backtrace[ 2 ][ 'function' ] == 'wp_die' ) {
+
+      switch ( $message ) {
+
+        case 'You do not have sufficient permissions to access this page.':
+          $original_message = $message;
+          $message = array();
+          $message[ ] = '<li class="title">Access Denied</li>';
+          $message[ ] = '<li class="message">' . $original_message . '</li>';
+          $message = '<ul>' . implode( (array)$message ) . '</li>';
+          break;
+
+      }
+
+    }
+
+    if ( !headers_sent() ) {
+      status_header( $r[ 'response' ] );
+      nocache_headers();
+      header( 'Content-Type: text/html; charset=utf-8' );
+    } else {
+      echo '<div class="ud_inline_fatal_error">' . $message . '</div>';
+      die();
+    }
+
+    if ( empty( $title ) ) {
+      $title = function_exists( '__' ) ? __( 'UD Error', UD_API_Transdomain ) : 'UD Error';
+    }
+
+    $output = array();
+    $output[ ] = '<!DOCTYPE html>';
+    $output[ ] = '<!-- Ticket #11289, IE bug fix: always pad the error page with enough characters such that it is greater than 512 bytes, even after gzip compression abcdefghijklmnopqrstuvwxyz1234567890aabbccddeeffgghhiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz11223344556677889900abacbcbdcdcededfefegfgfhghgihihjijikjkjlklkmlmlnmnmononpopoqpqprqrqsrsrtstsubcbcdcdedefefgfabcadefbghicjkldmnoepqrfstugvwxhyz1i234j567k890laabmbccnddeoeffpgghqhiirjjksklltmmnunoovppqwqrrxsstytuuzvvw0wxx1yyz2z113223434455666777889890091abc2def3ghi4jkl5mno6pqr7stu8vwx9yz11aab2bcc3dd4ee5ff6gg7hh8ii9j0jk1kl2lmm3nnoo4p5pq6qrr7ss8tt9uuvv0wwx1x2yyzz13aba4cbcb5dcdc6dedfef8egf9gfh0ghg1ihi2hji3jik4jkj5lkl6kml7mln8mnm9ono-->';
+    $output[ ] = '<html xmlns="http://www.w3.org/1999/xhtml" class="graceful_death">';
+    $output[ ] = '<head>';
+    $output[ ] = '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+    $output[ ] = '<title>' . $title . '</title>';
+    $output[ ] = '<link rel="stylesheet" id="wp-admin-css"  href="' . admin_url( '/css/wp-admin.css' ) . '" type="text/css" media="all" />';
+    $output[ ] = '</head>' . $message . '</body></html>';
+
+    die( implode( '', (array)$output ) );
+
   }
 
   /**
@@ -473,11 +580,25 @@ class UD_API {
   /**
    * Determine if any requested template exists and return path to it.
    *
-   * @todo Merge with x_get_template_part() to support $slug and $name, as well as $path.
-   * @name array $name List of requested templates. Will be return the first found
-   * @path array $path [optional]. Method tries to find template in theme, but also it can be found in given list of pathes.
+   * == Usage ==
+   * The function will search through: STYLESHEETPATH, TEMPLATEPATH, and any custom paths you pass as second argument.
+   *
+   * $best_template = UD_API::get_template_part( array(
+   *   'template-ideal-match',
+   *   'template-default',
+   * ), array( PATH_TO_MY_TEMPLATES );
+   *
+   * Note: load_template() extracts $wp_query->query_vars into the loaded template, so to add any global variables to the template, add them to
+   * $wp_query->query_vars prior to calling this function.
+   *
+   * @param mixed $name List of requested templates. Will be return the first found
+   * @param array $path [optional]. Method tries to find template in theme, but also it can be found in given list of pathes.
+   * @param array $opts [optional]. Set of additional params: 
+   *   - string $instance. Template can depend on instance. For example: facebook, PDF, etc. Uses filter: ud::template_part::{instance}
+   *   - boolean $load. if true, rendered HTML will be returned, in other case, only found template's path.
+   * @load boolean [optional]. If true and a template is found, the template will be loaded via load_template() and returned as a string
    * @author peshkov@UD
-   * @version 1.0
+   * @version 1.1
    */
   static function get_template_part( $name, $path = array(), $opts = array() ) {
     $name = (array)$name;
@@ -491,7 +612,11 @@ class UD_API {
 
     $opts = wp_parse_args( $opts, array(
       'instance' => $instance,
+      'load' => false,
     ) );
+    
+    //** Allows to add/change templates storage directory. */
+    $path = apply_filters( "ud::template_part::path", $path, $name, $opts );
 
     foreach ( $name as $n ) {
       $n = "{$n}.php";
@@ -508,8 +633,13 @@ class UD_API {
     }
 
     $template = apply_filters( "ud::template_part::{$opts['instance']}", $template, array( 'name' => $name, 'path' => $path, 'opts' => $opts ) );
-
-    WPP_F::console_log( $template, $instance );
+    
+    //** If match and load was requested, get template and return */
+    if( !empty( $template ) && $opts[ 'load' ] == true ) {
+      ob_start();
+      load_template( $template, false );
+      return ob_get_clean();
+    }
 
     return !empty( $template ) ? $template : false;
   }
@@ -1307,8 +1437,8 @@ class UD_API {
         wp_crm_add_to_user_log( $args[ 'user' ]->ID, self::replace_data( $args[ 'crm_log_message' ], $args[ 'data' ] ) );
       }
 
-      if ( !empty( $args[ 'trigger_action' ] ) ) {
-        $notifications = WP_CRM_F::get_trigger_action_notification( $args[ 'trigger_action' ] );
+      if ( !empty( $args[ 'trigger_action' ] ) && is_callable( 'WP_CRM_N', 'get_trigger_action_notification' ) ) {
+        $notifications = WP_CRM_N::get_trigger_action_notification( $args[ 'trigger_action' ] );
         if ( !empty( $notifications ) ) {
           return wp_crm_send_notification( $args[ 'trigger_action' ], $args[ 'data' ] );
         }

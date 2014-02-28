@@ -465,8 +465,8 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
               /* Update max page in slider and in display */
               jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider" ).slider( "option", "max", result_data.wpp_query.pages );
               jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_total_page_count" ).text( result_data.wpp_query.pages );
-              max_slider_pos = result_data.wpp_query.pages;
-              if ( max_slider_pos == 0 ) jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_current_page_count" ).text( 0 );
+              max_slider_pos_<?php echo $unique_hash; ?> = result_data.wpp_query.pages;
+              if ( max_slider_pos_<?php echo $unique_hash; ?> == 0 ) jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_current_page_count" ).text( 0 );
               <?php } ?>
               jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> a.fancybox_image" ).fancybox( {
                 'transitionIn': 'elastic',
@@ -485,7 +485,7 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
             return null;
           }
           document_ready = true;
-          max_slider_pos = <?php echo ($pages ? $pages : 'null'); ?>;
+          max_slider_pos_<?php echo $unique_hash; ?> = <?php echo ($pages ? $pages : 'null'); ?>;
           //** Do not assign click event again */
           if ( !jQuery( '#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_back' ).data( 'events' ) ) {
             jQuery( '#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_back' ).click( function () {
@@ -501,7 +501,7 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
           if ( !jQuery( '#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_forward' ).data( 'events' ) ) {
             jQuery( '#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_forward' ).click( function () {
               var current_value = jQuery( "#wpp_shortcode_<?php echo $unique_hash; ?> .wpp_pagination_slider" ).slider( "value" );
-              if ( max_slider_pos && (current_value == max_slider_pos || max_slider_pos < 1 ) ) {
+              if ( max_slider_pos_<?php echo $unique_hash; ?> && (current_value == max_slider_pos_<?php echo $unique_hash; ?> || max_slider_pos_<?php echo $unique_hash; ?> < 1 ) ) {
                 return;
               }
               var new_value = current_value + 1;
@@ -1247,7 +1247,22 @@ if ( !function_exists( 'sort_stats_by_groups' ) ):
         unset( $filtered_stats[ $key ] );
       }
     }
-
+    
+    //** Sort by saved groups order. */
+    $main_ordered = array();
+    $ordered = array();
+    foreach( $group_keys as $key ) {
+      if( array_key_exists( $key, $filtered_stats ) ) {
+        if( $key == $main_stats_group ) {
+          $main_ordered[$key] = $filtered_stats[$key];
+        } else {
+          $ordered[$key] = $filtered_stats[$key];
+        } 
+        unset( $filtered_stats[$key] );
+      }
+    }
+    $filtered_stats = $main_ordered + $ordered + $filtered_stats;
+    
     //echo "<pre>";print_r($filtered_stats);echo "</pre>";
     return $filtered_stats;
   }
@@ -1329,9 +1344,7 @@ if ( !function_exists( 'draw_property_search_form' ) ):
       <?php
       //** If no property_type passed in search_attributes, we get defaults */
       if ( is_array( $searchable_property_types ) && !array_key_exists( 'property_type', array_fill_keys( $search_attributes, 1 ) ) ) {
-        foreach ( $searchable_property_types as $property ) {
-          echo '<input type="hidden" name="wpp_search[property_type][]" value="' . $property . '" />';
-        }
+        echo '<input type="hidden" name="wpp_search[property_type]" value="' . implode( ',', $searchable_property_types ) . '" />';
       }
       ?>
       <ul class="wpp_search_elements">

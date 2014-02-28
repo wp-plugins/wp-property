@@ -21,7 +21,7 @@ class WPP_Core {
   function WPP_Core() {
     global $wp_properties;
 
-    //** Determine if memory limit is low and increase it */
+    // Determine if memory limit is low and increase it
     if ( (int) ini_get( 'memory_limit' ) < 128 ) {
       ini_set( 'memory_limit', '128M' );
     }
@@ -46,9 +46,6 @@ class WPP_Core {
 
     //** Pre-init action hook */
     do_action( 'wpp_pre_init' );
-
-    //* set WPP capabilities */
-    $this->set_capabilities();
 
     // Check settings data on accord with existing wp_properties data before option updates
     add_filter( 'wpp_settings_save', array( 'WPP_Core', 'check_wp_settings_data' ), 0, 2 );
@@ -81,6 +78,9 @@ class WPP_Core {
 
     //** Set up our custom object and taxonomyies */
     WPP_F::register_post_type_and_taxonomies();
+    
+    //* set WPP capabilities */
+    $this->set_capabilities();
 
     //** Load all widgets and register widget areas */
     add_action( 'widgets_init', array( 'WPP_F', 'widgets_init' ) );
@@ -197,7 +197,7 @@ class WPP_Core {
     wp_register_script( 'wp-property-admin-widgets', WPP_URL . 'js/wpp.admin.widgets.js', array( 'jquery', 'wpp-localization' ), WPP_Version );
     wp_register_script( 'wp-property-admin-settings', WPP_URL . 'js/wpp.admin.settings.js', array( 'jquery', 'wpp-localization' ), WPP_Version );
     wp_register_script( 'wp-property-backend-global', WPP_URL . 'js/wpp.admin.global.js', array( 'jquery', 'wp-property-global', 'wpp-localization' ), WPP_Version );
-    wp_register_script( 'wp-property-global', WPP_URL . 'js/wpp.global.js', array( 'jquery', 'wpp-localization' ), WPP_Version );
+    wp_register_script( 'wp-property-global', WPP_URL . 'js/wpp.global.js', array( 'jquery', 'wpp-localization', 'jquery-ui-tabs', 'jquery-ui-sortable' ), WPP_Version );
     wp_register_script( 'jquery-cookie', WPP_URL . 'js/jquery.smookie.js', array( 'jquery', 'wpp-localization' ), '1.7.3' );
 
     if ( WPP_F::can_get_script( $scheme . '://maps.google.com/maps/api/js?sensor=true' ) ) {
@@ -216,8 +216,8 @@ class WPP_Core {
 
     wp_register_style( 'wpp-jquery-fancybox-css', WPP_URL . 'third-party/fancybox/jquery.fancybox-1.3.4.css' );
     wp_register_style( 'wpp-jquery-colorpicker-css', WPP_URL . 'third-party/colorpicker/colorpicker.css' );
-    wp_register_style( 'jquery-ui', WPP_URL . 'css/jquery-ui.css' );
-    wp_register_style( 'wpp-jquery-data-tables', WPP_URL . "css/wpp-data-tables.css" );
+    wp_register_style( 'jquery-ui', WPP_URL . 'css/wpp.admin.jquery.ui.css' );
+    wp_register_style( 'wpp-jquery-data-tables', WPP_URL . "css/wpp.admin.data.tables.css" );
 
     /** Find and register stylesheet  */
     if ( file_exists( STYLESHEETPATH . '/wp-properties.css' ) ) {
@@ -411,8 +411,8 @@ class WPP_Core {
     }
 
     //** Enqueue CSS styles on all pages */
-    if ( file_exists( WPP_Path . 'css/wp_properties_admin.css' ) ) {
-      wp_register_style( 'wpp-admin-styles', WPP_URL . 'css/wp_properties_admin.css' );
+    if ( file_exists( WPP_Path . 'css/wpp.admin.css' ) ) {
+      wp_register_style( 'wpp-admin-styles', WPP_URL . 'css/wpp.admin.css' );
       wp_enqueue_style( 'wpp-admin-styles' );
     }
 
@@ -1921,7 +1921,7 @@ class WPP_Core {
     if ( isset( $data[ 'request' ][ 'wp_customize' ] ) && $data[ 'request' ][ 'wp_customize' ] == 'on' ) {
       $data[ 'iframe_enabled' ] = true;
     }
-    
+
     $data = apply_filters( 'wpp::get_instance', $data );
     
     /** If we're not on an admin, we should remove the XMLI info */

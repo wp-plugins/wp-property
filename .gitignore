@@ -18,3 +18,6 @@ core/premium
 *.out
 *.pid
 *.gz
+
+node_modules
+static/codex
