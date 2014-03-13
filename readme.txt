@@ -227,6 +227,23 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.40.0 =
+* Added option 'Enable Comments' on settings page. Adds comments support for property post type.
+* Added 'Automatic Renew Subscription Plan' option for Front End Properties submissions (FEPS) premium feature.
+* Added 'Featured' information to subscription plans in Front End Properties submissions (FEPS) premium feature.
+* Added improvements and fixes to Twentytwelve theme's styles.
+* Added hook to wpp_render_search_input function for ability to add field with custom type.
+* Improved file caching.
+* Refactored CSS files. Added LESS implementation.
+* Fixed view styles on premium features settings pages. Compatibility with WordPress 3.8 and higher.
+* Fixed condition in sort_stats_by_groups function.
+* Fixed wrong condition in get_properties function for value which contains '-' symbol in it ( e.g. 'New-York' ).
+* Fixed draw_stats function.
+* Fixed 'Show XML Import History' and 'Delete Unattached Files' functionality on Help Tab in Settings.
+* Fixed showing attributes' values of draft properties in dropdown list of the search form.
+* Fixed showing Logs data when option 'Show Log' is enabled.
+* Removed deprecated option "Load WP-Property scripts on all front-end pages".
+
 = 1.39.0 =
 * Added filter ud::template_part::path which allows to add/change templates storage directory.
 * Added improvements to Front End Property Submissions (FEPS) premium feature.

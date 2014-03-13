@@ -147,7 +147,8 @@ if ( get_option( 'permalink_structure' ) == '' ) {
       <th><?php _e( 'Options', 'wpp' ); ?></th>
       <td>
         <ul>
-          <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][include_in_regular_search_results]&label=" . sprintf( __( 'Include %1s in regular search results.', 'wpp' ), $object_label[ 'plural' ] ), $wp_properties[ 'configuration' ][ 'include_in_regular_search_results' ] ); ?></li>
+          <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][enable_comments]&label=" . __( 'Enable comments.', 'wpp' ), $wp_properties[ 'configuration' ][ 'enable_comments' ] ); ?></li>
+          <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][exclude_from_regular_search_results]&label=" . sprintf( __( 'Exclude %1s from regular search results.', 'wpp' ), $object_label[ 'plural' ] ), $wp_properties[ 'configuration' ][ 'exclude_from_regular_search_results' ] ); ?></li>
           <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][do_not_automatically_regenerate_thumbnails]&label=" . __( 'Disable "on-the-fly" image regeneration.', 'wpp' ), $wp_properties[ 'configuration' ][ 'do_not_automatically_regenerate_thumbnails' ] ); ?></li>
           <?php /* <li><?php echo WPP_F::checkbox("name=wpp_settings[configuration][do_not_automatically_geo_validate_on_property_view]&label=" . __('Disable front-end "on-the-fly" address validation.', 'wpp'), $wp_properties['configuration']['do_not_automatically_geo_validate_on_property_view']); ?></li> */ ?>
           <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][auto_delete_attachments]&label=" . sprintf(__( 'Automatically delete all %1s images and attachments when a %2s is deleted.', 'wpp' ), $object_label[ 'singular' ], $object_label[ 'singular' ] ), $wp_properties[ 'configuration' ][ 'auto_delete_attachments' ] ); ?></li>
@@ -201,25 +202,22 @@ if ( get_option( 'permalink_structure' ) == '' ) {
       </td>
     </tr>
 
+    <?php if ( apply_filters( 'wpp::custom_styles', false ) === false ) : ?>
     <tr>
-      <th><?php _e( 'Styles and Scripts', 'wpp' ); ?></th>
+      <th><?php _e( 'Styles', 'wpp' ); ?></th>
       <td>
         <ul>
           <li><?php echo $using_custom_css ? WPP_F::checkbox( "name=wpp_settings[configuration][autoload_css]&label=" . __( 'Load default CSS. If unchecked, the wp-properties.css in your theme folder will not be loaded.', 'wpp' ), $wp_properties[ 'configuration' ][ 'autoload_css' ] ) : WPP_F::checkbox( "name=wpp_settings[configuration][autoload_css]&label=" . __( 'Load default CSS.', 'wpp' ), $wp_properties[ 'configuration' ][ 'autoload_css' ] ); ?></li>
-
-          <?php if ( WPP_F::has_theme_specific_stylesheet() ) { ?>
+          <?php if ( WPP_F::has_theme_specific_stylesheet() ) : ?>
             <li>
-                 <?php echo WPP_F::checkbox( "name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" . __( 'Do not load theme-specific stylesheet.', 'wpp' ), $wp_properties[ 'configuration' ][ 'do_not_load_theme_specific_css' ] ); ?>
+              <?php echo WPP_F::checkbox( "name=wpp_settings[configuration][do_not_load_theme_specific_css]&label=" . __( 'Do not load theme-specific stylesheet.', 'wpp' ), $wp_properties[ 'configuration' ][ 'do_not_load_theme_specific_css' ] ); ?>
               <div class="description"><?php _e( 'This version of WP-Property has a stylesheet made specifically for the theme you are using.', 'wpp' ); ?></div>
-                 </li>
             </li>
-          <?php } /* WPP_F::has_theme_specific_stylesheet() */ ?>
-
-          <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][load_scripts_everywhere]&label=" . __( 'Load WP-Property scripts on all front-end pages.', 'wpp' ), $wp_properties[ 'configuration' ][ 'load_scripts_everywhere' ] ); ?></li>
+          <?php endif; /* WPP_F::has_theme_specific_stylesheet() */ ?>
         </ul>
-
       </td>
     </tr>
+    <?php endif; ?>
 
     <tr>
       <th><?php _e( 'Default Phone Number', 'wpp' ); ?></th>

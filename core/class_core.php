@@ -187,7 +187,6 @@ class WPP_Core {
 
     //** Load early so plugins can use them as well */
     wp_register_script( 'wpp-localization', get_bloginfo( 'wpurl' ) . '/wp-admin/admin-ajax.php?action=wpp_js_localization', array(), WPP_Version );
-    wp_localize_script( 'wpp-localization', 'wpp', array( 'instance' => $this->get_instance() ) );
 
     wp_register_script( 'wpp-jquery-fancybox', WPP_URL . 'third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array( 'jquery', 'wpp-localization' ), '1.7.3' );
     wp_register_script( 'wpp-jquery-colorpicker', WPP_URL . 'third-party/colorpicker/colorpicker.js', array( 'jquery', 'wpp-localization' ) );
@@ -232,7 +231,11 @@ class WPP_Core {
       wp_register_style( 'wp-property-frontend', WPP_URL . 'templates/wp_properties.css', array(), WPP_Version );
 
       //** Find and register theme-specific style if a custom wp_properties.css does not exist in theme */
-      if ( $wp_properties[ 'configuration' ][ 'do_not_load_theme_specific_css' ] != 'true' && WPP_F::has_theme_specific_stylesheet() ) {
+      if ( 
+        isset( $wp_properties[ 'configuration' ][ 'do_not_load_theme_specific_css' ] ) && 
+        $wp_properties[ 'configuration' ][ 'do_not_load_theme_specific_css' ] != 'true' && 
+        WPP_F::has_theme_specific_stylesheet() 
+      ) {
         wp_register_style( 'wp-property-theme-specific', WPP_URL . "templates/theme-specific/" . get_option( 'template' ) . ".css", array( 'wp-property-frontend' ), WPP_Version );
       }
     }
@@ -340,6 +343,8 @@ class WPP_Core {
    */
   function admin_enqueue_scripts( $hook ) {
     global $current_screen, $wp_properties, $wpdb;
+    
+    wp_localize_script( 'wpp-localization', 'wpp', array( 'instance' => $this->get_instance() ) );
 
     switch ( $current_screen->id ) {
 
@@ -855,17 +860,16 @@ class WPP_Core {
   function template_redirect() {
     global $post, $property, $wp_query, $wp_properties, $wp_styles, $wpp_query, $wp_taxonomies;
 
+    wp_localize_script( 'wpp-localization', 'wpp', array( 'instance' => $this->get_instance() ) );
+    
     //** Load global wp-property script on all frontend pages */
     wp_enqueue_script( 'wp-property-global' );
 
-    //** Load essential styles that are used in widgets */
-    wp_enqueue_style( 'wp-property-frontend' );
-    wp_enqueue_style( 'wp-property-theme-specific' );
-
-    //** Load non-essential scripts and styles if option is enabled to load them globally */
-    if ( $wp_properties[ 'configuration' ][ 'load_scripts_everywhere' ] == 'true' ) {
-      WPP_F::console_log( 'Loading WP-Property scripts globally.' );
-      WPP_F::load_assets( array( 'single', 'overview' ) );
+    if ( apply_filters( 'wpp::custom_styles', false ) === false ) {
+      //** Possibly load essential styles that are used in widgets */
+      wp_enqueue_style( 'wp-property-frontend' );
+      //** Possibly load theme specific styles */
+      wp_enqueue_style( 'wp-property-theme-specific' );
     }
 
     if ( $wp_properties[ 'configuration' ][ 'do_not_enable_text_widget_shortcodes' ] != 'true' ) {
@@ -1826,19 +1830,21 @@ class WPP_Core {
    */
   static function localize_scripts() {
 
-    $l10n = array();
-
-    //** Include the list of translations */
-    include_once WPP_Path . 'l10n.php';
-
-    /** All additional localizations must be added using the filter below. */
-    $l10n = apply_filters( 'wpp::js::localization', $l10n );
-
-    foreach ( (array) $l10n as $key => $value ) {
-      if ( !is_scalar( $value ) ) {
-        continue;
+    $l10n = WPP_F::get_cache( 'localize_scripts' );
+  
+    if( !$l10n ) {
+      $l10n = array();
+      //** Include the list of translations */
+      include_once WPP_Path . 'l10n.php';
+      /** All additional localizations must be added using the filter below. */
+      $l10n = apply_filters( 'wpp::js::localization', $l10n );
+      foreach ( (array) $l10n as $key => $value ) {
+        if ( !is_scalar( $value ) ) {
+          continue;
+        }
+        $l10n[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
       }
-      $l10n[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
+      WPP_F::set_cache( 'localize_scripts', $l10n );
     }
 
     header( 'Content-type: application/x-javascript' );
@@ -1915,6 +1921,7 @@ class WPP_Core {
       'ajax_url' => admin_url('admin-ajax.php'),
       'home_url' => home_url(),
       'user_logged_in' => is_user_logged_in() ? 'true' : 'false',
+      'is_permalink' => ( get_option( 'permalink_structure' ) !== '' ? true : false ),
       'settings' => $wp_properties,
     );
 
@@ -1924,7 +1931,7 @@ class WPP_Core {
 
     $data = apply_filters( 'wpp::get_instance', $data );
     
-    /** If we're not on an admin, we should remove the XMLI info */
+    /** Security: If we're not on an admin, we should remove the XMLI info */
     if( !( is_admin() && current_user_can( 'manage_options' ) ) && isset( $data[ 'settings' ][ 'configuration' ][ 'feature_settings' ][ 'property_import' ] ) ){
       unset( $data[ 'settings' ][ 'configuration' ][ 'feature_settings' ][ 'property_import' ] );
     }

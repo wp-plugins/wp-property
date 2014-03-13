@@ -94,7 +94,7 @@ class WPP_F extends UD_API {
     $args = wp_parse_args( (array) $args, array(
       'type'   => $type,
       'object' => $object,
-      'prefix' => 'wpp',
+      'instance' => 'WP-Property',
     ) );
 
     return parent::log( $message, $args );
@@ -160,8 +160,8 @@ class WPP_F extends UD_API {
     }
 
     //** Register a sidebar for each property type */
-    if( $wp_properties[ 'configuration' ][ 'do_not_register_sidebars' ] != 'true' ) {
-      foreach( $wp_properties[ 'property_types' ] as $property_slug => $property_title ) {
+    if( isset( $wp_properties[ 'configuration' ][ 'do_not_register_sidebars' ] ) && $wp_properties[ 'configuration' ][ 'do_not_register_sidebars' ] != 'true' ) {
+      foreach( (array)$wp_properties[ 'property_types' ] as $property_slug => $property_title ) {
         register_sidebar( array(
           'name'          => sprintf( __( 'Property: %s', 'wpp' ), $property_title ),
           'id'            => "wpp_sidebar_{$property_slug}",
@@ -240,12 +240,18 @@ class WPP_F extends UD_API {
       'not_found_in_trash' => __( 'No properties found in Trash', 'wpp' ),
       'parent_item_colon'  => ''
     ) );
+    
+    //** Add support for property */
+    $supports = array( 'title', 'editor', 'thumbnail' );
+    if( isset( $wp_properties[ 'configuration' ][ 'enable_comments' ] ) && $wp_properties[ 'configuration' ][ 'enable_comments' ] == 'true' ) {
+      array_push( $supports, 'comments' );
+    }
 
     // Register custom post types
     register_post_type( 'property', array(
       'labels'              => $wp_properties[ 'labels' ],
       'public'              => true,
-      'exclude_from_search' => $wp_properties[ 'configuration' ][ 'include_in_regular_search_results' ] == 'true' ? false : true,
+      'exclude_from_search' => $wp_properties[ 'configuration' ][ 'exclude_from_regular_search_results' ] == 'true' ? true : false,
       'show_ui'             => true,
       '_edit_link'          => 'post.php?post=%d',
       'capability_type'     => array( 'wpp_property', 'wpp_properties' ),
@@ -254,7 +260,7 @@ class WPP_F extends UD_API {
         'slug' => $wp_properties[ 'configuration' ][ 'base_slug' ]
       ),
       'query_var'           => $wp_properties[ 'configuration' ][ 'base_slug' ],
-      'supports'            => array( 'title', 'editor', 'thumbnail' ),
+      'supports'            => $supports,
       'menu_icon'           => WPP_URL . 'images/pp_menu-1.6.png'
     ) );
 
@@ -2183,6 +2189,42 @@ class WPP_F extends UD_API {
   }
 
   /**
+   * Maybe add cache file
+   *
+   * @version 0.1
+   * @since 1.40.0
+   * @author peshkov@UD
+   */
+  static function set_cache( $name, $data ) {
+    $dir = WPP_Path . 'cache/';
+    $file = $dir . MD5( $name ) . '.res';
+    //** Try to create directory if it doesn't exist */
+    if( !is_dir( $dir ) ) {
+      @mkdir( $dir, 0755 );
+    }
+    if( is_dir( $dir ) && @file_put_contents( $file, maybe_serialize( $data ) ) ) {
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * Maybe get data from cache file
+   *
+   * @version 0.1
+   * @since 1.40.0
+   * @author peshkov@UD
+   */
+  static function get_cache( $name, $live = 3600 ) {
+    $dir = WPP_Path . 'cache/';
+    $file = $dir . MD5( $name ) . '.res';
+    if( is_file( $file ) && time() - filemtime( $file ) < $live ) {
+      return maybe_unserialize( file_get_contents( $file ) );
+    }
+    return false;
+  }
+  
+  /**
    * Removes all WPP cache files
    *
    * @return string Response
@@ -3054,14 +3096,9 @@ class WPP_F extends UD_API {
       'ID'        => 'equal',
       'post_date' => 'date'
     );
-
-    if( $instance_id ) {
-      //** Load value array from cache if it exists (search widget creates it on update */
-      $cachefile = WPP_Path . 'cache/searchwidget/' . $instance_id . '.values.res';
-
-      if( $cache && is_file( $cachefile ) && time() - filemtime( $cachefile ) < 3600 ) {
-        $result = unserialize( file_get_contents( $cachefile ) );
-      }
+    
+    if( $instance_id && $cache ) {
+      $result = WPP_F::get_cache( $instance_id );
     }
 
     if( !$result ) {
@@ -3120,7 +3157,9 @@ class WPP_F extends UD_API {
             SELECT DISTINCT(" . ( $type == 'data' ? "DATE_FORMAT(p1.{$searchable_attribute}, '%Y%m')" : "p1.{$searchable_attribute}" ) . ")
             FROM {$wpdb->posts} p1
             LEFT JOIN {$wpdb->postmeta} pm2 ON p1.ID = pm2.post_id
-            WHERE pm2.meta_key = 'property_type' $searchable_property_types_sql
+            WHERE pm2.meta_key = 'property_type' 
+              AND p1.post_status = 'publish'
+              $searchable_property_types_sql
             order by p1.{$searchable_attribute}
           " );
 
@@ -3132,11 +3171,14 @@ class WPP_F extends UD_API {
           //** No predefined value exist */
           $db_values = $wpdb->get_col( "
             SELECT DISTINCT(pm1.meta_value)
-            FROM {$wpdb->postmeta} pm1
+            FROM {$wpdb->posts} p1
+            LEFT JOIN {$wpdb->postmeta} pm1 ON p1.ID = pm1.post_id
             LEFT JOIN {$wpdb->postmeta} pm2 ON pm1.post_id = pm2.post_id
-            WHERE pm1.meta_key = '{$searchable_attribute}' AND pm2.meta_key = 'property_type'
-            $searchable_property_types_sql
-            AND pm1.meta_value != ''
+            WHERE pm1.meta_key = '{$searchable_attribute}' 
+              AND pm2.meta_key = 'property_type'
+              AND pm1.meta_value != ''
+              AND p1.post_status = 'publish'
+              $searchable_property_types_sql
             ORDER BY " . ( $is_numeric ? 'ABS(' : '' ) . "pm1.meta_value" . ( $is_numeric ? ')' : '' ) . " ASC
           " );
 
@@ -3179,17 +3221,17 @@ class WPP_F extends UD_API {
 
       $result = $range;
 
-      if( $cachefile ) {
-        $cachedir = dirname( $cachefile );
-        if( !is_dir( $cachedir ) ) {
-          wp_mkdir_p( $cachedir );
-        }
-
-        @file_put_contents( $cachefile, serialize( $result ) );
+      if( $instance_id && $cache ) {
+        WPP_F::set_cache( $instance_id, $result );
       }
     }
 
-    return $result;
+    return apply_filters( 'wpp::get_search_values', $result, array(
+      'search_attributes' => $search_attributes, 
+      'searchable_property_types' => $searchable_property_types, 
+      'cache' => $cache, 
+      'instance_id' => $instance_id,
+    ) );
   }
 
   /**
@@ -3415,12 +3457,9 @@ class WPP_F extends UD_API {
       $numeric = in_array( $meta_key, (array) $wp_properties[ 'numeric_attributes' ] ) ? true : false;
 
       if( !in_array( $meta_key, (array) $commas_ignore ) && substr_count( $criteria, ',' ) || ( substr_count( $criteria, '-' ) && $numeric ) || substr_count( $criteria, '--' ) ) {
-        if( substr_count( $criteria, ',' ) && !substr_count( $criteria, '-' ) ) {
-          $comma_and = explode( ',', $criteria );
-        }
+      
         if( substr_count( $criteria, '-' ) && !substr_count( $criteria, ',' ) ) {
           $cr = explode( '-', $criteria );
-
           // Check pieces of criteria. Array should contains 2 int's elements
           // In other way, it's just value of meta_key
           if( count( $cr ) > 2 || ( (int ) $cr[ 0 ] == 0 && ( int ) $cr[ 1 ] == 0 ) ) {
@@ -3433,6 +3472,11 @@ class WPP_F extends UD_API {
             }
           }
         }
+        
+        if ( substr_count( $criteria, ',' ) ) {
+          $comma_and = explode( ',', $criteria );
+        }
+        
       } else {
         $specific = $criteria;
       }
@@ -5085,8 +5129,8 @@ class WPP_F extends UD_API {
     add_screen_option( 'layout_columns', array( 'max' => 2, 'default' => 2 ) );
 
     //** Default Help items */
-    $contextual_help[ 'General Help' ][ ] = '<h3>' . __( 'General Help', WPI ) . '</h3>';
-    $contextual_help[ 'General Help' ][ ] = '<p>' . __( 'Comming soon...', WPI ) . '</p>';
+    $contextual_help[ 'General Help' ][ ] = '<h3>' . __( 'General Help', 'wpp' ) . '</h3>';
+    $contextual_help[ 'General Help' ][ ] = '<p>' . __( 'Comming soon...', 'wpp' ) . '</p>';
 
     //** Hook this action is you want to add info */
     $contextual_help = apply_filters( 'property_page_all_properties_help', $contextual_help );
