@@ -227,6 +227,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.40.1 =
+* Reverted back Sidebar areas which have been removed in 1.40.0 release.
+
 = 1.40.0 =
 * Added option 'Enable Comments' on settings page. Adds comments support for property post type.
 * Added 'Automatic Renew Subscription Plan' option for Front End Properties submissions (FEPS) premium feature.
