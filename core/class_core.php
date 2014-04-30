@@ -509,8 +509,8 @@ class WPP_Core {
     if ( is_array( $_REQUEST[ 'wpp_search' ] ) ) {
 
       if ( isset( $_POST[ 'wpp_search' ] ) ) {
-        $query = '?' . http_build_query( array( 'wpp_search' => $_REQUEST[ 'wpp_search' ] ), '', '&' );
-        wp_redirect( WPP_F::base_url( $wp_properties[ 'configuration' ][ 'base_slug' ] ) . $query );
+        $_query = '?' . http_build_query( array( 'wpp_search' => $_REQUEST[ 'wpp_search' ] ), '', '&' );
+        wp_redirect( WPP_F::base_url( $wp_properties[ 'configuration' ][ 'base_slug' ] ) . $_query );
         die();
       }
 
@@ -568,7 +568,41 @@ class WPP_Core {
     if ( is_array( $wpp_pages ) ) {
       WPP_F::console_log( 'WPP_F::parse_request() ran, determined that request is for: ' . implode( ', ', $wpp_pages ) );
     }
-
+    
+    if( !is_admin() ) {
+      /**
+       * HACK.
+       * 
+       * The issue:
+       * When parent page is set as 'Default Properties Page',
+       * child page will be rendered as 'property' page. 
+       * So Wordpress thinks that it's not a page and uses single template instead of page template.
+       *
+       * Tablet:
+       * We determine if current post is 'page' but uses incorrect post_type 'property'
+       * and fix it to valid post_type.
+       *
+       * @todo it's rough way to fix the problem, should be another one.
+       * @see self::template_redirect(). hack is used there.
+       * @author peshkov@UD
+       */
+      if( 
+        isset( $query->query_vars[ 'post_type' ] ) && 
+        $query->query_vars[ 'post_type' ] == 'property' && 
+        isset( $query->query_vars[ $wp_properties[ 'configuration' ][ 'base_slug' ] ] 
+      ) ) {
+        $posts = get_posts( array( 
+          'name' => $query->query_vars[ $wp_properties[ 'configuration' ][ 'base_slug' ] ],
+          'post_type' => 'page',
+        ) );
+        if( !empty( $posts ) && count( $posts ) == 1 ) {
+          $query->query_vars[ 'post_type' ] = 'page';
+          $query->query_vars[ '_fix_to_page_template' ] = true;
+        }
+      }
+    }
+    
+    return $query;
   }
 
   /**
@@ -859,7 +893,17 @@ class WPP_Core {
    */
   function template_redirect() {
     global $post, $property, $wp_query, $wp_properties, $wp_styles, $wpp_query, $wp_taxonomies;
-
+    
+    /**
+     * HACK.
+     * @see self::parse_request();
+     * @author peshkov@UD
+     */
+    if( get_query_var( '_fix_to_page_template' ) ) {
+      $wp_query->is_single = false;
+      $wp_query->is_page = true;
+    }
+    
     wp_localize_script( 'wpp-localization', 'wpp', array( 'instance' => $this->get_instance() ) );
     
     //** Load global wp-property script on all frontend pages */
@@ -1128,14 +1172,12 @@ class WPP_Core {
   function shortcode_featured_properties( $atts = false ) {
     global $wp_properties, $wpp_query, $post;
 
-    $default_property_type = WPP_F::get_most_common_property_type();
-
     if ( !$atts ) {
       $atts = array();
     }
     $hide_count = '';
     $defaults = array(
-      'property_type' => '',
+      'property_type' => 'all',
       'type' => '',
       'class' => 'shortcode_featured_properties',
       'per_page' => '6',
@@ -1149,8 +1191,8 @@ class WPP_Core {
       'thumbnail_size' => 'thumbnail'
     );
 
-    $args = array_merge( $defaults, $atts );
-
+    $args = shortcode_atts( $defaults, $atts );
+    
     //** Using "image_type" is obsolete */
     if ( $args[ 'thumbnail_size' ] == $defaults[ 'thumbnail_size' ] && !empty( $args[ 'image_type' ] ) ) {
       $args[ 'thumbnail_size' ] = $args[ 'image_type' ];
@@ -1159,10 +1201,6 @@ class WPP_Core {
     //** Using "type" is obsolete. If property_type is not set, but type is, we set property_type from type */
     if ( !empty( $args[ 'type' ] ) && empty( $args[ 'property_type' ] ) ) {
       $args[ 'property_type' ] = $args[ 'type' ];
-    }
-
-    if ( empty( $args[ 'property_type' ] ) ) {
-      $args[ 'property_type' ] = $default_property_type;
     }
 
     // Convert shortcode multi-property-type string to array
@@ -1308,6 +1346,7 @@ class WPP_Core {
     $defaults[ 'ajax_call' ] = false;
     $defaults[ 'disable_wrapper' ] = false;
     $defaults[ 'sorter_type' ] = 'buttons';
+    $defaults[ 'sorter' ] = 'on';
     $defaults[ 'pagination' ] = 'on';
     $defaults[ 'hide_count' ] = false;
     $defaults[ 'per_page' ] = 10;
@@ -1317,7 +1356,7 @@ class WPP_Core {
     $defaults[ 'stats' ] = '';
     $defaults[ 'class' ] = 'wpp_property_overview_shortcode';
     $defaults[ 'in_new_window' ] = false;
-
+    
     $defaults = apply_filters( 'shortcode_property_overview_allowed_args', $defaults, $atts );
 
     //** We add # to value which says that we don't want to use LIKE in SQL query for searching this value. */
@@ -1332,6 +1371,12 @@ class WPP_Core {
         }
         $atts[ $key ] = '#' . $val . '#';
       }
+    }
+    
+    //* Determine if we should disable sorter */
+    if( isset( $atts[ 'sorter' ] ) && in_array( $atts[ 'sorter' ], array( 'off', 'false' ) ) ) {
+      $atts[ 'sorter' ] = false;
+      $atts[ 'sorter_type' ] = 'none';
     }
 
     if ( !empty( $atts[ 'ajax_call' ] ) ) {

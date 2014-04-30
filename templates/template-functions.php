@@ -1332,9 +1332,10 @@ if ( !function_exists( 'draw_property_search_form' ) ):
       }
     } ?>
     <form action="<?php echo WPP_F::base_url( $wp_properties[ 'configuration' ][ 'base_slug' ] ); ?>" method="post">
-    <?php if ( $sort_order ) { ?>
-      <input type="hidden" name="wpp_search[sort_order]" value="<?php echo esc_attr( $sort_order ); ?>"/>
-    <?php } ?>
+      <?php do_action( "draw_property_search_form", $args ); ?>
+      <?php if ( $sort_order ) { ?>
+        <input type="hidden" name="wpp_search[sort_order]" value="<?php echo esc_attr( $sort_order ); ?>"/>
+      <?php } ?>
       <?php if ( $sort_by ) { ?>
         <input type="hidden" name="wpp_search[sort_by]" value="<?php echo esc_attr( $sort_by ); ?>"/>
       <?php } ?>
@@ -1469,6 +1470,10 @@ if ( !function_exists( 'wpp_render_search_input' ) ):
           <?php
           break;
         case 'range_input':
+          /* Determine if $value has correct format, and if not - fix it. */
+          $value = ( !is_array( $value ) ? array( 'min' => '', 'max' => '' ) : $value );
+          $value[ 'min' ] = ( in_array( 'min', $value ) ? $value[ 'min' ] : '' );
+          $value[ 'max' ] = ( in_array( 'max', $value ) ? $value[ 'max' ] : '' );
           ?>
           <input id="<?php echo $random_element_id; ?>" class="wpp_search_input_field_min wpp_search_input_field_<?php echo $attrib; ?> <?php echo $attribute_data[ 'ui_class' ]; ?>" type="text" name="wpp_search[<?php echo $attrib; ?>][min]" value="<?php echo $value[ 'min' ]; ?>" placeholder="<?php echo $placeholder[ 'min' ]; ?>"/>
           <span class="wpp_dash">-</span>
