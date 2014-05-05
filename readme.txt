@@ -227,6 +227,9 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.41.1 =
+* Fixed fatal error related to including phrets library on servers with PHP 5.2.X.
+
 = 1.41.0 =
 * Added hook to property_search form to have ability to add any custom fields.
 * Improved [featured_properties] shortcode.
