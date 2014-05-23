@@ -227,6 +227,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.41.2 =
+* Fixed issue with phRETS cookie file generating on connection to RETS servers.
+* Added cleaner of old phRETS cookie files for temp dir.
+
 = 1.41.1 =
 * Fixed fatal error related to including phrets library on servers with PHP 5.2.X.
 
