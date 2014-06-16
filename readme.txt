@@ -227,6 +227,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.41.3 =
+* Fixed issue with not matching up properties types on XML import.
+* Fixed bug with incorrect price sorting on property overview ( results page ) when any of properties has non-numeric or empty value for price attribute.
+
 = 1.41.2 =
 * Fixed issue with phRETS cookie file generating on connection to RETS servers.
 * Added cleaner of old phRETS cookie files for temp dir.

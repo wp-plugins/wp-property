@@ -1161,7 +1161,7 @@ if ( !class_exists( 'UD_API' ) ) {
         'check_existance' => false
       );
 
-      extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
+      extract( wp_parse_args( $args, $defaults ) );
 
       $content = preg_replace( '~[^\\pL0-9_]+~u', $separator, $content ); // substitutes anything but letters, numbers and '_' with separator
       $content = trim( $content, $separator );
