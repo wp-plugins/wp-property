@@ -1082,9 +1082,9 @@ class WPP_F extends UD_API {
       $sortable_attrs[ 'menu_order' ] = __( 'Default', 'wpp' );
     }
 
-    if( !empty( $sortable_attrs ) ) {
-      return $sortable_attrs;
-    }
+    $sortable_attrs = apply_filters( 'wpp::get_sortable_keys', $sortable_attrs );
+    
+    return $sortable_attrs;
   }
 
   /**
@@ -3474,7 +3474,7 @@ class WPP_F extends UD_API {
           $cr = explode( '-', $criteria );
           // Check pieces of criteria. Array should contains 2 int's elements
           // In other way, it's just value of meta_key
-          if( count( $cr ) > 2 || ( (int ) $cr[ 0 ] == 0 && ( int ) $cr[ 1 ] == 0 ) ) {
+          if( count( $cr ) > 2 || ( ( float ) $cr[ 0 ] == 0 && ( float ) $cr[ 1 ] == 0 ) ) {
             $specific = $criteria;
           } else {
             $hyphen_between = $cr;
@@ -3655,55 +3655,70 @@ class WPP_F extends UD_API {
     // Remove duplicates
     $matching_ids = array_unique( $matching_ids );
 
-    $matching_ids = apply_filters( 'wpp::get_properties::matching_ids', $matching_ids, array_merge( (array) $query, array( 'additional_sql' => $additional_sql, 'total' => $total ) ) );
+    $matching_ids = apply_filters( 'wpp::get_properties::matching_ids', $matching_ids, array_merge( (array) $query, array( 
+      'additional_sql'  => $additional_sql, 
+      'total'           => $total,
+    ) ) );
+    
+    $result = apply_filters( 'wpp::get_properties::custom_sort', false, array(
+      'matching_ids'    => $matching_ids,
+      'additional_sql'  => $additional_sql,
+      'sort_by'         => $sql_sort_by,
+      'sort_order'      => $sql_sort_order,
+      'limit_query'     => $limit_query,
+    ) );
+    
+    if( !$result ) {
+    
+      // Sorts the returned Properties by the selected sort order
+      if( $sql_sort_by &&
+        $sql_sort_by != 'menu_order' &&
+        $sql_sort_by != 'post_date' &&
+        $sql_sort_by != 'post_title'
+      ) {
+      
+        //** Sorts properties in random order. */
+        if( $sql_sort_by === 'random' ) {
 
-    // Sorts the returned Properties by the selected sort order
-    if( $sql_sort_by &&
-      $sql_sort_by != 'menu_order' &&
-      $sql_sort_by != 'post_date' &&
-      $sql_sort_by != 'post_title'
-    ) {
+          $result = $wpdb->get_col( "
+            SELECT ID FROM {$wpdb->posts } AS p
+            WHERE ID IN (" . implode( ",", $matching_ids ) . ")
+            $additional_sql
+            ORDER BY RAND() $sql_sort_order
+            $limit_query" );
 
-      //** Sorts properties in random order. */
-      if( $sql_sort_by === 'random' ) {
+        } else {
+
+          //** Determine if attribute has numeric format or all values of meta_key are numbers we use CAST in SQL query to avoid sort issues */
+          if( ( isset( $wp_properties[ 'numeric_attributes' ] ) && in_array( $sql_sort_by, $wp_properties[ 'numeric_attributes' ] ) ) || 
+              self::meta_has_number_data_type( $matching_ids, $sql_sort_by )
+          ) {
+            $meta_value = "CAST( meta_value AS DECIMAL(20,3 ))";
+          } else {
+            $meta_value = "meta_value";
+          }
+
+          $result = $wpdb->get_col( "
+            SELECT p.ID , (SELECT pm.meta_value FROM {$wpdb->postmeta} AS pm WHERE pm.post_id = p.ID AND pm.meta_key = '{$sql_sort_by}' LIMIT 1 ) as meta_value
+              FROM {$wpdb->posts} AS p
+              WHERE p.ID IN ( " . implode( ",", $matching_ids ) . ")
+              {$additional_sql}
+              ORDER BY {$meta_value} {$sql_sort_order}
+              {$limit_query}" );
+
+        }
+
+      } else {
 
         $result = $wpdb->get_col( "
           SELECT ID FROM {$wpdb->posts } AS p
           WHERE ID IN (" . implode( ",", $matching_ids ) . ")
           $additional_sql
-          ORDER BY RAND() $sql_sort_order
+          ORDER BY $sql_sort_by $sql_sort_order
           $limit_query" );
 
-      } else {
-
-        //** Determine if attribute has numeric format or all values of meta_key are numbers we use CAST in SQL query to avoid sort issues */
-        if( ( isset( $wp_properties[ 'numeric_attributes' ] ) && in_array( $sql_sort_by, $wp_properties[ 'numeric_attributes' ] ) ) || 
-            self::meta_has_number_data_type( $matching_ids, $sql_sort_by )
-        ) {
-          $meta_value = "CAST( meta_value AS DECIMAL(20,3 ))";
-        } else {
-          $meta_value = "meta_value";
-        }
-
-        $result = $wpdb->get_col( "
-          SELECT p.ID , (SELECT pm.meta_value FROM {$wpdb->postmeta} AS pm WHERE pm.post_id = p.ID AND pm.meta_key = '{$sql_sort_by}' LIMIT 1 ) as meta_value
-            FROM {$wpdb->posts} AS p
-            WHERE p.ID IN ( " . implode( ",", $matching_ids ) . ")
-            {$additional_sql}
-            ORDER BY {$meta_value} {$sql_sort_order}
-            {$limit_query}" );
-
       }
-
-    } else {
-
-      $result = $wpdb->get_col( "
-        SELECT ID FROM {$wpdb->posts } AS p
-        WHERE ID IN (" . implode( ",", $matching_ids ) . ")
-        $additional_sql
-        ORDER BY $sql_sort_by $sql_sort_order
-        $limit_query" );
-
+    
     }
 
     // Stores the total Properties returned

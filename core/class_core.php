@@ -1183,7 +1183,7 @@ class WPP_Core {
       'per_page' => '6',
       'sorter_type' => 'none',
       'show_children' => 'false',
-      'hide_count' => true,
+      'hide_count' => 'true',
       'fancybox_preview' => 'false',
       'bottom_pagination_flag' => 'false',
       'pagination' => 'off',
@@ -1219,16 +1219,22 @@ class WPP_Core {
       }
 
     }
-
+    
+    /** We hide wrapper to use our custom one. */
     $args[ 'disable_wrapper' ] = 'true';
+    
     $args[ 'featured' ] = 'true';
     $args[ 'template' ] = 'featured-shortcode';
-
+    $args[ 'unique_hash' ] = rand( 10000, 99900 );
+    
     unset( $args[ 'image_type' ] );
     unset( $args[ 'type' ] );
 
-    $result = WPP_Core::shortcode_property_overview( $args );
-
+    $result .= WPP_Core::shortcode_property_overview( $args );    
+    if( !empty( $result ) ) {
+      $result = '<div id="wpp_shortcode_' . $args[ 'unique_hash' ] . '" class="' . $args[ 'class' ] . '">' . $result . '</div>';
+    }
+    
     return $result;
   }
 
