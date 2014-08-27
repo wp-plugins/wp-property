@@ -9,8 +9,8 @@
  * @package WP-Property
  * @subpackage Main
  */
-class WPP_Core {
 
+class WPP_Core {
 
   /**
    * Highest-level function initialized on plugin load
@@ -48,7 +48,7 @@ class WPP_Core {
     do_action( 'wpp_pre_init' );
 
     // Check settings data on accord with existing wp_properties data before option updates
-    add_filter( 'wpp_settings_save', array( 'WPP_Core', 'check_wp_settings_data' ), 0, 2 );
+    add_filter( 'wpp_settings_save', array( $this, 'check_wp_settings_data' ), 0, 2 );
 
   }
 
@@ -73,15 +73,15 @@ class WPP_Core {
     /** Making template-functions global but load after the premium features, giving the premium features priority. */
     include_once WPP_Templates . '/template-functions.php';
 
-    //** Load settings into $wp_properties and save settings if nonce exists */
-    WPP_F::settings_action();
-
+    //* set WPP capabilities */
+    $this->set_capabilities();
+    
     //** Set up our custom object and taxonomyies */
     WPP_F::register_post_type_and_taxonomies();
     
-    //* set WPP capabilities */
-    $this->set_capabilities();
-
+    //** Load settings into $wp_properties and save settings if nonce exists */
+    WPP_F::settings_action();
+    
     //** Load all widgets and register widget areas */
     add_action( 'widgets_init', array( 'WPP_F', 'widgets_init' ) );
 
@@ -118,7 +118,7 @@ class WPP_Core {
     add_action( "wp_ajax_wpp_property_overview_pagination", array( $this, "ajax_property_overview" ) );
     add_action( "wp_ajax_nopriv_wpp_property_overview_pagination", array( $this, "ajax_property_overview" ) );
 
-    /** Localization */
+    /** Localization. Deprecated way! Now static l10n file is used. */
     add_action( "wp_ajax_wpp_js_localization", array( __CLASS__, "localize_scripts" ) );
     add_action( "wp_ajax_nopriv_wpp_js_localization", array( __CLASS__, "localize_scripts" ) );
 
@@ -142,10 +142,10 @@ class WPP_Core {
     add_action( 'save_property', create_function( '$post_id', 'WPP_F::revalidate_address($post_id);' ) );
 
     add_action( 'before_delete_post', array( 'WPP_F', 'before_delete_post' ) );
-    add_filter( 'post_updated_messages', array( 'WPP_Core', 'property_updated_messages' ), 5 );
+    add_filter( 'post_updated_messages', array( $this, 'property_updated_messages' ), 5 );
 
     /** Fix toggale row actions -> get rid of "Quick Edit" on property rows */
-    add_filter( 'page_row_actions', array( 'WPP_Core', 'property_row_actions' ), 0, 2 );
+    add_filter( 'page_row_actions', array( &$this, 'property_row_actions' ), 0, 2 );
 
     /** Disables meta cache for property obejcts if enabled */
     add_action( 'pre_get_posts', array( 'WPP_F', 'pre_get_posts' ) );
@@ -185,9 +185,15 @@ class WPP_Core {
     //** Determine if we are secure */
     $scheme = ( is_ssl() && !is_admin() ? 'https' : 'http' );
 
-    //** Load early so plugins can use them as well */
-    wp_register_script( 'wpp-localization', get_bloginfo( 'wpurl' ) . '/wp-admin/admin-ajax.php?action=wpp_js_localization', array(), WPP_Version );
-
+    //** Load Localization early so plugins can use them as well */
+    //** Try to generate static localization script. It can be flushed on Clear Cache! */
+    if( $this->maybe_generate_l10n_script() ) {
+      wp_register_script( 'wpp-localization', WPP_URL . 'cache/l10n.js', array(), WPP_Version );
+    } else {
+      //** This is old way of getting localization for WPP scripts. Deprecated way! */
+      wp_register_script( 'wpp-localization', get_bloginfo( 'wpurl' ) . '/wp-admin/admin-ajax.php?action=wpp_js_localization', array(), WPP_Version );
+    }
+    
     wp_register_script( 'wpp-jquery-fancybox', WPP_URL . 'third-party/fancybox/jquery.fancybox-1.3.4.pack.js', array( 'jquery', 'wpp-localization' ), '1.7.3' );
     wp_register_script( 'wpp-jquery-colorpicker', WPP_URL . 'third-party/colorpicker/colorpicker.js', array( 'jquery', 'wpp-localization' ) );
     wp_register_script( 'wpp-jquery-easing', WPP_URL . 'third-party/fancybox/jquery.easing-1.3.pack.js', array( 'jquery', 'wpp-localization' ), '1.7.3' );
@@ -255,10 +261,10 @@ class WPP_Core {
     }
 
     //** Modify admin body class */
-    add_filter( 'admin_body_class', array( 'WPP_Core', 'admin_body_class' ), 5 );
+    add_filter( 'admin_body_class', array( $this, 'admin_body_class' ), 5 );
 
     //** Modify Front-end property body class */
-    add_filter( 'body_class', array( 'WPP_Core', 'properties_body_class' ) );
+    add_filter( 'body_class', array( $this, 'properties_body_class' ) );
 
     add_filter( 'wp_get_attachment_link', array( 'WPP_F', 'wp_get_attachment_link' ), 10, 6 );
 
@@ -274,10 +280,12 @@ class WPP_Core {
     }
 
     //** Make Property Featured Via AJAX */
-    if ( isset( $_REQUEST[ '_wpnonce' ] ) ) {
-      if ( wp_verify_nonce( $_REQUEST[ '_wpnonce' ], "wpp_make_featured_" . $_REQUEST[ 'post_id' ] ) ) {
-        add_action( 'wp_ajax_wpp_make_featured', create_function( "", '  $post_id = $_REQUEST[post_id]; echo WPP_F::toggle_featured($post_id); die();' ) );
-      }
+    if ( 
+      isset( $_REQUEST[ 'post_id' ] ) 
+      && isset( $_REQUEST[ '_wpnonce' ] ) 
+      && wp_verify_nonce( $_REQUEST[ '_wpnonce' ], "wpp_make_featured_" . $_REQUEST[ 'post_id' ] ) 
+    ) {
+      add_action( 'wp_ajax_wpp_make_featured', create_function( "", '  $post_id = $_REQUEST[\'post_id\']; echo WPP_F::toggle_featured( $post_id ); die();' ) );
     }
 
     //** Post-init action hook */
@@ -310,7 +318,7 @@ class WPP_Core {
    * @since 0.60
    *
    */
-  static function after_setup_theme() {
+  static public function after_setup_theme() {
     add_theme_support( 'post-thumbnails' );
   }
 
@@ -323,7 +331,7 @@ class WPP_Core {
    * @since 0.60
    *
    */
-  function plugin_action_links( $links, $file ) {
+  public function plugin_action_links( $links, $file ) {
 
     if ( $file == 'wp-property/wp-property.php' ) {
       $settings_link = '<a href="' . admin_url( "edit.php?post_type=property&page=property_settings" ) . '">' . __( 'Settings', 'wpp' ) . '</a>';
@@ -341,7 +349,7 @@ class WPP_Core {
    * @since 0.53
    *
    */
-  function admin_enqueue_scripts( $hook ) {
+  public function admin_enqueue_scripts( $hook ) {
     global $current_screen, $wp_properties, $wpdb;
     
     wp_localize_script( 'wpp-localization', 'wpp', array( 'instance' => $this->get_instance() ) );
@@ -506,7 +514,7 @@ class WPP_Core {
     }
 
     //** If we are displaying search results, we can assume this is the default property page */
-    if ( is_array( $_REQUEST[ 'wpp_search' ] ) ) {
+    if ( isset( $_REQUEST[ 'wpp_search' ] ) && is_array( $_REQUEST[ 'wpp_search' ] ) ) {
 
       if ( isset( $_POST[ 'wpp_search' ] ) ) {
         $_query = '?' . http_build_query( array( 'wpp_search' => $_REQUEST[ 'wpp_search' ] ), '', '&' );
@@ -541,7 +549,7 @@ class WPP_Core {
     }
 
     //** If this is a the root property page, and the Dynamic Default Property page is used */
-    if ( $wp_query->wpp_root_property_page && $wp_properties[ 'configuration' ][ 'base_slug' ] == 'property' ) {
+    if ( isset( $wp_query->wpp_root_property_page ) && $wp_properties[ 'configuration' ][ 'base_slug' ] == 'property' ) {
       $wp_query->wpp_default_property_page = true;
 
       WPP_F::console_log( 'Overriding default 404 page status.' );
@@ -553,19 +561,17 @@ class WPP_Core {
       add_action( 'template_redirect', create_function( '', ' global $wp_query; $wp_query->is_404 = false;' ), 0, 10 );
     }
 
-    if ( $wp_query->wpp_search_page ) {
+    $wpp_pages = array();
+    if ( isset( $wp_query->wpp_search_page ) ) {
       $wpp_pages[ ] = 'Search Page';
     }
-
-    if ( $wp_query->wpp_default_property_page ) {
+    if ( isset( $wp_query->wpp_default_property_page ) ) {
       $wpp_pages[ ] = 'Default Property Page';
     }
-
-    if ( $wp_query->wpp_root_property_page ) {
+    if ( isset( $wp_query->wpp_root_property_page ) ) {
       $wpp_pages[ ] = 'Root Property Page.';
     }
-
-    if ( is_array( $wpp_pages ) ) {
+    if ( !empty( $wpp_pages ) ) {
       WPP_F::console_log( 'WPP_F::parse_request() ran, determined that request is for: ' . implode( ', ', $wpp_pages ) );
     }
     
@@ -619,13 +625,21 @@ class WPP_Core {
     }
 
     //** Handle automatic PO inserting for non-search root page */
-    if ( !$wp_query->wpp_search_page && $wp_query->wpp_root_property_page && $wp_properties[ 'configuration' ][ 'automatically_insert_overview' ] == 'true' ) {
+    if ( 
+      !isset( $wp_query->wpp_search_page ) 
+      && isset( $wp_query->wpp_root_property_page ) 
+      && isset( $wp_properties[ 'configuration' ][ 'automatically_insert_overview' ] ) 
+      && $wp_properties[ 'configuration' ][ 'automatically_insert_overview' ] == 'true'
+    ) {
       WPP_F::console_log( 'Automatically inserted property overview shortcode into page content.' );
       return WPP_Core::shortcode_property_overview();
     }
 
     //** Handle automatic PO inserting for search pages */
-    if ( $wp_query->wpp_search_page && $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] != 'true' ) {
+    if ( 
+      isset( $wp_query->wpp_search_page ) 
+      && ( !isset( $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] ) || $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] != 'true' )
+    ) {
       WPP_F::console_log( 'Automatically inserted property overview shortcode into search page content.' );
       return WPP_Core::shortcode_property_overview();
     }
@@ -646,7 +660,7 @@ class WPP_Core {
     global $wp_properties, $wp_version;
 
     $_wpnonce = ( version_compare( $wp_version, '3.5', '>=' ) ? 'update-post_' : 'update-property_' ) . $post_id;
-    if ( !wp_verify_nonce( $_POST[ '_wpnonce' ], $_wpnonce ) || $_POST[ 'post_type' ] !== 'property' ) {
+    if ( !isset( $_POST[ '_wpnonce' ] ) || !wp_verify_nonce( $_POST[ '_wpnonce' ], $_wpnonce ) || $_POST[ 'post_type' ] !== 'property' ) {
       return $post_id;
     }
 
@@ -685,13 +699,13 @@ class WPP_Core {
       'old_coordinates' => ( ( empty( $old_lat ) ) || ( empty( $old_lng ) ) ) ? "" : array( 'lat' => $old_lat, 'lng' => $old_lng ),
       'old_location' => ( !empty( $wp_properties[ 'configuration' ][ 'address_attribute' ] ) ) ? get_post_meta( $post_id, $wp_properties[ 'configuration' ][ 'address_attribute' ], true ) : ''
     );
-
+    
     foreach ( $update_data as $meta_key => $meta_value ) {
       $attribute_data = WPP_F::get_attribute_data( $meta_key );
-
-      //* Cleans the user input */
-      $meta_value = WPP_F::encode_mysql_input( $meta_value, $meta_key );
-
+      
+      $meta_value = html_entity_decode( $meta_value );
+      $meta_value = stripslashes( $meta_value );
+      
       //* Only admins can mark properties as featured. */
       if ( $meta_key == 'featured' && !current_user_can( 'manage_options' ) ) {
         //** But be sure that meta 'featured' exists at all */
@@ -703,8 +717,7 @@ class WPP_Core {
       }
 
       //* Remove certain characters */
-
-      if ( $attribute_data[ 'currency' ] || $attribute_data[ 'numeric' ] ) {
+      if ( isset( $attribute_data[ 'currency' ] ) || isset( $attribute_data[ 'numeric' ] ) ) {
         $meta_value = str_replace( array( "$", "," ), '', $meta_value );
       }
 
@@ -761,7 +774,7 @@ class WPP_Core {
         <ul>
           <li><?php _e( 'Menu Sort Order:', 'wpp' ) ?> <?php echo WPP_F::input( "name=menu_order&special=size=4", $post->menu_order ); ?></li>
 
-          <?php if ( current_user_can( 'manage_options' ) && $wp_properties[ 'configuration' ][ 'do_not_use' ][ 'featured' ] != 'true' ) { ?>
+          <?php if ( current_user_can( 'manage_options' ) && isset( $wp_properties[ 'configuration' ][ 'do_not_use' ][ 'featured' ] ) && $wp_properties[ 'configuration' ][ 'do_not_use' ][ 'featured' ] != 'true' ) { ?>
             <li><?php echo WPP_F::checkbox( "name=wpp_data[meta][featured]&label=" . __( 'Display in featured listings.', 'wpp' ), get_post_meta( $post->ID, 'featured', true ) ); ?></li>
           <?php } ?>
 
@@ -916,7 +929,7 @@ class WPP_Core {
       wp_enqueue_style( 'wp-property-theme-specific' );
     }
 
-    if ( $wp_properties[ 'configuration' ][ 'do_not_enable_text_widget_shortcodes' ] != 'true' ) {
+    if ( !isset( $wp_properties[ 'configuration' ][ 'do_not_enable_text_widget_shortcodes' ] ) || $wp_properties[ 'configuration' ][ 'do_not_enable_text_widget_shortcodes' ] != 'true' ) {
       add_filter( 'widget_text', 'do_shortcode' );
     }
 
@@ -932,7 +945,7 @@ class WPP_Core {
       (count($wp_query->posts) < 2) added post 1.31.1 release to avoid
       taxonomy archives from being broken by single property pages
     */
-    if ( count( $wp_query->posts ) < 2 && ( $post->post_type == "property" || $wp_query->is_child_property ) ) {
+    if ( count( $wp_query->posts ) < 2 && ( $post->post_type == "property" || isset( $wp_query->is_child_property ) ) ) {
       $wp_query->single_property_page = true;
 
       //** This is a hack and should be done better */
@@ -949,7 +962,7 @@ class WPP_Core {
     }
 
     //** If viewing root property page that is the default dynamic page. */
-    if ( $wp_query->wpp_default_property_page ) {
+    if ( isset( $wp_query->wpp_default_property_page ) ) {
       $wp_query->is_property_overview = true;
     }
 
@@ -959,17 +972,20 @@ class WPP_Core {
     }
 
     //** If this is the root page and the shortcode is automatically inserted */
-    if ( $wp_query->wpp_root_property_page && $wp_properties[ 'configuration' ][ 'automatically_insert_overview' ] == 'true' ) {
+    if ( isset( $wp_query->wpp_root_property_page ) && $wp_properties[ 'configuration' ][ 'automatically_insert_overview' ] == 'true' ) {
       $wp_query->is_property_overview = true;
     }
 
     //** If search result page, and system not explicitly configured to not include PO on search result page automatically */
-    if ( $wp_query->wpp_search_page && $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] != 'true' ) {
+    if ( 
+      isset( $wp_query->wpp_search_page ) && 
+      ( !isset( $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] ) || $wp_properties[ 'configuration' ][ 'do_not_override_search_result_page' ] != 'true' ) 
+    ) {
       $wp_query->is_property_overview = true;
     }
 
     //** Scripts and styles to load on all overview and signle listing pages */
-    if ( $wp_query->single_property_page || $wp_query->is_property_overview ) {
+    if ( isset( $wp_query->single_property_page ) || isset( $wp_query->is_property_overview ) ) {
 
       WPP_F::console_log( 'Including scripts for all single and overview property pages.' );
 
@@ -999,7 +1015,7 @@ class WPP_Core {
     }
 
     //** Scripts loaded only on single property pages */
-    if ( $wp_query->single_property_page && !post_password_required( $post ) ) {
+    if ( isset( $wp_query->single_property_page ) && !post_password_required( $post ) ) {
 
       WPP_F::console_log( 'Including scripts for all single property pages.' );
 
@@ -1013,8 +1029,6 @@ class WPP_Core {
 
       $property = prepare_property_for_display( $property );
 
-      $type = $property[ 'property_type' ];
-
       //** Make certain variables available to be used within the single listing page */
       $single_page_vars = apply_filters( 'wpp_property_page_vars', array(
         'property' => $property,
@@ -1026,10 +1040,10 @@ class WPP_Core {
         $wp_query->query_vars = array_merge( $wp_query->query_vars, $single_page_vars );
       }
 
-      $template_found = WPP_F::get_template_part( array(
-        "property-{$type}",
+      $template_found = WPP_F::get_template_part( array_filter( array(
+        ( !empty( $property[ 'property_type' ] ) ? "property-{$property[ 'property_type' ]}" : false ),
         "property",
-      ), array( WPP_Templates ) );
+      ) ), array( WPP_Templates ) );
 
       //** Load the first found template */
       if ( $template_found ) {
@@ -1041,11 +1055,11 @@ class WPP_Core {
     }
 
     //** Current requests includes a property overview.  PO may be via shortcode, search result, or due to this being the Default Dynamic Property page */
-    if ( $wp_query->is_property_overview ) {
+    if ( isset( $wp_query->is_property_overview ) ) {
 
       WPP_F::console_log( 'Including scripts for all property overview pages.' );
 
-      if ( $wp_query->wpp_default_property_page ) {
+      if ( isset( $wp_query->wpp_default_property_page ) ) {
         WPP_F::console_log( 'Dynamic Default Property page detected, will load custom template.' );
       } else {
         WPP_F::console_log( 'Custom Default Property page detected, property overview content may be rendered via shortcode.' );
@@ -1067,7 +1081,7 @@ class WPP_Core {
       add_action( 'wp_head', create_function( '', "do_action('wp_head_property_overview'); " ) );
 
       //** If using Dynamic Property Root page, we must load a template */
-      if ( $wp_query->wpp_default_property_page ) {
+      if ( isset( $wp_query->wpp_default_property_page ) ) {
 
         //** Unset any post that may have been found based on query */
         $post = false;
@@ -1100,13 +1114,13 @@ class WPP_Core {
    * @since 1.10
    *
    */
-  function admin_init() {
+  public function admin_init() {
     global $wp_properties, $post;
 
     WPP_F::fix_screen_options();
 
     // Plug page actions -> Add Settings Link to plugin overview page
-    add_filter( 'plugin_action_links', array( 'WPP_Core', 'plugin_action_links' ), 10, 2 );
+    add_filter( 'plugin_action_links', array( $this, 'plugin_action_links' ), 10, 2 );
 
     //* Adds metabox 'General Information' to Property Edit Page */
     add_meta_box( 'wpp_property_meta', __( 'General Information', 'wpp' ), array( 'WPP_UI', 'metabox_meta' ), 'property', 'normal', 'high' );
@@ -1132,13 +1146,15 @@ class WPP_Core {
 
     WPP_F::manual_activation();
 
-    // Download backup of configuration
-    if ( $_REQUEST[ 'page' ] == 'property_settings'
+    //** Download backup of configuration */
+    if (
+      isset( $_REQUEST[ 'page' ] )
+      && $_REQUEST[ 'page' ] == 'property_settings'
+      && isset( $_REQUEST[ 'wpp_action' ] )
       && $_REQUEST[ 'wpp_action' ] == 'download-wpp-backup'
+      && isset( $_REQUEST[ '_wpnonce' ] )
       && wp_verify_nonce( $_REQUEST[ '_wpnonce' ], 'download-wpp-backup' )
     ) {
-      global $wp_properties;
-
       $sitename = sanitize_key( get_bloginfo( 'name' ) );
       $filename = $sitename . '-wp-property.' . date( 'Y-m-d' ) . '.txt';
 
@@ -1230,7 +1246,7 @@ class WPP_Core {
     unset( $args[ 'image_type' ] );
     unset( $args[ 'type' ] );
 
-    $result .= WPP_Core::shortcode_property_overview( $args );    
+    $result = WPP_Core::shortcode_property_overview( $args );    
     if( !empty( $result ) ) {
       $result = '<div id="wpp_shortcode_' . $args[ 'unique_hash' ] . '" class="' . $args[ 'class' ] . '">' . $result . '</div>';
     }
@@ -1255,7 +1271,8 @@ class WPP_Core {
       'searchable_property_types' => '',
       'pagination' => 'on',
       'group_attributes' => 'off',
-      'per_page' => '10'
+      'per_page' => '10',
+      'strict_search' => 'false',
     ), $atts ) );
 
     if ( empty( $searchable_attributes ) ) {
@@ -1286,6 +1303,7 @@ class WPP_Core {
     $search_args[ 'per_page' ] = $per_page;
     $search_args[ 'pagination' ] = $pagination;
     $search_args[ 'instance_id' ] = $widget_id;
+    $search_args[ 'strict_search' ] = $strict_search;
 
     draw_property_search_form( $search_args );
 
@@ -1315,10 +1333,8 @@ class WPP_Core {
   function shortcode_property_overview( $atts = "" ) {
     global $wp_properties, $wpp_query, $property, $post, $wp_query;
 
-    $atts = wp_parse_args( $atts, array(
-      'strict_search' => 'false'
-    ) );
-
+    $atts = wp_parse_args( $atts, array() );
+    
     WPP_F::force_script_inclusion( 'jquery-ui-widget' );
     WPP_F::force_script_inclusion( 'jquery-ui-mouse' );
     WPP_F::force_script_inclusion( 'jquery-ui-slider' );
@@ -1340,10 +1356,11 @@ class WPP_Core {
     }
 
     //** Get ALL allowed attributes that may be passed via shortcode (to include property attributes) */
+    $defaults[ 'strict_search' ] = false;
     $defaults[ 'show_children' ] = ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'show_children' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'show_children' ] : 'true' );
     $defaults[ 'child_properties_title' ] = __( 'Floor plans at location:', 'wpp' );
     $defaults[ 'fancybox_preview' ] = $wp_properties[ 'configuration' ][ 'property_overview' ][ 'fancybox_preview' ];
-    $defaults[ 'bottom_pagination_flag' ] = ( $wp_properties[ 'configuration' ][ 'bottom_insert_pagenation' ] == 'true' ? true : false );
+    $defaults[ 'bottom_pagination_flag' ] = ( isset( $wp_properties[ 'configuration' ][ 'bottom_insert_pagenation' ] ) && $wp_properties[ 'configuration' ][ 'bottom_insert_pagenation' ] == 'true' ? true : false );
     $defaults[ 'thumbnail_size' ] = $wp_properties[ 'configuration' ][ 'property_overview' ][ 'thumbnail_size' ];
     $defaults[ 'sort_by_text' ] = __( 'Sort By:', 'wpp' );
     $defaults[ 'sort_by' ] = 'post_date';
@@ -1365,20 +1382,6 @@ class WPP_Core {
     
     $defaults = apply_filters( 'shortcode_property_overview_allowed_args', $defaults, $atts );
 
-    //** We add # to value which says that we don't want to use LIKE in SQL query for searching this value. */
-    $required_strict_search = apply_filters( 'wpp::required_strict_search', array( 'wpp_agents' ) );
-    foreach ( $atts as $key => $val ) {
-      if ( ( ( $atts[ 'strict_search' ] == 'true' && isset( $wp_properties[ 'property_stats' ][ $key ] ) ) ||
-           in_array( $key, $required_strict_search ) ) &&
-           !key_exists( $key, $defaults ) && $key != 'property_type'
-      ) {
-        if ( substr_count( $val, ',' ) || substr_count( $val, '&ndash;' ) || substr_count( $val, '--' ) ) {
-          continue;
-        }
-        $atts[ $key ] = '#' . $val . '#';
-      }
-    }
-    
     //* Determine if we should disable sorter */
     if( isset( $atts[ 'sorter' ] ) && in_array( $atts[ 'sorter' ], array( 'off', 'false' ) ) ) {
       $atts[ 'sorter' ] = false;
@@ -1407,14 +1410,14 @@ class WPP_Core {
     } else {
       /** Determine if fancybox style is included */
       WPP_F::force_style_inclusion( 'wpp-jquery-fancybox-css' );
-
+      
       //** Merge defaults with passed arguments */
       $wpp_query = shortcode_atts( $defaults, $atts );
       $wpp_query[ 'query' ] = shortcode_atts( $queryable_keys, $atts );
 
       //** Handle search */
-      if ( $wpp_search = $_REQUEST[ 'wpp_search' ] ) {
-        $wpp_query[ 'query' ] = shortcode_atts( $wpp_query[ 'query' ], $wpp_search );
+      if ( !empty( $_REQUEST[ 'wpp_search' ] ) ) {
+        $wpp_query[ 'query' ] = shortcode_atts( $wpp_query[ 'query' ], $_REQUEST[ 'wpp_search' ] );
         $wpp_query[ 'query' ] = WPP_F::prepare_search_attributes( $wpp_query[ 'query' ] );
 
         if ( isset( $_REQUEST[ 'wpp_search' ][ 'sort_by' ] ) ) {
@@ -1431,6 +1434,10 @@ class WPP_Core {
 
         if ( isset( $_REQUEST[ 'wpp_search' ][ 'per_page' ] ) ) {
           $wpp_query[ 'per_page' ] = $_REQUEST[ 'wpp_search' ][ 'per_page' ];
+        }
+        
+        if ( isset( $_REQUEST[ 'wpp_search' ][ 'strict_search' ] ) ) {
+          $wpp_query[ 'strict_search' ] = $_REQUEST[ 'wpp_search' ][ 'strict_search' ];
         }
       }
 
@@ -1452,11 +1459,11 @@ class WPP_Core {
     //** Replace dynamic field values */
 
     //** Detect currently property for conditional in-shortcode usage that will be replaced from values */
-    if ( isset( $post ) ) {
+    if ( isset( $post ) && is_object( $post ) ) {
 
-      $dynamic_fields[ 'post_id' ] = $post->ID;
-      $dynamic_fields[ 'post_parent' ] = $post->parent_id;
-      $dynamic_fields[ 'property_type' ] = $post->property_type;
+      $dynamic_fields[ 'post_id' ] = isset( $post->ID ) ? $post->ID : 0;
+      $dynamic_fields[ 'post_parent' ] = isset( $post->parent_id ) ? $post->parent_id : 0;
+      $dynamic_fields[ 'property_type' ] = isset( $post->property_type ) ? $post->property_type : false;
 
       $dynamic_fields = apply_filters( 'shortcode_property_overview_dynamic_fields', $dynamic_fields );
 
@@ -1472,11 +1479,24 @@ class WPP_Core {
     //** Remove all blank values */
     $wpp_query[ 'query' ] = array_filter( $wpp_query[ 'query' ] );
 
+    //** We add # to value which says that we don't want to use LIKE in SQL query for searching this value. */
+    $required_strict_search = apply_filters( 'wpp::required_strict_search', array( 'wpp_agents' ) );
+    if( ( in_array( $wpp_query[ 'strict_search' ], array( 'true', 'on' ) ) && isset( $wp_properties[ 'property_stats' ][ $key ] ) ) || in_array( $key, $required_strict_search ) ) {
+      foreach ( $wpp_query[ 'query' ] as $key => $val ) {
+        if ( !key_exists( $key, $defaults ) && $key != 'property_type' ) {
+          if ( substr_count( $val, ',' ) || substr_count( $val, '&ndash;' ) || substr_count( $val, '--' ) ) {
+            continue;
+          }
+          $wpp_query[ 'query' ][ $key ] = '#' . $val . '#';
+        }
+      }
+    }
+    
     //** Unset this because it gets passed with query (for back-button support) but not used by get_properties() */
     unset( $wpp_query[ 'query' ][ 'per_page' ] );
     unset( $wpp_query[ 'query' ][ 'pagination' ] );
     unset( $wpp_query[ 'query' ][ 'requested_page' ] );
-
+    
     //** Load the results */
     $wpp_query[ 'properties' ] = WPP_F::get_properties( $wpp_query[ 'query' ], true );
 
@@ -1484,11 +1504,10 @@ class WPP_Core {
     if ( $wpp_query[ 'pagination' ] == 'on' ) {
       $wpp_query[ 'pages' ] = ceil( $wpp_query[ 'properties' ][ 'total' ] / $wpp_query[ 'per_page' ] );
     }
+    
+    $property_type = isset( $wpp_query[ 'query' ][ 'property_type' ] ) ? $wpp_query[ 'query' ][ 'property_type' ] : false;
 
-    //** Set for quick access (for templates */
-    $property_type = $wpp_query[ 'query' ][ 'property_type' ];
-
-    if ( !empty( $property_type ) ) {
+    if ( !empty( $property_type ) && isset( $wp_properties[ 'hidden_attributes' ][ $property_type ] ) ) {
       foreach ( (array) $wp_properties[ 'hidden_attributes' ][ $property_type ] as $attr_key ) {
         unset( $wpp_query[ 'sortable_attrs' ][ $attr_key ] );
       }
@@ -1502,7 +1521,7 @@ class WPP_Core {
     $thumbnail_size = $wpp_query[ 'thumbnail_size' ];
 
     //* Debugger */
-    if ( $wp_properties[ 'configuration' ][ 'developer_mode' ] == 'true' && !$wpp_query[ 'ajax_call' ] ) {
+    if ( isset( $wp_properties[ 'configuration' ][ 'developer_mode' ] ) && $wp_properties[ 'configuration' ][ 'developer_mode' ] == 'true' && !$wpp_query[ 'ajax_call' ] ) {
       echo '<script type="text/javascript">console.log( ' . json_encode( $wpp_query ) . ' ); </script>';
     }
 
@@ -1532,7 +1551,7 @@ class WPP_Core {
     //** Try find custom template */
     $template_found = WPP_F::get_template_part( array(
       "property-overview-{$template}",
-      "property-overview-{$property_type}",
+      "property-overview-" . sanitize_key( $property_type ),
       "property-{$template}",
       "property-overview",
     ), array( WPP_Templates ) );
@@ -1782,8 +1801,16 @@ class WPP_Core {
    */
   function properties_body_class( $classes ) {
     global $post, $wp_properties;
-
-    if ( strpos( $post->post_content, "property_overview" ) || ( is_search() && isset( $_REQUEST[ 'wpp_search' ] ) ) || ( $wp_properties[ 'configuration' ][ 'base_slug' ] == $post->post_name ) ) {
+    
+    if( !is_object( $post ) ) {
+      return $classes;
+    }
+    
+    if ( 
+      strpos( $post->post_content, "property_overview" ) 
+      || ( is_search() && isset( $_REQUEST[ 'wpp_search' ] ) ) 
+      || ( $wp_properties[ 'configuration' ][ 'base_slug' ] == $post->post_name ) 
+    ) {
       $classes[ ] = 'wp-property-listing';
     }
     return $classes;
@@ -1840,7 +1867,7 @@ class WPP_Core {
     global $wpp_capabilities;
 
     //* Get Administrator role for adding custom capabilities */
-    $role =& get_role( 'administrator' );
+    $role = get_role( 'administrator' );
 
     //* General WPP capabilities */
     $wpp_capabilities = array(
@@ -1871,18 +1898,17 @@ class WPP_Core {
       }
     }
   }
-
+  
   /**
    * Generates javascript file with localization.
    * Adds localization support to all WP-Property scripts.
    *
+   * @todo deprecated way of loading localization data. See self::maybe_generate_l10n_script()
    * @since 1.37.3.2
    * @author peshkov@UD
    */
   static function localize_scripts() {
-
     $l10n = WPP_F::get_cache( 'localize_scripts' );
-  
     if( !$l10n ) {
       $l10n = array();
       //** Include the list of translations */
@@ -1897,11 +1923,44 @@ class WPP_Core {
       }
       WPP_F::set_cache( 'localize_scripts', $l10n );
     }
-
     header( 'Content-type: application/x-javascript' );
-
     die( "var wpp = ( typeof wpp === 'object' ) ? wpp : {}; wpp.strings = " . json_encode( $l10n ) . ';' );
+  }
 
+  /**
+   * Generates javascript file with localization.
+   * Adds localization support to all WP-Property scripts.
+   *
+   * @since 1.41.5
+   * @author peshkov@UD
+   */
+  static function maybe_generate_l10n_script() {
+    $dir = WPP_Path . 'cache/';
+    $file = $dir . 'l10n.js';
+    //** File already created! */
+    if( file_exists( $file ) ){
+      return true;
+    }
+    //** Try to create directory if it doesn't exist */
+    if( !is_dir( $dir ) && !wp_mkdir_p( $dir ) ) {
+      return false;
+    }
+    $l10n = array();
+    //** Include the list of translations */
+    include_once WPP_Path . 'l10n.php';
+    /** All additional localizations must be added using the filter below. */
+    $l10n = apply_filters( 'wpp::js::localization', $l10n );
+    foreach ( (array) $l10n as $key => $value ) {
+      if ( !is_scalar( $value ) ) {
+        continue;
+      }
+      $l10n[ $key ] = html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' );
+    }
+    //** Save file */
+    if( @file_put_contents( $file, 'var wpp = ( typeof wpp === \'object\' ) ? wpp : {}; wpp.strings = ' . json_encode( $l10n ) . ';' ) ) {
+      return false;
+    }
+    return true;
   }
 
   /**

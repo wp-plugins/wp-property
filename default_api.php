@@ -272,7 +272,7 @@ if ( isset( $wp_properties[ 'numeric_attributes' ] ) && is_array( $wp_properties
   if ( isset( $wp_properties['searchable_attr_fields'] ) && is_array( $wp_properties['searchable_attr_fields'] ) ) {
     foreach( $wp_properties['searchable_attr_fields'] as $key => $value ) {
       if ( $value == 'checkbox' ) {
-        add_filter("wpp_stat_filter_$key", create_function(' $value ', ' return $value == "0" ? __("No", WPP) : __("Yes", WPP); '));
+        add_filter("wpp_stat_filter_$key", create_function(' $value ', ' return $value == "0" ? __( "No", "wpp" ) : __( "Yes", "wpp" ); '));
       }
     }
   }
@@ -356,12 +356,13 @@ function wpp_format_address_attribute( $data, $property = false, $format = "[str
   $currenty_address = $property->$wp_properties[ 'configuration' ][ 'address_attribute' ];
 
   //** If the currently requested properties address has not been formatted, and on-the-fly geo-lookup has not been disabled, try to look up now */
-  if ( !$property->address_is_formatted && $wp_properties[ 'configuration' ][ 'do_not_automatically_geo_validate_on_property_view' ] != 'true' ) {
+  if ( 
+    ( !isset( $property->address_is_formatted ) || !$property->address_is_formatted ) 
+    && $wp_properties[ 'configuration' ][ 'do_not_automatically_geo_validate_on_property_view' ] != 'true' 
+  ) {
     //** Silently attempt to validate address, right now */
     $geo_data = WPP_F::revalidate_all_addresses( array( 'property_ids' => array( $property->ID ), 'echo_result' => false, 'return_geo_data' => true ) );
-
     if ( $this_geo_data = $geo_data[ 'geo_data' ][ $property->ID ] ) {
-
       $street_number = $this_geo_data->street_number;
       $route = $this_geo_data->route;
       $city = $this_geo_data->city;
@@ -371,17 +372,15 @@ function wpp_format_address_attribute( $data, $property = false, $format = "[str
       $country = $this_geo_data->country;
       $postal_code = $this_geo_data->postal_code;
     }
-
   } else {
-
-    $street_number = $property->street_number;
-    $route = $property->route;
-    $city = $property->city;
-    $state = $property->state;
-    $state_code = $property->state_code;
-    $county = $property->county;
-    $country = $property->country;
-    $postal_code = $property->postal_code;
+    $street_number = isset( $property->street_number ) ? $property->street_number : false;
+    $route = isset( $property->route ) ? $property->route : false;
+    $city = isset( $property->city ) ? $property->city : false;
+    $state = isset( $property->state ) ? $property->state : false;
+    $state_code = isset( $property->state_code ) ? $property->state_code : false;
+    $county = isset( $property->county ) ? $property->county : false;
+    $country = isset( $property->country ) ? $property->country : false;
+    $postal_code = isset( $property->postal_code ) ? $property->postal_code : false;
   }
 
   $display_address = $format;
@@ -458,17 +457,17 @@ function wpp_property_stats_input_address( $content, $slug, $object ) {
           <?php echo $content; ?>
     <div class="wpp_attribute_row_address_options">
           <input type="hidden" name="wpp_data[meta][manual_coordinates]" value="false"/>
-          <input type="checkbox" id="wpp_manual_coordinates" name="wpp_data[meta][manual_coordinates]" value="true" <?php checked( $object[ 'manual_coordinates' ], 1 ); ?> />
+          <input type="checkbox" id="wpp_manual_coordinates" name="wpp_data[meta][manual_coordinates]" value="true" <?php isset( $object[ 'manual_coordinates' ] ) ? checked( $object[ 'manual_coordinates' ], 1 ) : ''; ?> />
           <label for="wpp_manual_coordinates"><?php echo __( 'Set Coordinates Manually.', 'wpp' ); ?></label>
-          <div id="wpp_coordinates" style="<?php if ( !$object[ 'manual_coordinates' ] ) { ?>display:none;<?php } ?>">
+          <div id="wpp_coordinates" style="<?php echo !isset( $object[ 'manual_coordinates' ] ) ? 'display:none;' : ''; ?>">
             <ul>
               <li>
-                  <input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo $object[ 'latitude' ]; ?>"/>
+                  <input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo isset( $object[ 'latitude' ] ) ? $object[ 'latitude' ] : ''; ?>"/>
                   <label><?php echo __( 'Latitude', 'wpp' ) ?></label>
                   <div class="wpp_clear"></div>
                 </li>
                 <li>
-                  <input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo $object[ 'longitude' ]; ?>"/>
+                  <input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo isset( $object[ 'longitude' ] ) ? $object[ 'longitude' ] : ''; ?>"/>
                   <label><?php echo __( 'Longitude', 'wpp' ) ?></label>
                   <div class="wpp_clear"></div>
                 </li>
@@ -549,7 +548,7 @@ function wpp_save_property_aggregated_data( $post_id ) {
 
         $attribute_data = WPP_F::get_attribute_data( $searchable_attribute );
 
-        if ( $attribute_data[ 'numeric' ] || $attribute_data[ 'currency' ] ) {
+        if ( !empty( $attribute_data[ 'numeric' ] ) || !empty( $attribute_data[ 'currency' ] ) ) {
           if ( !empty( $child_object[ $searchable_attribute ] ) && !in_array( $searchable_attribute, $excluded_attributes ) ) {
             if ( !isset( $range[ $searchable_attribute ] ) ) $range[ $searchable_attribute ] = array();
             $range[ $searchable_attribute ][ ] = $child_object[ $searchable_attribute ];
@@ -632,7 +631,7 @@ function format_phone_number( $phone_number ) {
  */
 function add_format_phone_number_checkbox() {
   global $wp_properties;
-  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_phone_number]&label=" . __( 'Format phone number.', 'wpp' ), $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] ) . '</li>';
+  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_phone_number]&label=" . __( 'Format phone number.', 'wpp' ), ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] : false ) ) . '</li>';
 }
 
 /**
@@ -643,7 +642,7 @@ function add_format_phone_number_checkbox() {
  */
 function add_format_true_checkbox() {
   global $wp_properties;
-  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __( 'Convert "Yes" and "True" values to checked icons on the front-end.', 'wpp' ), $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] ) . '</li>';
+  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __( 'Convert "Yes" and "True" values to checked icons on the front-end.', 'wpp' ), ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] : false ) ) . '</li>';
 }
 
 /**
@@ -727,9 +726,10 @@ function add_display_address( $property ) {
   $display_address_code = $display_address;
 
   // Check if property is supposed to inehrit the address
-  if ( isset( $property[ 'parent_id' ] )
-    && is_array( $wp_properties[ 'property_inheritance' ][ $property[ 'property_type' ] ] )
-    && in_array( $wp_properties[ 'configuration' ][ 'address_attribute' ], $wp_properties[ 'property_inheritance' ][ $property[ 'property_type' ] ] )
+  if ( 
+    isset( $property[ 'parent_id' ] )
+    && isset( $wp_properties[ 'property_inheritance' ][ $property[ 'property_type' ] ] )
+    && in_array( $wp_properties[ 'configuration' ][ 'address_attribute' ], (array)$wp_properties[ 'property_inheritance' ][ $property[ 'property_type' ] ] )
   ) {
 
     if ( get_post_meta( $property[ 'parent_id' ], 'address_is_formatted', true ) ) {
@@ -759,16 +759,16 @@ function add_display_address( $property ) {
   } else {
 
     // Verify that address has been converted via Google Maps API
-    if ( $property[ 'address_is_formatted' ] ) {
+    if ( isset( $property[ 'address_is_formatted' ] ) && $property[ 'address_is_formatted' ] ) {
 
-      $street_number = $property[ 'street_number' ];
-      $route = $property[ 'route' ];
-      $city = $property[ 'city' ];
-      $state = $property[ 'state' ];
-      $state_code = $property[ 'state_code' ];
-      $country = $property[ 'country' ];
-      $postal_code = $property[ 'postal_code' ];
-      $county = $property[ 'county' ];
+      $street_number = isset( $property[ 'street_number' ] ) ? $property[ 'street_number' ] : '';
+      $route = isset( $property[ 'route' ] ) ? $property[ 'route' ] : '';
+      $city = isset( $property[ 'city' ] ) ? $property[ 'city' ] : '';
+      $state = isset( $property[ 'state' ] ) ? $property[ 'state' ] : '';
+      $state_code = isset( $property[ 'state_code' ] ) ? $property[ 'state_code' ] : '';
+      $country = isset( $property[ 'country' ] ) ? $property[ 'country' ] : '';
+      $postal_code = isset( $property[ 'postal_code' ] ) ? $property[ 'postal_code' ] : '';
+      $county = isset( $property[ 'county' ] ) ? $property[ 'county' ] : '';
 
       $display_address = str_replace( "[street_number]", $street_number, $display_address );
       $display_address = str_replace( "[street_name]", $route, $display_address );

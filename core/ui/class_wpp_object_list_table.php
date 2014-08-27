@@ -13,11 +13,10 @@ class WPP_Object_List_Table extends WPP_List_Table {
   function __construct( $args = '' ) {
     $args = wp_parse_args( $args, array(
       'plural' => '',
-      'iColumns' => 3,
       'per_page' => 20,
       'iDisplayStart' => 0,
       'ajax_action' => 'wpp_ajax_list_table',
-      'current_screen' => '',
+      'screen' => '',
       'table_scope' => 'wpp_overview',
       'singular' => '',
       'ajax' => false
@@ -152,8 +151,10 @@ class WPP_Object_List_Table extends WPP_List_Table {
           break;
 
         case 'property_type':
-          $property_type = $post->property_type;
-          $r .= $wp_properties[ 'property_types' ][ $property_type ];
+          $property_type = !empty( $post->property_type ) ? $post->property_type : false;
+          if( !empty( $property_type ) ) {
+            $r .= ( isset( $wp_properties[ 'property_types' ][ $property_type ] ) ? $wp_properties[ 'property_types' ][ $property_type ] : '' );
+          }
           break;
 
         case 'overview':
@@ -167,7 +168,7 @@ class WPP_Object_List_Table extends WPP_List_Table {
 
           $display_stats = array();
           foreach($overview_stats as $stat => $label) {
-            $values = $post->$stat;
+            $values = isset( $post->$stat ) ? $post->$stat : array( '' );
 
             if ( !is_array( $values ) ) {
               $values = array( $values );
@@ -233,7 +234,7 @@ class WPP_Object_List_Table extends WPP_List_Table {
 
         case 'thumbnail':
 
-          if ( $post->featured_image ) {
+          if ( isset( $post->featured_image ) && $post->featured_image ) {
 
             $overview_thumb_type = $wp_properties[ 'configuration' ][ 'admin_ui' ][ 'overview_table_thumbnail_size' ];
 
@@ -256,12 +257,12 @@ class WPP_Object_List_Table extends WPP_List_Table {
         case 'featured':
 
           if ( current_user_can( 'manage_options' ) ) {
-            if ( $post->featured )
+            if ( isset( $post->featured ) && $post->featured )
               $r .= "<input type='button' id='wpp_feature_{$post->ID}' class='wpp_featured_toggle wpp_is_featured' nonce='" . wp_create_nonce( 'wpp_make_featured_' . $post->ID ) . "' value='" . __( 'Featured', 'wpp' ) . "' />";
             else
               $r .= "<input type='button' id='wpp_feature_{$post->ID}' class='wpp_featured_toggle' nonce='" . wp_create_nonce( 'wpp_make_featured_' . $post->ID ) . "'  value='" . __( 'Add to Featured', 'wpp' ) . "' />";
           } else {
-            if ( $post->featured )
+            if ( isset( $post->featured ) && $post->featured )
               $r .= __( 'Featured', 'wpp' );
             else
               $r .= "";
@@ -274,7 +275,7 @@ class WPP_Object_List_Table extends WPP_List_Table {
 
           $print_values = array();
 
-          $value = $post->{$column};
+          $value = isset( $post->{$column} ) ? $post->{$column} : array( '' );
 
           if ( !is_array( $value ) ) {
             $value = array( $value );

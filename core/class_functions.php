@@ -16,7 +16,7 @@ class WPP_F extends UD_API {
    *
    * @updated 1.36.0
    */
-  static function get_api_key( $args = false ) {
+  static public function get_api_key( $args = false ) {
 
     $args = wp_parse_args( $args, array(
       'force_check' => false
@@ -90,7 +90,7 @@ class WPP_F extends UD_API {
    *
    * @return boolean
    */
-  static function log( $message = false, $type = 'default', $object = false, $args = array() ) {
+  static public function log( $message = false, $type = 'default', $object = false, $args = array() ) {
     $args = wp_parse_args( (array) $args, array(
       'type'   => $type,
       'object' => $object,
@@ -106,7 +106,7 @@ class WPP_F extends UD_API {
    * @since 1.10
    *
    */
-  function property_label( $type = 'singular' ) {
+  static public function property_label( $type = 'singular' ) {
     global $wp_post_types;
 
     if( $type == 'plural' ) {
@@ -125,7 +125,7 @@ class WPP_F extends UD_API {
    * @since 1.31.0
    *
    */
-  function widgets_init() {
+  static public function widgets_init() {
     global $wp_properties;
 
     /** Loads widgets */
@@ -184,7 +184,7 @@ class WPP_F extends UD_API {
    * @since 1.31.0
    *
    */
-  static function register_post_type_and_taxonomies() {
+  static public function register_post_type_and_taxonomies() {
     global $wp_properties;
 
     // Setup taxonomies
@@ -254,7 +254,7 @@ class WPP_F extends UD_API {
     register_post_type( 'property', array(
       'labels'              => $wp_properties[ 'labels' ],
       'public'              => true,
-      'exclude_from_search' => $wp_properties[ 'configuration' ][ 'exclude_from_regular_search_results' ] == 'true' ? true : false,
+      'exclude_from_search' => ( isset( $wp_properties[ 'configuration' ][ 'exclude_from_regular_search_results' ] ) && $wp_properties[ 'configuration' ][ 'exclude_from_regular_search_results' ] == 'true' ? true : false ),
       'show_ui'             => true,
       '_edit_link'          => 'post.php?post=%d',
       'capability_type'     => array( 'wpp_property', 'wpp_properties' ),
@@ -268,7 +268,7 @@ class WPP_F extends UD_API {
     ) );
 
     if( $wp_properties[ 'taxonomies' ] ) {
-
+    
       foreach( $wp_properties[ 'taxonomies' ] as $taxonomy => $taxonomy_data ) {
 
         //** Check if taxonomy is disabled */
@@ -285,6 +285,7 @@ class WPP_F extends UD_API {
           'labels'       => $taxonomy_data[ 'labels' ],
           'query_var'    => $taxonomy,
           'rewrite'      => array( 'slug' => $taxonomy ),
+          'show_ui'      => ( current_user_can( 'manage_wpp_categories' ) ? true : false ),
           'capabilities' => array(
             'manage_terms' => 'manage_wpp_categories',
             'edit_terms'   => 'manage_wpp_categories',
@@ -295,8 +296,6 @@ class WPP_F extends UD_API {
       }
     }
 
-    register_taxonomy_for_object_type( 'property_features', 'property' );
-
   }
 
   /**
@@ -305,7 +304,7 @@ class WPP_F extends UD_API {
    * @since 1.10
    *
    */
-  function load_assets( $types = array() ) {
+  static public function load_assets( $types = array() ) {
     global $post, $property, $wp_properties;
 
     add_action( 'wp_enqueue_scripts', create_function( '', "wp_enqueue_script('jquery-ui-slider');" ) );
@@ -348,7 +347,7 @@ class WPP_F extends UD_API {
    * @since Denali 3.0
    *
    */
-  function is_asset_loaded( $handle = false ) {
+  static public function is_asset_loaded( $handle = false ) {
     global $wp_properties, $wp_scripts;
 
     if( empty( $handle ) ) {
@@ -373,15 +372,15 @@ class WPP_F extends UD_API {
    *
    * @since 1.32.0
    */
-  function console_log( $text = false ) {
+  static public function console_log( $text = false ) {
     global $wp_properties;
 
-    if( $wp_properties[ 'configuration' ][ 'developer_mode' ] != 'true' ) {
-      return;
+    if( !isset( $wp_properties[ 'configuration' ][ 'developer_mode' ] ) || $wp_properties[ 'configuration' ][ 'developer_mode' ] != 'true' ) {
+      return false;
     }
 
     if( empty( $text ) ) {
-      return;
+      return false;
     }
 
     if( is_array( $text ) || is_object( $text ) ) {
@@ -394,6 +393,7 @@ class WPP_F extends UD_API {
     add_filter( 'wp_footer', create_function( '$nothing,$echo_text = "' . $text . '"', 'echo \'<script type="text/javascript">if(typeof console == "object"){console.log("\' . $echo_text . \'");}</script>\'; ' ) );
     add_filter( 'admin_footer', create_function( '$nothing,$echo_text = "' . $text . '"', 'echo \'<script type="text/javascript">if(typeof console == "object"){console.log("\' . $echo_text . \'");}</script>\'; ' ) );
 
+    return true;
   }
 
   /**
@@ -402,7 +402,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.26.0
    */
-  function can_get_script( $url = false, $args = array() ) {
+  static public function can_get_script( $url = false, $args = array() ) {
     global $wp_properties;
 
     if( empty( $url ) ) {
@@ -448,7 +448,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.26.0
    */
-  function can_get_image( $url = false ) {
+  static public function can_get_image( $url = false ) {
     global $wp_properties;
 
     if( empty( $url ) ) {
@@ -471,7 +471,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.30.2
    */
-  function strip_invalid_xml( $value ) {
+  static public function strip_invalid_xml( $value ) {
 
     $ret = "";
 
@@ -510,7 +510,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.26.0
    */
-  function json_to_xml( $json, $options = array() ) {
+  static public function json_to_xml( $json, $options = array() ) {
 
     //** An array of serializer options */
     $options = wp_parse_args( $options, array(
@@ -575,7 +575,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.32.0
    */
-  function detect_encoding( $string ) {
+  static public function detect_encoding( $string ) {
 
     $encoding = array(
       'UTF-8',
@@ -608,7 +608,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.32.0
    */
-  function csv_to_xml( $string, $args = false ) {
+  static public function csv_to_xml( $string, $args = false ) {
 
     $uploads = wp_upload_dir();
 
@@ -677,7 +677,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.25.0
    */
-  function get_filesize( $file ) {
+  static public function get_filesize( $file ) {
     $bytes = filesize( $file );
     $s     = array( 'b', 'Kb', 'Mb', 'Gb' );
     $e     = floor( log( $bytes ) / log( 1024 ) );
@@ -691,7 +691,7 @@ class WPP_F extends UD_API {
    * @todo Add regex to check for opening and closing bracket.
    * @version 1.23.1
    */
-  function mass_set_property_type( $property_type = false ) {
+  static public function mass_set_property_type( $property_type = false ) {
     global $wpdb;
 
     if( !$property_type ) {
@@ -727,7 +727,7 @@ class WPP_F extends UD_API {
    * @todo Add regex to check for opening and closing bracket.
    * @version 1.23.1
    */
-  function detect_shortcode( $shortcode = false ) {
+  static public function detect_shortcode( $shortcode = false ) {
     global $post;
 
     if( !$post ) {
@@ -749,7 +749,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.23.0
    */
-  function reassemble_address( $property_id = false ) {
+  static public function reassemble_address( $property_id = false ) {
 
     if( !$property_id ) {
       return false;
@@ -778,11 +778,11 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.3
    */
-  function generate_nonce( $action = -1 ) {
+  static public function generate_nonce( $action = -1 ) {
 
     $user = wp_get_current_user();
 
-    $uid = (int) $user->id;
+    $uid = (int) $user->ID;
 
     if( empty( $uid ) ) {
       $uid = $_SERVER[ 'REMOTE_ADDR' ];
@@ -799,10 +799,10 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.3
    */
-  function verify_nonce( $nonce, $action = false ) {
+  static public function verify_nonce( $nonce, $action = false ) {
 
     $user = wp_get_current_user();
-    $uid  = (int) $user->id;
+    $uid  = (int) $user->ID;
 
     if( empty( $uid ) ) {
       $uid = $_SERVER[ 'REMOTE_ADDR' ];
@@ -830,7 +830,7 @@ class WPP_F extends UD_API {
    * @todo Consider putting this into settings action, or somewhere, so it its only ran once, or adding caching
    * @version 1.17.3
    */
-  function get_attribute_data( $attribute = false ) {
+  static public function get_attribute_data( $attribute = false ) {
     global $wp_properties;
 
     if( !$attribute ) {
@@ -877,13 +877,13 @@ class WPP_F extends UD_API {
 
     $return[ 'slug' ] = $attribute;
 
-    if( $wp_properties[ 'property_stats' ][ $attribute ] ) {
+    if( isset( $wp_properties[ 'property_stats' ][ $attribute ] ) ) {
       $return[ 'is_stat' ]      = 'true';
       $return[ 'storage_type' ] = 'meta_key';
       $return[ 'label' ]        = $wp_properties[ 'property_stats' ][ $attribute ];
     }
 
-    if( $wp_properties[ 'property_meta' ][ $attribute ] ) {
+    if( isset( $wp_properties[ 'property_meta' ][ $attribute ] ) ) {
       $return[ 'is_meta' ]         = 'true';
       $return[ 'storage_type' ]    = 'meta_key';
       $return[ 'label' ]           = $wp_properties[ 'property_meta' ][ $attribute ];
@@ -891,22 +891,22 @@ class WPP_F extends UD_API {
       $return[ 'data_input_type' ] = 'textarea';
     }
 
-    if( $wp_properties[ 'searchable_attr_fields' ][ $attribute ] ) {
+    if( isset( $wp_properties[ 'searchable_attr_fields' ][ $attribute ] ) ) {
       $return[ 'input_type' ] = $wp_properties[ 'searchable_attr_fields' ][ $attribute ];
       $ui_class[ ]            = $return[ 'input_type' ];
     }
 
-    if( $wp_properties[ 'admin_attr_fields' ][ $attribute ] ) {
+    if( isset( $wp_properties[ 'admin_attr_fields' ][ $attribute ] ) ) {
       $return[ 'data_input_type' ] = $wp_properties[ 'admin_attr_fields' ][ $attribute ];
       $ui_class[ ]                 = $return[ 'data_input_type' ];
     }
 
-    if( $wp_properties[ 'configuration' ][ 'address_attribute' ] == $attribute ) {
+    if( isset( $wp_properties[ 'configuration' ][ 'address_attribute' ] ) && $wp_properties[ 'configuration' ][ 'address_attribute' ] == $attribute ) {
       $return[ 'is_address_attribute' ] = 'true';
       $ui_class[ ]                      = 'address_attribute';
     }
 
-    if( is_array( $wp_properties[ 'property_inheritance' ] ) ) {
+    if( isset( $wp_properties[ 'property_inheritance' ] ) && is_array( $wp_properties[ 'property_inheritance' ] ) ) {
       foreach( $wp_properties[ 'property_inheritance' ] as $property_type => $type_data ) {
         if( in_array( $attribute, $type_data ) ) {
           $return[ 'inheritance' ][ ] = $property_type;
@@ -914,35 +914,35 @@ class WPP_F extends UD_API {
       }
     }
 
-    if( is_array( $wp_properties[ 'predefined_values' ] ) && ( $predefined_values = $wp_properties[ 'predefined_values' ][ $attribute ] ) ) {
-      $return[ 'predefined_values' ] = $predefined_values;
+    if( isset( $wp_properties[ 'predefined_values' ][ $attribute ] ) ) {
+      $return[ 'predefined_values' ] = $wp_properties[ 'predefined_values' ][ $attribute ];
     }
 
-    if( is_array( $wp_properties[ 'predefined_search_values' ] ) && ( $predefined_values = $wp_properties[ 'predefined_search_values' ][ $attribute ] ) ) {
-      $return[ 'predefined_search_values' ] = $predefined_values;
+    if( isset( $wp_properties[ 'predefined_search_values' ][ $attribute ] ) ) {
+      $return[ 'predefined_search_values' ] = $wp_properties[ 'predefined_search_values' ][ $attribute ];
     }
 
-    if( is_array( $wp_properties[ 'sortable_attributes' ] ) && in_array( $attribute, $wp_properties[ 'sortable_attributes' ] ) ) {
+    if( isset( $wp_properties[ 'sortable_attributes' ] ) && in_array( $attribute, (array)$wp_properties[ 'sortable_attributes' ] ) ) {
       $return[ 'sortable' ] = true;
       $ui_class[ ]          = 'sortable';
     }
 
-    if( is_array( $wp_properties[ 'hidden_frontend_attributes' ] ) && in_array( $attribute, $wp_properties[ 'hidden_frontend_attributes' ] ) ) {
+    if( isset( $wp_properties[ 'hidden_frontend_attributes' ] ) && in_array( $attribute, (array)$wp_properties[ 'hidden_frontend_attributes' ] ) ) {
       $return[ 'hidden_frontend_attribute' ] = true;
       $ui_class[ ]                           = 'fe_hidden';
     }
 
-    if( is_array( $wp_properties[ 'currency_attributes' ] ) && in_array( $attribute, $wp_properties[ 'currency_attributes' ] ) ) {
+    if( isset( $wp_properties[ 'currency_attributes' ] ) && in_array( $attribute, (array)$wp_properties[ 'currency_attributes' ] ) ) {
       $return[ 'currency' ] = true;
       $ui_class[ ]          = 'currency';
     }
 
-    if( is_array( $wp_properties[ 'numeric_attributes' ] ) && in_array( $attribute, $wp_properties[ 'numeric_attributes' ] ) ) {
+    if( isset( $wp_properties[ 'numeric_attributes' ] ) && in_array( $attribute, (array)$wp_properties[ 'numeric_attributes' ] ) ) {
       $return[ 'numeric' ] = true;
       $ui_class[ ]         = 'numeric';
     }
 
-    if( is_array( $wp_properties[ 'searchable_attributes' ] ) && in_array( $attribute, $wp_properties[ 'searchable_attributes' ] ) ) {
+    if( isset( $wp_properties[ 'searchable_attributes' ] ) && in_array( $attribute, (array)$wp_properties[ 'searchable_attributes' ] ) ) {
       $return[ 'searchable' ] = true;
       $ui_class[ ]            = 'searchable';
     }
@@ -966,7 +966,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.3
    */
-  function force_script_inclusion( $handle = false ) {
+  static public function force_script_inclusion( $handle = false ) {
     global $wp_scripts;
 
     //** WP 3.3+ allows inline wp_enqueue_script(). Yay. */
@@ -1001,7 +1001,7 @@ class WPP_F extends UD_API {
    * @return bool
    * @author Maxim Peshkov
    */
-  function force_style_inclusion( $handle = false ) {
+  static public function force_style_inclusion( $handle = false ) {
     global $wp_styles;
     static $printed_styles = array();
 
@@ -1028,7 +1028,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.3
    */
-  function get_queryable_keys() {
+  static public function get_queryable_keys() {
     global $wp_properties;
 
     $keys = array_keys( (array) $wp_properties[ 'property_stats' ] );
@@ -1060,7 +1060,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.2
    */
-  function get_sortable_keys() {
+  static public function get_sortable_keys() {
     global $wp_properties;
 
     $sortable_attrs = array();
@@ -1069,9 +1069,9 @@ class WPP_F extends UD_API {
       $sortable_attrs[ 'post_title' ] = __( 'Title', 'wpp' );
     }
 
-    if( !empty( $wp_properties[ 'property_stats' ] ) && $wp_properties[ 'sortable_attributes' ] ) {
-      foreach( $wp_properties[ 'property_stats' ] as $slug => $label ) {
-        if( in_array( $slug, $wp_properties[ 'sortable_attributes' ] ) ) {
+    if( !empty( $wp_properties[ 'property_stats' ] ) && !empty( $wp_properties[ 'sortable_attributes' ] ) ) {
+      foreach( (array)$wp_properties[ 'property_stats' ] as $slug => $label ) {
+        if( in_array( $slug, (array)$wp_properties[ 'sortable_attributes' ] ) ) {
           $sortable_attrs[ $slug ] = $label;
         }
       }
@@ -1096,7 +1096,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.26.0
    */
-  function posts_results( $posts ) {
+  static public function posts_results( $posts ) {
     global $wpdb, $wp_query;
 
     //** Look for child properties */
@@ -1111,8 +1111,12 @@ class WPP_F extends UD_API {
     }
 
     //** Look for regular pages that are placed under base slug */
-    if( $wp_query->query_vars[ 'post_type' ] == 'property' && count( $wpdb->get_row( "SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'property'  LIMIT 0, 1" ) ) == 0 ) {
-      $posts[ ] = $wpdb->get_row( "SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'page'  LIMIT 0, 1" );
+    if( 
+      isset( $wp_query->query_vars[ 'post_type' ] )
+      && $wp_query->query_vars[ 'post_type' ] == 'property' 
+      && count( $wpdb->get_row( "SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'property'  LIMIT 0, 1" ) ) == 0 
+    ) {
+      $posts[] = $wpdb->get_row( "SELECT * FROM {$wpdb->posts} WHERE post_name = '{$wp_query->query_vars['name']}' AND post_type = 'page'  LIMIT 0, 1" );
     }
 
     return $posts;
@@ -1123,10 +1127,10 @@ class WPP_F extends UD_API {
    *
    * @version 1.17.2
    */
-  function pre_get_posts( $query ) {
+  static public function pre_get_posts( $query ) {
     global $wp_properties;
 
-    if( $wp_properties[ 'configuration' ][ 'disable_wordpress_postmeta_cache' ] != 'true' ) {
+    if( !isset( $wp_properties[ 'configuration' ][ 'disable_wordpress_postmeta_cache' ] ) || $wp_properties[ 'configuration' ][ 'disable_wordpress_postmeta_cache' ] != 'true' ) {
       return;
     }
 
@@ -1141,7 +1145,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.16.3
    */
-  function format_numeric( $content = '' ) {
+  static public function format_numeric( $content = '' ) {
     global $wp_properties;
 
     $content = trim( $content );
@@ -1165,7 +1169,7 @@ class WPP_F extends UD_API {
    * @return bool
    * @author peshkov@UD
    */
-  function is_decimal( $val ) {
+  static public function is_decimal( $val ) {
     return is_numeric( $val ) && floor( $val ) != $val;
   }
 
@@ -1178,7 +1182,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.16.3
    */
-  function file_in_uploads_exists_by_url( $image_url = '' ) {
+  static public function file_in_uploads_exists_by_url( $image_url = '' ) {
 
     if( empty( $image_url ) ) {
       return false;
@@ -1201,7 +1205,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.16.3
    */
-  function setup_default_property_page() {
+  static public function setup_default_property_page() {
     global $wpdb, $wp_properties, $user_ID;
 
     $base_slug = $wp_properties[ 'configuration' ][ 'base_slug' ];
@@ -1256,7 +1260,7 @@ class WPP_F extends UD_API {
    *
    * @version 1.16.1
    */
-  function before_delete_post( $post_id ) {
+  static public function before_delete_post( $post_id ) {
     global $wpdb, $wp_properties;
 
     if( $wp_properties[ 'configuration' ][ 'auto_delete_attachments' ] != 'true' ) {
@@ -1289,12 +1293,11 @@ class WPP_F extends UD_API {
       }
     }
 
-    if( is_array( $attachment_directories ) ) {
+    if( isset( $attachment_directories ) && is_array( $attachment_directories ) ) {
       $attachment_directories = array_unique( $attachment_directories );
       foreach( $attachment_directories as $dir ) {
         @rmdir( $dir );
       }
-
     }
 
   }
@@ -1305,7 +1308,7 @@ class WPP_F extends UD_API {
    * @todo add some sort of light validating that the the passed item here is in fact an image
    *
    */
-  function get_property_image_data( $requested_id ) {
+  static public function get_property_image_data( $requested_id ) {
     global $wpdb;
 
     if( empty( $requested_id ) ) {
@@ -1387,7 +1390,7 @@ class WPP_F extends UD_API {
    * @return array. Image data for first image size (if multiple provided). Or FALSE if file could not be generated.
    * @since 1.6
    */
-  static function generate_image( $attachment_id, $sizes = array() ) {
+  static public function generate_image( $attachment_id, $sizes = array() ) {
     global $_wp_additional_image_sizes;
 
     // Determine if params are empty
@@ -1492,7 +1495,7 @@ class WPP_F extends UD_API {
    * @since 1.6
    *
    */
-  static function has_theme_specific_stylesheet() {
+  static public function has_theme_specific_stylesheet() {
 
     $theme_slug = get_option( 'template' );
 
@@ -1510,7 +1513,7 @@ class WPP_F extends UD_API {
    * @since 1.13
    *
    */
-  static function check_premium_folder_permissions() {
+  static public function check_premium_folder_permissions() {
     global $wp_messages;
 
     // If folder is writable, it's all good
@@ -1558,7 +1561,7 @@ class WPP_F extends UD_API {
    * @since 1.05
    *
    */
-  static function revalidate_all_addresses( $args = '' ) {
+  static public function revalidate_all_addresses( $args = '' ) {
     global $wp_properties, $wpdb;
 
     set_time_limit( 0 );
@@ -1676,7 +1679,7 @@ class WPP_F extends UD_API {
    * @since 1.37.2
    * @author odokienko@UD
    */
-  static function revalidate_address( $post_id, $args = array() ) {
+  static public function revalidate_address( $post_id, $args = array() ) {
     global $wp_properties;
 
     $args = wp_parse_args( $args, array(
@@ -1745,12 +1748,12 @@ class WPP_F extends UD_API {
       update_post_meta( $post_id, 'address_is_formatted', true );
 
       if( !empty( $wp_properties[ 'configuration' ][ 'address_attribute' ] ) && ( !$manual_coordinates || $address_by_coordinates ) ) {
-        update_post_meta( $post_id, $wp_properties[ 'configuration' ][ 'address_attribute' ], WPP_F::encode_mysql_input( $geo_data->formatted_address, $wp_properties[ 'configuration' ][ 'address_attribute' ] ) );
+        update_post_meta( $post_id, $wp_properties[ 'configuration' ][ 'address_attribute' ], $geo_data->formatted_address );
       }
 
       foreach( $geo_data as $geo_type => $this_data ) {
         if( in_array( $geo_type, (array) $wp_properties[ 'geo_type_attributes' ] ) && !in_array( $geo_type, array( 'latitude', 'longitude' ) ) ) {
-          update_post_meta( $post_id, $geo_type, WPP_F::encode_mysql_input( $this_data, $geo_type ) );
+          update_post_meta( $post_id, $geo_type, $this_data );
         }
       }
 
@@ -1768,7 +1771,7 @@ class WPP_F extends UD_API {
     }
 
     //** Logs the last validation status for better troubleshooting */
-    update_post_meta( $post_id, 'wpp::google_validation_status', $geo_data->status );
+    update_post_meta( $post_id, 'wpp::google_validation_status', ( isset( $geo_data->status ) ? $geo_data->status : 'success' ) );
 
     // Try to figure out what went wrong
     if( !empty( $geo_data->status ) && ( $geo_data->status == 'OVER_QUERY_LIMIT' || $geo_data->status == 'REQUEST_DENIED' ) ) {
@@ -1804,7 +1807,7 @@ class WPP_F extends UD_API {
    *
    * @since 1.06
    */
-  static function minify_js( $data ) {
+  static public function minify_js( $data ) {
 
     if( !class_exists( 'W3_Plugin' ) ) {
       include_once WPP_Path . 'third-party/jsmin.php';
@@ -1853,7 +1856,7 @@ class WPP_F extends UD_API {
    * @since 1.37.3.2
    * @author odokienko@UD
    */
-  static function minify_css( $data ) {
+  static public function minify_css( $data ) {
 
     include_once WPP_Path . 'third-party/cssmin.php';
 
@@ -1879,7 +1882,7 @@ class WPP_F extends UD_API {
    * @since 1.0
    *
    */
-  static function get_image_dimensions( $type = false ) {
+  static public function get_image_dimensions( $type = false ) {
     return WPP_F::image_sizes( $type );
   }
 
@@ -1890,7 +1893,7 @@ class WPP_F extends UD_API {
    * @since 0.721
    *
    */
-  static function fix_screen_options() {
+  static public function fix_screen_options() {
     global $current_user;
 
     $user_id = $current_user->data->ID;
@@ -1924,7 +1927,7 @@ class WPP_F extends UD_API {
    * @since 0.55
    *
    */
-  static function get_most_common_property_type( $array = false ) {
+  static public function get_most_common_property_type( $array = false ) {
     global $wpdb, $wp_properties;
 
     $type_slugs = array_keys( (array) $wp_properties[ 'property_types' ] );
@@ -1957,7 +1960,7 @@ class WPP_F extends UD_API {
    *
    * @return Array
    */
-  static function split_query_string( $query ) {
+  static public function split_query_string( $query ) {
     /**
      * Split the string properly, so no interference with &ndash; which is used in user input.
      */
@@ -1969,52 +1972,13 @@ class WPP_F extends UD_API {
   }
 
   /**
-   * Handles user input, so a standard is created for supporting special characters.
-   *
-   *
-   * @param  string $input to be converted
-   *
-   * @param bool    $meta_key
-   *
-   * @return   string   $result
-   */
-  static function encode_mysql_input( $input, $meta_key = false ) {
-
-    if( $meta_key == 'latitude' || $meta_key == 'longitude' ) {
-      return (float) $input;
-    }
-
-    /* Uses WPs built in esc_html, works like a charm. */
-    $input = esc_html( $input );
-
-    return $input;
-  }
-
-  /**
-   * Handles user input, so a standard is created for supporting special characters.
-   *
-   * @param $output
-   *
-   * @internal param string $string to be converted
-   *
-   * @return   string   $result
-   */
-  static function decode_mysql_output( $output ) {
-
-    $result = html_entity_decode( $output );
-
-    return $result;
-
-  }
-
-  /**
    * Determines if all of the arrays values are numeric
    *
    *
    * @since 0.55
    *
    */
-  static function is_numeric_range( $array = false ) {
+  static public function is_numeric_range( $array = false ) {
     if( !is_array( $array ) || empty( $array ) ) {
       return false;
     }
@@ -2027,7 +1991,7 @@ class WPP_F extends UD_API {
     return true;
   }
 
-  static function draw_property_type_dropdown( $args = '' ) {
+  static public function draw_property_type_dropdown( $args = '' ) {
     global $wp_properties;
 
     $defaults = array( 'id' => 'wpp_property_type', 'name' => 'wpp_property_type', 'selected' => '' );
@@ -2047,7 +2011,10 @@ class WPP_F extends UD_API {
 
   }
 
-  static function draw_property_dropdown( $args = '' ) {
+  /**
+   *
+   */
+  static public function draw_property_dropdown( $args = '' ) {
     global $wp_properties, $wpdb;
 
     $defaults = array( 'id' => 'wpp_properties', 'name' => 'wpp_properties', 'selected' => '' );
@@ -2072,7 +2039,7 @@ class WPP_F extends UD_API {
    * Return an array of all available attributes and meta keys
    *
    */
-  static function get_total_attribute_array( $args = '', $extra_values = false ) {
+  static public function get_total_attribute_array( $args = '', $extra_values = false ) {
     global $wp_properties, $wpdb;
 
     $defaults = array(
@@ -2112,7 +2079,7 @@ class WPP_F extends UD_API {
    * Render a dropdown of property attributes.
    *
    */
-  static function draw_attribute_dropdown( $args = '', $extra_values = false ) {
+  static public function draw_attribute_dropdown( $args = '', $extra_values = false ) {
     global $wp_properties, $wpdb;
 
     $defaults = array( 'id' => 'wpp_attribute', 'name' => 'wpp_attribute', 'selected' => '' );
@@ -2141,7 +2108,7 @@ class WPP_F extends UD_API {
 
   }
 
-  static function draw_localization_dropdown( $args = '' ) {
+  static public function draw_localization_dropdown( $args = '' ) {
     global $wp_properties, $wpdb;
 
     $defaults = array( 'id' => 'wpp_google_maps_localization', 'name' => 'wpp_google_maps_localization', 'selected' => '', 'return_array' => 'false' );
@@ -2198,7 +2165,7 @@ class WPP_F extends UD_API {
    * @since 1.40.0
    * @author peshkov@UD
    */
-  static function set_cache( $name, $data ) {
+  static public function set_cache( $name, $data ) {
     $dir = WPP_Path . 'cache/';
     $file = $dir . MD5( $name ) . '.res';
     //** Try to create directory if it doesn't exist */
@@ -2218,11 +2185,14 @@ class WPP_F extends UD_API {
    * @since 1.40.0
    * @author peshkov@UD
    */
-  static function get_cache( $name, $live = 3600 ) {
+  static public function get_cache( $name, $live = 3600 ) {
     $dir = WPP_Path . 'cache/';
     $file = $dir . MD5( $name ) . '.res';
     if( is_file( $file ) && time() - filemtime( $file ) < $live ) {
-      return maybe_unserialize( file_get_contents( $file ) );
+      $handle = fopen( $file, "r" );
+      $content = fread( $handle, filesize( $file ) );
+      fclose( $handle );
+      return maybe_unserialize( $content );
     }
     return false;
   }
@@ -2235,7 +2205,7 @@ class WPP_F extends UD_API {
    * @since 1.32.2
    * @author Maxim Peshkov
    */
-  static function clear_cache() {
+  static public function clear_cache() {
     $cache_dir = WPP_Path . 'cache/';
     if( file_exists( $cache_dir ) ) {
       wpp_recursive_unlink( $cache_dir );
@@ -2251,7 +2221,7 @@ class WPP_F extends UD_API {
    * @since 0.55
    * @version 1.13.1
    */
-  static function feature_check() {
+  static public function feature_check() {
     global $wp_properties;
 
     $updates = array();
@@ -2399,7 +2369,7 @@ class WPP_F extends UD_API {
    *
    * @since 0.721
    */
-  static function toggle_featured( $post_id = false ) {
+  static public function toggle_featured( $post_id = false ) {
     global $current_user;
 
     if( !current_user_can( 'manage_options' ) )
@@ -2427,7 +2397,7 @@ class WPP_F extends UD_API {
    *
    * @since 3.0
    */
-  static function overview_columns( $columns ) {
+  static public function overview_columns( $columns ) {
     global $wp_properties, $wp_taxonomies;
 
     $overview_columns = apply_filters( 'wpp_overview_columns', array(
@@ -2453,7 +2423,7 @@ class WPP_F extends UD_API {
 
   }
 
-  static function custom_attribute_columns( $columns ) {
+  static public function custom_attribute_columns( $columns ) {
     global $wp_properties;
 
     if( !empty( $wp_properties[ 'column_attributes' ] ) ) {
@@ -2475,7 +2445,7 @@ class WPP_F extends UD_API {
    * @since 0.54
    *
    */
-  static function image_sizes_dropdown( $args = "" ) {
+  static public function image_sizes_dropdown( $args = "" ) {
     global $wp_properties;
 
     $defaults = array(
@@ -2527,7 +2497,7 @@ class WPP_F extends UD_API {
    *
    * @returns array keys: 'width' and 'height' if image type sizes found.
    */
-  static function image_sizes( $type = false, $args = "" ) {
+  static public function image_sizes( $type = false, $args = "" ) {
     global $_wp_additional_image_sizes;
 
     $defaults = array(
@@ -2590,7 +2560,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @since 1.38.3
    */
-  function save_settings() {
+  static public function save_settings() {
     global $wp_properties;
 
     $data = self::parse_str( $_REQUEST[ 'data' ] );
@@ -2640,7 +2610,7 @@ class WPP_F extends UD_API {
    * @return array|$wp_properties
    * @since 1.12
    */
-  static function settings_action( $force_db = false ) {
+  static public function settings_action( $force_db = false ) {
     global $wp_properties;
 
     //** Handle backup */
@@ -2719,7 +2689,7 @@ class WPP_F extends UD_API {
    *
    * @return mixed
    */
-  static function remove_deleted_image_sizes( $sizes ) {
+  static public function remove_deleted_image_sizes( $sizes ) {
     global $wp_properties;
 
     foreach( $sizes as $slug => $size ) {
@@ -2742,7 +2712,7 @@ class WPP_F extends UD_API {
    * @since 0.54
    *
    */
-  static function the_post( $post ) {
+  static public function the_post( $post ) {
     global $post, $property;
 
     if( $post->post_type != 'property' ) {
@@ -2760,7 +2730,7 @@ class WPP_F extends UD_API {
    * @updated 1.39.0
    * @since 0.624
    */
-  static function load_premium() {
+  static public function load_premium() {
     global $wp_properties;
 
     $default_headers = array(
@@ -2792,7 +2762,7 @@ class WPP_F extends UD_API {
 
         if( end( @explode( ".", $file ) ) == 'php' ) {
 
-          $_upgraed = false;
+          $_upgraded = false;
 
           $plugin_data = @get_file_data( WPP_Premium . "/" . $file, $default_headers, 'plugin' );
 
@@ -2802,13 +2772,16 @@ class WPP_F extends UD_API {
           if( $plugin_slug == 'class_admin_tools' ) {
             continue;
           }
+          
+          if( !isset( $wp_properties[ 'installed_features' ][ $plugin_slug ] ) ) {
+            $wp_properties[ 'installed_features' ][ $plugin_slug ] = array();
+          }
 
-          if( is_array( $wp_properties[ 'installed_features' ][ $plugin_slug ] ) && $wp_properties[ 'installed_features' ][ $plugin_slug ][ 'version' ] ) {
-
-            if( version_compare( $plugin_data[ 'version' ], $wp_properties[ 'installed_features' ][ $plugin_slug ][ 'version' ] ) > 0 ) {
-              $_upgraed = true;
-            }
-
+          if( 
+            !empty( $wp_properties[ 'installed_features' ][ $plugin_slug ][ 'version' ] ) 
+            && version_compare( $plugin_data[ 'version' ], $wp_properties[ 'installed_features' ][ $plugin_slug ][ 'version' ] ) > 0 
+          ) {
+            $_upgraded = true;
           }
 
           $wp_properties[ 'installed_features' ][ $plugin_slug ][ 'name' ]        = $plugin_data[ 'name' ];
@@ -2851,7 +2824,7 @@ class WPP_F extends UD_API {
                 $_instance = new $_class( $wp_properties, $plugin_data );
 
                 // Call Upgrade Method, if exists.
-                if( $_upgraed && is_callable( array( $_instance, 'upgrade' ) ) ) {
+                if( $_upgraded && is_callable( array( $_instance, 'upgrade' ) ) ) {
                   $_instance->upgrade( $wp_properties );
                 }
 
@@ -2899,7 +2872,7 @@ class WPP_F extends UD_API {
    *
    * @return boolean.
    */
-  static function check_premium( $slug ) {
+  static public function check_premium( $slug ) {
     global $wp_properties;
 
     if( empty( $wp_properties[ 'installed_features' ][ $slug ][ 'version' ] ) ) {
@@ -2930,7 +2903,7 @@ class WPP_F extends UD_API {
    * @global array $wp_properties
    * @return null
    */
-  static function check_plugin_updates() {
+  static public function check_plugin_updates() {
     global $wp_properties;
 
     $result = WPP_F::feature_check();
@@ -2952,7 +2925,7 @@ class WPP_F extends UD_API {
    * @since 1.10
    *
    */
-  static function activation() {
+  static public function activation() {
     global $wp_rewrite;
     // Do close to nothing because only ran on activation, not updates, as of 3.1
     // Now handled by WPP_F::manual_activation().
@@ -2970,7 +2943,7 @@ class WPP_F extends UD_API {
    * @version 1.13
    *
    */
-  static function manual_activation() {
+  static public function manual_activation() {
 
     $installed_ver = get_option( "wpp_version", 0 );
     $wpp_version   = WPP_Version;
@@ -3005,7 +2978,7 @@ class WPP_F extends UD_API {
    * Plugin Deactivation
    *
    */
-  static function deactivation() {
+  static public function deactivation() {
     global $wp_rewrite;
     $timestamp = wp_next_scheduled( 'wpp_premium_feature_check' );
     wp_unschedule_event( $timestamp, 'wpp_premium_feature_check' );
@@ -3023,7 +2996,7 @@ class WPP_F extends UD_API {
    * @since 0.621
    *
    */
-  static function get_searchable_properties() {
+  static public function get_searchable_properties() {
     global $wp_properties;
 
     $searchable_properties = array();
@@ -3057,7 +3030,7 @@ class WPP_F extends UD_API {
    *
    * @return mixed|string|void $value Modified value
    */
-  function attribute_filter( $value, $slug ) {
+  static public function attribute_filter( $value, $slug ) {
     global $wp_properties;
 
     // Filter bool values
@@ -3091,7 +3064,7 @@ class WPP_F extends UD_API {
    * @return array|$range
    * @since 0.57
    */
-  static function get_search_values( $search_attributes, $searchable_property_types, $cache = true, $instance_id = false ) {
+  static public function get_search_values( $search_attributes, $searchable_property_types, $cache = true, $instance_id = false ) {
     global $wpdb, $wp_properties;
 
     // Non post_meta fields
@@ -3104,7 +3077,7 @@ class WPP_F extends UD_API {
       $result = WPP_F::get_cache( $instance_id );
     }
 
-    if( !$result ) {
+    if( empty( $result ) ) {
       $query_attributes = "";
       $query_types      = "";
 
@@ -3131,15 +3104,16 @@ class WPP_F extends UD_API {
         //** Load attribute data */
         $attribute_data = WPP_F::get_attribute_data( $searchable_attribute );
 
-        if( $attribute_data[ 'numeric' ] || $attribute_data[ 'currency' ] ) {
+        if( isset( $attribute_data[ 'numeric' ] ) || isset( $attribute_data[ 'currency' ] ) ) {
           $is_numeric = true;
         } else {
           $is_numeric = false;
         }
-
+        
         //** Check to see if this attribute has predefined values or if we have to get them from DB */
         //** If the attributes has predefind values, we use them */
-        if( $predefined_search_values = $wp_properties[ 'predefined_search_values' ][ $searchable_attribute ] ) {
+        if( !empty( $wp_properties[ 'predefined_search_values' ][ $searchable_attribute ] ) ) {
+          $predefined_search_values = $wp_properties[ 'predefined_search_values' ][ $searchable_attribute ];
           $predefined_search_values = str_replace( array( ', ', ' ,' ), array( ',', ',' ), trim( $predefined_search_values ) );
           $predefined_search_values = explode( ',', $predefined_search_values );
 
@@ -3203,7 +3177,7 @@ class WPP_F extends UD_API {
 
           // Clean up values if a conversion exists
           $value = WPP_F::do_search_conversion( $searchable_attribute, trim( $value ) );
-
+          
           // Fix value with special chars. Disabled here, should only be done in final templating stage.
           // $value = htmlspecialchars($value, ENT_QUOTES);
 
@@ -3216,7 +3190,7 @@ class WPP_F extends UD_API {
           $range[ $searchable_attribute ][ $key ] = $value;
 
         }
-
+        
         //** Sort values */
         sort( $range[ $searchable_attribute ], SORT_REGULAR );
 
@@ -3240,9 +3214,13 @@ class WPP_F extends UD_API {
   /**
    * Check if a search converstion exists for a attributes value
    */
-  static function do_search_conversion( $attribute, $value, $reverse = false ) {
+  static public function do_search_conversion( $attribute, $value, $reverse = false ) {
     global $wp_properties;
 
+    if( !isset( $wp_properties[ 'search_conversions' ][ $attribute ] ) ) {
+      return $value;
+    }
+    
     // First, check if any conversions exists for this attribute, if not, return value
     if( count( $wp_properties[ 'search_conversions' ][ $attribute ] ) < 1 ) {
       return $value;
@@ -3260,8 +3238,8 @@ class WPP_F extends UD_API {
 
     }
     // Need to $conversion == '0' or else studios will not work, since they have 0 bedrooms
-    $conversion = $wp_properties[ 'search_conversions' ][ $attribute ][ $value ];
-    if( $conversion == '0' || !empty( $conversion ) )
+    $conversion = isset( $wp_properties[ 'search_conversions' ][ $attribute ][ $value ] ) ? $wp_properties[ 'search_conversions' ][ $attribute ][ $value ] : false;
+    if( $conversion === '0' || !empty( $conversion ) )
       return $conversion;
 
     // Return value in case something messed up
@@ -3281,7 +3259,7 @@ class WPP_F extends UD_API {
    *
    * @return bool|mixed|void
    */
-  static function get_properties( $args = "", $total = false ) {
+  static public function get_properties( $args = "", $total = false ) {
     global $wpdb, $wp_properties, $wpp_query;
 
     //** Cleanup (fix) ID argument if it's passed */
@@ -3359,7 +3337,7 @@ class WPP_F extends UD_API {
 
         $original_value = $value;
 
-        $numeric = in_array( $thing, (array) $wp_properties[ 'numeric_attributes' ] ) ? true : false;
+        $numeric = !empty( $wp_properties[ 'numeric_attributes' ] ) && in_array( $thing, (array) $wp_properties[ 'numeric_attributes' ] ) ? true : false;
 
         //** If not CSV and last character is a +, we look for open-ended ranges, i.e. bedrooms: 5+
         if( substr( $original_value, -1, 1 ) == '+' && !strpos( $original_value, ',' ) && $numeric ) {
@@ -3377,7 +3355,9 @@ class WPP_F extends UD_API {
     }
 
     $defaults = array(
-      'property_type' => 'all'
+      'property_type' => 'all',
+      'pagi' => false,
+      'sort_by' => false,
     );
 
     $query      = wp_parse_args( $args, $defaults );
@@ -3444,7 +3424,7 @@ class WPP_F extends UD_API {
     /** Handles the sort_by parameter in the Short Code */
     if( $query[ 'sort_by' ] ) {
       $sql_sort_by    = $query[ 'sort_by' ];
-      $sql_sort_order = ( $query[ 'sort_order' ] ) ? strtoupper( $query[ 'sort_order' ] ) : 'ASC';
+      $sql_sort_order = isset( $query[ 'sort_order' ] ) ? strtoupper( $query[ 'sort_order' ] ) : 'ASC';
     } else {
       $sql_sort_by    = 'post_date';
       $sql_sort_order = 'ASC';
@@ -3459,14 +3439,13 @@ class WPP_F extends UD_API {
     foreach( (array) $query as $meta_key => $criteria ) {
 
       $specific = '';
-      $criteria = WPP_F::encode_mysql_input( $criteria, $meta_key );
 
       // Stop filtering ( loop ) because no IDs left
       if( isset( $matching_ids ) && empty( $matching_ids ) ) {
         break;
       }
 
-      $numeric = in_array( $meta_key, (array) $wp_properties[ 'numeric_attributes' ] ) ? true : false;
+      $numeric = ( isset( $wp_properties[ 'numeric_attributes' ] ) && in_array( $meta_key, (array) $wp_properties[ 'numeric_attributes' ] ) ) ? true : false;
 
       if( !in_array( $meta_key, (array) $commas_ignore ) && substr_count( $criteria, ',' ) || ( substr_count( $criteria, '-' ) && $numeric ) || substr_count( $criteria, '--' ) ) {
       
@@ -3493,7 +3472,7 @@ class WPP_F extends UD_API {
         $specific = $criteria;
       }
 
-      if( !$limit_query ) {
+      if( !isset( $limit_query ) ) {
         $limit_query = '';
       }
 
@@ -3513,7 +3492,7 @@ class WPP_F extends UD_API {
           }
 
           //** If comma_and is set, $criteria is ignored, otherwise $criteria is used */
-          $property_type_array = is_array( $comma_and ) ? $comma_and : array( $specific );
+          $property_type_array = isset( $comma_and ) && is_array( $comma_and ) ? $comma_and : array( $specific );
 
           //** Make sure property type is in slug format */
           foreach( $property_type_array as $key => $this_property_type ) {
@@ -3524,7 +3503,7 @@ class WPP_F extends UD_API {
             }
           }
 
-          if( $comma_and ) {
+          if( !empty( $property_type_array ) ) {
             //** Multiple types passed */
             $where_string = implode( "' OR meta_value ='", $property_type_array );
           } else {
@@ -3551,7 +3530,7 @@ class WPP_F extends UD_API {
         default:
 
           // Get all properties for that meta_key
-          if( $specific == 'all' && !$comma_and && !$hyphen_between ) {
+          if( $specific == 'all' && empty( $comma_and ) && empty( $hyphen_between ) ) {
 
             if( isset( $matching_ids ) ) {
               $matching_id_filter = implode( "' OR post_id ='", $matching_ids );
@@ -3563,12 +3542,12 @@ class WPP_F extends UD_API {
 
           } else {
 
-            if( $comma_and ) {
+            if( !empty( $comma_and ) ) {
               $where_and = "( meta_value ='" . implode( "' OR meta_value ='", $comma_and ) . "')";
               $specific  = $where_and;
             }
 
-            if( $hyphen_between ) {
+            if( !empty( $hyphen_between ) ) {
               // We are going to see if we are looking at some sort of date, in which case we have a special MySQL modifier
               $adate = false;
               if( preg_match( '%\\d{1,2}/\\d{1,2}/\\d{4}%i', $hyphen_between[ 0 ] ) ) $adate = true;
@@ -3755,7 +3734,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @since 1.37.5
    */
-  static function has_children( $id ) {
+  static public function has_children( $id ) {
 
     $children = get_posts( array(
       'post_type'   => 'property',
@@ -3773,10 +3752,9 @@ class WPP_F extends UD_API {
    * Prepares Request params for get_properties() function
    *
    * @param array $attrs
-   *
    * @return array $attrs
    */
-  function prepare_search_attributes( $attrs ) {
+  static public function prepare_search_attributes( $attrs ) {
     global $wp_properties;
 
     $prepared = array();
@@ -3788,10 +3766,11 @@ class WPP_F extends UD_API {
       //** Fix search form passed paramters to be usable by get_properties();
       if( is_array( $search_query ) ) {
         //** Array variables are either option lists or minimum and maxim variables
-        if( is_numeric( array_shift( array_keys( $search_query ) ) ) ) {
+        $stack = array_keys( $search_query );
+        if( is_numeric( array_shift( $stack ) ) ) {
           //** get regular arrays (non associative) */
           $search_query = implode( ',', $search_query );
-        } elseif( is_array( $search_query[ 'options' ] ) ) {
+        } elseif( isset( $search_query[ 'options' ] ) && is_array( $search_query[ 'options' ] ) ) {
           //** Get queries with options */
           $search_query = implode( ',', $search_query[ 'options' ] );
         } elseif( in_array( 'min', array_keys( $search_query ) ) ||
@@ -3840,7 +3819,7 @@ class WPP_F extends UD_API {
   /**
    * Returns array of all values for a particular attribute/meta_key
    */
-  static function get_all_attribute_values( $slug ) {
+  static public function get_all_attribute_values( $slug ) {
     global $wpdb;
 
     // Non post_meta fields
@@ -3900,7 +3879,7 @@ class WPP_F extends UD_API {
    * @todo Fix the long dashes - when in latitude or longitude it breaks it when using static map
    *
    */
-  static function get_property( $id, $args = false ) {
+  static public function get_property( $id, $args = false ) {
     global $wp_properties, $wpdb;
 
     $id = trim( $id );
@@ -4019,7 +3998,7 @@ class WPP_F extends UD_API {
         }
       }
 
-      if( $featured_image_id ) {
+      if( !empty( $featured_image_id ) ) {
         $return[ 'featured_image' ] = $featured_image_id;
 
         $image_title = $wpdb->get_var( "SELECT post_title  FROM {$wpdb->prefix}posts WHERE ID = '{$featured_image_id}' " );
@@ -4070,8 +4049,8 @@ class WPP_F extends UD_API {
       $return[ 'parent_title' ] = $parent_object[ 'post_title' ];
 
       // Inherit things
-      if( is_array( $wp_properties[ 'property_inheritance' ][ $return[ 'property_type' ] ] ) ) {
-        foreach( $wp_properties[ 'property_inheritance' ][ $return[ 'property_type' ] ] as $inherit_attrib ) {
+      if( !empty( $wp_properties[ 'property_inheritance' ][ $return[ 'property_type' ] ] ) ) {
+        foreach( (array)$wp_properties[ 'property_inheritance' ][ $return[ 'property_type' ] ] as $inherit_attrib ) {
           if( !empty( $parent_object[ $inherit_attrib ] ) && empty( $return[ $inherit_attrib ] ) ) {
             $return[ $inherit_attrib ] = $parent_object[ $inherit_attrib ];
           }
@@ -4091,6 +4070,8 @@ class WPP_F extends UD_API {
 
       if( count( $children ) > 0 ) {
 
+        $range = array();
+      
         //** Cycle through children and get necessary variables */
         foreach( $children as $child_id ) {
 
@@ -4110,7 +4091,7 @@ class WPP_F extends UD_API {
 
             $attribute_data = WPP_F::get_attribute_data( $searchable_attribute );
 
-            if( $attribute_data[ 'numeric' ] || $attribute_data[ 'currency' ] ) {
+            if( !empty( $attribute_data[ 'numeric' ] ) || !empty( $attribute_data[ 'currency' ] ) ) {
 
               if( !empty( $child_object[ $searchable_attribute ] ) && !in_array( $searchable_attribute, $excluded_attributes ) ) {
                 $range[ $searchable_attribute ][ ] = $child_object[ $searchable_attribute ];
@@ -4178,13 +4159,14 @@ class WPP_F extends UD_API {
     $return[ 'permalink' ] = get_permalink( $id );
 
     //** Make sure property_type stays as slug, or it will break many things:  (widgets, class names, etc)  */
-    $return[ 'property_type_label' ] = $wp_properties[ 'property_types' ][ $return[ 'property_type' ] ];
-
-    if( empty( $return[ 'property_type_label' ] ) ) {
-      foreach( $wp_properties[ 'property_types' ] as $pt_key => $pt_value ) {
-        if( strtolower( $pt_value ) == strtolower( $return[ 'property_type' ] ) ) {
-          $return[ 'property_type' ]       = $pt_key;
-          $return[ 'property_type_label' ] = $pt_value;
+    if( !empty( $return[ 'property_type' ] ) ) {
+      $return[ 'property_type_label' ] = isset( $wp_properties[ 'property_types' ][ $return[ 'property_type' ] ]) ? $wp_properties[ 'property_types' ][ $return[ 'property_type' ] ] : false;
+      if( empty( $return[ 'property_type_label' ] ) ) {
+        foreach( $wp_properties[ 'property_types' ] as $pt_key => $pt_value ) {
+          if( strtolower( $pt_value ) == strtolower( $return[ 'property_type' ] ) ) {
+            $return[ 'property_type' ]       = $pt_key;
+            $return[ 'property_type_label' ] = $pt_value;
+          }
         }
       }
     }
@@ -4231,7 +4213,7 @@ class WPP_F extends UD_API {
    * @todo This should be obsolete, in any case we can't assume everyone uses USD - potanin@UD (11/22/11)
    *
    */
-  static function get_attrib_prefix( $attrib ) {
+  static public function get_attrib_prefix( $attrib ) {
 
     if( $attrib == 'price' ) {
       return "$";
@@ -4249,7 +4231,7 @@ class WPP_F extends UD_API {
    * @todo This function does not seem to be used by anything. potanin@UD (11/12/11)
    *
    */
-  static function get_attrib_annex( $attrib ) {
+  static public function get_attrib_annex( $attrib ) {
 
     if( $attrib == 'area' ) {
       return __( ' sq ft.', 'wpp' );
@@ -4261,7 +4243,7 @@ class WPP_F extends UD_API {
    * Get coordinates for property out of database
    *
    */
-  static function get_coordinates( $listing_id = false ) {
+  static public function get_coordinates( $listing_id = false ) {
     global $post, $property;
 
     if( !$listing_id ) {
@@ -4292,7 +4274,7 @@ class WPP_F extends UD_API {
   /**
    * Validate if a URL is valid.
    */
-  static function isURL( $url ) {
+  static public function isURL( $url ) {
     return preg_match( '|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url );
   }
 
@@ -4303,7 +4285,7 @@ class WPP_F extends UD_API {
    *
    * @return boolean
    */
-  static function is_email( $value ) {
+  static public function is_email( $value ) {
     return preg_match( '/^[_a-z0-9-]+(.[_a-z0-9-]+)*@[a-z0-9-]+(.[a-z0-9-]+)*(.[a-z]{2,3})$/', strtolower( $value ) );
   }
 
@@ -4315,10 +4297,12 @@ class WPP_F extends UD_API {
    * @since 1.0
    *
    */
-  static function get_stat_values_and_labels( $property_object, $args = false ) {
+  static public function get_stat_values_and_labels( $property_object, $args = false ) {
     global $wp_properties;
 
-    $defaults = array();
+    $defaults = array(
+      'label_as_key' => 'true',
+    );
 
     if( is_array( $property_object ) ) {
       $property_object = (object) $property_object;
@@ -4332,11 +4316,17 @@ class WPP_F extends UD_API {
     if( empty( $property_stats ) ) {
       $property_stats = $wp_properties[ 'property_stats' ];
     }
+    
+    $return = array();
 
     foreach( $property_stats as $slug => $label ) {
 
       // Determine if it's frontend and the attribute is hidden for frontend
-      if( in_array( $slug, (array) $wp_properties[ 'hidden_frontend_attributes' ] ) && !current_user_can( 'manage_options' ) ) {
+      if( 
+        isset( $wp_properties[ 'hidden_frontend_attributes' ] ) 
+        && in_array( $slug, (array) $wp_properties[ 'hidden_frontend_attributes' ] ) 
+        && !current_user_can( 'manage_options' ) 
+      ) {
         continue;
       }
 
@@ -4363,14 +4353,16 @@ class WPP_F extends UD_API {
       // Include only passed variables
       if( is_array( $include ) && in_array( $slug, $include ) ) {
         if( !empty( $value ) ) {
-          $return[ $label ] = $value;
+          if( $label_as_key == 'true' ) $return[ $label ] = $value;
+          else $return[ $slug ] = array( 'label' => $label, 'value' => $value );
         }
         continue;
       }
 
       if( !is_array( $include ) ) {
         if( !empty( $value ) ) {
-          $return[ $label ] = $value;
+          if( $label_as_key == 'true' ) $return[ $label ] = $value;
+          else $return[ $slug ] = array( 'label' => $label, 'value' => $value );
         }
       }
 
@@ -4384,7 +4376,7 @@ class WPP_F extends UD_API {
 
   }
 
-  static function array_to_object( $array = array() ) {
+  static public function array_to_object( $array = array() ) {
     if( is_array( $array ) ) {
       $data = new stdClass();
 
@@ -4408,7 +4400,7 @@ class WPP_F extends UD_API {
    * @since 1.081
    *
    */
-  static function google_maps_infobox( $post, $args = false ) {
+  static public function google_maps_infobox( $post, $args = false ) {
     global $wp_properties;
 
     $map_image_type     = $wp_properties[ 'configuration' ][ 'single_property_view' ][ 'map_image_type' ];
@@ -4433,7 +4425,11 @@ class WPP_F extends UD_API {
     ) );
 
     //** Check if we have children */
-    if( count( $property[ 'children' ] ) > 0 && $wp_properties[ 'configuration' ][ 'google_maps' ][ 'infobox_settings' ][ 'do_not_show_child_properties' ] != 'true' ) {
+    if( 
+      !empty( $property[ 'children' ] ) 
+      && ( !isset( $wp_properties[ 'configuration' ][ 'google_maps' ][ 'infobox_settings' ][ 'do_not_show_child_properties' ] )
+      || $wp_properties[ 'configuration' ][ 'google_maps' ][ 'infobox_settings' ][ 'do_not_show_child_properties' ] != 'true' )
+    ) {
       foreach( $property[ 'children' ] as $child_property ) {
         $child_property           = (array) $child_property;
         $html_child_properties[ ] = '<li class="infobox_child_property"><a href="' . $child_property[ 'permalink' ] . '">' . $child_property[ 'post_title' ] . '</a></li>';
@@ -4464,11 +4460,14 @@ class WPP_F extends UD_API {
       'property_stats' => $property_stats
     ) );
 
-    $image = wpp_get_image_link( $property[ 'featured_image' ], $map_image_type, array( 'return' => 'array' ) );
-
-    $imageHTML = "<img width=\"{$image['width']}\" height=\"{$image['height']}\" src=\"{$image['link']}\" alt=\"" . addslashes( $post->post_title ) . "\" />";
-    if( @$wp_properties[ 'configuration' ][ 'property_overview' ][ 'fancybox_preview' ] == 'true' && !empty( $property[ 'featured_image_url' ] ) ) {
-      $imageHTML = "<a href=\"{$property['featured_image_url']}\" class=\"fancybox_image thumbnail\">{$imageHTML}</a>";
+    if( !empty( $property[ 'featured_image' ] ) ) {
+      $image = wpp_get_image_link( $property[ 'featured_image' ], $map_image_type, array( 'return' => 'array' ) );
+      if( !empty( $image ) && is_array( $image ) ) {
+        $imageHTML = "<img width=\"{$image['width']}\" height=\"{$image['height']}\" src=\"{$image['link']}\" alt=\"" . addslashes( $post->post_title ) . "\" />";
+        if( @$wp_properties[ 'configuration' ][ 'property_overview' ][ 'fancybox_preview' ] == 'true' && !empty( $property[ 'featured_image_url' ] ) ) {
+          $imageHTML = "<a href=\"{$property['featured_image_url']}\" class=\"fancybox_image thumbnail\">{$imageHTML}</a>";
+        }
+      }
     }
 
     ob_start(); ?>
@@ -4482,7 +4481,7 @@ class WPP_F extends UD_API {
 
       <table cellpadding="0" cellspacing="0" class="wpp_google_maps_infobox_table" style="">
         <tr>
-          <?php if( $image[ 'link' ] ) { ?>
+          <?php if( !empty( $imageHTML ) ) { ?>
             <td class="wpp_google_maps_left_col" style=" width: <?php echo $image[ 'width' ]; ?>px">
               <?php echo $imageHTML; ?>
               <?php if( $infobox_settings[ 'show_direction_link' ] == 'true' ): ?>
@@ -4496,7 +4495,7 @@ class WPP_F extends UD_API {
           <?php } ?>
 
           <td class="wpp_google_maps_right_col" vertical-align="top" style="vertical-align: top;">
-            <?php if( !$image[ 'link' ] && $infobox_settings[ 'show_direction_link' ] == 'true' ) { ?>
+            <?php if( !empty( $imageHTML ) && $infobox_settings[ 'show_direction_link' ] == 'true' ) { ?>
               <div class="wpp_google_maps_attribute_row wpp_google_maps_attribute_row_directions_link">
                 <a target="_blank"
                   href="http://maps.google.com/maps?gl=us&daddr=<?php echo addslashes( str_replace( ' ', '+', $property[ 'formatted_address' ] ) ); ?>"
@@ -4575,7 +4574,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @since 1.37.5
    */
-  static function update_parent_id( $parent_id, $post_id ) {
+  static public function update_parent_id( $parent_id, $post_id ) {
     global $wpdb, $wp_properties;
 
     $parent_id = !empty( $parent_id ) ? $parent_id : 0;
@@ -4612,7 +4611,7 @@ class WPP_F extends UD_API {
    * @since 1.11
    *
    */
-  static function get_property_map( $id, $args = '' ) {
+  static public function get_property_map( $id, $args = '' ) {
     global $wp_properties, $wpdb;
 
     $defaults = array(
@@ -4691,7 +4690,7 @@ class WPP_F extends UD_API {
    * @todo API call to UD server to verify there is no duplicates
    * @since 1.6
    */
-  static function get_gpid( $property_id = false, $check_existance = false ) {
+  static public function get_gpid( $property_id = false, $check_existance = false ) {
 
     if( $check_existance && $property_id ) {
       $exists = get_post_meta( $property_id, 'wpp_gpid', true );
@@ -4713,7 +4712,7 @@ class WPP_F extends UD_API {
    * @return string | Returns GPID
    * @since 1.6
    */
-  static function maybe_set_gpid( $property_id = false ) {
+  static public function maybe_set_gpid( $property_id = false ) {
 
     if( !$property_id ) {
       return false;
@@ -4740,7 +4739,7 @@ class WPP_F extends UD_API {
    *
    * @since 1.6
    */
-  static function get_property_from_gpid( $gpid = false ) {
+  static public function get_property_from_gpid( $gpid = false ) {
     global $wpdb;
 
     if( !$gpid ) {
@@ -4765,7 +4764,7 @@ class WPP_F extends UD_API {
    * @since 1.14
    *
    */
-  static function strings_for_translations() {
+  static public function strings_for_translations() {
 
     __( 'General Settings', 'wpp' );
     __( 'Find your property', 'wpp' );
@@ -4803,7 +4802,7 @@ class WPP_F extends UD_API {
    * @since 1.16.2
    * @author Maxim Peshkov
    */
-  function meta_has_number_data_type( $property_ids, $meta_key ) {
+  static public function meta_has_number_data_type( $property_ids, $meta_key ) {
     global $wpdb;
 
     /* There is no sense to continue if no ids */
@@ -4849,7 +4848,7 @@ class WPP_F extends UD_API {
    * @since 3.0
    *
    */
-  function list_table() {
+  static public function list_table() {
     global $current_screen;
 
     include WPP_Path . 'core/ui/class_wpp_object_list_table.php';
@@ -4913,7 +4912,7 @@ class WPP_F extends UD_API {
    * Get Search filter fields
    *
    */
-  function get_search_filters() {
+  static public function get_search_filters() {
     global $wp_properties;
 
     $filters       = array();
@@ -5078,7 +5077,7 @@ class WPP_F extends UD_API {
    *
    * @return array
    */
-  function get_users_of_post_type( $post_type ) {
+  static public function get_users_of_post_type( $post_type ) {
     global $wpdb;
 
     switch( $post_type ) {
@@ -5114,7 +5113,7 @@ class WPP_F extends UD_API {
   /**
    * Process bulk actions
    */
-  function property_page_all_properties_load() {
+  static public function property_page_all_properties_load() {
 
     if( !empty( $_REQUEST[ 'action' ] ) && !empty( $_REQUEST[ 'post' ] ) ) {
 
@@ -5173,7 +5172,7 @@ class WPP_F extends UD_API {
    *
    * @author korotkov@ud
    */
-  function property_page_property_settings_load() {
+  static public function property_page_property_settings_load() {
 
     //** Default Help items */
     $contextual_help[ 'Main' ][ ] = '<h3>' . __( 'Default Properties Page', 'wpp' ) . '</h3>';
@@ -5208,7 +5207,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @since 1.37.6
    */
-  static function get_default_coordinates() {
+  static public function get_default_coordinates() {
     global $wp_properties;
 
     $coords = $wp_properties[ 'default_coords' ];
@@ -5233,7 +5232,7 @@ class WPP_F extends UD_API {
    *
    * @return int
    */
-  function get_properties_quantity( $post_status = array( 'publish' ) ) {
+  static public function get_properties_quantity( $post_status = array( 'publish' ) ) {
     global $wpdb;
 
     $results = $wpdb->get_col( "
@@ -5256,7 +5255,7 @@ class WPP_F extends UD_API {
    * @global object $wp_locale
    * @return array
    */
-  function get_property_month_periods() {
+  static public function get_property_month_periods() {
     global $wpdb, $wp_locale;
 
     $months = $wpdb->get_results( "
@@ -5292,7 +5291,7 @@ class WPP_F extends UD_API {
    * @return bool
    * @author korotkov@ud
    */
-  function delete_directory( $dirname ) {
+  static public function delete_directory( $dirname ) {
 
     if( is_dir( $dirname ) )
       $dir_handle = opendir( $dirname );
@@ -5322,7 +5321,7 @@ class WPP_F extends UD_API {
    *
    * @author korotkov@ud
    */
-  function check_facebook_tabs() {
+  static public function check_facebook_tabs() {
     //** Check if FB Tabs is not installed to prevent an ability to use WPP as Facebook App or Page Tab */
     if( !class_exists( 'class_wpp_facebook_tabs' ) ) {
 
@@ -5345,7 +5344,7 @@ class WPP_F extends UD_API {
    *
    * @return string $phone_number
    */
-  function format_phone_number( $phone_number ) {
+  static public function format_phone_number( $phone_number ) {
 
     $phone_number = ereg_replace( "[^0-9]", '', $phone_number );
     if( strlen( $phone_number ) != 10 ) return ( False );
@@ -5368,7 +5367,7 @@ class WPP_F extends UD_API {
    *
    * @return string Checkbox input field and hidden field with the opposive value
    */
-  function checkbox( $args = '', $checked = false ) {
+  static public function checkbox( $args = '', $checked = false ) {
     $defaults = array(
       'name'      => '',
       'id'        => false,
@@ -5491,7 +5490,7 @@ class WPP_F extends UD_API {
    *
    * @return string Input field and hidden field with the opposive value
    */
-  function textarea( $args = '' ) {
+  static public function textarea( $args = '' ) {
     $defaults = array( 'name' => '', 'id' => false, 'checked' => false, 'class' => false, 'style' => false, 'group' => '', 'special' => '', 'value' => '', 'label' => false, 'maxlength' => false );
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
     $name      = isset( $name ) ? $name : '';
@@ -5563,7 +5562,7 @@ class WPP_F extends UD_API {
    *
    * @return string Input field and hidden field with the opposive value
    */
-  function input( $args = '', $value = false ) {
+  static public function input( $args = '', $value = false ) {
     $defaults = array( 'name' => '', 'group' => '', 'special' => '', 'value' => $value, 'title' => '', 'type' => 'text', 'class' => false, 'hidden' => false, 'style' => false, 'readonly' => false, 'label' => false );
     extract( wp_parse_args( $args, $defaults ), EXTR_SKIP );
     $name     = isset( $name ) ? $name : '';
@@ -5591,7 +5590,7 @@ class WPP_F extends UD_API {
     $return = '';
 
     if( $label ) $return .= "<label for='$name'>";
-    $return .= "<input " . ( $type ? "type=\"$type\" " : '' ) . " " . ( $style ? "style=\"$style\" " : '' ) . " id=\"$id\" class=\"" . ( $type ? "" : "input_field" ) . " $class_from_name $class " . ( $hidden ? " hidden " : '' ) . "" . ( $group ? "group_$group" : '' ) . " \"    name=\"" . ( $group ? $group . "[" . $name . "]" : $name ) . "\"   value=\"" . stripslashes( $value ) . "\"   title=\"$title\" $special " . ( $type == 'forget' ? " autocomplete='off'" : '' ) . " " . ( $readonly ? " readonly=\"readonly\" " : "" ) . " />";
+    $return .= "<input " . ( $type ? "type=\"$type\" " : '' ) . " " . ( $style ? "style=\"$style\" " : '' ) . ( isset( $id ) ? "id=\"$id\" " : '' ) . " class=\"" . ( $type ? "" : "input_field " ) . ( isset( $class_from_name ) ? $class_from_name : '' ) . " $class " . ( $hidden ? " hidden " : '' ) . "" . ( $group ? "group_$group" : '' ) . " \"    name=\"" . ( $group ? $group . "[" . $name . "]" : $name ) . "\"   value=\"" . stripslashes( $value ) . "\"   title=\"$title\" $special " . ( $type == 'forget' ? " autocomplete='off'" : '' ) . " " . ( $readonly ? " readonly=\"readonly\" " : "" ) . " />";
     if( $label ) $return .= " $label </label>";
 
     return $return;
@@ -5604,7 +5603,7 @@ class WPP_F extends UD_API {
    * @source WPP_F
    *
    */
-  function objectToArray( $object ) {
+  static public function objectToArray( $object ) {
 
     if( !is_object( $object ) && !is_array( $object ) ) {
       return $object;
@@ -5624,7 +5623,7 @@ class WPP_F extends UD_API {
    * @source WPP_F
    *
    */
-  static function base_url( $page = '', $get = '' ) {
+  static public function base_url( $page = '', $get = '' ) {
     global $wpdb, $wp_properties;
 
     $permalink           = '';
@@ -5688,7 +5687,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @since 1.37.6
    */
-  function wp_get_attachment_link( $output, $id, $size, $permalink, $icon, $text ) {
+  static public function wp_get_attachment_link( $output, $id, $size, $permalink, $icon, $text ) {
 
     if( function_exists( 'debug_backtrace' ) && !is_admin() ) {
       $backtrace = debug_backtrace();
@@ -5710,7 +5709,7 @@ class WPP_F extends UD_API {
    * @author peshkov@UD
    * @version 0.1
    */
-  static function clear_post_status( $post_status = '', $ucfirst = true ) {
+  static public function clear_post_status( $post_status = '', $ucfirst = true ) {
     switch( $post_status ) {
       case 'publish':
         $post_status = __( 'published', 'wpp' );
@@ -5729,6 +5728,25 @@ class WPP_F extends UD_API {
         break;
     }
     return ( $ucfirst ? ucfirst( $post_status ) : $post_status );
+  }
+  
+  /**
+   * Sanitizes data.
+   * Prevents shortcodes and XSS adding!
+   *
+   * @todo: remove the method since it's added in utility library.
+   * @author peshkov@UD
+   */
+  static public function sanitize_request( $data ) {
+    if( is_array( $data ) ) {
+      foreach( $data as $k => $v ) {
+        $data[ $k ] = self::sanitize_request( $v );
+      }
+    } else {
+      $data = strip_shortcodes( $data );
+      $data = filter_var( $data, FILTER_SANITIZE_STRING );
+    }
+    return $data;
   }
 
 }
