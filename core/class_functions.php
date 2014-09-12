@@ -1134,7 +1134,7 @@ class WPP_F extends UD_API {
       return;
     }
 
-    if( $query->query_vars[ 'post_type' ] == 'property' ) {
+    if( isset( $query->query_vars[ 'post_type' ] ) && $query->query_vars[ 'post_type' ] == 'property' ) {
       $query->query_vars[ 'cache_results' ] = false;
     }
 
@@ -2265,7 +2265,7 @@ class WPP_F extends UD_API {
       if( empty( $r ) ) {
         throw new Exception( __( 'Requested server returned empty result or timeout was exceeded. Please, try again later.', 'wpp' ) );
       }
-
+      
       if( is_object( $r->available_features ) ) {
         $r->available_features = WPP_F::objectToArray( $r->available_features );
         //** Update WP-Property settings */
@@ -2278,7 +2278,7 @@ class WPP_F extends UD_API {
         throw new Exception( __( 'There are no available premium features.', 'wpp' ) );
       }
 
-      if( $wp_properties[ 'configuration' ][ 'disable_automatic_feature_update' ] == 'true' ) {
+      if( isset( $wp_properties[ 'configuration' ][ 'disable_automatic_feature_update' ] ) && $wp_properties[ 'configuration' ][ 'disable_automatic_feature_update' ] == 'true' ) {
         throw new Exception( __( 'No premium features were downloaded because the setting is disabled. Enable in the "Developer" tab.', 'wpp' ) );
       }
 
@@ -2293,7 +2293,7 @@ class WPP_F extends UD_API {
       }
 
       //** Save code */
-      if( is_object( $r->code ) ) {
+      if( isset( $r ) && isset( $r->code ) && is_object( $r->code ) ) {
 
         foreach( $r->code as $code ) {
 
@@ -2677,7 +2677,7 @@ class WPP_F extends UD_API {
     $wp_properties[ 'taxonomies' ]                = apply_filters( 'wpp_taxonomies', ( isset( $wp_properties[ 'taxonomies' ] ) ? $wp_properties[ 'taxonomies' ] : array() ) );
 
     $wp_properties = stripslashes_deep( $wp_properties );
-
+    
     return $wp_properties;
 
   }
@@ -2851,13 +2851,13 @@ class WPP_F extends UD_API {
 
       }
 
-      // Remove features that are not found on disk
-      foreach( (array) $wp_properties[ 'installed_features' ] as $_slug => $data ) {
-
-        if( !in_array( $_slug, $_verified ) ) {
-          unset( $wp_properties[ 'installed_features' ][ $_slug ] );
+      //** Remove features that are not found on disk */
+      if( isset( $wp_properties[ 'installed_features' ] ) ) {
+        foreach( (array) $wp_properties[ 'installed_features' ] as $_slug => $data ) {
+          if( !in_array( $_slug, $_verified ) ) {
+            unset( $wp_properties[ 'installed_features' ][ $_slug ] );
+          }
         }
-
       }
 
     }

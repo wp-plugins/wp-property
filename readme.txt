@@ -227,6 +227,10 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.42.1 =
+* Fixed property search for range input and range dropdown fields types.
+* Fixed Warnings and Notices.
+
 = 1.42.0 =
 * Added strict search option for [property_search] shortcode and 'Property Search' widget.
 * Removed taxonomies metaboxes on edit property page for users who do not have capabilities.
