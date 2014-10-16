@@ -1,0 +1,29 @@
+{
+  "name": "wp-property",
+  "version": "1.41.4",
+  "description": "wp-property plugin",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/UsabilityDynamics/wp-property"
+  },
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "dependencies": {
+    "load-grunt-tasks": "^0.6.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-less": "~0.8.3",
+    "grunt-contrib-uglify": "~0.2.4",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-yuidoc": "~0.5.0",
+    "grunt-markdown": "~0.4.0",
+    "grunt-requirejs": "~0.4.0",
+    "grunt-contrib-requirejs": "*",
+    "grunt-shell": "~0.6.0",
+    "grunt-phpunit": "~0.3.3"
+  }
+}
