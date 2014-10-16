@@ -269,14 +269,14 @@ class WPP_Core {
     add_filter( 'wp_get_attachment_link', array( 'WPP_F', 'wp_get_attachment_link' ), 10, 6 );
 
     /** Load all shortcodes */
-    add_shortcode( 'property_overview', array( $this, 'shortcode_property_overview' ) );
-    add_shortcode( 'property_search', array( $this, 'shortcode_property_search' ) );
-    add_shortcode( 'featured_properties', array( $this, 'shortcode_featured_properties' ) );
-    add_shortcode( 'property_map', array( $this, 'shortcode_property_map' ) );
-    add_shortcode( 'property_attribute', array( $this, 'shortcode_property_attribute' ) );
+    add_shortcode( 'property_overview', array( __CLASS__, 'shortcode_property_overview' ) );
+    add_shortcode( 'property_search', array( __CLASS__, 'shortcode_property_search' ) );
+    add_shortcode( 'featured_properties', array( __CLASS__, 'shortcode_featured_properties' ) );
+    add_shortcode( 'property_map', array( __CLASS__, 'shortcode_property_map' ) );
+    add_shortcode( 'property_attribute', array( __CLASS__, 'shortcode_property_attribute' ) );
 
     if ( !empty( $wp_properties[ 'alternative_shortcodes' ][ 'property_overview' ] ) ) {
-      add_shortcode( "{$wp_properties[ 'alternative_shortcodes' ]['property_overview']}", array( $this, 'shortcode_property_overview' ) );
+      add_shortcode( "{$wp_properties[ 'alternative_shortcodes' ]['property_overview']}", array( __CLASS__, 'shortcode_property_overview' ) );
     }
 
     //** Make Property Featured Via AJAX */
@@ -765,29 +765,19 @@ class WPP_Core {
    */
   function post_submitbox_misc_actions() {
     global $post, $wp_properties;
-
     if ( $post->post_type == 'property' ) {
-
       ?>
       <div class="misc-pub-section ">
-
         <ul>
           <li><?php _e( 'Menu Sort Order:', 'wpp' ) ?> <?php echo WPP_F::input( "name=menu_order&special=size=4", $post->menu_order ); ?></li>
-
-          <?php if ( current_user_can( 'manage_options' ) && isset( $wp_properties[ 'configuration' ][ 'do_not_use' ][ 'featured' ] ) && $wp_properties[ 'configuration' ][ 'do_not_use' ][ 'featured' ] != 'true' ) { ?>
+          <?php if ( current_user_can( 'manage_options' ) ) { ?>
             <li><?php echo WPP_F::checkbox( "name=wpp_data[meta][featured]&label=" . __( 'Display in featured listings.', 'wpp' ), get_post_meta( $post->ID, 'featured', true ) ); ?></li>
           <?php } ?>
-
           <?php do_action( 'wpp_publish_box_options' ); ?>
         </ul>
-
       </div>
-    <?php
-
+      <?php
     }
-
-    return;
-
   }
 
   /**
@@ -1185,7 +1175,7 @@ class WPP_Core {
    * @uses WPP_F::get_properties()
    *
    */
-  function shortcode_featured_properties( $atts = false ) {
+  static public function shortcode_featured_properties( $atts = false ) {
     global $wp_properties, $wpp_query, $post;
 
     if ( !$atts ) {
@@ -1261,7 +1251,7 @@ class WPP_Core {
    * @since 1.04
    *
    */
-  function shortcode_property_search( $atts = "" ) {
+  static public function shortcode_property_search( $atts = "" ) {
     global $post, $wp_properties;
     $group_attributes = '';
     $per_page = '';
@@ -1330,7 +1320,7 @@ class WPP_Core {
    * @uses WPP_F::get_properties()
    *
    */
-  function shortcode_property_overview( $atts = "" ) {
+  static public function shortcode_property_overview( $atts = "" ) {
     global $wp_properties, $wpp_query, $property, $post, $wp_query;
 
     $atts = wp_parse_args( $atts, array() );
@@ -1634,7 +1624,7 @@ class WPP_Core {
    * @since 1.26.0
    *
    */
-  function shortcode_property_attribute( $atts = false ) {
+  static public function shortcode_property_attribute( $atts = false ) {
     global $post, $property;
 
     $this_property = $property;
@@ -1745,7 +1735,7 @@ class WPP_Core {
    * @since 1.26.0
    *
    */
-  function shortcode_property_map( $atts = false ) {
+  static public function shortcode_property_map( $atts = false ) {
     global $post, $property;
 
     if ( !$atts ) {

@@ -3,7 +3,7 @@ Contributors: usability_dynamics, andypotanin, jbrw1984, maxim.peshkov, anton-ko
 Donate link: http://usabilitydynamics.com/products/wp-property/
 Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 3.6
-Tested up to: 4.0.0
+Tested up to: 4.0
 Stable tag: 1.42.1
 
 
@@ -227,9 +227,15 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
+= 1.42.2 =
+* Fixed 'exclude' parameter for draw_stats function. The issue also was related to showing specific property attributes in PDF Flyer.
+* Fixed property object caching.
+* Fixed bug on clicking 'Add to Featured' on 'All Properties' page.
+* Fixed option 'Display in featured listings' on edit property page.
+* Warnings and Notices fixes.
+
 = 1.42.1 =
 * Fixed property search for range input and range dropdown fields types.
-* Fixed Warnings and Notices.
 
 = 1.42.0 =
 * Added strict search option for [property_search] shortcode and 'Property Search' widget.

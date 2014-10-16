@@ -126,7 +126,7 @@ if ( !function_exists( 'property_overview_image' ) ) {
       ob_start();
       ?>
       <div class="property_image">
-        <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property[ 'post_title' ] . ( $property[ 'parent_title' ] ? __( ' of ', 'wpp' ) . $property[ 'parent_title' ] : "" ); ?>" class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?> thumbnail" rel="properties">
+        <a href="<?php echo $thumbnail_link; ?>" title="<?php echo $property[ 'post_title' ] . ( !empty( $property[ 'parent_title' ] ) ? __( ' of ', 'wpp' ) . $property[ 'parent_title' ] : "" ); ?>" class="property_overview_thumb property_overview_thumb_<?php echo $thumbnail_size; ?> <?php echo $link_class; ?> thumbnail" rel="properties">
           <img width="<?php echo $image[ 'width' ]; ?>" height="<?php echo $image[ 'height' ]; ?>" src="<?php echo $image[ 'link' ]; ?>" alt="<?php echo $property[ 'post_title' ]; ?>" style="width:<?php echo $image[ 'width' ]; ?>px;height:<?php echo $image[ 'height' ]; ?>px;"/>
         </a>
       </div>
@@ -679,7 +679,7 @@ if ( !function_exists( 'is_property_overview_page' ) ):
       _doing_it_wrong( __FUNCTION__, __( 'Conditional query tags do not work before the query is run. Before then, they always return false.' ), '3.1' );
       return false;
     }
-    return $wp_query->is_property_overview;
+    return isset( $wp_query->is_property_overview ) ? $wp_query->is_property_overview : false;
   }
 endif;
 
@@ -703,6 +703,8 @@ if ( !function_exists( 'prepare_property_for_display' ) ):
       return;
     }
 
+    $_args = is_array( $args ) ? http_build_query( $args ) : (string) $args;
+    
     /* Used to apply different filters depending on where the attribute is displayed. i.e. google_map_infobox  */
     $attribute_scope = ( !empty( $args[ 'scope' ] ) ) ? $args[ 'scope' ] : false;
 
@@ -731,7 +733,7 @@ if ( !function_exists( 'prepare_property_for_display' ) ):
     //** Load property from cache, or function, if not passed */
     if ( !is_array( $property ) ) {
 
-      if ( $cache_property = wp_cache_get( 'property_for_display_' . $property_id ) ) {
+      if ( $cache_property = wp_cache_get( md5( 'display_' . $property_id . $_args ) ) ) {
         return $cache_property;
       }
 
@@ -771,7 +773,7 @@ if ( !function_exists( 'prepare_property_for_display' ) ):
 
     $property[ 'system' ][ 'prepared_for_display' ] = true;
 
-    wp_cache_add( 'property_for_display_' . $property_id, $property );
+    wp_cache_add( md5( 'display_' . $property_id . $_args ), $property );
 
     if ( $return_type == 'object' ) {
       return (object) $property;
@@ -952,6 +954,16 @@ if ( !function_exists( 'draw_stats' ) ):
       }
     } else {
       $property_stats = WPP_F::get_stat_values_and_labels( $property, array( 'label_as_key' => 'false' ) );
+    }
+    
+    /** Exclude specific attributes from list */
+    if( !empty( $exclude ) ) {
+      $exclude = !is_array( $exclude ) ? explode( ',', $exclude ) : $exclude; 
+      foreach( $exclude as $k ) {
+        if( isset( $property_stats[ $k ] ) ) {
+          unset( $property_stats[ $k ] );
+        }
+      }
     }
 
     if ( empty( $property_stats ) ) {
