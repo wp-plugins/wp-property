@@ -182,13 +182,11 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
    * therefore, all JS in here has to take that into account and not perform same function twice.
    *
    * @since 1.10
-   *
    */
   function wpp_draw_pagination( $settings = '' ) {
     global $wpp_query, $wp_properties;
 
     $settings = wp_parse_args( $settings, array(
-      'javascript' => true,
       'return' => true,
       'class' => '',
       'sorter_type' => 'none',
@@ -196,6 +194,8 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
       'sort_by_text' => isset( $wpp_query[ 'sort_by_text' ] ) ? $wpp_query[ 'sort_by_text' ] : '',
       'javascript' => true
     ) );
+
+    $settings = apply_filters( 'wpp:draw_pagination:settings', $settings, $wpp_query, $wp_properties );
 
     if ( is_array( $wpp_query ) || is_object( $wpp_query ) ) {
       extract( $wpp_query );
@@ -209,6 +209,19 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
     if ( $pagination == 'off' && $hide_count ) {
       return;
     }
+
+    // Allow for pagination override.
+    $_custom_pagination = apply_filters( 'wpp:property_overview:custom_pagination', false, $settings, $wpp_query );
+
+    if( $_custom_pagination && !empty( $_custom_pagination ) ) {
+      if ( $settings[ 'return' ] == 'true' ) {
+        return $_custom_pagination;
+      } else {
+        echo $_custom_pagination;
+        return null;
+      }
+    }
+
     if ( $properties[ 'total' ] > $per_page && $pagination != 'off' ) {
       $use_pagination = true;
     }
@@ -600,7 +613,7 @@ if ( !function_exists( 'wpp_draw_pagination' ) ):
     }
 
     ob_start(); ?>
-    <div class="properties_pagination <?php echo $settings[ 'class' ]; ?> wpp_slider_pagination" id="properties_pagination_<?php echo $unique_hash; ?>">
+    <div class="properties_pagination <?php echo $settings[ 'class' ]; ?> wpp_slider_pagination" id="properties_pagination_<?php echo $unique_hash; ?>" data-property-pagination-hash="<?php echo $unique_hash; ?>">
       <div class="wpp_pagination_slider_status">
         <span class="wpp_property_results_options">
           <?php if ( $hide_count != 'true' ) {

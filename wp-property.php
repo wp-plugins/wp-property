@@ -4,10 +4,10 @@
  * Plugin URI: http://usabilitydynamics.com/products/wp-property/
  * Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
  * Author: Usability Dynamics, Inc.
- * Version: 1.42.3
+ * Version: 1.42.4
  * Author URI: http://usabilitydynamics.com
  *
- * Copyright 2012 - 2014 Usability Dynamics, Inc.  ( email : info@usabilitydynamics.com )
+ * Copyright 2012 - 2015 Usability Dynamics, Inc.  ( email : info@usabilitydynamics.com )
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +25,34 @@
  */
 
 /** This Version  */
-define( 'WPP_Version', '1.42.3' );
+if( !defined( 'WPP_Version' ) ) {
+  define( 'WPP_Version', '1.42.4' );
+}
 
 /** Get Directory - not always wp-property */
-define( 'WPP_Directory', dirname( plugin_basename( __FILE__ ) ) );
+if( !defined( 'WPP_Directory' ) ) {
+  define( 'WPP_Directory', dirname( plugin_basename( __FILE__ ) ) );
+}
 
 /** Path for Includes */
-define( 'WPP_Path', plugin_dir_path( __FILE__ ) );
+if( !defined( 'WPP_Path' ) ) {
+  define( 'WPP_Path', plugin_dir_path( __FILE__ ) );
+}
 
 /** Path for front-end links */
-define( 'WPP_URL', plugin_dir_url( __FILE__ ) );
+if( !defined( 'WPP_URL' ) ) {
+  define( 'WPP_URL', plugin_dir_url( __FILE__ ) );
+}
 
 /** Directory path for includes of template files  */
-define( 'WPP_Templates', WPP_Path . 'templates' );
+if( !defined( 'WPP_Templates' ) ) {
+  define( 'WPP_Templates', WPP_Path . 'templates' );
+}
 
 /** Directory path for includes of template files  */
-define( 'WPP_Premium', WPP_Path . 'core/premium' );
+if( !defined( 'WPP_Premium' ) ) {
+  define( 'WPP_Premium', WPP_Path . 'core/premium' );
+}
 
 //** Global Usability Dynamics functions */
 include_once WPP_Path . 'core/ud_api.php';

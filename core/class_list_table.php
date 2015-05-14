@@ -247,7 +247,7 @@ class WPP_List_Table extends WP_List_Table {
 
     if ( !$ajax ) $this->all_items = array();
 
-    if ( empty( $this->all_items ) ) {
+    if ( !isset( $this->all_items ) ) {
       $this->all_items = WPP_F::get_properties( $wpp_search );
     }
 
