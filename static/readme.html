@@ -112,12 +112,24 @@
     </style>
   </head>
   <body>  
-    <p>Developed by the same people who brought you <a href="http://wordpress.org/extend/plugins/wp-invoice/">WP-Invoice</a>, comes WP-Property. As always, integration is seamless, the system is expandable and customizable, functionality is rich, and we are here to support it.</p>
-<p>[vimeo <a href="http://vimeo.com/14280748">http://vimeo.com/14280748</a>]</p>
-<p>This is not a &quot;collection&quot; of plugins, but one full suite. You will not have to download and match together a plethora of other plugins, in the hopes of them working well together, to have all the features you need.</p>
-<p><a href="http://www.vimeo.com/14473894">http://www.vimeo.com/14473894</a></p>
-<p>Check out our <a href="https://usabilitydynamics.com/products/wp-property/the-denali-premium-theme/">premium WordPress real estate theme</a>.</p>
-<p>Be sure to check out the  <a href="http://usabilitydynamics.com/products/wp-property/forum/">WP-Property Forum</a> if you need help.</p>
+    <h3 id="wp-property-plugin">WP-Property Plugin</h3>
+<p>Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.</p>
+<hr>
+<p><a href="http://waffle.io/usabilitydynamics/wp-property"><img src="https://badge.waffle.io/usabilitydynamics/wp-property.png?label=bug&amp;title=Bugs" alt="Issues - Bug"></a>
+<a href="http://waffle.io/usabilitydynamics/wp-property/"><img src="https://badge.waffle.io/usabilitydynamics/wp-property.png?label=backlog&amp;title=Backlog" alt="Issues - Backlog"></a>
+<a href="http://waffle.io/usabilitydynamics/wp-property/"><img src="https://badge.waffle.io/usabilitydynamics/wp-property.png?label=in progress&amp;title=Active" alt="Issues - Active"></a></p>
+<hr>
+<p><a href="https://gemnasium.com/usabilitydynamics/wp-property"><img src="https://gemnasium.com/usabilitydynamics/wp-property.svg" alt="Dependency Status"></a>
+<a href="https://scrutinizer-ci.com/g/usabilitydynamics/wp-property"><img src="http://img.shields.io/scrutinizer/g/usabilitydynamics/wp-property.svg" alt="Scrutinizer Quality"></a>
+<a href="https://scrutinizer-ci.com/g/usabilitydynamics/wp-property"><img src="http://img.shields.io/scrutinizer/coverage/g/usabilitydynamics/wp-property.svg" alt="Scrutinizer Coverage"></a>
+<a href="https://packagist.org/packages/usabilitydynamics/wp-property"><img src="http://img.shields.io/packagist/v/usabilitydynamics/wp-property.svg" alt="Packagist Vesion"></a>
+<a href="https://circleci.com/gh/usabilitydynamics/wp-property"><img src="https://circleci.com/gh/usabilitydynamics/wp-property.png" alt="CircleCI"></a></p>
+<hr>
+<h3 id="installing-via-composerjs">Installing via ComposerJS</h3>
+<p>To add WP-Property via ComposerJS to an existing project:</p>
+<pre><code>composer require usabilitydynamics/wp-property dev-master</code></pre>
+<p>For development, use following to checkout WP-Property and build:</p>
+<pre><code>composer create-project --stability=dev usabilitydynamics/wp-property</code></pre>
 <h3 id="features">Features</h3>
 <ul>
 <li>New shortcode: [property_attribute] to pull a single attribute without using PHP. Example: [property_attribute attribute=bedrooms] will return the number of bedrooms for current property. [property_attribute property_id=4 attribute=bathrooms] will return the number of bathrooms for property with ID of 5.</li>

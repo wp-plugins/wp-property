@@ -1,33 +1,23 @@
 <?php
 /**
  * Plugin Name: WP-Property
- * Plugin URI: http://usabilitydynamics.com/products/wp-property/
+ * Plugin URI: https://www.usabilitydynamics.com/product/wp-property/
  * Description: Property and Real Estate Management Plugin for WordPress.  Create a directory of real estate / rental properties and integrate them into you WordPress CMS.
  * Author: Usability Dynamics, Inc.
- * Version: 1.42.4
- * Author URI: http://usabilitydynamics.com
+ * Version: 2.0.0
+ * Requires at least: 4.0
+ * Tested up to: 4.2.3
+ * Text Domain: wpp
+ * Domain Path: /static/languages/
+ * Author URI: https://www.usabilitydynamics.com
+ * GitHub Plugin URI: wp-property/wp-property
+ * GitHub Branch: v2.0
+ * Support: https://wordpress.org/support/plugin/wp-property
+ * UserVoice: http://feedback.usabilitydynamics.com/forums/95259-wp-property
  *
  * Copyright 2012 - 2015 Usability Dynamics, Inc.  ( email : info@usabilitydynamics.com )
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; version 3 of the License.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
-
-/** This Version  */
-if( !defined( 'WPP_Version' ) ) {
-  define( 'WPP_Version', '1.42.4' );
-}
 
 /** Get Directory - not always wp-property */
 if( !defined( 'WPP_Directory' ) ) {
@@ -41,57 +31,103 @@ if( !defined( 'WPP_Path' ) ) {
 
 /** Path for front-end links */
 if( !defined( 'WPP_URL' ) ) {
-  define( 'WPP_URL', plugin_dir_url( __FILE__ ) );
+  define( 'WPP_URL', plugin_dir_url( __FILE__ ) . 'static/' );
 }
 
 /** Directory path for includes of template files  */
 if( !defined( 'WPP_Templates' ) ) {
-  define( 'WPP_Templates', WPP_Path . 'templates' );
+  define( 'WPP_Templates', WPP_Path . 'static/views' );
+} 
+ 
+if( !function_exists( 'ud_get_wp_property' ) ) {
+
+  /**
+   * Returns  Instance
+   *
+   * @author Usability Dynamics, Inc.
+   * @since 2.0.0
+   * @param bool $key
+   * @param null $default
+   * @return
+   */
+  function ud_get_wp_property( $key = false, $default = null ) {
+    $instance = \UsabilityDynamics\WPP\Bootstrap::get_instance();
+    return $key ? $instance->get( $key, $default ) : $instance;
+  }
+
 }
 
-/** Directory path for includes of template files  */
-if( !defined( 'WPP_Premium' ) ) {
-  define( 'WPP_Premium', WPP_Path . 'core/premium' );
+if( !function_exists( 'ud_check_wp_property' ) ) {
+  /**
+   * Determines if plugin can be initialized.
+   *
+   * @author Usability Dynamics, Inc.
+   * @since 2.0.0
+   */
+  function ud_check_wp_property() {
+    global $_ud_wp_property_error;
+    try {
+      //** Be sure composer.json exists */
+      $file = dirname( __FILE__ ) . '/composer.json';
+      if( !file_exists( $file ) ) {
+        throw new Exception( __( 'Distributive is broken. composer.json is missed. Try to remove and upload plugin again.', 'wpp' ) );
+      }
+      $data = json_decode( file_get_contents( $file ), true );
+      //** Be sure PHP version is correct. */
+      if( !empty( $data[ 'require' ][ 'php' ] ) ) {
+        preg_match( '/^([><=]*)([0-9\.]*)$/', $data[ 'require' ][ 'php' ], $matches );
+        if( !empty( $matches[1] ) && !empty( $matches[2] ) ) {
+          if( !version_compare( PHP_VERSION, $matches[2], $matches[1] ) ) {
+            throw new Exception( sprintf( __( 'Plugin requires PHP %s or higher. Your current PHP version is %s', 'wpp' ), $matches[2], PHP_VERSION ) );
+          }
+        }
+      }
+      //** Be sure vendor autoloader exists */
+      if ( file_exists( dirname( __FILE__ ) . '/vendor/libraries/autoload.php' ) ) {
+        require_once ( dirname( __FILE__ ) . '/vendor/libraries/autoload.php' );
+      } else {
+        throw new Exception( sprintf( __( 'Distributive is broken. %s file is missed. Try to remove and upload plugin again.', 'wpp' ), dirname( __FILE__ ) . '/vendor/libraries/autoload.php' ) );
+      }
+      //** Be sure our Bootstrap class exists */
+      if( !class_exists( '\UsabilityDynamics\WPP\Bootstrap' ) ) {
+        throw new Exception( __( 'Distributive is broken. Plugin loader is not available. Try to remove and upload plugin again.', 'wpp' ) );
+      }
+    } catch( Exception $e ) {
+      $_ud_wp_property_error = $e->getMessage();
+      return false;
+    }
+    return true;
+  }
+
 }
 
-//** Global Usability Dynamics functions */
-include_once WPP_Path . 'core/ud_api.php';
+if( !function_exists( 'ud_my_wp_plugin_message' ) ) {
+  /**
+   * Renders admin notes in case there are errors on plugin init
+   *
+   * @author Usability Dynamics, Inc.
+   * @since 1.0.0
+   */
+  function ud_wp_property_message() {
+    global $_ud_wp_property_error;
+    if( !empty( $_ud_wp_property_error ) ) {
+      $message = sprintf( __( '<p><b>%s</b> can not be initialized. %s</p>', 'wpp' ), 'WP-Property', $_ud_wp_property_error );
+      echo '<div class="error fade" style="padding:11px;">' . $message . '</div>';
+    }
+  }
+  add_action( 'admin_notices', 'ud_wp_property_message' );
+}
 
-/** Loads built-in plugin metadata and allows for third-party modification to hook into the filters. Has to be included here to run after template functions.php */
-include_once WPP_Path . 'action_hooks.php';
+// An alias for "ud_get_wp_property"
+if( !function_exists( 'wpp' ) ) {
 
-/** Defaults filters and hooks */
-include_once WPP_Path . 'default_api.php';
+  function wpp( $key = false, $default = null ) {
+    return ud_get_wp_property($key, $default);
+  }
 
-/** Loads general functions used by WP-Property */
-include_once WPP_Path . 'core/class_functions.php';
+}
 
-/** Loads Admin Tools feature */
-include_once WPP_Path . 'core/class_admin_tools.php';
-
-/** Loads export functionality */
-include_once WPP_Path . 'core/class_property_export.php';
-
-/** Loads all the metaboxes for the property page */
-include_once WPP_Path . 'core/ui/class_ui.php';
-
-/** Loads all the metaboxes for the property page */
-include_once WPP_Path . 'core/class_core.php';
-
-/** Bring in the RETS library */
-include_once WPP_Path . 'core/class_rets.php';
-
-/** Load set of static methods for mail notifications */
-include_once WPP_Path . 'core/class_mail.php';
-
-/** Load in hooks that deal with legacy and backwards-compat issues */
-include_once WPP_Path . 'core/class_legacy.php';
-
-// Register activation hook -> has to be in the main plugin file
-register_activation_hook( __FILE__,array( 'WPP_F', 'activation' ) );
-
-// Register activation hook -> has to be in the main plugin file
-register_deactivation_hook( __FILE__,array( 'WPP_F', 'deactivation' ) );
-
-// Initiate the plugin
-add_action( "after_setup_theme", create_function( '', 'new WPP_Core;' ) );
+//** Initialize. */
+if( ud_check_wp_property() ) {
+  ud_get_wp_property();
+}

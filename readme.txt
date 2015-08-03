@@ -1,37 +1,85 @@
 === WP-Property - WordPress Powered Real Estate and Property Management ===
-Contributors: usability_dynamics, andypotanin, jbrw1984, maxim.peshkov, anton-korotkoff, ideric
-Donate link: http://usabilitydynamics.com/products/wp-property/
-Tags: property management, real estate, listings, properties, property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
-Requires at least: 3.6
-Tested up to: 4.2
+Contributors: usability_dynamics, andypotanin, jbrw1984, maxim.peshkov, Anton Korotkoff, ideric, MariaKravchenko
+Donate link: http://usabilitydynamics.com/product/wp-property/
+Tags: property management, real estate, listings, properties, property, wp-property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
+Requires at least: 4.0
+Tested up to: 4.2.3
 Stable tag: 1.42.4
 
 
 == Description ==
 
-Developed by the same people who brought you [WP-Invoice](http://wordpress.org/extend/plugins/wp-invoice/), comes WP-Property. As always, integration is seamless, the system is expandable and customizable, functionality is rich, and we are here to support it.
+WP-Property is the leading WordPress plugin for creating and managing highly customizable real estate, property management, and completely custom listing showcase websites. Packed full of features, it gives you possibilities that no other real estate system for WordPress does. Try it out, you will be impressed.
+
+Although WP-Property is the most downloaded WordPress real estate plugin, it can handle so much more than real estate. Showcase any kind of entity you want, from livestock, golf carts, to properties and products, experiencing unparalleled ease of use and flexibility on the way.
+
+> Do you want to see the plugin in action? Just proceed to our <a href="http://madison.ci.usabilitydynamics.com/">Madison</a> and <a href="http://denali.ci.usabilitydynamics.com/">Denali</a> Demo sites.
+
+<strong>Dynamic Property Listings - No Coding Required!</strong><br>
+* WP-Property seamlessly integrates with WordPress websites, no coding required!
+* Specify search criteria and quickly sort results with a single click.
+* Any custom attributes at your fingertips.
+* Fully customizable dynamic filtering.
 
 [vimeo http://vimeo.com/14280748]
 
-This is not a "collection" of plugins, but one full suite. You will not have to download and match together a plethora of other plugins, in the hopes of them working well together, to have all the features you need.
+<strong>Unparalleled Flexibility – List ANY Product or Service!</strong><br>
+* Built for real estate, useful for everything.
+* Extremely flexible interface which lets you list products of any kind.
+* List vehicles, hotel reservations, farm animals and much more.
+* Versatile application, limited only by your imagination
 
-http://www.vimeo.com/14473894
+[vimeo http://www.vimeo.com/14473894]
 
-Check out our [premium WordPress real estate theme](https://usabilitydynamics.com/products/wp-property/the-denali-premium-theme/).
+<strong>More than a Plugin - A Real Estate Management System!</strong><br>
+* Not just a mere plugin, but a whole real estate management system at your fingertips!
+* Smooth operation, user friendly interface, comes with its own vast collection of property listing functionality and compatible premium features.
+* Expandable, customizable and fully supported by us!
 
-Be sure to check out the  [WP-Property Forum](http://usabilitydynamics.com/products/wp-property/forum/) if you need help.
+> See the plugin on [GitHub](https://github.com/wp-property/wp-property)
 
-= Common Shortcodes =
+**Features**
+* Flexible Extendable Filter on All Properties page.
+* Fields such as price, bathrooms, bedrooms, features, address, work out of the box.
+* Any amount of custom attributes (fields) and property types.
+* Different attributes' fields inputs are available, e.g. Text Editor, Number, Currency, File and Image Upload, URL, Date and Color Pickers, etc.
+* Free and Paid [Add-ons and Themes](https://www.usabilitydynamics.com/products#category-wp-property) available.
+* Flexible Search.
+* Pagination and sorting works on search results.
+* Property result pagination via AJAX.
+* Property queries by custom attributes.
+* Localized Google Maps.
+* Customizable templates for different property types.
+* SEO friendly URLs generated for every property, following the WordPress format.
+* Customizable widgets:  Featured Properties, Property Search, Property Gallery, and Child Properties.
+* Google Maps API to automatically validate physical addresses behind-the-scenes.
+* Integrates with Media Library, avoiding the need for additional third-party Gallery plugins.
+* Advanced image type configuration using UI.
+* Out of the box support for two property types, Building and Floorplan. More can be added via WP-Property API.
+* Property types follow a hierarchical format, having the ability of inheriting settings - i.e. buildings (or communities) will automatically calculate the price range of all floor-plans below them.
+* Free!
 
-We have setup a  ["Shortcode Cheatsheet" page](http://usabilitydynamics.com/help/wp-property-help/wp-property-shortcode-cheat-sheet/) for your convenience.
+**Widgets**
+* Child Properties. Show child properties (if any) for currently displayed property
+* Featured Properties. List of properties that were marked as Featured
+* Latest Properties. List of the latest properties created on this site.
+* Other Properties. Display a list of properties that share a parent with the currently displayed property.
+* Property Attributes. Display a list of selected property attributes when loaded on a single property page.
+* Property Search. Display a highly customizable property search form.
+* Property Gallery. List of all images attached to the current property
 
-Include search form into page/post content.
+**Shortcodes**
+We have setup a ["Shortcode Cheatsheet" page](https://www.usabilitydynamics.com/tutorials/wp-property-help/wp-property-shortcode-cheat-sheet/) for your convenience.
 
-* [property_search] Include search widget on content of a page or a post.
-* [property_search searchable_attributes=bedrooms,bathrooms searchable_property_types=single_family_home per_page=10] Show search options for bedrooms and bathrooms; return only Single Family Homes, and show 10 results per page.
+* [property_overview]
+* [property_search]
+* [property_map]
+* [property_attribute]
+* [featured_properties]
+* [list_attachments]
 
-Shortcodes are used to display listings. Simply put a shortcode into the body of a post or page, and a list of properties will be displayed in its place on the front-end of your website.
-
+<strong>[property_overview]</strong><br>
+Property Overview Shortcode. It is used to display a list of properties.  In it's most basic form, it will return all the published properties on your site.<br>
 * [property_overview pagination=on] Show all properties and enable pagination.
 * [property_overview sorter=on] Will list all properties with sorting.
 * [property_overview per_page=5] Show 5 properties on a page (10 properties is the default). If you use this shortcode - you don't need to use 'pagination=on'.
@@ -39,57 +87,43 @@ Shortcodes are used to display listings. Simply put a shortcode into the body of
 * [property_overview bathrooms=1,3 bedrooms=2-4] Use "," for setting specific values of attributes and "-" for ranges.
 * [property_overview sorter=on sort_by=price sort_order=DESC pagination=on] Will list all properties sorted by price in DESC order (attribute "Price" should be checked as sorted in Properties->Settings->Developer page ) and paginate.
 
-Usage of custom attributes added in the Developer tab for queries, example:
-
+Usage of custom attributes added in the Developer tab for queries, example:<br>
 * [property_overview house_color=blue,green] List all blue and green properties.
 * [property_overview type=single_family_home year_built=1995-2010] List all single family homes built between 1995 and 2010.
 * [property_overview type=apartment pets_allowed=yes] All apartments where "Pets Allowed" attribute is set to "yes".
 * [property_overview template=detailed-overview] will load property-overview-detailed-overview.php from your theme folder.
 
-= New features =
+<strong>[property_search]</strong><br>
+Property Search. This shortcode renders a search form, much like the Property Search widget. In it's most basic form it will display the first 5 attributes that you have selected as being searchable in the Developer tab.
+* [property_search searchable_attributes=bedrooms,bathrooms searchable_property_types=single_family_home per_page=10] A more complex example showing search options for bedrooms and bathrooms, return only Single Family Homes and limiting the search results to 10 per page.
+* [property_search do_not_use_cache=true searchable_attributes=bedrooms,bathrooms] By default the search widget, and the search shortcode, cache the values used in dropdowns.  You can force the shortcode to avoid getting the values from cache and force it to generate the values on-the-fly when the page is opened.  This is generally not recommended because it slows down the page load-time, but may be useful when troubleshooting.
+If you want to use address attributes in [property_search] you will have to add them using the Developer tab.  Watch screencast on adding address attributes to property_search shortcode.
 
-* New shortcode: [property_attribute] to pull a single attribute without using PHP. Example: [property_attribute attribute=bedrooms] will return the number of bedrooms for current property. [property_attribute property_id=4 attribute=bathrooms] will return the number of bathrooms for property with ID of 5.
-* New shortcode: [property_map] to pull a single attribute without using PHP. Example: [property_map width="100%" height="100px" zoom_level=11 property_id=5].  Leave property_id blank to get map for currently displayed property.
-* Two different sorter styles available, buttons and dropdown.
-* "Sort by:" text can be customized in [property_overview] shortcode using the sort_by_text argument.
+<strong>[property_map]</strong><br>
+Single Property Map. This shortcode displays property maps from single property pages.
 
+<strong>[property_attribute]</strong><br>
+Property Attribute. Property Attribute Shortcodes return the value of an attribute for a specific property. The current property is targeted by default. Properties other than the current one can be specified using their property ID number, as shown below.
+* [property_attribute attribute=bedrooms] Get the number of bedrooms for current property.
+* [property_attribute property_id=5 attribute=bathrooms] Get the number of bathrooms for a property with an ID of 5.
+* [property_attribute attribute=status] Shows status for current property.
+* [property_attribute attribute=map] Shows map for current property
 
-= More features =
+<strong>[featured_properties]</strong><br>
+Featured Property. This shortcode queries only those properties that have been given Featured status.
+* [featured_properties type='all' stats='price'] Shows all featured properties, and display their prices.
 
-* Add predefined values for any attribute in Admin Tab that will create a dropdown input field on the property editing page.
-* Pagination back-button support.
-* Slovakian translation.
-* Search form shortcode.
-* Pagination and sorting works on search results
-* Major improvements to search widget and search function
-* Property result pagination via AJAX
-* Property queries by custom attributes
-* Localized Google Maps
-* Translations into Italian, Portuguese and Russian.
-* Customizable templates for different property types.
-* Fields such as price, bathrooms, bedrooms, features, address, work out of the box.
-* SEO friendly URLs generated for every property, following the WordPress format.
-* Customizable widgets:  Featured Properties, Property Search, Property Gallery, and Child Properties.
-* Google Maps API to automatically validate physical addresses behind-the-scenes.
-* Integrates with Media Library, avoiding the need for additional third-party Gallery plugins.
-* Advanced image type configuration using UI.
-* Out of the box support for two property types, Building and Floorplan.   More can be added via WP-Property API.
-* Property types follow a hierarchical format, having the ability of inheriting settings - i.e. buildings (or communities) will automatically calculate the price range of all floor-plans below them.
-* Free!
+<strong>[list_attachments]</strong><br>
+List Attachments Shortcode is used to display attachments of a property, can also be used in a post. Ported over from List Attachments Shortcode plugin.  If plugin exists, the WP-Property version of shortcode is not loaded.
 
-= Premium features =
+**Add-ons and Themes**
 
- Learn more about the [WP-Property Premium Features](https://usabilitydynamics.com/products/wp-property/premium/).
+WP-Property recommends free [WP-Property: Terms](https://www.usabilitydynamics.com/product/wp-property-terms) Add-on which allows you to manage Taxonomies for your Properties! Just imagine that you are getting not just native WordpPress terms, but you can use terms as posts. Every term of WP-Property's taxonomy has own Single page, content, thumbnails and everything else what is available for native WordpPress Posts. It adds absolutely new level of managing your Real Estate site!
 
-* Supermap - an overview map of all your listings.
-* Slideshow - home page slideshow and property specific slideshow.
-* Agent Module - Create agents and assign them to properties. Create agent-specific listing pages by using [property_overview wpp_agents=1] where 1 is the agent ID.
-* PDF Flyer - Instantly generate PDF flyers of your properties for printing.
-* XML Import - Map XML files to your WPP attributes, setup schedules, and import third-party listings.
-* Power Tools with Capability Management Price - Extra functionality which includes capability management, white labeling the control panel, and changes menu titles.
+Is the current functionality still not enough to cover all your needs?
+Learn more about the [WP-Property Add-ons and themes](https://www.usabilitydynamics.com/products#category-wp-property).
 
-
-= Translations =
+**Translations**
 
 * English (UK)
 * French (FR)
@@ -128,37 +162,20 @@ http://vimeo.com/14473894
 
 == Frequently Asked Questions ==
 
-= What if I can't see the developer tab? =
-
-The developer tab should appear within a few seconds after you install the plugin.  If it doesn't, go to Properties -> Settings -> Troubleshooting and click the "Check Updates" button.
-
 = My theme is not working... HELP =
-
-Because there are so many different themes available for WP, not all of them will work flawlessly out of the box.  You can either customize your own theme, contact us for a theme customization quote or purchase one of our premium themes such as the Denali.
+Because there are so many different themes available for WP, not all of them will work flawlessly out of the box.  You can either customize your own theme, contact us for a theme customization quote or purchase one of our premium themes such as the Denali or Madison.
 
 = Is the plugin available in different languages? =
-
-Due to contributions from the plugin users we currently have it in Italian, Russian and Portuguese translations. If you would like to translate the plugin in your own languages please email us the files when you are done so we can include them in future updates.
+Due to contributions from the plugin users we currently have it in Danish, German, English, Spanish, French, Hungarian, Italian, Brazilian, Russian, Slovak, Turkish translations. If you would like to translate the plugin in your own languages please email us the files when you are done so we can include them in future updates.
 
 = Side Bar disappears =
-
-This is a theme issue. Once again you can customize your own theme, email us and we can give you a quote or you can purchase the Denali.
-
-= How do stylesheets work? =
-
-The plugin uses your theme's stylesheet, but also has its own. Inside the plugin folder (wp-content/plugins/wp-property/templates) there is a file called "wp_properties.css". Copy that file to your template directory, and the plugin will automatically switch to using the settings in that file, and will not load the default one anymore. That way when you upgrade the plugin, your custom CSS will not be overwritten. Same goes for all the other template files.
-
-= How do I upload property images? =
-
-You would do it the same way as if you were editing a post or a page.  On the property editing page, click the Image icon above the content area, and upload images into the media library.  If you want the images to show up on the front-end, you may want to visit Appearance -> Widgets and setup the Property Gallery widget to show up on the property page.
+This is a theme issue. Once again you can customize your own theme, email us and we can give you a quote or you can purchase the Denali premium theme.
 
 = How do I suggest an idea? =
-
-You can send us a message via our website, or, preferably, visit our [feedback.TwinCitiesTech.com](http://feedback.twincitiestech.com/forums/95259-wp-property) page to submit new, and vote on existing, ideas.
+You can send us a message via our website, or, preferably, visit our [feedback.usabilitydynamics.com](http://feedback.usabilitydynamics.com/forums/95259-wp-property) page to submit new, and vote on existing, ideas.
 
 = I like where this is going, but how do I get customization? =
-
-If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.  If you need something custom, and urgent, [contact us](http://twincitiestech.com/contact-us/)
+If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.  If you need something custom, and urgent, [contact us](https://www.usabilitydynamics.com/contact-us)
 
 == Upgrade Notice ==
 
@@ -227,23 +244,37 @@ We are still in early stages, so updates will be coming out routinely.  Please d
 
 == Changelog ==
 
-= 1.42.4 =
-* Fixed issues with Front End Property Submission add-on.
-* Fixed JavaScript issues in payment process of Front End Property Submission add-on.
-* Code clean up and improvements.
-
-= 1.42.3 =
-* Added compatibility with Wordpress 4.2.
-
-= 1.42.2 =
-* Fixed 'exclude' parameter for draw_stats function. The issue also was related to showing specific property attributes in PDF Flyer.
-* Fixed property object caching.
-* Fixed bug on clicking 'Add to Featured' on 'All Properties' page.
+= 2.0.0 =
+* Changed plugin initialization functionality.
+* Added 'Advanced Range Dropdown' Search Input field which renders min and max select boxes. Feedback: http://feedback.usabilitydynamics.com/forums/95259-wp-property/suggestions/3557341-price-min-and-max-select-boxes-instead-of-text-inp
+* Added Composer ( dependency manager ) modules and moved some functionality to composer modules ( vendors ).
+* Added ability to clone listings.
+* Added more flexibility over adding and customizing taxonomies. See free WP-Property Terms Add-on.
+* Added optional revision control for properties.
+* Added option to redirect certain property types to parent on front-end.
+* Added ability to save float numbers for numeric attributes.
+* Added Gallery Images meta box on Edit Property page got better images management.
+* Added smart Manual Coordinates option. Now you can set coordinates directly on map.
+* Added doing WP-Property Settings backup on upgrade to new version. Get information about backup: get_option('wpp_settings_backup');
+* Moved premium features to separate plugins (Add-ons).
+* Changed Licenses management.
+* Moved 'Advanced Settings' to the 'Help' tab out of the 'Developer' tab on Settings page
+* Cleaned up functionality of plugin.
+* Refactored file structure of plugin.
+* Refactored attributes and meta management and added new attribute types.
+* Refactored 'All Properties' page and added smart filter on it.
+* Changed settings export to use JSON extension.
+* Fixed 'Get Direction' link on Google Map for properties which have manual coordinates.
+* Fixed pagination bug related to sorting properties by prices with the same price value.
+* Fixed double sharp for strict search in field's value.
 * Fixed option 'Display in featured listings' on edit property page.
-* Warnings and Notices fixes.
+* Fixed "Add Row" issue for WP-Property Settings and WP-Property: Importer schedule mapping.
+* Fixed Warnings and Notices.
+* Depreciated / removed legacy UD log.
 
 = 1.42.1 =
 * Fixed property search for range input and range dropdown fields types.
+* Fixed Warnings and Notices.
 
 = 1.42.0 =
 * Added strict search option for [property_search] shortcode and 'Property Search' widget.
