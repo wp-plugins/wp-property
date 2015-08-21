@@ -3,7 +3,7 @@ Contributors: usability_dynamics, andypotanin, jbrw1984, maxim.peshkov, Anton Ko
 Donate link: http://usabilitydynamics.com/product/wp-property/
 Tags: property management, real estate, listings, properties, property, wp-property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 4.0
-Tested up to: 4.3-RC2
+Tested up to: 4.3
 Stable tag: 2.0.2
 
 
@@ -186,6 +186,9 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Upgrade Notice ==
 
+= 2.0.3 =
+* Added compatibility with WordPress 4.3 and higher.
+
 = 1.38 =
 * Added compatibility with FEPS 2.0 premium feature.
 
@@ -199,6 +202,14 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 * Security fixes
 
 == Changelog ==
+
+= 2.0.3 =
+* Added ability to set Google Maps API key on WP-Property Settings page. Using of Google Maps API key increases google validation limits.
+* Fixed the way of widgets initialization. Compatibility with WordPress 4.3 and higher.
+* Fixed Warnings and issues with hidden Title and Checkbox columns on All Properties page for WordPress 4.3 and higher.
+* Fixed Warnings which were breaking ajax request on pagination and filtering items on All Properties page for PHP 5.6.
+* Fixed Warning on properties overview's default template.
+* Fixed incorrect behaviour on custom 'Install Plugins' page after depended plugins ( Add-ons ) activation.
 
 = 2.0.2 =
 * Added Shortcodes UI library for providing better shortcodes UI management in future releases.
