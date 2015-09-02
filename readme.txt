@@ -203,6 +203,14 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 
 == Changelog ==
 
+= 2.0.4 =
+* Added filter which adds admin domain to the whitelist of hosts to redirect to, in case, admin and site domains are different.
+* Added Chinese language to available address localizations.
+* Fixed showing values for Multi Checkbox attributes on All Properties page ( Admin Panel ) and on Front End.
+* Fixed default overview on All Properties pages. There was a potential issue when trashed properties were shown on default overview.
+* Fixed warnings on Property saving process which prevent loading page.
+* Fixed the bug when UsabilityDynamics Admin Notices could not be dismissed.
+
 = 2.0.3 =
 * Added ability to set Google Maps API key on WP-Property Settings page. Using of Google Maps API key increases google validation limits.
 * Fixed the way of widgets initialization. Compatibility with WordPress 4.3 and higher.
@@ -256,6 +264,21 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 * Fixed "Add Row" issue for WP-Property Settings and WP-Property: Importer schedule mapping.
 * Fixed Warnings and Notices.
 * Depreciated / removed legacy UD log.
+
+= 1.42.4 =
+* Fixed issues with Front End Property Submission add-on.
+* Fixed JavaScript issues in payment process of Front End Property Submission add-on.
+* Code clean up and improvements.
+
+= 1.42.3 =
+* Added compatibility with Wordpress 4.2.
+
+= 1.42.2 =
+* Fixed 'exclude' parameter for draw_stats function. The issue also was related to showing specific property attributes in PDF Flyer.
+* Fixed property object caching.
+* Fixed bug on clicking 'Add to Featured' on 'All Properties' page.
+* Fixed option 'Display in featured listings' on edit property page.
+* Warnings and Notices fixes.
 
 = 1.42.1 =
 * Fixed property search for range input and range dropdown fields types.

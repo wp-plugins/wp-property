@@ -1566,7 +1566,7 @@ class WPP_F extends UsabilityDynamics\Utility {
 
     $address = get_post_meta( $post_id, $wp_properties[ 'configuration' ][ 'address_attribute' ], true );
 
-    $coordinates = ( empty( $latitude ) || empty( $longitude ) ) ? "" : array( 'lat' => get_post_meta( $post_id, 'latitude', true ), 'lng' => get_post_meta( $post_id, 'longitude', true ) );
+    $coordinates = ( empty( $latitude ) || empty( $longitude ) ) ? false : array( 'lat' => get_post_meta( $post_id, 'latitude', true ), 'lng' => get_post_meta( $post_id, 'longitude', true ) );
 
     if( $skip_existing == 'true' && !empty( $current_coordinates ) && in_array( $address_is_formatted, array( '1', 'true' ) ) ) {
       $return[ 'status' ] = 'skipped';
@@ -1621,8 +1621,16 @@ class WPP_F extends UsabilityDynamics\Utility {
 
       update_post_meta( $post_id, 'wpp::last_address_validation', time() );
 
-      update_post_meta( $post_id, 'latitude', $manual_coordinates ? $coordinates[ 'lat' ] : $geo_data->latitude );
-      update_post_meta( $post_id, 'longitude', $manual_coordinates ? $coordinates[ 'lng' ] : $geo_data->longitude );
+      if( $manual_coordinates ) {
+        $lat = !empty( $coordinates[ 'lat' ] ) ? $coordinates[ 'lat' ] : 0;
+        $lng = !empty( $coordinates[ 'lng' ] ) ? $coordinates[ 'lng' ] : 0;
+      } else {
+        $lat = $geo_data->latitude;
+        $lng = $geo_data->longitude;
+      }
+
+      update_post_meta( $post_id, 'latitude', $lat );
+      update_post_meta( $post_id, 'longitude', $lng );
 
       if( $return_geo_data ) {
         $return[ 'geo_data' ] = $geo_data;
@@ -2105,24 +2113,27 @@ class WPP_F extends UsabilityDynamics\Utility {
       'ar'    => 'Arabic',
       'bg'    => 'Bulgarian',
       'cs'    => 'Czech',
+      'da'    => 'Danish',
+      'nl'    => 'Dutch',
       'de'    => 'German',
+      'zh-TW' => 'Chinese',
       'el'    => 'Greek',
-      'es'    => 'Spanish',
+      'fi'    => 'Finnish',
       'fr'    => 'French',
       'hu'    => 'Hungarian',
       'it'    => 'Italian',
       'ja'    => 'Japanese',
       'ko'    => 'Korean',
-      'da'    => 'Danish',
-      'nl'    => 'Dutch',
       'no'    => 'Norwegian',
       'pt'    => 'Portuguese',
       'pt-BR' => 'Portuguese (Brazil)',
       'pt-PT' => 'Portuguese (Portugal)',
       'ru'    => 'Russian',
+      'es'    => 'Spanish',
       'sv'    => 'Swedish',
       'th'    => 'Thai',
-      'uk'    => 'Ukranian' );
+      'uk'    => 'Ukrainian'
+    );
 
     $attributes = apply_filters( "wpp_google_maps_localizations", $attributes );
 
@@ -3407,7 +3418,6 @@ class WPP_F extends UsabilityDynamics\Utility {
       'return_object'         => 'false',
       'load_gallery'          => 'true',
       'load_thumbnail'        => 'true',
-      'allow_multiple_values' => 'false',
       'load_parent'           => 'true',
       'cache'                 => 'true',
     ) ), EXTR_SKIP );
@@ -3417,7 +3427,6 @@ class WPP_F extends UsabilityDynamics\Utility {
     $return_object         = isset( $return_object ) ? $return_object : 'false';
     $load_gallery          = isset( $load_gallery ) ? $load_gallery : 'true';
     $load_thumbnail        = isset( $load_thumbnail ) ? $load_thumbnail : 'true';
-    $allow_multiple_values = isset( $allow_multiple_values ) ? $allow_multiple_values : 'false';
     $load_parent           = isset( $load_parent ) ? $load_parent : 'true';
 
     $args = is_array( $args ) ? http_build_query( $args ) : (string) $args;
@@ -3443,9 +3452,12 @@ class WPP_F extends UsabilityDynamics\Utility {
 
     //** Load all meta keys for this object */
     if( $keys = get_post_custom( $id ) ) {
+
       foreach( $keys as $key => $value ) {
 
-        if( $allow_multiple_values == 'false' ) {
+        $attribute = WPP_F::get_attribute_data( $key );
+
+        if( !$attribute[ 'multiple' ] ) {
           $value = $value[ 0 ];
         }
 
