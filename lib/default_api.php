@@ -1,251 +1,15 @@
 <?php
 /**
  * Default API Usage Examples
- *
- * @since 0.0.1
- * @class wpp_default_api
  */
-class wpp_default_api {
-
-  /**
-   * Loader for WPP API functions.
-   *
-   * @version 1.25.0
-   */
-  static function plugins_loaded() {
-
-    //** Load API towards the end of init */
-    add_filter( 'init', array( 'wpp_default_api', 'init' ), 0, 30 );
-
-  }
-
-  /**
-   * Loader for WPP API functions.
-   *
-   * @version 1.25.0
-   */
-  static function init() {
-    global $shortcode_tags;
-
-    $shortcodes = array_keys( (array) $shortcode_tags );
-
-    //** Load list-attachments shortcode if the List Attachments Shortcode plugin does not exist */
-    if ( !in_array( 'list-attachments', $shortcodes ) ) {
-      add_shortcode( 'list_attachments', array( 'wpp_default_api', 'list_attachments' ) );
-    }
-
-  }
-
-  /**
-   * Display list of attached files to a s post.
-   *
-   * Function ported over from List Attachments Shortcode plugin.
-   *
-   * @version 1.25.0
-   */
-  static function list_attachments( $atts = array() ) {
-    global $post, $wp_query;
-
-    $r = '';
-
-    if ( !is_array( $atts ) ) {
-      $atts = array();
-    }
-
-    $defaults = array(
-      'type' => NULL,
-      'orderby' => NULL,
-      'groupby' => NULL,
-      'order' => NULL,
-      'post_id' => false,
-      'before_list' => '',
-      'after_list' => '',
-      'opening' => '<ul class="attachment-list wpp_attachment_list">',
-      'closing' => '</ul>',
-      'before_item' => '<li>',
-      'after_item' => '</li>',
-      'show_descriptions' => true,
-      'include_icon_classes' => true,
-      'showsize' => false
-    );
-
-    $atts = array_merge( $defaults, $atts );
-
-    if ( isset( $atts[ 'post_id' ] ) && is_numeric( $atts[ 'post_id' ] ) ) {
-      $post = get_post( $atts[ 'post_id' ] );
-    }
-
-    if ( !$post ) {
-      return;
-    }
-
-    if ( !empty( $atts[ 'type' ] ) ) {
-      $types = explode( ',', str_replace( ' ', '', $atts[ 'type' ] ) );
-    } else {
-      $types = array();
-    }
-
-    $showsize = ( $atts[ 'showsize' ] == true || $atts[ 'showsize' ] == 'true' || $atts[ 'showsize' ] == 1 ) ? true : false;
-    $upload_dir = wp_upload_dir();
-
-    $op = clone $post;
-    $oq = clone $wp_query;
-
-    foreach ( array( 'before_list', 'after_list', 'opening', 'closing', 'before_item', 'after_item' ) as $htmlItem ) {
-      $atts[ $htmlItem ] = str_replace( array( '&lt;', '&gt;' ), array( '<', '>' ), $atts[ $htmlItem ] );
-    }
-
-    $args = array(
-      'post_type' => 'attachment',
-      'numberposts' => -1,
-      'post_status' => null,
-      'post_parent' => $post->ID,
-    );
-
-    if ( !empty( $atts[ 'orderby' ] ) ) {
-      $args[ 'orderby' ] = $atts[ 'orderby' ];
-    }
-    if ( !empty( $atts[ 'order' ] ) ) {
-      $atts[ 'order' ] = ( in_array( $atts[ 'order' ], array( 'a', 'asc', 'ascending' ) ) ) ? 'asc' : 'desc';
-      $args[ 'order' ] = $atts[ 'order' ];
-    }
-    if ( !empty( $atts[ 'groupby' ] ) ) {
-      $args[ 'orderby' ] = $atts[ 'groupby' ];
-    }
-
-    $attachments = get_posts( $args );
-
-    if ( $attachments ) {
-      $grouper = $atts[ 'groupby' ];
-      $test = $attachments;
-      $test = array_shift( $test );
-      if ( !property_exists( $test, $grouper ) ) {
-        $grouper = 'post_' . $grouper;
-      }
-
-      $attlist = array();
-
-      foreach ( $attachments as $att ) {
-        $key = ( !empty( $atts[ 'groupby' ] ) ) ? $att->$grouper : $att->ID;
-        $key .= ( !empty( $atts[ 'orderby' ] ) ) ? $att->$atts[ 'orderby' ] : '';
-
-        $attlink = wp_get_attachment_url( $att->ID );
-
-        if ( count( $types ) ) {
-          foreach ( $types as $t ) {
-            if ( substr( $attlink, ( 0 - strlen( '.' . $t ) ) ) == '.' . $t ) {
-              $attlist[ $key ] = clone $att;
-              $attlist[ $key ]->attlink = $attlink;
-            }
-          }
-        } else {
-          $attlist[ $key ] = clone $att;
-          $attlist[ $key ]->attlink = $attlink;
-        }
-      }
-      if ( $atts[ 'groupby' ] ) {
-        if ( $atts[ 'order' ] == 'asc' ) {
-          ksort( $attlist );
-        } else {
-          krsort( $attlist );
-        }
-      }
-    }
-
-    if ( count( $attlist ) ) {
-      $open = false;
-      $r = $atts[ 'before_list' ] . $atts[ 'opening' ];
-      foreach ( $attlist as $att ) {
-
-        $container_classes = array( 'attachment_container' );
-
-        //** Determine class to display for this file type */
-        if ( $atts[ 'include_icon_classes' ] ) {
-
-          switch ( $att->post_mime_type ) {
-
-            case 'application/zip':
-              $class = 'zip';
-              break;
-
-            case 'vnd.ms-excel':
-              $class = 'excel';
-              break;
-
-            case 'image/jpeg':
-            case 'image/png':
-            case 'image/gif':
-            case 'image/bmp':
-              $class = 'image';
-              break;
-
-            default:
-              $class = 'default';
-              break;
-          }
-        }
-
-        $icon_class = ( $class ? 'wpp_attachment_icon file-' . $class : false );
-
-        //** Determine if description shuold be displayed, and if it is not empty */
-        $echo_description = ( $atts[ 'show_descriptions' ] && !empty( $att->post_content ) ? ' <span class="attachment_description"> ' . $att->post_content . ' </span> ' : false );
-
-        $echo_title = ( $att->post_excerpt ? $att->post_excerpt : __( 'View ', 'wpp' ) . apply_filters( 'the_title_attribute', $att->post_title ) );
-
-        if ( $icon_class ) {
-          $container_classes[ ] = 'has_icon';
-        }
-
-        if ( !empty( $echo_description ) ) {
-          $container_classes[ ] = 'has_description';
-        }
-
-        //** Add conditional classes if class is not already passed into container */
-        if ( !strpos( $atts[ 'before_item' ], 'class' ) ) {
-          $this_before_item = str_replace( '>', ' class="' . implode( ' ', $container_classes ) . '">', $atts[ 'before_item' ] );
-        }
-
-        $echo_size = ( ( $showsize ) ? ' <span class="attachment-size">' . WPP_F::get_filesize( str_replace( $upload_dir[ 'baseurl' ], $upload_dir[ 'basedir' ], $attlink ) ) . '</span>' : '' );
-
-        if ( !empty( $atts[ 'groupby' ] ) && $current_group != $att->$grouper ) {
-          if ( $open ) {
-            $r .= $atts[ 'closing' ] . $atts[ 'after_item' ];
-            $open = false;
-          }
-          $r .= $atts[ 'before_item' ] . '<h3>' . $att->$grouper . '</h3>' . $atts[ 'opening' ];
-          $open = true;
-          $current_group = $att->$grouper;
-        }
-        $attlink = $att->attlink;
-        $r .= $this_before_item . '<a href="' . $attlink . '" title="' . $echo_title . '" class="wpp_attachment ' . $icon_class . '">' . apply_filters( 'the_title', $att->post_title ) . '</a>' . $echo_size . $echo_description . $atts[ 'after_item' ];
-      }
-      if ( $open ) {
-        $r .= $atts[ 'closing' ] . $atts[ 'after_item' ];
-      }
-      $r .= $atts[ 'closing' ] . $atts[ 'after_list' ];
-    }
-
-    $wp_query = clone $oq;
-    $post = clone $op;
-
-    return $r;
-
-  }
-
-}
-
-// Initialize WPP Default API */
-add_filter( 'plugins_loaded', array( 'wpp_default_api', 'plugins_loaded' ), 0, 9 );
 
 // Widget address format
 // add_filter( "wpp_stat_filter_{$wp_properties[ 'configuration' ]['address_attribute']}", "wpp_format_address_attribute", 0, 3 );
 
 // Add post-thumbnails support
-add_action( "after_setup_theme", array( 'WPP_Core', "after_setup_theme" ) );
-
-// Add some default actions
-//add_filter("wpp_stat_filter_price", 'add_dollar_sign');
-//add_filter("wpp_stat_filter_deposit", 'add_dollar_sign');
+add_action( "after_setup_theme", function(){
+  add_theme_support( 'post-thumbnails' );
+} );
 
 //** Add dollar sign to all attributes marked as currency */
 if ( isset( $wp_properties[ 'currency_attributes' ] ) && is_array( $wp_properties[ 'currency_attributes' ] ) ) {
@@ -281,8 +45,6 @@ if ( isset( $wp_properties['searchable_attr_fields'] ) && is_array( $wp_properti
   }
 }
 
-add_filter("wpp_stat_filter_phone_number", 'format_phone_number');
-
 // Exclude hidden attributes from frontend
 add_filter( 'wpp_get_property', 'wpp_exclude_hidden_attributes' );
 
@@ -303,9 +65,6 @@ add_filter( 'the_password_form', 'wpp_password_protected_property_form' );
 //add_action("wpp_ui_after_attribute_{$wp_properties['configuration']['address_attribute']}", 'wpp_show_coords');
 add_action( 'wpp_ui_after_attribute_price', 'wpp_show_week_month_selection' );
 
-//**  Adds additional settings for Property Page */
-add_action( 'wpp_settings_page_property_page', 'add_format_phone_number_checkbox' );
-
 /**
  * Add labels to system-generated attributes that do not have custom-set values
  *
@@ -314,11 +73,11 @@ add_action( 'wpp_settings_page_property_page', 'add_format_phone_number_checkbox
 function wpp_unique_key_labels( $stats ) {
 
   if ( empty( $stats[ 'property_type' ] ) ) {
-    $stats[ 'property_type' ] = __( 'Property Type', 'wpp' );
+    $stats[ 'property_type' ] = sprintf( __( '%s Type', ud_get_wp_property()->domain ), \WPP_F::property_label() );
   }
 
   if ( empty( $stats[ 'city' ] ) ) {
-    $stats[ 'city' ] = __( 'City', 'wpp' );
+    $stats[ 'city' ] = __( 'City', ud_get_wp_property()->domain );
   }
 
   return $stats;
@@ -421,20 +180,20 @@ function wpp_format_address_attribute( $data, $property = false, $format = "[str
 
 function wpp_property_stats_add_sold_or_rented( $property_stats ) {
 
-  $property_stats[ 'for_sale' ] = __( "For Sale", 'wpp' );
-  $property_stats[ 'for_rent' ] = __( "For Rent", 'wpp' );
+  $property_stats[ 'for_sale' ] = __( "For Sale", ud_get_wp_property()->domain );
+  $property_stats[ 'for_rent' ] = __( "For Rent", ud_get_wp_property()->domain );
 
   return $property_stats;
 }
 
 function wpp_property_stats_input_for_rent_make_checkbox( $content, $slug, $object ) {
   $checked = ( $object[ $slug ] == 'true' ? ' checked="true" ' : false );
-  return "<input type='hidden' name='wpp_data[meta][{$slug}]'  value='false'  /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>" . __( 'This is a rental property.', 'wpp' ) . "</label>";
+  return "<input type='hidden' name='wpp_data[meta][{$slug}]'  value='false'  /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>" . __( 'This is a rental property.', ud_get_wp_property()->domain ) . "</label>";
 }
 
 function wpp_property_stats_input_for_sale_make_checkbox( $content, $slug, $object ) {
   $checked = ( $object[ $slug ] == 'true' ? ' checked="true" ' : false );
-  return "<input type='hidden'  name='wpp_data[meta][{$slug}]'  value='false' /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>" . __( 'This property is for sale.', 'wpp' ) . "</label>";
+  return "<input type='hidden'  name='wpp_data[meta][{$slug}]'  value='false' /><input type='checkbox' id='wpp_meta_{$slug}' name='wpp_data[meta][{$slug}]'  value='true' $checked /> <label for='wpp_meta_{$slug}'>" . __( 'This property is for sale.', ud_get_wp_property()->domain ) . "</label>";
 }
 
 /**
@@ -453,17 +212,17 @@ function wpp_property_stats_input_address( $content, $slug, $object ) {
     <div class="wpp_attribute_row_address_options">
           <input type="hidden" name="wpp_data[meta][manual_coordinates]" value="false"/>
           <input type="checkbox" id="wpp_manual_coordinates" name="wpp_data[meta][manual_coordinates]" value="true" <?php isset( $object[ 'manual_coordinates' ] ) ? checked( $object[ 'manual_coordinates' ], 1 ) : ''; ?> />
-          <label for="wpp_manual_coordinates"><?php echo __( 'Set Coordinates Manually.', 'wpp' ); ?></label>
+          <label for="wpp_manual_coordinates"><?php echo __( 'Set Coordinates Manually.', ud_get_wp_property()->domain ); ?></label>
           <div id="wpp_coordinates" style="<?php echo !isset( $object[ 'manual_coordinates' ] ) ? 'display:none;' : ''; ?>">
             <ul>
               <li>
                   <input type="text" id="wpp_meta_latitude" name="wpp_data[meta][latitude]" value="<?php echo isset( $object[ 'latitude' ] ) ? $object[ 'latitude' ] : ''; ?>"/>
-                  <label><?php echo __( 'Latitude', 'wpp' ) ?></label>
+                  <label><?php echo __( 'Latitude', ud_get_wp_property()->domain ) ?></label>
                   <div class="wpp_clear"></div>
                 </li>
                 <li>
                   <input type="text" id="wpp_meta_longitude" name="wpp_data[meta][longitude]" value="<?php echo isset( $object[ 'longitude' ] ) ? $object[ 'longitude' ] : ''; ?>"/>
-                  <label><?php echo __( 'Longitude', 'wpp' ) ?></label>
+                  <label><?php echo __( 'Longitude', ud_get_wp_property()->domain ) ?></label>
                   <div class="wpp_clear"></div>
                 </li>
               </ul>
@@ -595,50 +354,12 @@ function wpp_save_property_aggregated_data( $post_id ) {
 
 function wpp_stat_filter_for_rent_fix( $value ) {
   if ( $value == '1' )
-    return __( 'Yes', 'wpp' );
+    return __( 'Yes', ud_get_wp_property()->domain );
 }
 
 function wpp_stat_filter_for_sale_fix( $value ) {
   if ( $value == '1' )
-    return __( 'Yes', 'wpp' );
-}
-
-/**
- * Formats phone number for display
- *
- *
- * @since 1.0
- *
- * @param string $phone_number
- *
- * @return string $phone_number
- */
-function format_phone_number( $phone_number ) {
-  global $wp_properties;
-
-  if ( 
-    isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] ) && 
-    $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] == 'true' 
-  ) {
-    $phone_number = preg_replace( "[^0-9]", '', $phone_number );
-    if ( strlen( $phone_number ) != 10 ) {
-      return $phone_number;
-    }
-    $sArea = substr( $phone_number, 0, 3 );
-    $sPrefix = substr( $phone_number, 3, 3 );
-    $sNumber = substr( $phone_number, 6, 4 );
-    $phone_number = "(" . $sArea . ") " . $sPrefix . "-" . $sNumber;
-  }
-
-  return $phone_number;
-}
-
-/**
- * Adds option 'format phone number' to settings of property page
- */
-function add_format_phone_number_checkbox() {
-  global $wp_properties;
-  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_phone_number]&label=" . __( 'Format phone number.', 'wpp' ), ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_phone_number' ] : false ) ) . '</li>';
+    return __( 'Yes', ud_get_wp_property()->domain );
 }
 
 /**
@@ -649,7 +370,7 @@ function add_format_phone_number_checkbox() {
  */
 function add_format_true_checkbox() {
   global $wp_properties;
-  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __( 'Convert "Yes" and "True" values to checked icons on the front-end.', 'wpp' ), ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] : false ) ) . '</li>';
+  echo '<li>' . WPP_F::checkbox( "name=wpp_settings[configuration][property_overview][format_true_checkbox]&label=" . __( 'Convert "Yes" and "True" values to checked icons on the front-end.', ud_get_wp_property()->domain ), ( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] ) ? $wp_properties[ 'configuration' ][ 'property_overview' ][ 'format_true_checkbox' ] : false ) ) . '</li>';
 }
 
 /**
@@ -706,7 +427,7 @@ function add_city_to_searchable( $array ) {
  * @return string $area
  */
 function add_square_foot( $area ) {
-  return $area . __( " sq. ft.", 'wpp' );
+  return $area . __( " sq. ft.", ud_get_wp_property()->domain );
 }
 
 /**
@@ -879,9 +600,9 @@ function wpp_show_coords( $listing_id = false ) {
 
   echo "<span class='description'>";
   if ( $coords ) {
-    _e( "Address was validated by Google Maps.", 'wpp' );
+    _e( "Address was validated by Google Maps.", ud_get_wp_property()->domain );
   } else {
-    _e( "Address has not yet been validated, should be formatted as: street, city, state, postal code, country. Locations are validated through Google Maps.", 'wpp' );
+    _e( "Address has not yet been validated, should be formatted as: street, city, state, postal code, country. Locations are validated through Google Maps.", ud_get_wp_property()->domain );
   }
   echo "</span>";
 

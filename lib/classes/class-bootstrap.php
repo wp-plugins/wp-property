@@ -44,22 +44,6 @@ namespace UsabilityDynamics\WPP {
           define( 'WPP_Version', $this->args[ 'version' ] );
         }
 
-        //** Init Settings */
-        $this->settings = new Settings( array(
-          'key'  => 'wpp_settings',
-          'store'  => 'options',
-          'data' => array(
-            'name' => $this->name,
-            'version' => $this->args[ 'version' ],
-            'domain' => $this->domain,
-          )
-        ));
-
-        //** Initiate Attributes Handler */
-        new Attributes();
-
-        /** Legacy filters and hooks */
-        include_once $this->path( 'lib/default_api.php', 'dir' );
         /** Loads general functions used by WP-Property */
         include_once $this->path( 'lib/class_functions.php', 'dir' );
         /** Loads Admin Tools feature */
@@ -72,6 +56,24 @@ namespace UsabilityDynamics\WPP {
         include_once $this->path( 'lib/class_mail.php', 'dir' );
         /** Load in hooks that deal with legacy and backwards-compat issues */
         include_once $this->path( 'lib/class_legacy.php', 'dir' );
+
+        $upload_dir = wp_upload_dir();
+
+        //** Init Settings */
+        $this->settings = new Settings( array(
+          'key'  => 'wpp_settings',
+          'store'  => 'options',
+          'data' => array(
+            'name' => $this->name,
+            'version' => $this->args[ 'version' ],
+            'domain' => $this->domain,
+            'cache_dir' => $upload_dir[ 'basedir' ] . '/wpp_cache',
+            'cache_url' => $upload_dir[ 'baseurl' ] . '/wpp_cache',
+          )
+        ));
+
+        //** Initiate Attributes Handler */
+        new Attributes();
 
         //** Initiate AJAX Handler */
         new Ajax();
@@ -93,11 +95,56 @@ namespace UsabilityDynamics\WPP {
         new \UsabilityDynamics\WPLT\Bootstrap();
 
         /**
-         *
+         * May be load Shortcodes
          */
+        add_action( 'init', function() {
+          ud_get_wp_property()->load_files( ud_get_wp_property()->path('lib/shortcodes', 'dir') );
+        }, 999 );
 
-        //** Initiate the plugin */
+
+        /**
+         * May be load Widgets
+         */
+        add_action( 'widgets_init', function() {
+          ud_get_wp_property()->load_files( ud_get_wp_property()->path('lib/widgets', 'dir') );
+        }, 1 );
+
+        /** Legacy filters and hooks */
+        include_once $this->path( 'lib/default_api.php', 'dir' );
+
+        /**
+         * Initiate the plugin
+         */
         $this->core = new \WPP_Core();
+
+        /**
+         * Flush WP-Property cache
+         */
+        if( get_transient( 'wpp_cache_flush' ) ) {
+          \WPP_F::clear_cache();
+          delete_transient( 'wpp_cache_flush' );
+        }
+
+      }
+
+      /**
+       * Includes all PHP files from specific folder
+       *
+       * @param string $dir Directory's path
+       * @author peshkov@UD
+       */
+      public function load_files($dir = '') {
+        $dir = trailingslashit($dir);
+        if (!empty($dir) && is_dir($dir)) {
+          if ($dh = opendir($dir)) {
+            while (( $file = readdir($dh) ) !== false) {
+              if (!in_array($file, array('.', '..')) && is_file($dir . $file) && 'php' == pathinfo($dir . $file, PATHINFO_EXTENSION)) {
+                include_once( $dir . $file );
+              }
+            }
+            closedir($dh);
+          }
+        }
       }
       
       /**
@@ -118,10 +165,10 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function activate() {
-        //** flush Rewrite Rules */
-        flush_rewrite_rules();
         //** flush Object Cache */
         wp_cache_flush();
+        //** set transient to flush WP-Property cache */
+        set_transient( 'wpp_cache_flush', time() );
       }
       
       /**
@@ -129,8 +176,6 @@ namespace UsabilityDynamics\WPP {
        *
        */
       public function deactivate() {
-        //** flush Rewrite Rules */
-        flush_rewrite_rules();
         //** flush Object Cache */
         wp_cache_flush();
       }
@@ -156,42 +201,7 @@ namespace UsabilityDynamics\WPP {
        * @author peshkov@UD
        */
       public function run_upgrade_process() {
-        /* Do automatic Settings backup! */
-        $settings = get_option( 'wpp_settings' );
-
-        if( !empty( $settings ) ) {
-
-          /**
-           * Fixes allowed mime types for adding download files on Edit Product page.
-           *
-           * @see https://wordpress.org/support/topic/2310-download-file_type-missing-in-variations-filters-exe?replies=5
-           * @author peshkov@UD
-           */
-          add_filter( 'upload_mimes', function( $t ){
-            if( !isset( $t['json'] ) ) {
-              $t['json'] = 'application/json';
-            }
-            return $t;
-          }, 99 );
-
-          $filename = md5( 'wpp_settings_backup' ) . '.json';
-          $upload = wp_upload_bits( $filename, null, json_encode( $settings ) );
-
-          if( !empty( $upload ) && empty( $upload[ 'error' ] ) ) {
-            if( isset( $upload[ 'error' ] ) ) unset( $upload[ 'error' ] );
-            $upload[ 'version' ] = $this->old_version;
-            $upload[ 'time' ] = time();
-            update_option( 'wpp_settings_backup', $upload );
-          }
-
-        }
-
-        /**
-         * WP-Property 1.42.4 and less compatibility
-         */
-        update_option( "wpp_version", $this->args['version'] );
-
-        do_action( $this->slug . '::upgrade', $this->old_version, $this->args[ 'version' ], $this );
+        Upgrade::run( $this->old_version, $this->args['version'] );
       }
 
     }

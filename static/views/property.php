@@ -124,19 +124,18 @@
         <?php foreach($wp_properties['property_meta'] as $meta_slug => $meta_title):
           if(empty($post->$meta_slug) || $meta_slug == 'tagline')
             continue;
-        ?>
+          ?>
           <h2><?php echo $meta_title; ?></h2>
           <p><?php echo  do_shortcode(html_entity_decode($post->$meta_slug)); ?></p>
         <?php endforeach; ?>
         <?php endif; ?>
-
 
         <?php if(WPP_F::get_coordinates()): ?>
           <div id="property_map" class="<?php wpp_css('property::property_map'); ?>" style="width:100%; height:450px"></div>
         <?php endif; ?>
 
         <?php if($post->post_parent): ?>
-          <a href="<?php echo $post->parent_link; ?>" class="<?php wpp_css('btn', "btn btn-return"); ?>"><?php _e('Return to building page.','wpp') ?></a>
+          <a href="<?php echo $post->parent_link; ?>" class="<?php wpp_css('btn', "btn btn-return"); ?>"><?php _e('Return to building page.',ud_get_wp_property()->domain) ?></a>
         <?php endif; ?>
 
       </div><!-- .entry-content -->

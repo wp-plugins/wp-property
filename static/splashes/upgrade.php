@@ -14,6 +14,19 @@ wp_cache_flush();
     background-size: 150px 150px !important;
     box-shadow: none !important;
   }
+  .changelog .col-1 {
+    padding-right: 2%;
+  }
+  .changelog .col-1,
+  .changelog .col-2 {
+    float: left;
+    width: 48%;
+  }
+  .changelog ul {
+    list-style-position: outside;
+    list-style-type: disc;
+    margin-left: 20px;
+  }
 </style>
 <div class="changelog">
 
@@ -35,6 +48,24 @@ wp_cache_flush();
       <hr />
       <p><?php printf( __( 'Do you want to help us to improve %s? Or do you have any idea? We are waiting <a href="%s" target="_blank">feedback</a> from you!', ud_get_wp_property()->domain ), ud_get_wp_property()->name, $s->uservoice_url  ); ?></p>
     <?php endif; ?>
+
+    <hr />
+
+    <h3><?php printf( __( 'WP-Property %s important changes', ud_get_wp_property()->domain ), ud_get_wp_property( 'version' ) ); ?>:</h3>
+
+    <ul>
+      <li>Added function get_property_type() which returns label of property type for current or particular property.</li>
+      <li>Added automatic object cache and plugin cache flushing on plugin's settings updates.</li>
+      <li>Added automatic object cache flushing on property updates.</li>
+      <li>Added automatic plugin cache flushing on plugin activation.</li>
+      <li>Updated localisation files.</li>
+      <li>Updated Russian localisation.</li>
+      <li>Refactored get_property function.</li>
+      <li>Fixed 'Property/Properties' white labels.</li>
+      <li>Fixed plugin's upgrade process.</li>
+      <li>Fixed localisation of javascript files on multi site.</li>
+      <li>Fixed rewrite rules breaking on plugin activation which has caused 404 errors on single property pages.</li>
+    </ul>
 
   </div>
 
