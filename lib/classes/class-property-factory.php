@@ -341,14 +341,14 @@ namespace UsabilityDynamics\WPP {
 
               if( count( $range[ $range_attribute ] ) < 2 ) {
                 if( !isset( $property[ $range_attribute ] ) ) {
-                  $data[ $range_attribute ] = '';
+                  $property[ $range_attribute ] = '';
                 }
                 $data[ $range_attribute ] = $property[ $range_attribute ] . ' ( ' . $range[ $range_attribute ][ 0 ] . ' )';
               }
 
               if( count( $range[ $range_attribute ] ) > 1 ) {
                 if( !isset( $property[ $range_attribute ] ) ) {
-                  $data[ $range_attribute ] = '';
+                  $property[ $range_attribute ] = '';
                 }
                 $data[ $range_attribute ] = $property[ $range_attribute ] . ' ( ' . min( $range[ $range_attribute ] ) . " - " . max( $range[ $range_attribute ] ) . ' )';
               }
@@ -372,6 +372,71 @@ namespace UsabilityDynamics\WPP {
       }
 
       /**
+       * Returns thumbnail ID of property.
+       * It thumbnail does not exist,
+       * it returns ID of default property image based on property type
+       *
+       * @param $property_id
+       * @return mixed
+       * @since 2.1.3
+       * @author peshkov@UD
+       */
+      static public function get_thumbnail_id( $property_id ) {
+
+        $meta_cache = wp_cache_get( $property_id, 'post_meta' );
+
+        if ( !$meta_cache ) {
+          $meta_cache = update_meta_cache( 'post', array( $property_id ) );
+          $meta_cache = $meta_cache[ $property_id ];
+        }
+
+        /* STEP 1:  Try to get ID of featured image */
+        if ( isset( $meta_cache[ '_thumbnail_id' ] ) ) {
+
+          if( is_array( $meta_cache[ '_thumbnail_id' ] ) ) {
+            return array_shift( array_values( $meta_cache[ '_thumbnail_id' ] ) );
+          } else {
+            return $meta_cache[ '_thumbnail_id' ];
+          }
+
+        }
+
+        /* STEP 2:  Try to get ID of any existing attachment (image) */
+        else {
+
+          $attachments = get_children( array(
+            'numberposts' => '1',
+            'post_parent' => $property_id,
+            'post_type' => 'attachment',
+            'post_mime_type' => 'image',
+            'orderby' => 'menu_order ASC, ID',
+            'order' => 'DESC'
+          ) );
+
+          if( !empty( $attachments ) ) {
+
+            return key($attachments);
+
+          }
+
+        }
+
+        /* STEP 3:  Try to get ID of default image based on property type */
+        $property_type = get_post_meta( $property_id, "property_type", true );
+        if( !empty( $property_type ) ) {
+          $id = ud_get_wp_property( "configuration.default_image.types.{$property_type}.id" );
+          if( !empty( $id ) && is_numeric( $id ) ) {
+            return $id;
+          }
+        }
+
+        /* STEP 4:  Try to get ID of basic default image. See Display Tab on Settings page (UI) */
+        $id = ud_get_wp_property( 'configuration.default_image.default.id' );
+        return !empty( $id ) && is_numeric( $id ) ? $id : false;
+
+      }
+
+      /**
        * Returns thumbnail's data
        *
        * @param int $id
@@ -391,10 +456,9 @@ namespace UsabilityDynamics\WPP {
 
           $wp_image_sizes = get_intermediate_image_sizes();
 
-          $thumbnail_id = get_post_meta( $id, '_thumbnail_id', true );
-          $attachments  = get_children( array( 'numberposts' => '1', 'post_parent' => $id, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order ASC, ID', 'order' => 'DESC' ) );
+          $thumbnail_id = self::get_thumbnail_id( $id );
 
-          if( $thumbnail_id ) {
+          if( !empty( $thumbnail_id ) ) {
 
             foreach( $wp_image_sizes as $image_name ) {
               $this_url = wp_get_attachment_image_src( $thumbnail_id, $image_name, true );
@@ -402,19 +466,6 @@ namespace UsabilityDynamics\WPP {
             }
 
             $featured_image_id = $thumbnail_id;
-
-          } elseif( !empty( $attachments ) && is_array( $attachments ) ) {
-
-            foreach( $attachments as $attachment_id => $attachment ) {
-
-              foreach( $wp_image_sizes as $image_name ) {
-                $this_url = wp_get_attachment_image_src( $attachment_id, $image_name, true );
-                $data[ 'images' ][ $image_name ] = $this_url[ 0 ];
-              }
-
-              $featured_image_id = $attachment_id;
-              break;
-            }
 
           }
 

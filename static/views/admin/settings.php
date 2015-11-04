@@ -354,21 +354,43 @@ if ( get_option( 'permalink_structure' ) == '' ) {
             </tfoot>
           </table>
 
-
        </td>
     </tr>
 
-
-
+    <tr>
+      <th><?php printf( __( 'Default %s image', ud_get_wp_property('domain') ), \WPP_F::property_label() ); ?></th>
+      <td>
+        <p>
+          <?php printf( __( 'Setup image which will be used by default for all %s without images.', ud_get_wp_property('domain') ), \WPP_F::property_label('plural') ); ?><br/>
+          <?php printf( __( 'Note, you also can setup default image for every %s type on Developer tab. So, that image will be used instead of current one.', ud_get_wp_property('domain') ), \WPP_F::property_label() ); ?>
+        </p>
+        <div class="upload-image-section">
+          <input type="hidden" name="wpp_settings[configuration][default_image][default][url]" class="input-image-url" value="<?php echo isset( $wp_properties[ 'configuration' ][ 'default_image' ][ 'default' ][ 'url' ] ) ? $wp_properties[ 'configuration' ][ 'default_image' ][ 'default' ]['url'] : ''; ?>">
+          <input type="hidden" name="wpp_settings[configuration][default_image][default][id]" class="input-image-id" value="<?php echo isset( $wp_properties[ 'configuration' ][ 'default_image' ][ 'default' ][ 'id' ] ) ? $wp_properties[ 'configuration' ][ 'default_image' ][ 'default' ]['id'] : ''; ?>">
+          <div class="image-actions">
+            <input type="button" class="button-secondary button-setup-image" value="<?php _e( 'Setup Image', ud_get_wp_property('domain') ); ?>">
+          </div>
+          <div class="image-wrapper"></div>
+        </div>
+      </td>
+    </tr>
 
     <tr>
       <th><?php _e( 'Overview Shortcode', ud_get_wp_property()->domain ) ?></th>
       <td>
         <p>
-        <?php printf( __( 'These are the settings for the <b>%s</b> shortcode. The shortcode displays a list of all %s.<br />The display settings may be edited further by customizing the <b>%s</b> file.  To avoid losing your changes during updates, copy <b>%s</b> file in your theme\'s root directory, which will be automatically loaded.', ud_get_wp_property()->domain ), '[property_overview]', WPP_F::property_label( 'plural' ), 'wp-content/plugins/wp-property/static/views/property-overview.php', 'property-overview.php' ); ?>
+        <?php printf( __( 'These are the settings for the <b>%s</b> shortcode and %s Overview widget. The shortcode (widget) displays a list of all %s.<br />The display settings may be edited further by customizing the <b>%s</b> file.  To avoid losing your changes during updates, copy <b>%s</b> file in your theme\'s root directory, which will be automatically loaded.', ud_get_wp_property()->domain ), '[property_overview]', WPP_F::property_label(), WPP_F::property_label( 'plural' ), 'wp-content/plugins/wp-property/static/views/property-overview.php', 'property-overview.php' ); ?>
         </p>
+        <br/>
         <ul>
           <li><?php _e( 'Thumbnail size:', ud_get_wp_property()->domain ) ?> <?php WPP_F::image_sizes_dropdown( "name=wpp_settings[configuration][property_overview][thumbnail_size]&selected=" . $wp_properties[ 'configuration' ][ 'property_overview' ][ 'thumbnail_size' ] ); ?></li>
+          <li><?php _e( "Default Type of Pagination", ud_get_wp_property()->domain ) ?>:
+            <select name="wpp_settings[configuration][property_overview][pagination_type]">
+              <option value="slider" <?php if( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'pagination_type' ] ) ) selected( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'pagination_type' ], 'slider' ); ?>><?php _e( 'Slider', ud_get_wp_property()->domain ); ?> (slider)</option>
+              <option value="numeric" <?php if( isset( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'pagination_type' ] ) ) selected( $wp_properties[ 'configuration' ][ 'property_overview' ][ 'pagination_type' ], 'numeric' ); ?>><?php _e( 'Numeric', ud_get_wp_property()->domain ); ?> (numeric)</option>
+            </select>
+            <span class="description"><?php printf( __( 'You always can set pagination type for specific shortcode or widget manually. Example: %s', ud_get_wp_property('domain') ), '<code>[property_overview pagination_type=numeric]</code>' ); ?></span>
+          </li>
           <li><?php echo WPP_F::checkbox( 'name=wpp_settings[configuration][property_overview][show_children]&label=' . sprintf(__( 'Show children %1s.', ud_get_wp_property()->domain ), $object_label[ 'plural' ] ), $wp_properties[ 'configuration' ][ 'property_overview' ][ 'show_children' ] ); ?></li>
           <li><?php echo WPP_F::checkbox( 'name=wpp_settings[configuration][property_overview][fancybox_preview]&label=' . sprintf(__( 'Show larger image of %1s when image is clicked using fancybox.', ud_get_wp_property()->domain ), $object_label[ 'singular' ]), $wp_properties[ 'configuration' ][ 'property_overview' ][ 'fancybox_preview' ] ); ?></li>
           <li><?php echo WPP_F::checkbox( "name=wpp_settings[configuration][bottom_insert_pagenation]&label=" . __( 'Show pagination on bottom of results.', ud_get_wp_property()->domain ), ( isset( $wp_properties[ 'configuration' ][ 'bottom_insert_pagenation' ] ) ? $wp_properties[ 'configuration' ][ 'bottom_insert_pagenation' ] : false ) ); ?></li>
@@ -495,13 +517,6 @@ if ( get_option( 'permalink_structure' ) == '' ) {
 
   <div id="tab_troubleshooting">
     <div class="wpp_inner_tab wp-core-ui">
-
-      <div class="wpp_settings_block">
-        <label>
-        <?php _e( 'If prompted for your domain name during a premium feature purchase, enter as appears here:', ud_get_wp_property()->domain ); ?>
-          <input type="text" readonly="true" value="<?php echo $this_domain; ?>" size="<?php echo strlen( $this_domain ) + 10; ?>"/>
-        </label>
-      </div>
 
       <div class="wpp_settings_block">
         <?php _e( "Restore Backup of WP-Property Configuration", ud_get_wp_property()->domain ); ?>

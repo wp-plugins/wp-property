@@ -32,7 +32,8 @@ namespace UsabilityDynamics\WPP {
         }
 
         $sort_by = array(
-          'post_date' => sprintf( __( 'Date (%s)', ud_get_wp_property( 'domain' ) ), 'post_date' ),
+          'post_date' => sprintf( __( 'Post Date (%s)', ud_get_wp_property( 'domain' ) ), 'post_date' ),
+          'post_modified' => sprintf( __( 'Modified Date (%s)', ud_get_wp_property( 'domain' ) ), 'post_modified' ),
           'random' => sprintf( __( 'Random (%s)', ud_get_wp_property( 'domain' ) ), 'random' ),
           'menu_order' => sprintf( __( 'Menu Order (%s)', ud_get_wp_property( 'domain' ) ), 'menu_order' ),
         );
@@ -179,6 +180,16 @@ namespace UsabilityDynamics\WPP {
                 ),
                 'default' => 'on'
               ),
+              'pagination_type' => array(
+                'name' => __( 'Pagination Type', ud_get_wp_property()->domain ),
+                'description' => __( 'Determine pagination UI', ud_get_wp_property()->domain ),
+                'type' => 'select',
+                'options' => array(
+                  'slider' => __( 'slider', ud_get_wp_property()->domain ),
+                  'numeric'  => __( 'numeric', ud_get_wp_property()->domain )
+                ),
+                'default' => ud_get_wp_property( 'configuration.property_overview.pagination_type' ) ? ud_get_wp_property( 'configuration.property_overview.pagination_type' ) : 'slider',
+              ),
               'per_page' => array(
                 'name' => __( 'Per Page', ud_get_wp_property()->domain ),
                 'description' => sprintf( __( '%s quantity per page.', ud_get_wp_property()->domain ), \WPP_F::property_label() ),
@@ -321,6 +332,7 @@ namespace UsabilityDynamics\WPP {
         $defaults[ 'sorter_type' ] = 'buttons';
         $defaults[ 'sorter' ] = 'on';
         $defaults[ 'pagination' ] = 'on';
+        $defaults[ 'pagination_type' ] = ud_get_wp_property( 'configuration.property_overview.pagination_type' ) ? ud_get_wp_property( 'configuration.property_overview.pagination_type' ) : 'slider';
         $defaults[ 'hide_count' ] = false;
         $defaults[ 'per_page' ] = 10;
         $defaults[ 'starting_row' ] = 0;
@@ -526,9 +538,8 @@ namespace UsabilityDynamics\WPP {
         $template_found = \WPP_F::get_template_part( array(
           "property-overview-{$template}",
           "property-overview-" . sanitize_key( $property_type ),
-          "property-{$template}",
           "property-overview",
-        ), array( WPP_Templates ) );
+        ), array( ud_get_wp_property()->path( 'static/views', 'dir' ) ) );
 
         if( $template_found ) {
           include $template_found;
@@ -544,7 +555,8 @@ namespace UsabilityDynamics\WPP {
           $result[ 'top' ] = '<div id="wpp_shortcode_' . $wpp_query[ 'unique_hash' ] . '" class="wpp_ui ' . $wpp_query[ 'class' ] . '">';
         }
 
-        $result[ 'top_pagination' ] = wpp_draw_pagination( array(
+        $result[ 'top_pagination' ] = self::draw_pagination( array(
+          'type' => $wpp_query[ 'pagination_type' ],
           'class' => 'wpp_top_pagination',
           'sorter_type' => $wpp_query[ 'sorter_type' ],
           'hide_count' => $wpp_query[ 'hide_count' ],
@@ -553,7 +565,8 @@ namespace UsabilityDynamics\WPP {
         $result[ 'result' ] = $ob_get_contents;
 
         if( $wpp_query[ 'bottom_pagination_flag' ] == 'true' ) {
-          $result[ 'bottom_pagination' ] = wpp_draw_pagination( array(
+          $result[ 'bottom_pagination' ] = self::draw_pagination( array(
+            'type' => $wpp_query[ 'pagination_type' ],
             'class' => 'wpp_bottom_pagination',
             'sorter_type' => $wpp_query[ 'sorter_type' ],
             'hide_count' => $wpp_query[ 'hide_count' ],
@@ -578,6 +591,148 @@ namespace UsabilityDynamics\WPP {
         }
       }
 
+      /**
+       * Renders pagination
+       *
+       */
+      static public function draw_pagination( $settings = '' ) {
+        global $wpp_query, $wp_properties;
+
+        $settings = wp_parse_args( $settings, array(
+          'type' => 'slider',
+          'javascript' => true,
+          'return' => true,
+          'class' => '',
+          'sorter_type' => 'none',
+          'hide_count' => false,
+          'sort_by_text' => isset( $wpp_query[ 'sort_by_text' ] ) ? $wpp_query[ 'sort_by_text' ] : ''
+        ) );
+
+        $settings = apply_filters( 'wpp:draw_pagination:settings', $settings, $wpp_query, $wp_properties );
+
+        //** Do not show pagination on ajax requests */
+        if ( $wpp_query[ 'ajax_call' ] ) {
+          return null;
+        }
+
+        if ( is_array( $wpp_query ) || is_object( $wpp_query ) ) {
+          extract( $wpp_query );
+        }
+
+        if ( isset( $pagination ) && $pagination == 'off' && !empty( $hide_count ) ) {
+          return null;
+        }
+
+        /** Maybe use custom pagination/sorter instead of default one */
+        $custom = apply_filters( 'wpp:property_overview:custom_pagination', false, $settings, $wpp_query, $wp_properties );
+
+        if( !empty( $custom ) ) {
+          if ( $settings[ 'return' ] == 'true' ) {
+            return $custom;
+          } else {
+            echo $custom;
+            return null;
+          }
+        }
+
+        if ( is_array( $wpp_query ) || is_object( $wpp_query ) ) {
+          extract( $wpp_query );
+        }
+
+        if ( $properties[ 'total' ] > $per_page && $pagination != 'off' ) {
+          $use_pagination = true;
+        }
+
+        if ( $properties[ 'total' ] < 2 || $sorter_type == 'none' ) {
+          $sortable_attrs = false;
+        }
+
+        //** Determine if we should initialize javascript logic */ */
+        if ( $settings[ 'javascript' ] ) {
+
+          //** Load pagination script */
+          $script_path = apply_filters( "wpp::property_overview::script::path", ud_get_wp_property()->path( 'static/scripts/property_overview.js', 'url' ), $settings );
+          wp_enqueue_script( "property-overview", $script_path, array( 'jquery' ) );
+          wp_localize_script( "property-overview", "_wpp_overview_pagination", array(
+            "previous" => __( 'Previous', ud_get_wp_property('domain') ),
+            "next" => __( 'Next', ud_get_wp_property('domain') ),
+            "first" => __( 'First', ud_get_wp_property('domain') ),
+            "last" => __( 'Last', ud_get_wp_property('domain') ),
+          ) );
+
+          ob_start(); ?>
+          <script type="text/javascript">
+            jQuery( document).ready(function(){
+              if( typeof jQuery.fn.wpp_pagination == 'function' ) {
+                jQuery( '#wpp_shortcode_<?php echo $unique_hash ?>' ).wpp_pagination({
+                  "type": "<?php echo $settings['type'] ?>",
+                  "unique_id": "<?php echo $unique_hash ?>",
+                  "pages": <?php echo !empty( $pages ) ? $pages : 'null'; ?>,
+                  "use_pagination": <?php echo $use_pagination; ?>,
+                  "query": <?php echo json_encode($wpp_query); ?>,
+                  "ajax_url": "<?php echo admin_url('admin-ajax.php'); ?>"
+                });
+              }
+            });
+          </script>
+          <?php
+
+          $js_result = ob_get_clean();
+          $js_result = apply_filters( "wpp::property_overview::{$settings['type']}::script::inline", $js_result, $settings );
+
+        }
+
+        //** Try find pagination template based on type */
+        $template_found = \WPP_F::get_template_part( array(
+          "pagination"
+        ), array( ud_get_wp_property()->path( 'static/views', 'dir' ) ) );
+
+        $result = '';
+        if( $template_found ) {
+          ob_start();
+          self::maybe_print_styles();
+          include $template_found;
+          $result = ob_get_clean();
+        }
+
+        //** Combine JS (after minification) with HTML results */
+        if ( $settings[ 'javascript' ] && isset( $js_result ) ) {
+          $js_result = \WPP_F::minify_js( $js_result );
+          $result = $js_result . $result;
+        }
+
+        if ( $settings[ 'return' ] == 'true' ) {
+          return $result;
+        }
+        echo $result;
+      }
+
+      /**
+       * Render property_overview default styles at once!
+       */
+      public function maybe_print_styles() {
+        global $_wp_property_overview_style;
+        if( empty( $_wp_property_overview_style) || !$_wp_property_overview_style ) {
+          $_wp_property_overview_style = true;
+          $style_path = apply_filters( "property-overview-style-path", ud_get_wp_property()->path( 'static/styles/property_overview.css', 'url' ) );
+          if( !empty( $style_path ) ) {
+            echo "<link rel='stylesheet' href='{$style_path}' type='text/css' media='all' />";
+          }
+        }
+      }
+
+      /**
+       * Try find pagination template based on type
+       *
+       * @param $type
+       * @return bool|mixed|null|string|void
+       */
+      static public function get_pagination_template_based_on_type( $type ) {
+        //** Try find pagination template based on type */
+        return \WPP_F::get_template_part( array(
+          "pagination-{$type}"
+        ), array( ud_get_wp_property()->path( 'static/views', 'dir' ) ) );
+      }
 
     }
 

@@ -4,7 +4,7 @@ Donate link: http://usabilitydynamics.com/product/wp-property/
 Tags: property management, real estate, listings, properties, property, wp-property, real estate cms, wordpress real estate, listings, estate, MLS, IDX, RETS, XML Import
 Requires at least: 4.0
 Tested up to: 4.3.1
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 
 
 == Description ==
@@ -226,6 +226,18 @@ If you submit a popular idea on UserVoice, we WILL integrate it sooner or later.
 * Security fixes
 
 == Changelog ==
+
+= 2.1.3 =
+* Added ability to set numeric or slider pagination for [property_overview] shortcode and Property Overview widget.
+* Added ability to set default image which will be shown if property does not have any one.
+* Added 'Child Properties' table's column on 'All Properties' page, which shows the list of all children for particular property.
+* Improved hooks for list table on 'All Properties' page to have more flexibility with adding custom columns and bulk actions.
+
+= 2.1.2 =
+* Added ability to sort properties by modified date for Property Overview widget.
+* Added option to export properties to CSV file on Help Tab of Settings page.
+* Fixed replacing of plugin's settings data with default values on updating WP-Property settings in some cases.
+* Fixed showing of Multi-Checkbox values.
 
 = 2.1.1 =
 * Added function get_property_type() which returns label of property type for current or particular property.

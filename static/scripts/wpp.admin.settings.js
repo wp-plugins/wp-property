@@ -12,6 +12,12 @@ jQuery.extend( wpp = wpp || {}, { ui: { settings: {
    */
   ready: function() {
 
+    if( typeof jQuery.fn.tooltip == 'function' ) {
+      jQuery( document ).tooltip({
+        track: true
+      });
+    }
+
     /**
      * Handles data saving.
      * Only if we don't upload backup file!
@@ -293,6 +299,83 @@ jQuery.extend( wpp = wpp || {}, { ui: { settings: {
       wpp.ui.settings.set_pre_defined_values_for_attribute( this );
     } );
 
+    /**
+     * Upload Image
+     */
+    jQuery('.button-setup-image').live( 'click', function(e) {
+      e.preventDefault();
+      var section = jQuery( this).parents( '.upload-image-section' );
+      if( !section.length > 0 ) {
+        return;
+      }
+      var image = wp.media({
+        title: wpp.strings.default_property_image,
+        multiple: false
+      }).open()
+        .on('select', function(e){
+          // This will return the selected image from the Media Uploader, the result is an object
+          var uploaded_image = image.state().get('selection').first();
+          // We convert uploaded_image to a JSON object to make accessing it easier
+          // Output to the console uploaded_image
+          //console.log(uploaded_image);
+          var image_url = uploaded_image.toJSON().url;
+          var image_id = uploaded_image.toJSON().id;
+          // Let's assign the url and id values to the input fields
+          jQuery( 'input.input-image-url', section ).val(image_url);
+          jQuery( 'input.input-image-id', section ).val(image_id);
+
+          wpp.ui.settings.append_default_image( section );
+        });
+    });
+
+    jQuery( '.upload-image-section' ).each( function( i, e ){
+      wpp.ui.settings.append_default_image( jQuery(e) );
+    } );
+
+    jQuery( '#wpp_inquiry_property_types tr').live( 'added', function() {
+      var section = jQuery( this).find( '.upload-image-section' );
+      if( !section.length > 0 ) {
+        return;
+      }
+      jQuery( 'input.input-image-url', section ).val('');
+      jQuery( 'input.input-image-id', section ).val('');
+      jQuery( '.image-wrapper img', section ).remove();
+      jQuery( '.button-remove-image', section ).remove();
+    } );
+
+  },
+
+  /**
+   * Renders specified image in upload section
+   */
+  append_default_image: function( section ) {
+    if(
+      jQuery( '.image-wrapper', section ).length > 0 &&
+      jQuery( 'input.input-image-url', section ).length > 0 &&
+      jQuery( 'input.input-image-url', section ).val().length > 0
+    ) {
+      jQuery( '.image-wrapper', section ).html('')
+        .append( '<img src="' + jQuery( 'input.input-image-url', section ).val() + '" alt="" title="" />' );
+      wpp.ui.settings.append_remove_default_image_btn( section );
+    }
+  },
+
+  /**
+   * Renders 'Remove Image' button in upload section
+   */
+  append_remove_default_image_btn: function( section ) {
+    if(
+      jQuery( '.image-actions', section ).length > 0 &&
+      !jQuery( '.button-remove-image', section ).length > 0
+    ) {
+      jQuery( '.image-actions', section ).append('<input class="button-secondary button-remove-image" type="button" value="' + wpp.strings.remove_image + '">');
+      jQuery( '.button-remove-image', section ).one( 'click', function() {
+        jQuery( 'input.input-image-url', section ).val('');
+        jQuery( 'input.input-image-id', section ).val('');
+        jQuery( '.image-wrapper img', section ).remove();
+        jQuery(this).remove();
+      } );
+    }
   },
 
   /**

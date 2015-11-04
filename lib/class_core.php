@@ -38,8 +38,6 @@ class WPP_Core {
     //** Hook in lower init */
     add_action( 'init', array( $this, 'init_lower' ), 100 );
 
-    /// add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
-
     //** Setup template_redirect */
     add_action( "template_redirect", array( $this, 'template_redirect' ) );
 
@@ -63,6 +61,12 @@ class WPP_Core {
       }
       return $args;
     } );
+
+    /**
+     * May be return ID of default image for property.
+     * We are doing it only for Front End! peshkov@UD
+     */
+    add_filter( 'get_post_metadata', array( $this, 'maybe_get_thumbnail_id' ), 10, 4 );
 
   }
 
@@ -265,6 +269,27 @@ class WPP_Core {
     }
 
     return $attributes;
+  }
+
+  /**
+   * May be return thumbnail ID for property.
+   * HOOK on get_post_meta
+   * It'being done only on Front End to prevent different issues!
+   *
+   * @author peshkov@UD
+   * @since 2.1.3
+   */
+  public function maybe_get_thumbnail_id( $value, $object_id, $meta_key, $single ) {
+    if( !is_admin() && $meta_key == '_thumbnail_id' && get_post_type( $object_id ) == 'property' ) {
+      $v = \UsabilityDynamics\WPP\Property_Factory::get_thumbnail_id( $object_id );
+      if( !empty( $v ) ) {
+        if( $single )
+          return $v;
+        else
+          return array( $v );
+      }
+    }
+    return $value;
   }
 
   /**

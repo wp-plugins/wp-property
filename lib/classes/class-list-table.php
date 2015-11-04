@@ -89,7 +89,8 @@ namespace UsabilityDynamics\WPP {
           'overview' => __( 'Overview', ud_get_wp_property( 'domain' ) ),
           'created' => __( 'Added', ud_get_wp_property( 'domain' ) ),
           'modified' => __( 'Updated', ud_get_wp_property( 'domain' ) ),
-          'featured' => __( 'Featured', ud_get_wp_property( 'domain' ) )
+          'featured' => __( 'Featured', ud_get_wp_property( 'domain' ) ),
+          'children' => sprintf( __( 'Child %s', ud_get_wp_property( 'domain' ) ), \WPP_F::property_label('plural') ),
         ) );
 
         $meta = ud_get_wp_property( 'property_stats', array() );
@@ -150,16 +151,17 @@ namespace UsabilityDynamics\WPP {
               } else {
                 $value = implode( '<br/>', $value );
               }
-              $value = apply_filters( "wpp::attribute::display", $value, $column_name );
-              $value = apply_filters( "wpp_stat_filter_{$column_name}", $value );
+              $value = apply_filters( "wpp::attribute::display", $value, $column_name, $item );
+              $value = apply_filters( "wpp_stat_filter_{$column_name}", $value, $item );
               if( !empty( $value ) ) {
                 return $value;
               }
             } else {
-              //Show the whole array for troubleshooting purposes
+              $value = '';
               if( isset( $item->{$column_name} ) && is_string( $item->{$column_name} ) ) {
-                return apply_filters( "wpp_stat_filter_{$column_name}", $item->{$column_name} );
+                $value = $item->{$column_name};
               }
+              return apply_filters( "wpp_stat_filter_{$column_name}", $value, $item );
             }
         }
         return '-';
@@ -299,6 +301,46 @@ namespace UsabilityDynamics\WPP {
       }
 
       /**
+       * Return Featured
+       *
+       * @param $post
+       * @return mixed|string
+       */
+      public function column_children( $post ) {
+        global $wpdb;
+
+        $count = 0;
+        $hidden_count = 0;
+
+        $posts = $wpdb->get_results( "
+          SELECT ID, post_title
+            FROM {$wpdb->posts}
+              WHERE post_type = 'property'
+              AND post_status = 'publish'
+              AND post_parent = '{$post->ID}' ORDER BY menu_order ASC
+        ", ARRAY_A );
+
+        if( !empty( $posts ) ) {
+          $data = array();
+          foreach( $posts as $post ) {
+            $count++;
+            $class = '';
+            if( $count > 3 ) {
+              $class = 'hidden wpp_overview_hidden_stats';
+              $hidden_count++;
+            }
+            $data[] = '<li class="' . $class . '"><a href="' . admin_url() . 'post.php?post=' . $post['ID'] . '&action=edit">' . $post[ 'post_title' ] . '</a></li>';
+          }
+          if( $count > 3 ) {
+            $data[] = '<li class="wpp_show_advanced" advanced_option_class="wpp_overview_hidden_stats">' . sprintf( __( 'Toggle %1s more.', ud_get_wp_property()->domain ), $hidden_count ) . '</li>';
+          }
+          return '<div class="child-properties"><ul class="wpp_something_advanced_wrapper">' . implode( '', $data ) . '</ul>';
+        }
+
+        return '';
+      }
+
+      /**
        * Return Thumnail
        *
        * @param $post
@@ -309,22 +351,15 @@ namespace UsabilityDynamics\WPP {
         $data = '';
 
         $wp_image_sizes = get_intermediate_image_sizes();
-        $thumbnail_id = get_post_meta( $post->ID, '_thumbnail_id', true );
+        $thumbnail_id = Property_Factory::get_thumbnail_id( $post->ID );
         if( $thumbnail_id ) {
           foreach( $wp_image_sizes as $image_name ) {
             $this_url = wp_get_attachment_image_src( $thumbnail_id, $image_name, true );
             $return[ 'images' ][ $image_name ] = $this_url[ 0 ];
           }
           $featured_image_id = $thumbnail_id;
-        } else {
-          $attachments = get_children( array( 'post_parent' => $post->ID, 'post_type' => 'attachment', 'post_mime_type' => 'image', 'orderby' => 'menu_order ASC, ID', 'order' => 'DESC' ) );
-          if( $attachments ) {
-            foreach( $attachments as $attachment_id => $attachment ) {
-              $featured_image_id = $attachment_id;
-              break;
-            }
-          }
         }
+
         if( empty( $featured_image_id ) ) {
           return $data;
         }
@@ -425,7 +460,7 @@ namespace UsabilityDynamics\WPP {
 
             default:
               //** Any custom action can be processed using action hook */
-              do_action( 'wpp::all_properties::process_bulk_action', $this->current_action() );
+              do_action( 'wpp::all_properties::process_bulk_action', $this->current_action(), $this );
               break;
 
           }
