@@ -1670,6 +1670,7 @@ class WPP_F extends UsabilityDynamics\Utility {
     $url = add_query_arg( apply_filters( 'wpp:geocoding_request', array(
       "address" => rawurlencode( $address ),
       "language" => $localization,
+      "key" => ud_get_wp_property( 'configuration.google_maps_api' )
     )), "https://maps.googleapis.com/maps/api/geocode/json" );
 
     $obj = wp_remote_get( $url );
@@ -2962,7 +2963,7 @@ class WPP_F extends UsabilityDynamics\Utility {
           } else {
             $hyphen_between = $cr;
             // If min value doesn't exist, set 1
-            if( empty( $hyphen_between[ 0 ] ) ) {
+            if( empty( $hyphen_between[ 0 ] ) && $hyphen_between[ 0 ] != "0" ) {
               $hyphen_between[ 0 ] = 1;
             }
           }

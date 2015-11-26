@@ -196,8 +196,8 @@ namespace UsabilityDynamics\WPP {
        * @return array
        */
       static function extend_property_with_parent( $property, $cache = true ) {
-
-        if( empty( $property[ 'ID' ] ) || empty( $post[ 'post_parent' ] ) || !$post[ 'post_parent' ] > 0 ) {
+        global $wp_properties;
+        if( empty( $property[ 'ID' ] ) || empty( $property[ 'post_parent' ] ) || !$property[ 'post_parent' ] > 0 ) {
           return $property;
         }
 
@@ -209,7 +209,7 @@ namespace UsabilityDynamics\WPP {
 
           $data = array();
 
-          $parent_object = self::get( $post[ 'post_parent' ], array(
+          $parent_object = self::get( $property[ 'post_parent' ], array(
             'get_children'          => 'false',
             'return_object'         => 'false',
             'load_gallery'          => 'false',
@@ -219,7 +219,7 @@ namespace UsabilityDynamics\WPP {
           ) );
 
           $data[ 'is_child' ] = true;
-          $data[ 'parent_id' ]    = $post[ 'post_parent' ];
+          $data[ 'parent_id' ]    = $property[ 'post_parent' ];
           $data[ 'parent_link' ]  = $parent_object[ 'permalink' ];
           $data[ 'parent_title' ] = $parent_object[ 'post_title' ];
 
@@ -394,7 +394,8 @@ namespace UsabilityDynamics\WPP {
         if ( isset( $meta_cache[ '_thumbnail_id' ] ) ) {
 
           if( is_array( $meta_cache[ '_thumbnail_id' ] ) ) {
-            return array_shift( array_values( $meta_cache[ '_thumbnail_id' ] ) );
+            $_ = array_values( $meta_cache[ '_thumbnail_id' ] );
+            return array_shift( $_ );
           } else {
             return $meta_cache[ '_thumbnail_id' ];
           }
